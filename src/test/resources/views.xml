@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN" "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+           
+<tiles-definitions>
+
+	<definition name="template" template="/WEB-INF/view/jsp/templates/mainTemplate.jsp">
+		<put-attribute name="top" value="/WEB-INF/view/jsp/templates/topTemplate.jsp" />
+		<put-attribute name="notes" value="/WEB-INF/view/jsp/templates/notesTemplate.jsp" />
+		<put-list-attribute name="styles">
+			<add-attribute type="string" value="basic.css" />
+            <add-attribute type="string" value="layout.css" />
+            <add-attribute type="string" value="content.css" />
+        </put-list-attribute>
+		<put-list-attribute name="scripts">
+			<add-attribute type="string" value="jquery-1.7.1.min.js" />
+            <add-attribute type="string" value="util.js" />
+        </put-list-attribute>
+	</definition>
+	
+	<definition name="home" extends="template">
+		<put-attribute name="title" value="Homepage" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/home.jsp" />
+	</definition>
+	
+	<definition name="admin/log" extends="template">
+		<put-attribute name="title" value="Administration - Debug Log" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/admin/log.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+            <add-attribute type="string" value="admin.js" />
+        </put-list-attribute>
+	</definition>	
+	<definition name="admin/userlog" extends="template">
+		<put-attribute name="title" value="Administration - User Log" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/admin/userlog.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+            <add-attribute type="string" value="admin.js" />
+        </put-list-attribute>
+	</definition>	
+	
+	<definition name="auth/login" extends="template">
+		<put-attribute name="title" value="Login" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/auth/login.jsp" />
+	</definition>	
+	<definition name="auth/denied" extends="template">
+		<put-attribute name="title" value="Access Denied - Please Login" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/auth/denied.jsp" />
+	</definition>	
+	
+	<definition name="schema/list" extends="template">
+		<put-attribute name="title" value="List Schemas" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/list.jsp" />
+		
+		<put-list-attribute name="scripts" inherit="true">
+            <add-attribute type="string" value="ajax.js" />
+        </put-list-attribute>
+	</definition>
+	<definition name="schema/edit" extends="template">
+		<put-attribute name="title" value="Edit Schema" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/edit.jsp" />
+	</definition>
+		
+	<definition name="mapping/list" extends="template">
+		<put-attribute name="title" value="List Crosswalks" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/list.jsp" />
+		
+		<put-list-attribute name="scripts" inherit="true">
+            <add-attribute type="string" value="ajax.js" />
+        </put-list-attribute>
+	</definition>
+	<definition name="mapping/edit" extends="template">
+		<put-attribute name="title" value="Edit Crosswalk" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/edit.jsp" />
+	</definition>
+	
+
+	<definition name="mapping/analyze" extends="template">
+		<put-attribute name="title" value="Analyze Crosswalk" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/analyze_v2.jsp" />
+		<put-list-attribute name="styles"  inherit="true">
+			<add-attribute type="string" value="mapping.css" />
+        </put-list-attribute>
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="mapping/tmpControl.js" />
+			<add-attribute type="string" value="mapping/Area.js" />
+			<add-attribute type="string" value="mapping/Array.js" />
+			<add-attribute type="string" value="mapping/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="mapping/Connection.js" />
+			<add-attribute type="string" value="mapping/Connector.js" />
+			<add-attribute type="string" value="mapping/ContainerUndoUnit.js" />
+			<add-attribute type="string" value="mapping/ContentChangedUndoUnit.js" />
+			<add-attribute type="string" value="mapping/Cursors.js" />
+			<add-attribute type="string" value="mapping/DeleteConnectionUndoUnit.js" />
+			<add-attribute type="string" value="mapping/DeleteElementUndoUnit.js" />
+			<add-attribute type="string" value="mapping/Element.js" />
+			<add-attribute type="string" value="mapping/Function.js" />
+			<add-attribute type="string" value="mapping/Graph.js" />
+			<add-attribute type="string" value="mapping/InsertConnectionUndoUnit.js" />
+			<add-attribute type="string" value="mapping/InsertElementUndoUnit.js" />
+			<add-attribute type="string" value="mapping/Point.js" />
+			<add-attribute type="string" value="mapping/Rectangle.js" />
+			<add-attribute type="string" value="mapping/Selection.js" />
+			<add-attribute type="string" value="mapping/SelectionUndoUnit.js" />
+			<add-attribute type="string" value="mapping/Tracker.js" />
+			<add-attribute type="string" value="mapping/TransformUndoUnit.js" />
+			<add-attribute type="string" value="mapping/UndoService.js" />
+        </put-list-attribute>
+	</definition>
+	
+	
+	<!-- AJAX -->
+	<definition name="admin/log/tr" template="/WEB-INF/view/jsp/admin/incl/log_row.jsp" />
+	<definition name="schema/list/tr" template="/WEB-INF/view/jsp/schema/incl/list_row.jsp" />
+	<definition name="mapping/list/tr" template="/WEB-INF/view/jsp/mapping/incl/list_row.jsp" />
+	
+</tiles-definitions>

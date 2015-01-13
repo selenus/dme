@@ -1,0 +1,51 @@
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans" xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+			 xmlns:context="http://www.springframework.org/schema/context"
+			 xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+								 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+								 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+				
+	<context:component-scan base-package="de.dariah.samlsp.orm.dao"/>
+	<context:component-scan base-package="de.dariah.samlsp.orm.service" />			 
+	
+	    <!-- Unsecured pages -->
+    <http security="none" pattern="/saml/web/**"/>
+    <http security="none" pattern="/user/redirect"/>
+    <http security="none" pattern="/logout.jsp"/>
+    <http security="none" pattern="/favicon.ico"/>
+	
+	
+	<http auto-config="true" access-decision-manager-ref="accessDecisionManager" >
+		<intercept-url pattern="/user/profile" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
+        
+       <intercept-url pattern="/schema/**" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
+        <intercept-url pattern="/mapping/**" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
+        <intercept-url pattern="/user/**" requires-channel="https" />
+        <intercept-url pattern="/saml/**" requires-channel="https" />
+        
+        
+        <intercept-url pattern="/admin/helpers/**" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
+	</http>
+	
+	<authentication-manager>
+	  <authentication-provider>
+	    <user-service>
+			<user name="Tobias" password="dariah" authorities="ROLE_ADMINISTRATOR, ROLE_CONTRIBUTOR" />
+	    </user-service>
+	  </authentication-provider>
+	</authentication-manager>
+	
+	<beans:bean id="attributeQueryOptions" class="de.dariah.aai.saml.attributequery.SAMLAttributeQueryOptions">
+        
+    </beans:bean>
+	
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<beans:constructor-arg name="decisionVoters">
+			<beans:list>
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+				<beans:bean class="de.dariah.aai.javasp.web.RoleLevelVoter" />
+			</beans:list>
+		</beans:constructor-arg>
+		<beans:property name="allowIfAllAbstainDecisions" value="false" />
+	</beans:bean>
+	
+</beans:beans>
