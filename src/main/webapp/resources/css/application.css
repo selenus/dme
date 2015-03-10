@@ -1,0 +1,41 @@
+#main-content-wrapper {
+	background: #fff;
+	
+	-webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+	
+	 /* Android ≤ 1.6, iOS 1-3.2, Safari 3-4 */
+  	-webkit-border-bottom-left-radius: 5px;
+  	-webkit-border-bottom-right-radius: 5px;
+  	
+  	/* Android 2.1+, Chrome, Firefox 4+, IE 9+, iOS 4+, Opera 10.50+, Safari 5+ */
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+  	/* useful if you don't want a bg color from leaking outside the border: */
+  	-webkit-background-clip: padding-box; background-clip: padding-box;
+  
+  	/* Menus should be shown even when not in white area */
+  	/*overflow: hidden;
+  	position:relative;
+	z-index: 2;*/
+}
+
+#main-content {
+	padding: 0 15px;
+}
+
+noscript div {
+    background-color: #AE0000;
+    color: #FFFFFF;
+    font-family: "MuseoSansRounded700";
+    font-size: 125%;
+    /*font-weight: bold;*/
+    left: 0;
+    padding: 6px 0;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    z-index: 1100;
+}
