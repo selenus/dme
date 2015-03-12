@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ taglib prefix="template" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="tpl" tagdir="/WEB-INF/tags" %>
 
 <c:forEach items="${navItem.subItems}" var="navSubItem">
 	<c:if test="${navItem.authRequired==false || 
@@ -17,7 +17,7 @@
 		</a>
 		<c:if test="${navSubItem.subItems!=null && fn:length(navSubItem.subItems)>0}">
 			<div class="nav<c:if test="${navSubItem.childActive}"> childActive</c:if>">
-		 		<template:sideNav navItem="${navSubItem}" />
+		 		<tpl:sideNav navItem="${navSubItem}" />
 			</div>
 		</c:if>
 	</c:if>

@@ -1,3 +1,6 @@
+/*!
+ *	Content wrapping
+ */
 #main-content-wrapper {
 	background: #fff;
 	
@@ -15,16 +18,62 @@
   	/* useful if you don't want a bg color from leaking outside the border: */
   	-webkit-background-clip: padding-box; background-clip: padding-box;
   
+  	padding-bottom: 5px;
   	/* Menus should be shown even when not in white area */
   	/*overflow: hidden;
   	position:relative;
 	z-index: 2;*/
 }
-
 #main-content {
 	padding: 0 15px;
 }
+#primary-content-area #notifications-area {
+	min-height: 50px;
+}
 
+/*!
+ *	Side navigation
+ */
+
+/*!
+ *	DARIAH Logos
+ */
+.dariah-flower-white-45,
+.dariah-flower-white-83 {
+	background-repeat: no-repeat;
+	background-position: top left;
+	font-family: "MuseoSansRounded700";
+	font-weight: 500;
+}
+
+.dariah-flower-white-83 {
+	background-image: url("../img/dariah-flower-white-83.png");
+	padding: 48px 0 0 50px;
+	min-height: 85px;
+	font-size: 30px;
+}
+
+.dariah-flower-white-45 {
+	background-image: url("../img/dariah-flower-white-45.png");
+	padding: 26px 0 0 30px;
+	margin-top: 15px;
+	min-height: 45px;
+	font-size: 22px;
+}
+
+/*!
+ *	Smaller jumbotron
+ */
+.jumbotron.jumbotron-small {
+	padding: 10px 0;
+}
+.jumbotron.jumbotron-small h1 {
+	font-size: 3em;
+}
+
+/*!
+ *	Auxiliary stuff
+ */
 noscript div {
     background-color: #AE0000;
     color: #FFFFFF;

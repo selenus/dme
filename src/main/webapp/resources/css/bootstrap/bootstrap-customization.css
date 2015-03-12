@@ -76,4 +76,15 @@ body {
 .breadcrumb {
 	font-size: 12px;
 }
- 
+
+/*!
+ *	Footer
+ */
+.footer {
+	padding-top: 0.7em;
+}
+
+.footer ul li {
+	display: inline;
+	margin-left: 10px;
+}

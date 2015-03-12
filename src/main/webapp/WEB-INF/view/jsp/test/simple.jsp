@@ -4,18 +4,30 @@
 
 <tiles:importAttribute name="fluidLayout" />
 
+<div class="jumbotron jumbotron-small">
+	 <div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
+		<div class="row">
+			<div class="xs-hidden sm-visible col-sm-3 col-lg-2 col-sm-offset-1">
+				<div class="pull-right dariah-flower-white-45">some&nbsp;tool</div>
+			</div>
+			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
+				<h1>Blu</h1>
+			</div>
+		</div>
+	</div>
+</div>
 <div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 	<div class="row">
-		<div id="main-content-wrapper" class="col-xs-12 col-sm-10 col-sm-offset-1">
+		<!-- Notifications -->
+		<div id="notifications-area"></div>
+		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
-				<li>Hauptebene</li>
-				<li class="active">Subebene</li>
+				<li>Lorem ipsum dolor</li>
+				<li class="active">sit amet</li>
 			</ul>
 			<div id="main-content">
-				<h1>Überschrift 1</h1>
-				<p>...</p>
-				<h2>Überschrift 2</h2>
-				<p><s:message code="~testtext" /> </p>
+				<h1>sit amet</h1>
+				<p>Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
 			</div>
 		</div>
 	</div>
