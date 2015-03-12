@@ -21,10 +21,12 @@
 				<!-- Notifications -->
 				<div id="notifications-area"></div>
 				<div class="col-md-3">
-					<div class="nav-primary-dariah">
-						<a class="logo-dariah" href="http://portal-de.dariah.eu" title="DARIAH-DE Portal">
-							<img width="220" height="103" src="<s:url value="/resources/img/dariah-logo.png" />" alt="DARIAH-DE Digital Research Infrastructure for the Arts and Humanities">
-						</a>
+					<div class="sidebar">
+						<div class="sidebar-logo">
+							<a href="http://portal-de.dariah.eu" title="DARIAH-DE Portal">
+								<img width="220" height="103" src="<s:url value="/resources/img/dariah-logo.png" />" alt="DARIAH-DE Digital Research Infrastructure for the Arts and Humanities">
+							</a>
+						</div>
 						<c:if test="${sideOpts!=null}">
 							<tiles:insertAttribute name="sideOpts"/>
 						</c:if>

@@ -3,7 +3,7 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="tpl" tagdir="/WEB-INF/tags" %>
 
-<header role="banner" class="navbar navbar-static-top <c:if test="${navbarInverse==true}">navbar-inverse</c:if>">
+<header role="banner" class="navbar navbar-default navbar-static-top <c:if test="${navbarInverse==true}">navbar-inverse</c:if>">
 	<div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 		<div class="row">
 			<div class="col-sm-11 col-sm-offset-1">
@@ -22,15 +22,15 @@
 		    			<c:forEach items="${_nav.rootItems}" var="_navItem">
 		    				<c:choose>
 				    			<c:when test="${_navItem.subItems!=null && fn:length(_navItem.subItems)>0}">
-					    			<li class="dropdown <c:if test="${_navItem.active || _navItem.childActive}"> active</c:if>">
-						    			<a class="dropdown-toggle" id="dropdownMenu-${_navItem.id}" data-toggle="dropdown">
+					    			<li class="dropdown <c:if test="${_navItem.active || _navItem.childActive}"> active</c:if>">					    			
+					    				<a aria-expanded="false" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
 											<c:if test="${_navItem.glyphicon!=null && fn:length(_navItem.glyphicon)>0}">
 												<span class="${_navItem.glyphicon}"></span>&nbsp;
 											</c:if>
 											${_navItem.displayCode}
 											<span class="caret"></span>
 										</a>
-										<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu-${_navItem.id}">
+										<ul role="menu" class="dropdown-menu">
 											<tpl:topNav navItem="${_navItem}" />
 										</ul>
 					    			</li>
