@@ -11,25 +11,19 @@
 			<add-attribute type="string" value="bootstrap/bootstrap.min.css" />
 			<add-attribute type="string" value="bootstrap/bootstrap-theme.min.css" />
 			<add-attribute type="string" value="bootstrap/bootstrap-customization.css" />
-			<add-attribute type="string" value="application.css" />
-			<!-- <add-attribute type="string" value="bootstrap/bootstrap-custom.css" />
+			<add-attribute type="string" value="bootstrap/bootstrap-modal-bs3patch.css" />
 			<add-attribute type="string" value="bootstrap/bootstrap-modal.css" />
-			<add-attribute type="string" value="application.css" /> -->
+			<add-attribute type="string" value="application.css" />
         </put-list-attribute>
 		<put-list-attribute name="scripts">
 			<add-attribute type="string" value="jquery/jquery.js" />
 			<add-attribute type="string" value="bootstrap/bootstrap.js" />
-		
-			<!-- <add-attribute type="string" value="_common/properties.js" />
-			<add-attribute type="string" value="jquery/jquery.js" />
+			<add-attribute type="string" value="bootstrap/bootbox.min.js" />
+			<add-attribute type="string" value="bootstrap/bootstrap-modalmanager.js" />
+			<add-attribute type="string" value="bootstrap/bootstrap-modal.js" />
+			<add-attribute type="string" value="_common/appProperties.js" />
 			<add-attribute type="string" value="_common/translator.js" />
 			<add-attribute type="string" value="_common/util.js" />
-			<add-attribute type="string" value="bootstrap/bootstrap.js" />
-			<add-attribute type="string" value="bootstrap/bootstrap-modal.js" />
-			<add-attribute type="string" value="bootstrap/bootstrap-modalmanager.js" />
-			<add-attribute type="string" value="bootstrap/bootbox.js" />
-			<add-attribute type="string" value="_common/notificationsHandler.js" />
-			<add-attribute type="string" value="_common/formHandler.js" /> -->
         </put-list-attribute>
 	</definition>
 	<definition name="template_main" extends="template_simple" template="/WEB-INF/view/jsp/templates/main.jsp">
