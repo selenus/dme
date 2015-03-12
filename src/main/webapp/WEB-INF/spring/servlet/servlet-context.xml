@@ -7,6 +7,8 @@
 						http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
 						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 	
+	<import resource="../common-config.xml"/>
+	
 	<mvc:annotation-driven />
 	<mvc:resources location="/resources/" mapping="/resources/**" cache-period="31556926"/>
 	
@@ -81,6 +83,7 @@
 							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 								<property name="id" value="test/jumbo/fluid" />
 								<property name="displayCode" value="~test.jumbo.fluid" />
+								<property name="glyphicon" value="glyphicon glyphicon-lock" />
 								<property name="linkUrl" value="/test/jumboFluid" />
 							</bean>
 						</list>

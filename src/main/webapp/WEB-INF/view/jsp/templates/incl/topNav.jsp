@@ -66,10 +66,8 @@
 							</ul>
 						</li>
 
-			    		<!-- 
-						<li id="login"<c:if test="${_auth!=null && _auth.auth==true}"> style="display: none;"</c:if>><a href="<s:url value='/spring_security_login' />" ><span class="glyphicon glyphicon-log-out"></span> Anmelden</a></li>
-						<li id="logout"<c:if test="${_auth==null || _auth.auth==false}"> style="display: none;"</c:if>><a href="<s:url value='/logout' />" ><span class="glyphicon glyphicon-log-out"></span> Abmelden</a></li>
-						 -->				
+						<li id="login"<c:if test="${_auth!=null && _auth.auth==true}"> style="display: none;"</c:if>><a href="<s:url value='${_loginUrl}' />" ><span class="glyphicon glyphicon-log-in"></span>&nbsp;<s:message code="~eu.dariah.de.minfba.common.login" /></a></li>
+						<li id="logout"<c:if test="${_auth==null || _auth.auth==false}"> style="display: none;"</c:if>><a href="<s:url value='${_logoutUrl}' />" ><span class="glyphicon glyphicon-log-out"></span>&nbsp;<s:message code="~eu.dariah.de.minfba.common.logout" /></a></li>		
 					</ul>
 		    	</nav>
 			</div>
