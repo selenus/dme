@@ -27,7 +27,7 @@
 											<c:if test="${_navItem.glyphicon!=null && fn:length(_navItem.glyphicon)>0}">
 												<span class="${_navItem.glyphicon}"></span>&nbsp;
 											</c:if>
-											${_navItem.displayCode}
+											<s:message code="${_navItem.displayCode}" />
 											<span class="caret"></span>
 										</a>
 										<ul role="menu" class="dropdown-menu">
@@ -41,7 +41,7 @@
 				    						<c:if test="${_navItem.glyphicon!=null && fn:length(_navItem.glyphicon)>0}">
 												<span class="${_navItem.glyphicon}"></span>&nbsp;
 											</c:if>
-				    						${_navItem.displayCode}
+				    						<s:message code="${_navItem.displayCode}" />
 				    					</a>
 				    				</li>
 				    			</c:otherwise>

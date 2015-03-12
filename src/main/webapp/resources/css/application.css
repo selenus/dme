@@ -84,6 +84,17 @@
 	border-bottom: 1px solid #f0f0f0;
 }
 
+.sidebar .sidebar-title a {
+	color: inherit;
+}
+
+.sidebar .sidebar-title a:hover,
+.sidebar .sidebar-title a:focus,
+.sidebar .sidebar-title a:visited {
+	color: inherit;
+	text-decoration: none;
+}
+
 
 /*!
  *	DARIAH Logos

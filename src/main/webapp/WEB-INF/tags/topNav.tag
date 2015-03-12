@@ -18,7 +18,7 @@
 					<c:if test="${navSubItem.glyphicon!=null && fn:length(navSubItem.glyphicon)>0}">
 						<span class="${navSubItem.glyphicon}"></span>&nbsp;
 					</c:if>
-					${navSubItem.displayCode}
+					<s:message code="${navSubItem.displayCode}" />
 				</li>
 				<c:if test="${navSubItem.subItems!=null && fn:length(navSubItem.subItems)>0}">
 					<c:forEach items="${navSubItem.subItems}" var="navSubSubItem">
@@ -27,7 +27,7 @@
 								<c:if test="${navSubSubItem.glyphicon!=null && fn:length(navSubSubItem.glyphicon)>0}">
 									<span class="${navSubSubItem.glyphicon}"></span>&nbsp;
 								</c:if>
-								${navSubSubItem.displayCode}
+								<s:message code="${navSubSubItem.displayCode}" />
 							</a>
 						</li>
 					</c:forEach>
@@ -39,7 +39,7 @@
 						<c:if test="${navSubItem.glyphicon!=null && fn:length(navSubItem.glyphicon)>0}">
 							<span class="${navSubItem.glyphicon}"></span>&nbsp;
 						</c:if>
-						${navSubItem.displayCode}
+						<s:message code="${navSubItem.displayCode}" />
 					</a>
 				</li>
 			</c:otherwise>

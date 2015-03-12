@@ -49,38 +49,38 @@
 			<list>
 				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 					<property name="id" value="test" />
-					<property name="displayCode" value="Test" />
+					<property name="displayCode" value="~test.test" />
 					<property name="glyphicon" value="glyphicon glyphicon-search" />
 					<property name="subItems">
 						<list>
 							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 								<property name="id" value="test/main" />
-								<property name="displayCode" value="Main" />
+								<property name="displayCode" value="~test.main" />
 								<property name="linkUrl" value="/test/main" />
 							</bean>
 							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 								<property name="id" value="test/main/fluid" />
-								<property name="displayCode" value="Main Fluid"/>
+								<property name="displayCode" value="~test.main.fluid"/>
 								<property name="linkUrl" value="/test/mainFluid" />
 							</bean>
 							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 								<property name="id" value="test/simple" />
-								<property name="displayCode" value="Simple" />
+								<property name="displayCode" value="~test.simple" />
 								<property name="linkUrl" value="/test/simple" />
 							</bean>
 							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 								<property name="id" value="test/simple/fluid" />
-								<property name="displayCode" value="Simple Fluid" />
+								<property name="displayCode" value="~test.simple.fluid" />
 								<property name="linkUrl" value="/test/simpleFluid" />
 							</bean>
 							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 								<property name="id" value="test/jumbo" />
-								<property name="displayCode" value="Jumbo" />
+								<property name="displayCode" value="~test.jumbo" />
 								<property name="linkUrl" value="/test/jumbo" />
 							</bean>
 							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 								<property name="id" value="test/jumbo/fluid" />
-								<property name="displayCode" value="Jumbo Fluid" />
+								<property name="displayCode" value="~test.jumbo.fluid" />
 								<property name="linkUrl" value="/test/jumboFluid" />
 							</bean>
 						</list>
@@ -88,27 +88,8 @@
 				</bean>
 				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 					<property name="id" value="index2" />
-					<property name="displayCode" value="Index" />
-					<property name="glyphicon" value="glyphicon glyphicon-th-list" />
-					<property name="linkUrl" value="/index" />
-				</bean>
-				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
-					<property name="id" value="index3" />
-					<property name="displayCode" value="Index" />
-					<property name="glyphicon" value="glyphicon glyphicon-th-list" />
-					<property name="linkUrl" value="/index" />
-				</bean>
-				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
-					<property name="id" value="index4" />
-					<property name="displayCode" value="Index" />
-					<property name="glyphicon" value="glyphicon glyphicon-th-list" />
-					<property name="linkUrl" value="/index" />
-				</bean>
-				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
-					<property name="id" value="index5" />
-					<property name="displayCode" value="Index" />
-					<property name="glyphicon" value="glyphicon glyphicon-th-list" />
-					<property name="linkUrl" value="/index" />
+					<property name="displayCode" value="~test.otherlink" />
+					<property name="linkUrl" value="/other" />
 				</bean>
 			</list>
 		</property>

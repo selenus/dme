@@ -13,7 +13,7 @@
 			<c:if test="${navSubItem.glyphicon!=null && fn:length(navSubItem.glyphicon)>0}">
 				<span class="${navSubItem.glyphicon}"></span>&nbsp;
 			</c:if>
-			${navSubItem.displayCode}
+			<s:message code="${navSubItem.displayCode}" />
 		</a>
 		<c:if test="${navSubItem.subItems!=null && fn:length(navSubItem.subItems)>0}">
 			<div class="nav<c:if test="${navSubItem.childActive}"> childActive</c:if>">
