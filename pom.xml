@@ -26,11 +26,11 @@
 
 	<dependencies>
 		<!-- DARIAH -->
-		<!-- <dependency>
-			<groupId>de.dariah</groupId>
-			<artifactId>dariah-base</artifactId>
-			<version>0.0.4-SNAPSHOT</version>
-		</dependency> -->
+		<dependency>
+			<groupId>eu.dariah.de.minfba.core</groupId>
+			<artifactId>core-orm</artifactId>
+			<version>0.0.5-SNAPSHOT</version>
+		</dependency>
 		<dependency>
 			<groupId>eu.dariah.de.minfba.core</groupId>
 			<artifactId>core-web</artifactId>
