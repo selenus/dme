@@ -24,6 +24,7 @@
         <property name="packagesToScan">
             <list>
                 <value>eu.dariah.de.minfba.core.metamodel</value>
+                <value>eu.dariah.de.minfba.core.metamodel.function</value>
                 <value>eu.dariah.de.minfba.core.metamodel.xml</value>
             </list>
         </property>

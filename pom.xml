@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>eu.dariah.de.minfba.core</groupId>
 			<artifactId>core-metamodel</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>eu.dariah.de.minfba.core</groupId>
