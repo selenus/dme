@@ -32,6 +32,11 @@
 		<put-attribute name="fluidLayout" cascade="true" value="true" />
 	</definition>
 	
+	<!-- Schema -->
+	<definition name="schema/home" extends="template_simple">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/home.jsp" />
+		<put-attribute name="fluidLayout" cascade="true" value="false" />
+	</definition>
 	
 	<!-- Test views -->
 	<definition name="test/simple" extends="template_simple">
