@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 @RequestMapping(value="/")
 public class HomeController {
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
 	public String getHome(HttpServletResponse response) throws IOException  {
 		/* TODO: For now...redirect; in the future a ScheReg dashboard is intended */
 		response.sendRedirect("schema/");

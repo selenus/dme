@@ -42,4 +42,7 @@
 	</bean>
 
 	<bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+	
+	<context:component-scan base-package="eu.dariah.de.minfba.schereg.dao"/>
+	<context:component-scan base-package="eu.dariah.de.minfba.schereg.service"/>
 </beans>
