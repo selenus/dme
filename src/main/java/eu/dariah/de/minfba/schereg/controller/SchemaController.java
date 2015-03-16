@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
@@ -33,16 +34,22 @@ public class SchemaController {
 		s.setNamespaces(new ArrayList<XmlNamespace>());
 		
 		XmlNamespace xns = new XmlNamespace();
-		xns.setKey("dc");
+		xns.setPrefix("dc");
 		xns.setUrl("http://dc");
 		xns.setSchema(s);
 		s.getNamespaces().add(xns);
 		
 		xns = new XmlNamespace();
-		xns.setKey("oai_dc");
+		xns.setPrefix("oai_dc");
 		xns.setUrl("http://oai_dc");
 		xns.setSchema(s);
 		s.getNamespaces().add(xns);
+		
+		Nonterminal n = new Nonterminal();
+		n.setName("n1");
+		
+		s.setRoot(n);
+		
 		
 		schemaService.saveSchema(s);
 		
@@ -51,13 +58,13 @@ public class SchemaController {
 		
 		for (Schema sDel : schemata) {
 			//schemaService.deleteSchema(sDel);
-			XmlSchema ssDel = (XmlSchema)sDel;
+			/*XmlSchema ssDel = (XmlSchema)sDel;
 			
 			for (XmlNamespace xns2 : ssDel.getNamespaces()) {
 				xns2.setKey(xns2.getKey()+ "_");
 			}
 			
-			schemaService.saveSchema(ssDel);
+			schemaService.saveSchema(ssDel);*/
 		}
 		
 		model.addAttribute("schemata", schemata);
