@@ -15,12 +15,13 @@ public class SchemaDaoImpl extends BaseDaoImpl<Schema> implements SchemaDao {
 	@Autowired MongoTemplate mongoTemplate;
 	
 	public void loadAllSchemas() {
-	    List<Schema> results = mongoTemplate.findAll(Schema.class);
+	    List<Schema> results = mongoTemplate.findAll(Schema.class, "collection");
+	    
 	    
 	    XmlSchema xs = new XmlSchema();
 	    xs.setLabel("label");
 	    
-	    mongoTemplate.insert(xs);
+	    mongoTemplate.insert(xs, "collection");
 	    
 	    logger.info("Total amount of schemas: {}", results.size());
 	    logger.info("Results: {}", results);
