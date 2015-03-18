@@ -6,32 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.transaction.Transactional;
-
 import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.schereg.dao.base.BasePersistenceTest;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:orm-test-context.xml"})
-public class SchemaDaoTest {
-	
-	@Autowired private SchemaDao schemaDao;
-	@Autowired private SessionFactory sessionFactory;
+public class SchemaDaoTest extends BasePersistenceTest {	
 	
 	@Test
-	@Transactional
 	public void testSchemaPersistence() throws IOException, URISyntaxException {
 		this.createSchemata(5);
 		
