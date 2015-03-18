@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
-import eu.dariah.de.minfba.schereg.dao.BaseSchemaDao;
+import eu.dariah.de.minfba.schereg.dao.SchemaDao;
 
 @Service
 @Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 public class SchemaServiceImpl implements SchemaService {
 
-	@Autowired private BaseSchemaDao baseSchemaDao;
+	@Autowired private SchemaDao baseSchemaDao;
 	
 	@Override
 	public List<Schema> findAllSchemata() {

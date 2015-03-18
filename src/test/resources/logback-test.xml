@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+	<property file="${application.conf}" />
+	
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d %-5level [%thread] %logger{32}: %msg%n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>TRACE</level>
+		</filter>
+	</appender>
+	
+	<root>
+		<level value="info"/>
+		<appender-ref ref="console" />
+	</root>
+	
+	<logger name="eu.dariah.de.minfba.schereg">
+		<level value="debug" />
+	</logger>
+</configuration>

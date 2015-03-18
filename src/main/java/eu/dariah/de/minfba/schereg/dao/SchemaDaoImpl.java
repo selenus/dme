@@ -6,8 +6,8 @@ import de.dariah.base.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 
 @Repository
-public class BaseSchemaDaoImpl extends BaseDaoImpl<Schema> implements BaseSchemaDao {
-	public BaseSchemaDaoImpl() {
+public class SchemaDaoImpl extends BaseDaoImpl<Schema> implements SchemaDao {
+	public SchemaDaoImpl() {
 		super(Schema.class);
 	}
 }
