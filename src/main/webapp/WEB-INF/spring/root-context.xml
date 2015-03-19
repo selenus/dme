@@ -17,6 +17,8 @@
 		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
 	</bean>
 	
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+	
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.dao"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.service"/>
 </beans>

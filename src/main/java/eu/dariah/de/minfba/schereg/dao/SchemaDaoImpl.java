@@ -2,28 +2,68 @@ package eu.dariah.de.minfba.schereg.dao;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 
 @Repository
 public class SchemaDaoImpl extends BaseDaoImpl<Schema> implements SchemaDao {
-	@Autowired MongoTemplate mongoTemplate;
+	public SchemaDaoImpl() {
+		super(Schema.class);
+	}
+
+	@Override
+	public List<Schema> findAll() {
+		Query q = new Query();
+		q.fields().exclude("namespaces");
+		
+		return mongoTemplate.find(q, clazz, this.getCollectionName());
+	}
 	
-	public void loadAllSchemas() {
-	    List<Schema> results = mongoTemplate.findAll(Schema.class, "collection");
+	@Override
+	public XmlNamespace findNamespaceByPrefix(String string) {
+        // the query object
+        Criteria findParentSchema = Criteria.where("namespaces.prefix").is(string);
+        // the field object
+        Criteria filterContainedNamespace = Criteria.where("namespaces").elemMatch(Criteria.where("prefix").is(string));
+                
+        BasicQuery query = new BasicQuery(findParentSchema.getCriteriaObject(), filterContainedNamespace.getCriteriaObject());	    
+	    XmlSchema result = mongoTemplate.findOne(query, XmlSchema.class, this.getCollectionName());
+		
+		if (result.getNamespaces()!=null && result.getNamespaces().size()>0) {
+			return result.getNamespaces().get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public void updateNamespaceByPrefix(Schema s, String string, String string2) {
+		// the query object
+        DBObject obj = new BasicDBObject();
+        obj.put("namespaces.prefix", string);
+        obj.put("_id", s.getId());
+        
+        // the field object
+        Criteria filterContainedNamespace = Criteria.where("namespaces").elemMatch(Criteria.where("prefix").is(string));
+                
+        BasicQuery query = new BasicQuery(obj, filterContainedNamespace.getCriteriaObject());	    
 	    
-	    
-	    XmlSchema xs = new XmlSchema();
-	    xs.setLabel("label");
-	    
-	    mongoTemplate.insert(xs, "collection");
-	    
-	    logger.info("Total amount of schemas: {}", results.size());
-	    logger.info("Results: {}", results);
+        
+        
+        
+	    Update update = new Update(); 
+	    update.set("namespaces.$.url", string2);
+	    	    
+	    mongoTemplate.findAndModify(query, update, XmlSchema.class, this.getCollectionName());
 	}
 }

@@ -22,8 +22,10 @@
 			<add-attribute type="string" value="bootstrap/bootstrap-modalmanager.js" />
 			<add-attribute type="string" value="bootstrap/bootstrap-modal.js" />
 			<add-attribute type="string" value="_common/appProperties.js" />
+			<add-attribute type="string" value="_common/notificationsHandler.js" />
 			<add-attribute type="string" value="_common/translator.js" />
 			<add-attribute type="string" value="_common/util.js" />
+			<add-attribute type="string" value="_common/formHandler.js" />
         </put-list-attribute>
 	</definition>
 	<definition name="template_main" extends="template_simple" template="/WEB-INF/view/jsp/templates/main.jsp">
@@ -31,12 +33,29 @@
 		<put-attribute name="sideNav" cascade="true" value="true" />
 		<put-attribute name="fluidLayout" cascade="true" value="true" />
 	</definition>
+	<definition name="template_editors" extends="template_simple">
+		<put-list-attribute name="styles" inherit="true">
+			<add-attribute type="string" value="dataTables/dataTables.bootstrap.css" />
+        </put-list-attribute>
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="dataTables/dataTables.js" />
+			<add-attribute type="string" value="dataTables/dataTables.bootstrap.js" />
+			<add-attribute type="string" value="dataTables/dataTables.fnReloadAjax.js" />
+			<add-attribute type="string" value="dataTables/dataTables.i18n.js" />
+			<add-attribute type="string" value="_common/baseEditor.js" />
+        </put-list-attribute>
+    </definition>
 	
 	<!-- Schema -->
-	<definition name="schema/home" extends="template_simple">
+	<definition name="schema/home" extends="template_editors">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/home.jsp" />
 		<put-attribute name="fluidLayout" cascade="true" value="false" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="schema.js" />
+		</put-list-attribute>
 	</definition>
+	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
+	
 	
 	<!-- Test views -->
 	<definition name="test/simple" extends="template_simple">
