@@ -1,0 +1,19 @@
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+<annotation>
+  <documentation> 
+      XML Schema 2002-03-18 by Pete Johnston.
+      Adjusted for usage in the OAI-PMH.
+      Schema imports the Dublin Core elements from the DCMI schema for unqualified Dublin Core.
+      2002-12-19 updated to use simpledc20021212.xsd (instead of simpledc20020312.xsd)
+  </documentation>
+</annotation>
+	
+<complexType name="oai_dcType">
+  <choice minOccurs="0" maxOccurs="unbounded">
+      <element name="creator" />
+  </choice>
+</complexType>
+
+</schema>
