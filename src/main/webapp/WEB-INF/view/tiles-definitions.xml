@@ -34,6 +34,7 @@
 		<put-attribute name="fluidLayout" cascade="true" value="true" />
 	</definition>
 	<definition name="template_editors" extends="template_simple">
+		<put-attribute name="fluidLayout" cascade="true" value="true" />
 		<put-list-attribute name="styles" inherit="true">
 			<add-attribute type="string" value="dataTables/dataTables.bootstrap.css" />
         </put-list-attribute>
@@ -49,7 +50,6 @@
 	<!-- Schema -->
 	<definition name="schema/home" extends="template_editors">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/home.jsp" />
-		<put-attribute name="fluidLayout" cascade="true" value="false" />
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="schema.js" />
 		</put-list-attribute>

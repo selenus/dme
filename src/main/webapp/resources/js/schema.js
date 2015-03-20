@@ -5,7 +5,11 @@ $(document).ready(function() {
 });
 
 var SchemaEditor = function() {
-	this.prepareTranslations([]);
+	this.prepareTranslations(["~eu.dariah.de.minfba.schereg.view.async.servererror.head",
+	                          "~eu.dariah.de.minfba.schereg.view.async.servererror.body",
+	                          "~eu.dariah.de.minfba.schereg.schemas.dialog.confirm_detete",
+	                          "~eu.dariah.de.minfba.schereg.schemas.notification.deleted.head",
+	                          "~eu.dariah.de.minfba.schereg.schemas.notification.deleted.body"]);
 	this.createTable();
 };
 
@@ -13,38 +17,45 @@ var SchemaEditor = function() {
 SchemaEditor.prototype = new BaseEditor();
 
 SchemaEditor.prototype.createTable = function() {
-	this._base.table = $('.table').dataTable({
-		"aaSorting": [[ 3, "asc" ]],
+	this._base.table = $('#schema-table').dataTable({
+		"aaSorting": [[ 1, "asc" ]],
 		"aoColumnDefs": [{	"aTargets": [0], 
-							"mData": "id", 
-							/*"mRender": function (data, type, full) { return editor.renderCheckboxColumn(data, type, full);}*/
+							"mData": "id",
+							"bSortable": false,
+							"bSearchable": false,
+							"sClass": "td-no-wrap",
+							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full); }
 						 },
 		                 {	"aTargets": [1],
 		                 	"mData": "label", 
-		                 	/*"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full);}*/
+		                 	"sClass": "td-no-wrap",
+		                 	"sWidth" : "100%"
 						 },
 						 {	"aTargets": [2], 
-							"mData": "label", 
-							"bSortable": false,
-							/*"mRender": function (data, type, full) { return editor.renderActionColumn(data, type, full);},*/
-							"sClass": "td-no-wrap"
+							"mData": "type", 
 						 },
 		                 {	"aTargets": [3], 
-							"mData": "label", 
-							/*"mRender": function (data, type, full) { return editor.renderCollectionColumn(data, type, full);},*/
-						 	"sWidth": "35%"
-						 },
-		                 {	"aTargets": [4], 
 							"mData": "id", 
-							/*"mRender": function (data, type, full) { return editor.renderEndpointsColumn(data, type, full);},*/
-							"sWidth": "65%"
-						 }],
-		/*"fnServerParams": function (aoData) { 
-			var hideWithoutEndpoint = "true";
-			$("#chk-filter-without-endpoint").each(function() { if ($(this).prop("checked")==false) { hideWithoutEndpoint = "false"; } });
-			aoData.push( { "name": "hideWithoutEndpoint", "value": hideWithoutEndpoint } ); 
-		}*/
+							"bSortable": false,
+							"bSearchable": false,
+							"sClass": "td-no-wrap",
+							"mRender": function (data, type, full) { return editor.renderActionColumn(data, type, full);}
+						 }]
 	});
+};
+
+SchemaEditor.prototype.renderBadgeColumn = function(data, type, full) {
+	var result = "";
+	
+	if (full.type=="BaseSchema") {
+		result = '<span class="label label-warning">Stub</span> ';
+	}	
+	return result;
+};
+
+SchemaEditor.prototype.renderActionColumn = function(data, type, full) {
+	return 	"<button onclick='editor.triggerEditSchema(\"" + data + "\");'class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-edit'></span></button> " +
+			"<button onclick='editor.triggerDeleteSchema(\"" + data + "\");' class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-trash'></span></button>";
 };
 
 SchemaEditor.prototype.triggerAddSchema = function () {
@@ -65,4 +76,28 @@ SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 		completeCallback: function() {_this.refresh();}
 	});
 	modalFormHandler.show(form_identifier);
+};
+
+SchemaEditor.prototype.triggerDeleteSchema = function(schemaId) {
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.dialog.confirm_detete"), schemaId), function(result) {
+		if(result) {
+			$.ajax({
+		        url: window.location.pathname + "/async/delete/" + schemaId,
+		        type: "GET",
+		        dataType: "json",
+		        success: function(data) { 
+		        	__notifications.showMessage(NOTIFICATION_TYPES.INFO, 
+		        			__translator.translate("~eu.dariah.de.minfba.schereg.schemas.notification.deleted.head"), 
+		        			String.format(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.notification.deleted.body"), schemaId));
+		        	_this.refresh();
+		        },
+		        error: function(textStatus) {
+		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+		        			__translator.translate("~eu.dariah.de.minfba.schereg.view.async.servererror.head"), 
+		        			__translator.translate("~eu.dariah.de.minfba.schereg.view.async.servererror.body"));
+		        }
+			});
+		}
+	}); //
 };

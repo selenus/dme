@@ -19,7 +19,7 @@
 <div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 	<div class="row">
 		<!-- Notifications -->
-		<div id="notifications-area"></div>
+		<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
 				<li><s:message code="~eu.dariah.de.minfba.schereg.title" /></li>
@@ -28,26 +28,30 @@
 			<div id="main-content">
 				<h2><s:message code="~eu.dariah.de.minfba.schereg.schemas.title" /></h2>
 				<div class="heading-button-bar">
-					<button id="btn-add-schema" class="btn btn-primary btn-sm">
-						<span class="glyphicon glyphicon-plus"></span> ~Add schema...
+					<button id="btn-add-schema" class="btn btn-default btn-sm">
+						<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.add" />
 					</button>
 				</div>
-				<table class="table table-striped table-bordered table-condensed">
-					<thead>
-						<tr>
-							<th></th> <!-- Status -->
-							<th>Label</th>
-							<th>Type</th>
-							<th>Elements</th>
-							<th></th> <!-- Actions -->
-						</tr>
-					</thead>
-					<tbody>
-					<tr>
-						<td colspan="5" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
-					</tr>
-					</tbody>
-				</table>
+				<div class="row">
+					<div class="col-xs-12 col-lg-7">
+						<table id="schema-table" class="table table-striped table-bordered table-condensed">
+							<thead>
+								<tr>
+									<th></th> <!-- Status -->
+									<th><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.label" /></th>
+									<th><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.type" /></th>
+									<th></th> <!-- Actions -->
+								</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td colspan="4" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-xs-12 col-lg-5 well">Some options here...</div>
+				</div>
 			</div>
 		</div>
 	</div>

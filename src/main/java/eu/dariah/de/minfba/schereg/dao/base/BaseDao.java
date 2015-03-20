@@ -16,5 +16,9 @@ public interface BaseDao<T extends Identifiable> {
 	
 	public <S extends T> S save(S entity);
 	public <S extends T> List<S> save(Iterable<S> entites);
+
 	
+	public void delete(String id);
+	public void delete(T entity);
+	public void delete(Iterable<? extends T> entities);
 }

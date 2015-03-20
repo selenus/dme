@@ -19,7 +19,7 @@
 		<div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 			<div id="primary-content-area" class="row">
 				<!-- Notifications -->
-				<div id="notifications-area"></div>
+				<div id="notifications-area" class="col-sm-12"></div>
 				<div class="col-md-3">
 					<div class="sidebar">
 						<div class="sidebar-logo">

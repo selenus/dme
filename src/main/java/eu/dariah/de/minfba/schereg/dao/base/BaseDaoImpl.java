@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
@@ -53,27 +55,24 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	public long count() {
 		// TODO Auto-generated method stub
 		return 0;
+	}*/
+
+	@Override
+	public void delete(String id) {
+		mongoTemplate.findAllAndRemove(new Query(Criteria.where("_id").is(id)), clazz, this.getCollectionName());
 	}
 
 	@Override
-	public void delete(String arg0) {
-		// TODO Auto-generated method stub
-		
+	public void delete(T entity) {
+		mongoTemplate.remove(entity);
 	}
 
 	@Override
-	public void delete(T arg0) {
-		// TODO Auto-generated method stub
-		
+	public void delete(Iterable<? extends T> entities) {
+		mongoTemplate.remove(entities);
 	}
 
-	@Override
-	public void delete(Iterable<? extends T> arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
+	/*@Override
 	public void deleteAll() {
 		// TODO Auto-generated method stub
 		

@@ -21,4 +21,14 @@ public class SchemaServiceImpl implements SchemaService {
 	public void saveSchema(Schema schema) {
 		schemaDao.save(schema);
 	}
+
+	@Override
+	public Schema findSchemaById(String id) {
+		return schemaDao.findById(id);
+	}
+
+	@Override
+	public void deleteSchemaById(String id) {
+		schemaDao.delete(id);
+	}
 }

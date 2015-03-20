@@ -48,28 +48,38 @@ public class SchemaController extends BaseTranslationController {
 	}
 	
 	@RequestMapping(method=GET, value={"/async/add"})
-	public String getAddForm(Model model, Locale locale) throws Exception {
+	public String getAddForm(Model model, Locale locale) {
 		model.addAttribute("actionPath", "/schema/async/save");
 		model.addAttribute("schema", new BaseSchema<BaseTerminal>());
 		return "schema/form/edit";
 	}
 	
 	@RequestMapping(method=GET, value={"/async/edit/{id}"})
-	public String getEditForm(@PathVariable String id, Model model, Locale locale) throws Exception {
+	public String getEditForm(@PathVariable String id, Model model, Locale locale) {
 		model.addAttribute("actionPath", "/schema/async/save");
+		model.addAttribute("schema", schemaService.findSchemaById(id));
 		return "schema/form/edit";
 	}
 	
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveCollectionAsync(@Valid BaseSchema<BaseTerminal> schema, BindingResult bindingResult, Model model, Locale locale) throws Exception {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid BaseSchema<BaseTerminal> schema, BindingResult bindingResult) {
 		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
-		
 		if (schema.getId().isEmpty()) {
 			schema.setId(null);
 		}
-		
 		schemaService.saveSchema(schema);
-		
+		return result;
+	}
+	
+	@RequestMapping(method=GET, value={"/async/delete/{id}"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String id) {
+		ModelActionPojo result;
+		if (id!=null && !id.isEmpty()) {
+			schemaService.deleteSchemaById(id);
+			result = new ModelActionPojo(true);
+		} else {
+			result = new ModelActionPojo(false);
+		}		
 		return result;
 	}
 }

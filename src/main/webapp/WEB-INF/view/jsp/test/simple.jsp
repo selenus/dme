@@ -19,7 +19,7 @@
 <div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 	<div class="row">
 		<!-- Notifications -->
-		<div id="notifications-area"></div>
+		<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
 				<li>Lorem ipsum dolor</li>

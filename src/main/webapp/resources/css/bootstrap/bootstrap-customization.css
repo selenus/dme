@@ -78,6 +78,21 @@ body {
 }
 
 /*!
+ *	Well
+ */
+.well {
+	background-image: none;
+	background-color: #FCFCFC; /* -> move to bootstrap.css */
+}
+
+/*!
+ *	Buttons
+ */
+.btn-default {
+	background-image: none;
+}
+
+/*!
  *	Footer
  */
 .footer {
