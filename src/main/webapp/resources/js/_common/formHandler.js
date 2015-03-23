@@ -302,7 +302,7 @@ var SchemaSourceSelector = function(owner, container, modelId, options) {
 	$.ajax({
         url: window.location.pathname + _this.options.formSource,
         data: _this.options.preexisting == null ? null : { preexisting: $(_this.owner.form).find(_this.options.preexisting).val() },
-        type: "POST",
+        type: "GET",
         dataType: "html",
         success: function(data) { _this.displayForm(data); },
         error: function(textStatus) { 
@@ -316,7 +316,7 @@ var SchemaSourceSelector = function(owner, container, modelId, options) {
 
 SchemaSourceSelector.prototype.displayForm = function(data) {
 	this.content = $(data);
-	$(this.content).attr("id", this.modelId);
+	$(this.content).prop("id", this.modelId);
 	$(this.container).append(this.content);
 	
 	var _this = this;
@@ -419,18 +419,20 @@ SchemaSourceSelector.prototype.handleDone = function(e, data) {
 			
 		} else {
 			_this.owner.addMessage("danger", _this.owner.translate("~*file.generalerror.head"), 
-	        		_this.owner.translate("~*file.generalerror.body").format(object.error));
+					String.format(_this.owner.translate("~*file.generalerror.body"), data.error));
 		}
     });
 };
 
 SchemaSourceSelector.prototype.handleFail = function(e, data) {
+	var _this = this;
+	
     $(this.container).find(".fileupload-progress").hide(0);
     if (this.options.multiFiles == false) {
 		$(this.tmpButton).show();
 	}
     this.owner.addMessage("danger", this.owner.translate("~*file.uploaderror.head"), 
-    		this.owner.translate("~*file.uploaderror.body").format(data.errorThrown));
+    		String.format(this.owner.translate("~*file.uploaderror.body"), data.errorThrown));
     
     if (_this.options.elementChangeCallback != undefined && typeof _this.options.elementChangeCallback == 'function') {
 		_this.options.elementChangeCallback(null);
@@ -444,7 +446,7 @@ SchemaSourceSelector.prototype.handleDelete = function(deleteLink, fileContainer
         type: "GET",
         dataType: "text",
         success: function(data) { 
-        	_this.owner.addMessage("danger", _this.owner.translate("~*file.deletesucceeded.head"), 
+        	_this.owner.addMessage("info", _this.owner.translate("~*file.deletesucceeded.head"), 
             		_this.owner.translate("~*file.deletesucceeded.body"));
         	
         	$(_this.container).find("input#file\\.id").attr("value", "");

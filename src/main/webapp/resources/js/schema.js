@@ -67,7 +67,7 @@ SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 	var form_identifier = "edit-schema-" + schemaId;
 	
 	modalFormHandler = new ModalFormHandler({
-		formUrl: (schemaId!=undefined ? ("/async/edit/" + schemaId) : "/async/add"),
+		formUrl: (schemaId!=undefined ? ("/forms/edit/" + schemaId) : "/forms/add"),
 		identifier: form_identifier,
 		//additionalModalClasses: "wider-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.head"},
@@ -75,6 +75,14 @@ SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});
+	
+	modalFormHandler.fileUploadElements.push({
+		selector: "#schema_source",				// selector for identifying where to put widget
+		formSource: "/forms/import",			// where is the form
+		uploadTarget: "/async/import", 			// where to we upload the file(s) to
+		multiFiles: false, 						// one or multiple files
+	});
+	
 	modalFormHandler.show(form_identifier);
 };
 

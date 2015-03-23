@@ -51,10 +51,14 @@
 	<definition name="schema/home" extends="template_editors">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/home.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="jquery/jquery.ui.widget.js" />
+			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
+			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
 			<add-attribute type="string" value="schema.js" />
 		</put-list-attribute>
 	</definition>
 	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
+	<definition name="schema/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
 	
 	
 	<!-- Test views -->

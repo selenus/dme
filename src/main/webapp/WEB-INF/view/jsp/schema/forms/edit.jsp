@@ -30,6 +30,16 @@
 				<sf:textarea path="description" class="form-control" rows="4" id="schema_description" />
 			</div>
 		</div>
+		
+		<div class="control-group">
+			<label class="control-label" for="schema_source"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.source" />:</label>
+			<div class="controls">
+				<sf:hidden path="source" />
+				<input id="schema_source" type="file" name="file" />
+				<sf:errors path="source" cssClass="error" />
+			</div>
+		</div>
+		
 	</div>
 	<div class="form-footer control-group">
 		<div class="controls">
