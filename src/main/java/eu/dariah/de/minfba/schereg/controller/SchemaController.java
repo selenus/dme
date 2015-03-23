@@ -25,12 +25,14 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.service.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema")
 public class SchemaController extends BaseTranslationController {
 	@Autowired private SchemaService schemaService;
+	@Autowired private SchemaImportWorker importWorker;
 	
 	public SchemaController() {
 		super("schema");
