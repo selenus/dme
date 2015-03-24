@@ -107,6 +107,11 @@ public class SchemaController extends BaseTranslationController implements Initi
 		return schemaService.findSchemaById(id);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getElements/{id}")
+	public @ResponseBody Schema getElements(@PathVariable String id, Model model, Locale locale) {
+		return schemaService.findSchemaById(id);
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/import", produces = "application/json; charset=utf-8")
 	public @ResponseBody JsonNode prepareSchema(MultipartHttpServletRequest request, Model model, Locale locale) throws IOException {
 		

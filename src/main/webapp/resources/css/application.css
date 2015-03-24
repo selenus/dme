@@ -52,6 +52,7 @@
 	border-right: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	padding: 10px;
+	overflow: hidden;
 }
  
 
@@ -86,8 +87,14 @@
 	margin-top: 0px;
 }
 
+#notifications-area {    
+    position: absolute;
+    z-index: 1000;
+}
+
 #notifications-area .alert {
 	margin: 10px 0;
+	opacity: 1;
 }
 
 #primary-content-area #notifications-area {
@@ -160,7 +167,7 @@
 
 
 /*!
- *	DARIAH Logos
+ *	Logos
  */ 
 .dariah-flower-white-45,
 .dariah-flower-white-83 {
@@ -187,6 +194,15 @@
 	font-size: 22px;
 	white-space: nowrap;
 }
+
+.loader {
+	background-image: url("../img/loader.gif");
+	background-repeat: no-repeat;
+	background-position: top center;
+	height: 32px;
+	/*width: 32px;*/
+}
+
 
 /*!
  *	Smaller jumbotron
@@ -260,4 +276,23 @@ noscript div {
 }
 .fileupload-file .fileupload-file-buttonbar {
     text-align: left;
+}
+
+/*! 
+ * Schema only
+ */
+.schema-metadata-label,
+.schema-metadata-data {
+	font-size: 90%;
+	padding: 0 4px;
+}
+
+.schema-metadata-label {
+	font-weight: bold;
+	text-align: right;
+}
+
+.schema-metadata-buttons {
+	margin-bottom: 10px;
+	padding: 0 4px;
 }

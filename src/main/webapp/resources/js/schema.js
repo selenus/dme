@@ -43,7 +43,33 @@ SchemaEditor.prototype.createTable = function() {
 	});
 };
 
-
+SchemaEditor.prototype.refresh = function() {
+	var _this = this;
+	
+	if (!this.error && this.table!=null) {
+		var selected = [];
+		this._base.table.$("tr.selected").each(function() {
+			selected.push($(this).prop("id"));
+		});
+				
+		this.table.ajax.reload(function() {
+			var hasSelected = false;
+			if (selected.length>0) {
+				for (var i=0; i<selected.length; i++) {
+					$("#"+selected[i]).each(function() {
+						$(this).addClass("selected");
+						// Only executed if the row (id) still exists
+						_this.handleSelection(selected[i]);
+						hasSelected = true;
+					});
+				}
+			} 
+			if (!hasSelected) {
+				_this.handleSelection(null);
+			}
+		});
+	}
+};
 
 SchemaEditor.prototype.assignTableEvents = function() {
 	var _this = this;
@@ -86,11 +112,13 @@ SchemaEditor.prototype.handleSelection = function(id) {
 	} else {
 		$("#tab-schema-metadata").removeClass("hide");
 		$("#tab-schema-elements").removeClass("hide");
-		$('#tab-schema-metadata a').tab('show');
 		
-		// TODO: Loading indicator
-		$("#schema-metadata").html("Loading...");
-		$("#schema-elements").html("Loading...");
+		/*if ($("#tab-schema-activity").hasClass("active")) {
+			$('#tab-schema-metadata a').tab('show');
+		}*/
+		
+		$("#schema-metadata").html("<div class=\"loader\">");
+		$("#schema-elements").html("<div class=\"loader\">");
 		
 		$.ajax({
 	        url: window.location.pathname + "/async/getData/" + id,
@@ -103,26 +131,38 @@ SchemaEditor.prototype.handleSelection = function(id) {
 	        			__translator.translate("~eu.dariah.de.minfba.schereg.view.async.servererror.body"));
 	        }
 		});
-				
 		
-		this.renderSchemaElementsTab(id);
+		$.ajax({
+	        url: window.location.pathname + "/async/getElements/" + id,
+	        type: "GET",
+	        dataType: "json",
+	        success: function(data) { _this.renderSchemaElementsTab(id, data); },
+	        error: function(textStatus) {
+	        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+	        			__translator.translate("~eu.dariah.de.minfba.schereg.view.async.servererror.head"), 
+	        			__translator.translate("~eu.dariah.de.minfba.schereg.view.async.servererror.body"));
+	        }
+		});
 	}
 };
 
 SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	$("#schema-metadata").html("");
 	
-	var buttonBar = $("<div class=\"clearfix\">");
+	
+	var buttonBarContainer = $("<div class=\"row\">");
+	var buttonBar = $("<div class=\"schema-metadata-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
 	buttonBar.append(
-		"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-primary btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
+		"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
 			__translator.translate("~eu.dariah.de.minfba.common.view.common.edit") + 
 		"</button> ");
 	buttonBar.append(
 		"<button onclick='editor.triggerDeleteSchema(\"" + id + "\");' class='btn btn-danger btn-sm' type='button'><span class='glyphicon glyphicon-trash'></span> " +
 			__translator.translate("~eu.dariah.de.minfba.common.view.common.delete") +
 		"</button>");
-	$("#schema-metadata").append(buttonBar);
+	buttonBarContainer.append(buttonBar);
 	
+	$("#schema-metadata").append(buttonBarContainer);
 	
 	var details = $("<div class=\"clearfix\">");
 	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.common.id"), data.id));
@@ -130,17 +170,18 @@ SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.description"), data.description));
 		
 	$("#schema-metadata").append(details);
+
 };
 
 SchemaEditor.prototype.renderSchemaMetadataTabDetail = function(label, data) {
 	var detail = $("<div class=\"row\">");
-	detail.append("<div class=\"col-sm-3\">" + label + "</div>");
-	detail.append("<div class=\"col-sm-9\">" + data + "</div>");
+	detail.append("<div class=\"schema-metadata-label col-xs-3 col-md-4\">" + label + ":</div>");
+	detail.append("<div class=\"schema-metadata-data col-xs-9 col-md-8\">" + data + "</div>");
 	
 	return detail;
 };
 
-SchemaEditor.prototype.renderSchemaElementsTab = function(id) {
+SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
 	$("#schema-elements").html(id);
 };
 

@@ -74,7 +74,7 @@ BaseEditor.prototype.cycleRefresh = function() {
 
 BaseEditor.prototype.refresh = function() {
 	if (!this.error && this.table!=null) {
-		this.table.fnReloadAjax(null, null, true);
+		this.table.ajax.reload();
 	}
 };
 
