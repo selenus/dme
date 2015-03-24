@@ -5,7 +5,12 @@ $(document).ready(function() {
 });
 
 var SchemaEditor = function() {
-	this.prepareTranslations(["~eu.dariah.de.minfba.schereg.view.async.servererror.head",
+	this.prepareTranslations(["~eu.dariah.de.minfba.common.id",
+	                          "~eu.dariah.de.minfba.schereg.schemas.model.description",
+	                          "~eu.dariah.de.minfba.schereg.schemas.model.label",
+	                          "~eu.dariah.de.minfba.common.view.common.delete",
+	                          "~eu.dariah.de.minfba.common.view.common.edit",
+	                          "~eu.dariah.de.minfba.schereg.view.async.servererror.head",
 	                          "~eu.dariah.de.minfba.schereg.view.async.servererror.body",
 	                          "~eu.dariah.de.minfba.schereg.schemas.dialog.confirm_detete",
 	                          "~eu.dariah.de.minfba.schereg.schemas.notification.deleted.head",
@@ -18,48 +23,62 @@ var SchemaEditor = function() {
 SchemaEditor.prototype = new BaseEditor();
 
 SchemaEditor.prototype.createTable = function() {
-	this._base.table = $('#schema-table').dataTable({
+	this._base.table = $('#schema-table').DataTable({
 		"aaSorting": [[ 1, "asc" ]],
 		"aoColumnDefs": [{	"aTargets": [0], 
-							"mData": "id",
+							"mData": "entity.id",
 							"bSortable": false,
 							"bSearchable": false,
 							"sClass": "td-no-wrap",
-							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full); }
+							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full.entity); }
 						 },
 		                 {	"aTargets": [1],
-		                 	"mData": "label", 
-		                 	"sClass": "td-no-wrap",
-		                 	"sWidth" : "70%"
+		                 	"mData": "entity.label",
+		                 	"sWidth" : "100%"
 						 },
 						 {	"aTargets": [2], 
-							"mData": "type",
-							"sWidth" : "30%"
-						 },
-		                 {	"aTargets": [3], 
-							"mData": "id", 
-							"bSortable": false,
-							"bSearchable": false,
-							"sClass": "td-no-wrap",
-							"mRender": function (data, type, full) { return editor.renderActionColumn(data, type, full);}
+							"mData": "entity.type", 
+		                 	"sClass": "td-no-wrap"
 						 }]
 	});
 };
 
+
+
 SchemaEditor.prototype.assignTableEvents = function() {
 	var _this = this;
+	
+    $('.data-table-filter input').on('keyup click', function () {
+    	$('#schema-table').DataTable().search($('.data-table-filter input').val(), false, false).draw();
+    });
+    $(".data-table-filter input").trigger("keyup");
+    
+    $('.data-table-count select').on('change', function () {
+    	var len = parseInt($('.data-table-count select').val());
+    	if (isNaN(len)) {
+    		len = -1; // Show all
+    	}    	
+    	_this._base.table.page.len(len).draw();
+    });
+    $(".data-table-count select").trigger("change");
+    		
 	$("#schema-table tbody").on("click", "tr", function () {
         if ($(this).hasClass("selected")) {
             $(this).removeClass("selected");
+            _this.handleSelection(null);
         } else {
         	_this._base.table.$("tr.selected").removeClass("selected");
             $(this).addClass("selected");
+            _this.handleSelection($(this).prop("id"));
         }
     });
 };
 
 SchemaEditor.prototype.handleSelection = function(id) {
+	var _this = this;
+	
 	if (id==null) {
+		$('#tab-schema-activity a').tab('show');
 		$("#tab-schema-metadata").addClass("hide");
 		$("#tab-schema-elements").addClass("hide");
 		$("#schema-metadata").html("");
@@ -67,7 +86,62 @@ SchemaEditor.prototype.handleSelection = function(id) {
 	} else {
 		$("#tab-schema-metadata").removeClass("hide");
 		$("#tab-schema-elements").removeClass("hide");
+		$('#tab-schema-metadata a').tab('show');
+		
+		// TODO: Loading indicator
+		$("#schema-metadata").html("Loading...");
+		$("#schema-elements").html("Loading...");
+		
+		$.ajax({
+	        url: window.location.pathname + "/async/getData/" + id,
+	        type: "GET",
+	        dataType: "json",
+	        success: function(data) { _this.renderSchemaMetadataTab(id, data); },
+	        error: function(textStatus) {
+	        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+	        			__translator.translate("~eu.dariah.de.minfba.schereg.view.async.servererror.head"), 
+	        			__translator.translate("~eu.dariah.de.minfba.schereg.view.async.servererror.body"));
+	        }
+		});
+				
+		
+		this.renderSchemaElementsTab(id);
 	}
+};
+
+SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
+	$("#schema-metadata").html("");
+	
+	var buttonBar = $("<div class=\"clearfix\">");
+	buttonBar.append(
+		"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-primary btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
+			__translator.translate("~eu.dariah.de.minfba.common.view.common.edit") + 
+		"</button> ");
+	buttonBar.append(
+		"<button onclick='editor.triggerDeleteSchema(\"" + id + "\");' class='btn btn-danger btn-sm' type='button'><span class='glyphicon glyphicon-trash'></span> " +
+			__translator.translate("~eu.dariah.de.minfba.common.view.common.delete") +
+		"</button>");
+	$("#schema-metadata").append(buttonBar);
+	
+	
+	var details = $("<div class=\"clearfix\">");
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.common.id"), data.id));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.label"), data.label));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.description"), data.description));
+		
+	$("#schema-metadata").append(details);
+};
+
+SchemaEditor.prototype.renderSchemaMetadataTabDetail = function(label, data) {
+	var detail = $("<div class=\"row\">");
+	detail.append("<div class=\"col-sm-3\">" + label + "</div>");
+	detail.append("<div class=\"col-sm-9\">" + data + "</div>");
+	
+	return detail;
+};
+
+SchemaEditor.prototype.renderSchemaElementsTab = function(id) {
+	$("#schema-elements").html(id);
 };
 
 SchemaEditor.prototype.renderBadgeColumn = function(data, type, full) {
@@ -79,10 +153,6 @@ SchemaEditor.prototype.renderBadgeColumn = function(data, type, full) {
 	return result;
 };
 
-SchemaEditor.prototype.renderActionColumn = function(data, type, full) {
-	return 	"<button onclick='editor.triggerEditSchema(\"" + data + "\");'class='btn btn-link btn-xs' type='button'><span class='glyphicon glyphicon-edit'></span></button> " +
-			"<button onclick='editor.triggerDeleteSchema(\"" + data + "\");' class='btn btn-link btn-xs' type='button'><span class='glyphicon glyphicon-trash'></span></button>";
-};
 
 SchemaEditor.prototype.triggerAddSchema = function () {
 	this.triggerEditSchema();

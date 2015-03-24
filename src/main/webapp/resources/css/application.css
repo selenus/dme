@@ -1,6 +1,26 @@
 /*!
  *	Data Tables
  */
+#data-details-container .form-control {
+	padding: 5px;
+	height: 30px;
+	font-size: 12px;
+}
+
+.data-table-filter, 
+.data-table-count {
+	float: left;
+	margin-right: 2px;
+}
+
+.data-table-filter {
+	width: 75px;
+}
+
+.data-table-count {
+	width: 60px;
+}
+ 
 .dataTables_wrapper {
 	/*padding: 7px; 
 	border: 1px solid #CCC; */
@@ -24,11 +44,14 @@
 /*!
  *	data-details-container (the reactor to activations in dataTable)
  */
+.data-details-container {
+	margin-top: 4px;
+}
 .data-details-container .tab-content {
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
-	padding: 10px 20px;
+	padding: 10px;
 }
  
 
@@ -57,6 +80,10 @@
 }
 #main-content {
 	padding: 0 15px;
+}
+
+#main-content h2 {
+	margin-top: 0px;
 }
 
 #notifications-area .alert {
