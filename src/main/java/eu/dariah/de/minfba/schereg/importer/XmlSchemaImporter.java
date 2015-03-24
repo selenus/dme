@@ -85,6 +85,20 @@ public class XmlSchemaImporter implements SchemaImporter {
 		}
 	}
 	
+	@Override
+	public boolean getIsSupported() {
+		try {
+			XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
+			XSLoader schemaLoader = impl.createXSLoader(null);
+			model = schemaLoader.loadURI(schemaFilePath);
+			
+			if (model!=null) {
+				return true;
+			}
+		} catch (Exception e) {}
+		return false;
+	}
+	
 	protected void importXmlSchema() {
 		XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 		XSLoader schemaLoader = impl.createXSLoader(null);

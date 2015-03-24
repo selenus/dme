@@ -10,6 +10,7 @@ var SchemaEditor = function() {
 	                          "~eu.dariah.de.minfba.schereg.schemas.model.label",
 	                          "~eu.dariah.de.minfba.common.view.common.delete",
 	                          "~eu.dariah.de.minfba.common.view.common.edit",
+	                          "~eu.dariah.de.minfba.schereg.schemas.button.import",
 	                          "~eu.dariah.de.minfba.schereg.view.async.servererror.head",
 	                          "~eu.dariah.de.minfba.schereg.view.async.servererror.body",
 	                          "~eu.dariah.de.minfba.schereg.schemas.dialog.confirm_detete",
@@ -186,8 +187,14 @@ SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
 	
 	var buttonBarContainer = $("<div class=\"row\">");
 	var buttonBar = $("<div class=\"schema-elements-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
-	buttonBar.append("<input id=\"schema_source\" type=\"file\" name=\"file\" /> ");
+	buttonBar.append(
+			"<button onclick='editor.triggerUploadFile(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
+				__translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.import") + 
+			"</button> ");
 	buttonBarContainer.append(buttonBar);
+	
+	
+	
 	
 	$("#schema-elements").append(buttonBarContainer);
 };
@@ -206,6 +213,30 @@ SchemaEditor.prototype.triggerAddSchema = function () {
 	this.triggerEditSchema();
 };
 
+SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
+	var _this = this;
+	var form_identifier = "upload-file-" + schemaId;
+	
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/forms/import/" + schemaId,
+		identifier: form_identifier,
+		//additionalModalClasses: "wider-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.body"}
+		                ],
+		completeCallback: function() {_this.refresh();}
+	});
+	
+	modalFormHandler.fileUploadElements.push({
+		selector: "#schema_source",				// selector for identifying where to put widget
+		formSource: "/forms/fileupload",		// where is the form
+		uploadTarget: "/async/upload", 			// where to we upload the file(s) to
+		multiFiles: false, 						// one or multiple files
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
+
 SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 	var _this = this;
 	var form_identifier = "edit-schema-" + schemaId;
@@ -219,14 +250,7 @@ SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});
-	
-	modalFormHandler.fileUploadElements.push({
-		selector: "#schema_source",				// selector for identifying where to put widget
-		formSource: "/forms/import",			// where is the form
-		uploadTarget: "/async/import", 			// where to we upload the file(s) to
-		multiFiles: false, 						// one or multiple files
-	});
-	
+		
 	modalFormHandler.show(form_identifier);
 };
 

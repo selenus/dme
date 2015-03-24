@@ -24,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -39,6 +40,8 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo.MessagePojo;
+import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.service.ElementService;
 import eu.dariah.de.minfba.schereg.service.SchemaService;
@@ -88,9 +91,16 @@ public class SchemaController extends BaseTranslationController implements Initi
 		return "schema/form/edit";
 	}
 	
-	@RequestMapping(method=GET, value={"/forms/import"})
-	public String getImportForm(Model model, Locale locale) {
+	@RequestMapping(method=GET, value={"/forms/import/{id}"})
+	public String getImportForm(@PathVariable String id, Model model, Locale locale) {
+		model.addAttribute("actionPath", "/schema/async/import");
+		model.addAttribute("schema", schemaService.findSchemaById(id));
 		return "schema/form/import";
+	}
+	
+	@RequestMapping(method=GET, value={"/forms/fileupload"})
+	public String getImportForm(Model model, Locale locale) {
+		return "common/fileupload";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
@@ -109,7 +119,7 @@ public class SchemaController extends BaseTranslationController implements Initi
 		return schemaService.findSchemaById(id);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/import", produces = "application/json; charset=utf-8")
+	@RequestMapping(method = RequestMethod.POST, value = "/async/upload", produces = "application/json; charset=utf-8")
 	public @ResponseBody JsonNode prepareSchema(MultipartHttpServletRequest request, Model model, Locale locale) throws IOException {
 		
 		MultiValueMap<String, MultipartFile> multipartMap = request.getMultiFileMap();
@@ -157,8 +167,26 @@ public class SchemaController extends BaseTranslationController implements Initi
 	}
 	
 	@RequestMapping(method=GET, value={"/async/file/validate/{id}"})
-	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String id, Model model, Locale locale) {		
-		return new ModelActionPojo(true);
+	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String id, Model model, Locale locale) throws SchemaImportException {
+		ModelActionPojo result = new ModelActionPojo();
+				
+		if (temporaryFilesMap.containsKey(id)) {
+			if (importWorker.isSupported(temporaryFilesMap.get(id), null)) {
+				result.setSuccess(true);
+				MessagePojo msg = result.new MessagePojo("success", 
+						messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.head", null, locale), 
+						messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.body", null, locale));
+				result.setMessage(msg);
+				return result;
+			}
+		}
+		result.setSuccess(false);
+		// TODO: Error message
+		MessagePojo msg = result.new MessagePojo("danger", 
+				messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationfailed.head", null, locale), 
+				messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationfailed.body", null, locale));
+		result.setMessage(msg);
+		return result;
 	}
 	
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
@@ -168,6 +196,15 @@ public class SchemaController extends BaseTranslationController implements Initi
 			schema.setId(null);
 		}
 		schemaService.saveSchema(schema);
+		return result;
+	}
+	
+	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo importSchemaElements(@RequestParam String schemaId, @RequestParam(value="file.id") String fileId) {
+		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
+		
+		// TODO Import the file
+		
 		return result;
 	}
 	

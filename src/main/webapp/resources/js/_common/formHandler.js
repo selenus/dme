@@ -383,7 +383,7 @@ SchemaSourceSelector.prototype.handleDone = function(e, data) {
 			        success: function(data) { 
 			        	$(_this.container).find('.progress .bar').css('width', '75%');
 			        	$(_this.container).find(".fileupload-progress").hide(0);
-		        		_this.owner.addMessage(data.message_type, data.message_head, data.message_body);
+		        		_this.owner.addMessage(data.message.messageType, data.message.messageHead, data.message.messageBody);
 			        	
 			        	if (data.success==true) {
 			        		$(_this.owner.form).find(".form-btn-submit").removeAttr("disabled");

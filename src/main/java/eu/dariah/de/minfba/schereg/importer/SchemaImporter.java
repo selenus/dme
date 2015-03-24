@@ -8,6 +8,8 @@ public interface SchemaImporter extends Runnable {
 	public void setRootElementNs(String rootElementNs);
 	public void setRootElementName(String rootElementName);
 	
+	public boolean getIsSupported();
+	
 	public String[] getNamespaces();
 	public Nonterminal getRootNonterminal();
 	public void setListener(SchemaImportListener importWorker);

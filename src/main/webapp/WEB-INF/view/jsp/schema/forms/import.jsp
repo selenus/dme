@@ -1,16 +1,26 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
+<%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
-<div>
-	<div class="fileupload-buttonbar">
-		<span class="btn btn-primary fileinput-button"> <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> ~fileinput.button.upload <input type="file" name="file" /></span>
+<s:url value="${actionPath}" var="saveUrl" />
+<form method="POST" action="${saveUrl}" class="form-horizontal" >
+	<div class="form-header">
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.schemas.button.import" /></h3>
+		<input type="hidden" name="schemaId" value="${schema.id}">
 	</div>
-	<div class="fileupload-progress hide">
-		<div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-			<div class="bar" style="width: 0%;"></div>
+	<div class="form-content">
+		<div class="form-group">
+			<label class="col-sm-3 control-label" for="schema_source"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.source" />:</label>
+			<div class="col-sm-9">
+				<input type="hidden" name="file.id" id="file.id" />
+				<input id="schema_source" type="file" name="file" />
+			</div>
 		</div>
-		<div class="progress-extended">&nbsp;</div>
 	</div>
-	<div class="fileupload-files" role="presentation" data-toggle="modal-gallery" data-target="#modal-gallery"></div>
-</div>
+	<div class="form-footer control-group">
+		<div class="controls">
+			<button class="btn btn-default cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.view.common.cancel" /></button>
+			<button class="btn btn-primary start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.view.common.save" /></button>
+		</div>
+	</div>
+</form>

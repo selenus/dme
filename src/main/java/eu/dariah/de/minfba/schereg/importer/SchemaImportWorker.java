@@ -29,6 +29,12 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		this.appContext = appContext;
 	}
 	
+	public boolean isSupported(String filePath, Schema s) {
+		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
+		importer.setSchemaFilePath(filePath);
+		return importer.getIsSupported();
+	}
+	
 	public void importSchema(String filePath, Schema schema) throws SchemaImportException {
 		/*
 		 * Currently only XML Schemata are supported for import;
