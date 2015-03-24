@@ -182,7 +182,14 @@ SchemaEditor.prototype.renderSchemaMetadataTabDetail = function(label, data) {
 };
 
 SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
-	$("#schema-elements").html(id);
+	$("#schema-elements").html("");
+	
+	var buttonBarContainer = $("<div class=\"row\">");
+	var buttonBar = $("<div class=\"schema-elements-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
+	buttonBar.append("<input id=\"schema_source\" type=\"file\" name=\"file\" /> ");
+	buttonBarContainer.append(buttonBar);
+	
+	$("#schema-elements").append(buttonBarContainer);
 };
 
 SchemaEditor.prototype.renderBadgeColumn = function(data, type, full) {

@@ -3,10 +3,8 @@ package eu.dariah.de.minfba.schereg.controller;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -19,16 +17,13 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -45,12 +40,14 @@ import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
+import eu.dariah.de.minfba.schereg.service.ElementService;
 import eu.dariah.de.minfba.schereg.service.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema")
 public class SchemaController extends BaseTranslationController implements InitializingBean {
 	@Autowired private SchemaService schemaService;
+	@Autowired private ElementService elementService;
 	@Autowired private SchemaImportWorker importWorker;
 	
 	private Map<String, String> temporaryFilesMap = new HashMap<String, String>();
