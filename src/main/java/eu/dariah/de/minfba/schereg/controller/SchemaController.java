@@ -71,15 +71,11 @@ public class SchemaController extends BaseTranslationController implements Initi
 	}
 	
 	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
-	public String getHome(Model model) {
+	public String getList(Model model) {
 		return "schema/home";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
-	public @ResponseBody DataTableList<Schema> getData(Model model, Locale locale) {
-		List<Schema> schemas = schemaService.findAllSchemas();		
-		return new DataTableList<Schema>(schemas);
-	}
+	
 	
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {
@@ -98,6 +94,12 @@ public class SchemaController extends BaseTranslationController implements Initi
 	@RequestMapping(method=GET, value={"/forms/import"})
 	public String getImportForm(Model model, Locale locale) {
 		return "schema/form/import";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
+	public @ResponseBody DataTableList<Schema> getData(Model model, Locale locale) {
+		List<Schema> schemas = schemaService.findAllSchemas();		
+		return new DataTableList<Schema>(schemas);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/import", produces = "application/json; charset=utf-8")

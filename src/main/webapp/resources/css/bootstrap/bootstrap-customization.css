@@ -75,6 +75,7 @@ body {
  */
 .breadcrumb {
 	font-size: 12px;
+	margin-bottom: 10px;
 }
 
 /*!
@@ -84,6 +85,12 @@ body {
 	background-image: none;
 	background-color: #FCFCFC; /* -> move to bootstrap.css */
 }
+
+h2 {/* -> move to bootstrap.css */
+	font-size: 26px;
+	margin-top: 10px;
+}
+
 
 /*!
  *	Buttons

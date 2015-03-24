@@ -11,6 +11,7 @@ var SchemaEditor = function() {
 	                          "~eu.dariah.de.minfba.schereg.schemas.notification.deleted.head",
 	                          "~eu.dariah.de.minfba.schereg.schemas.notification.deleted.body"]);
 	this.createTable();
+	this.assignTableEvents();
 };
 
 
@@ -29,10 +30,11 @@ SchemaEditor.prototype.createTable = function() {
 		                 {	"aTargets": [1],
 		                 	"mData": "label", 
 		                 	"sClass": "td-no-wrap",
-		                 	"sWidth" : "100%"
+		                 	"sWidth" : "70%"
 						 },
 						 {	"aTargets": [2], 
-							"mData": "type", 
+							"mData": "type",
+							"sWidth" : "30%"
 						 },
 		                 {	"aTargets": [3], 
 							"mData": "id", 
@@ -42,6 +44,30 @@ SchemaEditor.prototype.createTable = function() {
 							"mRender": function (data, type, full) { return editor.renderActionColumn(data, type, full);}
 						 }]
 	});
+};
+
+SchemaEditor.prototype.assignTableEvents = function() {
+	var _this = this;
+	$("#schema-table tbody").on("click", "tr", function () {
+        if ($(this).hasClass("selected")) {
+            $(this).removeClass("selected");
+        } else {
+        	_this._base.table.$("tr.selected").removeClass("selected");
+            $(this).addClass("selected");
+        }
+    });
+};
+
+SchemaEditor.prototype.handleSelection = function(id) {
+	if (id==null) {
+		$("#tab-schema-metadata").addClass("hide");
+		$("#tab-schema-elements").addClass("hide");
+		$("#schema-metadata").html("");
+		$("#schema-elements").html("");
+	} else {
+		$("#tab-schema-metadata").removeClass("hide");
+		$("#tab-schema-elements").removeClass("hide");
+	}
 };
 
 SchemaEditor.prototype.renderBadgeColumn = function(data, type, full) {
@@ -54,8 +80,8 @@ SchemaEditor.prototype.renderBadgeColumn = function(data, type, full) {
 };
 
 SchemaEditor.prototype.renderActionColumn = function(data, type, full) {
-	return 	"<button onclick='editor.triggerEditSchema(\"" + data + "\");'class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-edit'></span></button> " +
-			"<button onclick='editor.triggerDeleteSchema(\"" + data + "\");' class='btn btn-default btn-xs' type='button'><span class='glyphicon glyphicon-trash'></span></button>";
+	return 	"<button onclick='editor.triggerEditSchema(\"" + data + "\");'class='btn btn-link btn-xs' type='button'><span class='glyphicon glyphicon-edit'></span></button> " +
+			"<button onclick='editor.triggerDeleteSchema(\"" + data + "\");' class='btn btn-link btn-xs' type='button'><span class='glyphicon glyphicon-trash'></span></button>";
 };
 
 SchemaEditor.prototype.triggerAddSchema = function () {
