@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.dariah.de.minfba.core.metamodel.BaseSchema;
 import eu.dariah.de.minfba.core.metamodel.BaseTerminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -76,7 +77,6 @@ public class SchemaController extends BaseTranslationController implements Initi
 	}
 	
 	
-	
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {
 		model.addAttribute("actionPath", "/schema/async/save");
@@ -103,6 +103,7 @@ public class SchemaController extends BaseTranslationController implements Initi
 		return "common/fileupload";
 	}
 	
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
 	public @ResponseBody DataTableList<Schema> getData(Model model, Locale locale) {
 		List<Schema> schemas = schemaService.findAllSchemas();		
@@ -116,6 +117,7 @@ public class SchemaController extends BaseTranslationController implements Initi
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getElements/{id}")
 	public @ResponseBody Schema getElements(@PathVariable String id, Model model, Locale locale) {
+		// TODO: This is where we need the elements
 		return schemaService.findSchemaById(id);
 	}
 	
@@ -171,12 +173,14 @@ public class SchemaController extends BaseTranslationController implements Initi
 		ModelActionPojo result = new ModelActionPojo();
 				
 		if (temporaryFilesMap.containsKey(id)) {
-			if (importWorker.isSupported(temporaryFilesMap.get(id), null)) {
+			List<? extends Terminal> rootTerminals = importWorker.getPossibleRootTerminals(temporaryFilesMap.get(id));
+			if (rootTerminals!=null) {
 				result.setSuccess(true);
 				MessagePojo msg = result.new MessagePojo("success", 
 						messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.head", null, locale), 
 						messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.body", null, locale));
 				result.setMessage(msg);
+				result.setPojo(rootTerminals);
 				return result;
 			}
 		}
@@ -189,6 +193,27 @@ public class SchemaController extends BaseTranslationController implements Initi
 		return result;
 	}
 	
+	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo importSchemaElements(@RequestParam String schemaId, @RequestParam(value="file.id") String fileId, 
+			@RequestParam String rootTerminalNs, @RequestParam String rootTerminalName, Locale locale) {
+		ModelActionPojo result = new ModelActionPojo();
+		try {
+			Schema s = schemaService.findSchemaById(schemaId);
+			if (s!=null && temporaryFilesMap.containsKey(fileId)) {
+				importWorker.importSchema(temporaryFilesMap.remove(fileId), s);
+				result.setSuccess(true);
+				return result;
+			}
+		} catch (SchemaImportException e) {
+			MessagePojo msg = result.new MessagePojo("danger", 
+					messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.generalerror.head", null, locale), 
+					messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.generalerror.body", new Object[] {e.getLocalizedMessage()}, locale));
+			result.setMessage(msg);
+		}
+		result.setSuccess(false);
+		return result;
+	}
+	
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo saveSchema(@Valid BaseSchema<BaseTerminal> schema, BindingResult bindingResult) {
 		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
@@ -198,16 +223,7 @@ public class SchemaController extends BaseTranslationController implements Initi
 		schemaService.saveSchema(schema);
 		return result;
 	}
-	
-	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo importSchemaElements(@RequestParam String schemaId, @RequestParam(value="file.id") String fileId) {
-		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
 		
-		// TODO Import the file
-		
-		return result;
-	}
-	
 	@RequestMapping(method=GET, value={"/async/delete/{id}"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String id) {
 		ModelActionPojo result;

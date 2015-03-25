@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.importer;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 
@@ -29,10 +31,16 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		this.appContext = appContext;
 	}
 	
-	public boolean isSupported(String filePath, Schema s) {
+	public boolean isSupported(String filePath) {
 		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
 		importer.setSchemaFilePath(filePath);
 		return importer.getIsSupported();
+	}
+	
+	public List<? extends Terminal> getPossibleRootTerminals(String filePath) {
+		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
+		importer.setSchemaFilePath(filePath);
+		return importer.getPossibleRootTerminals();
 	}
 	
 	public void importSchema(String filePath, Schema schema) throws SchemaImportException {

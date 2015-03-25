@@ -232,9 +232,20 @@ SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
 		formSource: "/forms/fileupload",		// where is the form
 		uploadTarget: "/async/upload", 			// where to we upload the file(s) to
 		multiFiles: false, 						// one or multiple files
+		elementChangeCallback: _this.handleFileValidatedOrFailed
 	});
 		
 	modalFormHandler.show(form_identifier);
+};
+
+SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
+	
+	/*data.pojo.length
+	
+	data.pojo[i].name
+	data.pojo[i].namespace
+	
+	alert(data);*/
 };
 
 SchemaEditor.prototype.triggerEditSchema = function(schemaId) {

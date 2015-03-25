@@ -10,10 +10,16 @@
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="schema_source"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.source" />:</label>
-			<div class="col-sm-9">
+			<label class="col-sm-4 control-label" for="schema_source"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.source" />:</label>
+			<div class="col-sm-8">
 				<input type="hidden" name="file.id" id="file.id" />
 				<input id="schema_source" type="file" name="file" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-4 control-label" for="schema_root">~ Wurzelelement:</label>
+			<div class="col-sm-8">
+				<select id="schema_root" name="schema_root" class="form-control" disabled="disabled"></select>
 			</div>
 		</div>
 	</div>

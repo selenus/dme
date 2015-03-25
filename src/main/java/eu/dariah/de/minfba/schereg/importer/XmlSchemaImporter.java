@@ -99,6 +99,29 @@ public class XmlSchemaImporter implements SchemaImporter {
 		return false;
 	}
 	
+	@Override
+	public List<XmlTerminal> getPossibleRootTerminals() {
+		try {
+			XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
+			XSLoader schemaLoader = impl.createXSLoader(null);
+			model = schemaLoader.loadURI(schemaFilePath);
+			
+			XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
+			List<XmlTerminal> rootTerminals = new ArrayList<XmlTerminal>(elements.getLength());
+			XmlTerminal root;
+			XSElementDecl elem;
+			for (int j=0; j<elements.getLength(); j++) {
+				elem = (XSElementDecl)elements.item(j);
+				root = new XmlTerminal();
+				root.setName(elem.getName());
+				root.setNamespace(elem.getNamespace());
+				rootTerminals.add(root);
+			}
+			return rootTerminals;
+		} catch (Exception e) {}
+		return null;
+	}
+	
 	protected void importXmlSchema() {
 		XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 		XSLoader schemaLoader = impl.createXSLoader(null);
@@ -200,7 +223,7 @@ public class XmlSchemaImporter implements SchemaImporter {
 			terminalId = existingTerminalQNs.get(terminalQN).getId();
 		} else {
 			XmlTerminal t = new XmlTerminal();
-			t.setNamespacePrefix(terminalNamespace);
+			t.setNamespace(terminalNamespace);
 			t.setId(new ObjectId().toString());
 			t.setName(terminalName);
 			t.setAttribute(false);
