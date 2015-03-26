@@ -59,10 +59,17 @@
 	</definition>
 	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
 	<definition name="schema/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
-	
-	
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 	
+	<!-- Schema Editor -->
+	<definition name="schemaEditor" extends="template_editors">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/editor.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="schemaEditor.js" />
+		</put-list-attribute>
+	</definition>
+	
+
 	
 	<!-- Test views -->
 	<definition name="test/simple" extends="template_simple">

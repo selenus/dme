@@ -10,7 +10,7 @@ var SchemaEditor = function() {
 	                          "~eu.dariah.de.minfba.schereg.schemas.model.label",
 	                          "~eu.dariah.de.minfba.common.view.common.delete",
 	                          "~eu.dariah.de.minfba.common.view.common.edit",
-	                          "~eu.dariah.de.minfba.schereg.schemas.button.import",
+	                          "~eu.dariah.de.minfba.schereg.schemas.button.editor",
 	                          "~eu.dariah.de.minfba.schereg.view.async.servererror.head",
 	                          "~eu.dariah.de.minfba.schereg.view.async.servererror.body",
 	                          "~eu.dariah.de.minfba.schereg.schemas.dialog.confirm_detete",
@@ -187,10 +187,17 @@ SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
 	
 	var buttonBarContainer = $("<div class=\"row\">");
 	var buttonBar = $("<div class=\"schema-elements-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
-	buttonBar.append(
+	
+	// TODO: Move import behavior
+	/*buttonBar.append(
 			"<button onclick='editor.triggerUploadFile(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
 				__translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.import") + 
-			"</button> ");
+			"</button> ");*/
+	buttonBar.append(
+			"<a href='" + __util.getBaseUrl() + "schema/editor/" + id + "' class='btn btn-link btn-sm' type='button'>" + 
+				__translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.editor") + 
+			" <span class='glyphicon glyphicon-new-window'></span></a> ");
+	
 	buttonBarContainer.append(buttonBar);
 	
 	
