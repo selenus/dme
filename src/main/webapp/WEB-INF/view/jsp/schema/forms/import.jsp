@@ -17,7 +17,7 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-sm-4 control-label" for="schema_root">~ Wurzelelement:</label>
+			<label class="col-sm-4 control-label" for="schema_root"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.root_element" />:</label>
 			<div class="col-sm-8">
 				<select id="schema_root" name="schema_root" class="form-control" disabled="disabled"></select>
 			</div>
@@ -26,7 +26,7 @@
 	<div class="form-footer control-group">
 		<div class="controls">
 			<button class="btn btn-default cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.view.common.cancel" /></button>
-			<button class="btn btn-primary start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.view.common.save" /></button>
+			<button id="btn-submit-schema-elements" class="btn btn-primary start form-btn-submit" disabled="disabled" type="submit"><s:message code="~eu.dariah.de.minfba.common.view.common.save" /></button>
 		</div>
 	</div>
 </form>

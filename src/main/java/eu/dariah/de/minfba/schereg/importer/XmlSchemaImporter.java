@@ -75,7 +75,7 @@ public class XmlSchemaImporter implements SchemaImporter {
 		try {
 			this.importXmlSchema();
 			if (this.getListener()!=null) {
-				this.getListener().registerImportFinished(schemaId, rootNonterminal);
+				this.getListener().registerImportFinished(schemaId, rootNonterminal, new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing XML Schema", e);
@@ -226,7 +226,7 @@ public class XmlSchemaImporter implements SchemaImporter {
 			t.setNamespace(terminalNamespace);
 			t.setId(new ObjectId().toString());
 			t.setName(terminalName);
-			t.setAttribute(false);
+			t.setAttribute(isAttribute);
 			
 			terminalId = t.getId();
 			existingTerminalQNs.put(terminalQN, t);

@@ -31,4 +31,13 @@ public class SchemaServiceImpl implements SchemaService {
 	public void deleteSchemaById(String id) {
 		schemaDao.delete(id);
 	}
+
+	@Override
+	public <T extends Schema> T convertSchema(T newSchema, Schema original) {
+		newSchema.setId(original.getId());
+		newSchema.setLabel(original.getLabel());
+		newSchema.setDescription(original.getDescription());
+		newSchema.setRootNonterminalId(original.getRootNonterminalId());
+		return newSchema;
+	}
 }

@@ -195,16 +195,15 @@ public class SchemaController extends BaseTranslationController implements Initi
 	
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo importSchemaElements(@RequestParam String schemaId, @RequestParam(value="file.id") String fileId, 
-			@RequestParam String rootTerminalNs, @RequestParam String rootTerminalName, Locale locale) {
+			@RequestParam(value="schema_root") Integer schemaRoot, Locale locale) {
 		ModelActionPojo result = new ModelActionPojo();
 		try {
-			Schema s = schemaService.findSchemaById(schemaId);
-			if (s!=null && temporaryFilesMap.containsKey(fileId)) {
-				importWorker.importSchema(temporaryFilesMap.remove(fileId), s);
+			if (temporaryFilesMap.containsKey(fileId)) {
+				importWorker.importSchema(temporaryFilesMap.remove(fileId), schemaId, schemaRoot);
 				result.setSuccess(true);
 				return result;
 			}
-		} catch (SchemaImportException e) {
+		} catch (Exception e) {
 			MessagePojo msg = result.new MessagePojo("danger", 
 					messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.generalerror.head", null, locale), 
 					messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.generalerror.body", new Object[] {e.getLocalizedMessage()}, locale));

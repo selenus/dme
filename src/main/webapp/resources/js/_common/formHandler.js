@@ -358,7 +358,7 @@ SchemaSourceSelector.prototype.handleProgressAll = function(e, data) {
 
 SchemaSourceSelector.prototype.handleDone = function(e, data) {
 	$(this.container).find('.progress .bar').css('width', '75%');
-    $(this.container).find('.progress-extended').text("Now validating...");
+    $(this.container).find('.progress-extended').text("");
 	
     /* saved, id, fileType, fileSize, created, delete */
     /*$(this.container).find(".fileupload-progress").hide(0);*/

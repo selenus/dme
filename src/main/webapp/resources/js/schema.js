@@ -239,13 +239,21 @@ SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
 };
 
 SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
+	var select = $("#schema_root");
+	select.html("");
+	if (data==null || data.pojo==null || data.pojo.length==0) {
+		select.prop("disabled", "disabled");
+		$("#btn-submit-schema-elements").prop("disabled", "disabled");
+		return;
+	}
 	
-	/*data.pojo.length
-	
-	data.pojo[i].name
-	data.pojo[i].namespace
-	
-	alert(data);*/
+	var option;
+	for (var i=0; i<data.pojo.length; i++) {
+		option = "<option value='" + i + "'>" + data.pojo[i].name + " <small>(" + data.pojo[i].namespace + ")</small>" + "</option>";
+		select.append(option);
+	}
+	select.removeProp("disabled");
+	$("#btn-submit-schema-elements").removeProp("disabled");
 };
 
 SchemaEditor.prototype.triggerEditSchema = function(schemaId) {

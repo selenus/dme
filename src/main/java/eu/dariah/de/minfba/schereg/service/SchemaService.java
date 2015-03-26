@@ -9,4 +9,6 @@ public interface SchemaService {
 	public void saveSchema(Schema schema);
 	public Schema findSchemaById(String id);
 	public void deleteSchemaById(String id);
+	
+	public <T extends Schema> T convertSchema(T newSchema, Schema original);
 }
