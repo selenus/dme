@@ -166,7 +166,14 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 };
 
 SchemaEditor.prototype.addNonterminal = function() {
-	this.addElement(this.schema.addElement(editorTemplate, -1, "new Nonterminal*", this.graph.selectedItems[0], "Nonterminal"));
+	$.ajax({
+	    url: this.pathname + "/async/" + this.graph.selectedItems[0].id + "/createSubelement",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	this.addElement(this.schema.addElement(editorTemplate, -1, "new Nonterminal*", this.graph.selectedItems[0], "Nonterminal"));
+	    }
+	});
 };
 
 SchemaEditor.prototype.removeElement = function() {
