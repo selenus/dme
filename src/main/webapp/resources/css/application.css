@@ -278,6 +278,41 @@ noscript div {
     text-align: left;
 }
 
+/*!
+ *	Schema Editor
+ */
+/*
+	#schema-editor-dynamic-buttons
+	#schema-editor-container
+	#schema-editor-context
+	#schema-editor-context-form
+	#schema-editor-context-response
+*/
+
+#schema-editor-wrapper {
+	border: 1px solid #DDD;
+	overflow: hidden;
+}
+
+#schema-editor-container {
+	border-right: 1px solid #DDD;	 
+}
+
+#schema-editor-context {
+	overflow: scroll; 
+	overflow-x: hidden; 
+}
+
+.schema-editor-buttons .btn {
+	margin-bottom: 10px;
+	margin-left: 3px;
+}
+
+#schema-editor-dynamic-buttons {
+	margin-left: 10px; 
+	display: inline;
+}
+
 /*! 
  * Schema only
  */

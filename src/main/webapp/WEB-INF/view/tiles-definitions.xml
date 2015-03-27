@@ -66,6 +66,34 @@
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/editor.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="schemaEditor.js" />
+			<add-attribute type="string" value="schemaEditor/Area.js" />
+			<add-attribute type="string" value="schemaEditor/Array.js" />
+			<add-attribute type="string" value="schemaEditor/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="schemaEditor/Connection.js" />
+			<add-attribute type="string" value="schemaEditor/Connector.js" />
+			<add-attribute type="string" value="schemaEditor/ContainerUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/ContentChangedUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/Cursors.js" />
+			<add-attribute type="string" value="schemaEditor/DeleteConnectionUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/DeleteElementUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/Element.js" />
+			<add-attribute type="string" value="schemaEditor/ElementTemplate.js" />
+			<add-attribute type="string" value="schemaEditor/FunctionTemplate.js" />
+			<add-attribute type="string" value="schemaEditor/Function.js" />
+			<add-attribute type="string" value="schemaEditor/Graph.js" />
+			<add-attribute type="string" value="schemaEditor/InsertConnectionUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/InsertElementUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/Point.js" />
+			<add-attribute type="string" value="schemaEditor/Rectangle.js" />
+			<add-attribute type="string" value="schemaEditor/Selection.js" />
+			<add-attribute type="string" value="schemaEditor/SelectionUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/Tracker.js" />
+			<add-attribute type="string" value="schemaEditor/TransformUndoUnit.js" />
+			<add-attribute type="string" value="schemaEditor/UndoService.js" />
+			<add-attribute type="string" value="schemaEditor/HierarchyConnection.js" />
+			<add-attribute type="string" value="schemaEditor/MappingConnection.js" />
+			<add-attribute type="string" value="schemaEditor/Expander.js" />
+			<add-attribute type="string" value="schemaEditor/HNavBar.js" />
 		</put-list-attribute>
 	</definition>
 	

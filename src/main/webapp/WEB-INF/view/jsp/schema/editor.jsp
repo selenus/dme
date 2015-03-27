@@ -28,10 +28,32 @@
 			</ul>
 			<input type="hidden" id="schema-id" value="${schema.id}" />
 			<div id="main-content">
-				<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_editor" /> <small>${schema.label}</small></h2>
+				
 				<div class="row">
-					<div id="schema-editor" class="col-xs-12" style="height: 600px;">
-						<canvas style="position: relative;" id="canvas"></canvas>
+					<div class="col-xs-12">
+						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_editor" /> <small>${schema.label}</small>&nbsp;</h2>		
+						<div class="pull-left schema-editor-buttons">
+							<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.expand_all" /></button>
+			      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.collapse_all" /></button>
+			      			<div id="schema-editor-dynamic-buttons" class="pull-left"></div>
+						</div>
+					</div>
+					<div class="col-xs-12">
+						<div id="schema-editor-wrapper">
+							<div class="row">
+								<div class="col-xs-12 col-md-6">
+									<div id="schema-editor-container">
+										<canvas id="schema-editor-canvas" style="position: relative;"></canvas>
+									</div>
+								</div>
+								<div class="col-xs-12 col-md-6">
+									<div id="schema-editor-context">
+										<form id="schema-editor-context-form" role="form"></form>
+										<div id="schema-editor-context-response"></div>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

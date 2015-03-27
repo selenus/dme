@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.InitializingBean;
@@ -74,6 +75,13 @@ public class SchemaController extends BaseTranslationController implements Initi
 	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
 	public String getList(Model model) {
 		return "schema/home";
+	}
+	
+	@RequestMapping(value = "/editor", method = RequestMethod.GET)
+	public String getEditorRedirect(HttpServletResponse response) throws IOException {
+		// Editor called without an id...
+		response.sendRedirect("../");
+		return null;
 	}
 	
 	
