@@ -37,4 +37,9 @@ public class SchemaEditorController extends BaseTranslationController {
 	public @ResponseBody Element getHierarchy(@PathVariable String schemaId, Model model, Locale locale) {
 		return elementService.findRootBySchemaId(schemaId);
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/{parentElementId}/createSubelement")
+	public @ResponseBody Element createSubelement(@PathVariable String schemaId, @PathVariable String parentElementId, Model model, Locale locale) {
+		return elementService.findRootBySchemaId(schemaId);
+	}
 }
