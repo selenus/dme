@@ -34,6 +34,11 @@
 	padding: 0 2px;
 	color: #000;
 }
+
+.dataTables_wrapper table.dataTable {
+	margin-top: 0px !important;
+}
+
 .dataTables_wrapper table.dataTable tbody tr.selected {
     background-color: #BFBDC6;
 }
@@ -42,12 +47,10 @@
 }
 
 /*!
- *	data-details-container (the reactor to activations in dataTable)
+ *	data-details-container (the reactor to activations in dataTable) -> reused in editor
  */
-.data-details-container {
-	margin-top: 4px;
-}
-.data-details-container .tab-content {
+
+.details-container .tab-content {
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
@@ -288,22 +291,8 @@ noscript div {
 	#schema-editor-context-form
 	#schema-editor-context-response
 */
-
-#schema-editor-wrapper {
-	border: 1px solid #DDD;
-	overflow: hidden;
-}
-
 #schema-editor-container {
-	border-right: 1px solid #DDD;	 
-}
-
-#schema-editor-context {
-	margin-left: -15px; 
-	padding-left: 15px;
-	overflow: scroll; 
-	overflow-x: hidden;
-	height: 100%;
+	border: 1px solid #DDD;	 
 }
 
 .schema-editor-buttons .btn {
@@ -311,12 +300,14 @@ noscript div {
 	margin-left: 3px;
 }
 
-#schema-editor-dynamic-buttons {
-	margin-left: -15px; 
-	padding: 5px 15px;
-	background-color: #EEE;
-	border-bottom: 1px solid #DDD;
+#schema-editor-dynamic-buttons .btn {
+	margin-bottom: 5px;
+	margin-left: 3px;
 }
+
+
+
+
 
 /*! 
  * Schema only

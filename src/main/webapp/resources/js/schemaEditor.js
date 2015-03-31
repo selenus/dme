@@ -9,20 +9,19 @@ $(window).resize(function() {
 });
 
 var SchemaEditor = function() {
-	this.menuContainer = $("#schema-editor-dynamic-buttons");
 	this.schemaId = $("#schema-id").val();
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId;
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
 	this.graph = new Graph(this.context.canvas);
-	this.editorContainer = $("#schema-editor-container");
-	this.contextContainer = $("#schema-editor-context");
 	this.footerOffset = 70;	
 	
-	this.schemaContext = $("#schema-editor-schema-context");
-	this.elementContext = $("#schema-editor-element-context");
+	this.editorContainer = $("#schema-editor-container");
+	this.contextContainer = $(".schema-editor-context");
+	this.contextContainerInfo = $("#schema-editor-context-info");
 	
-	this.editorForm = $("#schema-editor-context-form");
-	this.editorResponse = $("#schema-editor-context-response");
+	this.menuContainer = $("#schema-editor-dynamic-buttons");
+	this.elementTab = $("#tab-element-metadata");
+	this.activityTab = $("#tab-element-activity");
 	
 	this.schema = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
  	this.graph.addArea(this.schema);
@@ -31,25 +30,31 @@ var SchemaEditor = function() {
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
 	
-	__translator.addTranslations(["~eu.dariah.de.minfba.common.view.common.delete",
+	__translator.addTranslations(["~eu.dariah.de.minfba.common.id",
+	                              "~eu.dariah.de.minfba.common.type",
+	                              "~eu.dariah.de.minfba.common.view.common.edit",
+	                              "~eu.dariah.de.minfba.common.view.common.delete",
 	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal",
 	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_label", 
 	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function",
 	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function",
 	                              "~eu.dariah.de.minfba.schereg.view.async.servererror.head",
-	                              "~eu.dariah.de.minfba.schereg.view.async.servererror.body"]);
+	                              "~eu.dariah.de.minfba.schereg.view.async.servererror.body",
+	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.name",
+	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.namespace",
+	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.attribute",
+	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.transient"]);
 	__translator.getTranslations();
 }
 
 SchemaEditor.prototype.resize = function() {
 	var height = Math.floor($(window).height() - this.editorContainer.offset().top - this.footerOffset);
 	this.editorContainer.css("height", height + "px");
-	this.schemaContext.css("height", height + "px");
-	this.elementContext.css("height", height + "px");
+	this.contextContainer.css("margin-top", Math.floor(this.editorContainer.offset().top - this.contextContainer.parent().offset().top - 40) + "px");
 	
 	if (this.context.canvas) {
-		this.context.canvas.width = this.editorContainer.width();
-		this.context.canvas.height = height;
+		this.context.canvas.width = this.editorContainer.width() - 1; // border-bottom
+		this.context.canvas.height = height - 2; // border-left and -right
 		window.scroll(0, 0);			
 		if (this.graph !== null) {
 			if (this.schema != null) {
@@ -128,49 +133,47 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 
 SchemaEditor.prototype.deselectionHandler = function() {
 	var _this = schemaEditor;
-	
-	_this.schemaContext.removeClass("hide");
-	_this.elementContext.addClass("hide");
-	
+		
 	_this.menuContainer.html("");
-	_this.editorForm.html("");
-	_this.editorResponse.html("");
+	_this.contextContainerInfo.html("");
+	_this.elementTab.addClass("hide");
+	_this.activityTab.find("a").tab('show');
 };
 
 SchemaEditor.prototype.selectionHandler = function(e) {
 	var _this = schemaEditor;
 	
-	_this.schemaContext.addClass("hide");
-	_this.elementContext.removeClass("hide");
-	
 	_this.menuContainer.html("");
-	_this.editorForm.html("");
-	_this.editorResponse.html("");
+	_this.contextContainerInfo.html("");
+	_this.elementTab.removeClass("hide");
+	_this.elementTab.find("a").tab('show');
 	
 	// TODO Show details in context response
 	var actions = [];
 	if (e.elementSubtype === "Nonterminal") {
-		actions[0] = ["addElement", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal")];
-		actions[1] = ["addDescription", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
-		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];	
+		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal")];
+		actions[1] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
+		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
+		actions[3] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.view.common.edit")];
 		_this.getElement(e.elementId);	
 	} else if (e.elementSubtype === "DescriptiveFunction") {
-		actions[0] = ["addTransformation", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function")];
+		actions[0] = ["addTransformation", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function")];
 		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
 	} else if (e.elementSubtype === "OutputFunction") {
-		actions[0] = ["addElement", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
+		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
 		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];	
 		_this.getOutputFunctionInfo(e.elementId);
 	} else if (e.elementSubtype === "Label") {
-		actions[0] = ["addElement", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
-		actions[1] = ["addDescription", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
-		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
+		actions[0] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.view.common.edit")];
+		actions[1] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
+		actions[2] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
+		actions[3] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
 	}
 	
 	var button;
 	for (var i=0; i<actions.length; i++) {
 		button = "<button " +
-					"class='btn btn-" + actions[i][2] + " btn-sm' " +
+					"class='btn btn-" + actions[i][2] + " btn-sm pull-right' " +
 					"onclick='schemaEditor." + actions[i][0] + "(); return false;' type='button'>" +
 						"<span class='glyphicon glyphicon-" + actions[i][1] + "'></span> " + actions[i][3] + 
 				 "</button> ";
@@ -181,14 +184,78 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 SchemaEditor.prototype.getElement = function(id) {
 	var _this = this;
 	$.ajax({
-		url: this.pathname + "/element/" + id + "/form/element",
+		url: this.pathname + "/element/" + id + "/async/get",
         type: "GET",
-        dataType: "html",
+        dataType: "json",
         success: function(data) { 
-        	$("#schema-editor-context-form").html(data);        	
+        	var details = $("<div class=\"clearfix\">");
+        	details.append(_this.renderContextTabDetail("", "<h4>~Element details</h4>"));
+        	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.id"), data.id));
+        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.name"), data.name));
+        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.transient"), data.transient));
+        		
+        	_this.contextContainerInfo.append(details);  	
+        	
+        	$.ajax({
+        		url: _this.pathname + "/element/" + id + "/async/getTerminal",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                	var details = $("<div class=\"clearfix\">");
+                	details.append(_this.renderContextTabDetail("", "<h4>~Source parser details</h4>"));
+                	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.id"), data.id));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.type"), data.simpleType));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.name"), data.name));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.transient"), data.namespace));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.attribute"), data.attribute));
+                		
+                	_this.contextContainerInfo.append(details);  	
+                },
+                error: function(textStatus) { /*alert("error");*/ }
+         	});    
         },
         error: function(textStatus) { /*alert("error");*/ }
  	});
+};
+
+SchemaEditor.prototype.renderContextTabDetail = function(label, data) {
+	var detail = $("<div class=\"row\">");
+	
+	if (label!=null && label!="") {
+		detail.append("<div class=\"schema-metadata-label col-xs-3 col-md-4\">" + label + ":</div>");
+	} else {
+		detail.append("<div class=\"col-xs-3 col-md-4\">&nbsp;</div>");
+	}
+	
+	var dataE = "<div class=\"schema-metadata-data col-xs-9 col-md-8\">";
+	if (data===true) {
+		dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
+	} else if (data===false) {
+		dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
+	} else {
+		dataE += data;
+	}
+	
+	detail.append(dataE + "</div>");
+	
+	return detail;
+};
+
+SchemaEditor.prototype.editElement = function() {
+	var _this = this;
+	var form_identifier = "edit-element-" + this.graph.selectedItems[0].id;
+	
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/element/" + this.graph.selectedItems[0].id + "/form/nonterminal",
+		identifier: form_identifier,
+		//additionalModalClasses: "wider-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.body"}
+		                ],
+		completeCallback: function() {_this.refresh();}
+	});
+		
+	modalFormHandler.show(form_identifier);
 };
 
 SchemaEditor.prototype.addElement = function() {

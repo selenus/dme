@@ -63,7 +63,7 @@
 							</table>
 						</div>
 					</div>
-					<div class="col-md-5 data-details-container" role="tabpanel">
+					<div class="col-md-5 details-container" role="tabpanel">
 						<ul class="nav nav-tabs" role="tablist">
 							<li role="presentation" id="tab-schema-activity" class="active"><a href="#schema-activity" aria-controls="schema-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.activity" /></a></li>
 							<li role="presentation" id="tab-schema-metadata" class="hide"><a href="#schema-metadata" aria-controls="schema-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.schema" /></a></li>
