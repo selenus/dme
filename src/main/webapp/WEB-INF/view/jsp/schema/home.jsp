@@ -22,7 +22,7 @@
 		<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
-				<li><s:message code="~eu.dariah.de.minfba.schereg.title" /></li>
+				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
 				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_short" /></li>
 			</ul>
 			<div id="main-content">

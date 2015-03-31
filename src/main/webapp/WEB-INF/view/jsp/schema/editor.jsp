@@ -22,8 +22,8 @@
 		<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
-				<li><s:message code="~eu.dariah.de.minfba.schereg.title" /></li>
-				<li><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_short" /></li>
+				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
+				<li><a href='<s:url value="/schema" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_short" /></a></li>
 				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_editor" /></li>
 			</ul>
 			<input type="hidden" id="schema-id" value="${schema.id}" />
@@ -35,26 +35,26 @@
 						<div class="pull-left schema-editor-buttons">
 							<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.expand_all" /></button>
 			      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.collapse_all" /></button>
-			      			<div id="schema-editor-dynamic-buttons" class="pull-left"></div>
+			      			<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm pull-left" ><span class='glyphicon glyphicon-edit'></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.import" /></button>
 						</div>
 					</div>
 					<div class="col-xs-12">
 						<div id="schema-editor-wrapper">
 							<div class="row">
-								<div class="col-xs-12 col-md-6">
+								<div class="col-xs-12 col-md-6" style="padding-right: 0;">
 									<div id="schema-editor-container">
 										<canvas id="schema-editor-canvas" style="position: relative;"></canvas>
 									</div>
 								</div>
 								<div class="col-xs-12 col-md-6">
-									<div id="schema-editor-context">
-										<form id="schema-editor-context-form" role="form"></form>
-										<div id="schema-editor-context-response">
-											<button onclick='schemaEditor.triggerUploadFile("id"); 'class='btn btn-default btn-sm' type='button'>
-												<span class='glyphicon glyphicon-edit'></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.import" />
-											</button> 
+									<div id="schema-editor-element-context" class="hide">
+										<div id="schema-editor-context">
+											<div id="schema-editor-dynamic-buttons"></div>
+											<div id="schema-editor-context-form"></div>
+											<div id="schema-editor-context-response"></div>
 										</div>
 									</div>
+									<div id="schema-editor-schema-context"></div>
 								</div>
 							</div>
 						</div>

@@ -18,6 +18,9 @@ var SchemaEditor = function() {
 	this.contextContainer = $("#schema-editor-context");
 	this.footerOffset = 70;	
 	
+	this.schemaContext = $("#schema-editor-schema-context");
+	this.elementContext = $("#schema-editor-element-context");
+	
 	this.editorForm = $("#schema-editor-context-form");
 	this.editorResponse = $("#schema-editor-context-response");
 	
@@ -41,7 +44,8 @@ var SchemaEditor = function() {
 SchemaEditor.prototype.resize = function() {
 	var height = Math.floor($(window).height() - this.editorContainer.offset().top - this.footerOffset);
 	this.editorContainer.css("height", height + "px");
-	this.contextContainer.css("height", height + "px");
+	this.schemaContext.css("height", height + "px");
+	this.elementContext.css("height", height + "px");
 	
 	if (this.context.canvas) {
 		this.context.canvas.width = this.editorContainer.width();
@@ -125,6 +129,9 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 SchemaEditor.prototype.deselectionHandler = function() {
 	var _this = schemaEditor;
 	
+	_this.schemaContext.removeClass("hide");
+	_this.elementContext.addClass("hide");
+	
 	_this.menuContainer.html("");
 	_this.editorForm.html("");
 	_this.editorResponse.html("");
@@ -132,6 +139,9 @@ SchemaEditor.prototype.deselectionHandler = function() {
 
 SchemaEditor.prototype.selectionHandler = function(e) {
 	var _this = schemaEditor;
+	
+	_this.schemaContext.addClass("hide");
+	_this.elementContext.removeClass("hide");
 	
 	_this.menuContainer.html("");
 	_this.editorForm.html("");
@@ -143,6 +153,7 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 		actions[0] = ["addElement", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal")];
 		actions[1] = ["addDescription", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
 		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];	
+		_this.getElement(e.elementId);	
 	} else if (e.elementSubtype === "DescriptiveFunction") {
 		actions[0] = ["addTransformation", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function")];
 		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
@@ -162,9 +173,22 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 					"class='btn btn-" + actions[i][2] + " btn-sm' " +
 					"onclick='schemaEditor." + actions[i][0] + "(); return false;' type='button'>" +
 						"<span class='glyphicon glyphicon-" + actions[i][1] + "'></span> " + actions[i][3] + 
-				 "</button>";
+				 "</button> ";
 		_this.menuContainer.append(button);
 	}
+};
+
+SchemaEditor.prototype.getElement = function(id) {
+	var _this = this;
+	$.ajax({
+		url: this.pathname + "/element/" + id + "/form/element",
+        type: "GET",
+        dataType: "html",
+        success: function(data) { 
+        	$("#schema-editor-context-form").html(data);        	
+        },
+        error: function(textStatus) { /*alert("error");*/ }
+ 	});
 };
 
 SchemaEditor.prototype.addElement = function() {

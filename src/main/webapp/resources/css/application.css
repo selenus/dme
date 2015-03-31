@@ -299,8 +299,11 @@ noscript div {
 }
 
 #schema-editor-context {
+	margin-left: -15px; 
+	padding-left: 15px;
 	overflow: scroll; 
-	overflow-x: hidden; 
+	overflow-x: hidden;
+	height: 100%;
 }
 
 .schema-editor-buttons .btn {
@@ -309,8 +312,10 @@ noscript div {
 }
 
 #schema-editor-dynamic-buttons {
-	margin-left: 10px; 
-	display: inline;
+	margin-left: -15px; 
+	padding: 5px 15px;
+	background-color: #EEE;
+	border-bottom: 1px solid #DDD;
 }
 
 /*! 

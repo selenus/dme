@@ -36,7 +36,7 @@
 					    			</li>
 				    			</c:when>
 				    			<c:otherwise>
-				    				<li>
+				    				<li<c:if test="${_navItem.active || _navItem.childActive}"> class="active"</c:if>>
 				    					<a href="<s:url value='${_navItem.linkUrl}'/>">
 				    						<c:if test="${_navItem.glyphicon!=null && fn:length(_navItem.glyphicon)>0}">
 												<span class="${_navItem.glyphicon}"></span>&nbsp;

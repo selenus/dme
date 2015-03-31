@@ -96,6 +96,8 @@
 		</put-list-attribute>
 	</definition>
 	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
+	<definition name="schemaEditor/form/element/edit" template="/WEB-INF/view/jsp/schema/editor/edit_element.jsp" />
+	
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 
 	

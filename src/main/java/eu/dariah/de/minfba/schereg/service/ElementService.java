@@ -9,6 +9,8 @@ public interface ElementService {
 	public Element findRootBySchemaId(String schemaId);
 	public Element findRootByElementId(String rootElementId);
 	
+	public Element findById(String elementId);
+	
 	public void deleteByRootElementId(String rootElementId);
 	public void deleteBySchemaId(String schemaId);
 

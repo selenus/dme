@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +19,13 @@ public class SchemaEditorElementController extends BaseTranslationController {
 	
 	public SchemaEditorElementController() {
 		super("schemaEditor");
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/element")
+	public String getElement(@PathVariable String schemaId, @PathVariable String elementId, Model model) {
+		model.addAttribute("element", elementService.findById(elementId));
+		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/save");
+		return "schemaEditor/form/element/edit";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/createSubelement")

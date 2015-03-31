@@ -82,6 +82,11 @@ public class ElementServiceImpl implements ElementService {
 	}
 	
 	@Override
+	public Element findById(String elementId) {
+		return elementDao.findById(elementId);
+	}
+	
+	@Override
 	public void deleteByRootElementId(String rootElementId) {
 		elementDao.delete(rootElementId);
 	}
