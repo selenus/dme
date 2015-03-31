@@ -100,7 +100,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		if (s != null && root!=null) {
 			elementService.deleteBySchemaId(schemaId);
 		}
-		elementService.saveElement(root);
+		elementService.saveElementHierarchy(root);
 		s.setRootNonterminalId(root.getId());
 		
 		if (terminals.size()>0 && terminals.get(0) instanceof XmlTerminal) {

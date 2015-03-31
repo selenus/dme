@@ -32,7 +32,9 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal",
 	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_label", 
 	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function",
-	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function"]);
+	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function",
+	                              "~eu.dariah.de.minfba.schereg.view.async.servererror.head",
+	                              "~eu.dariah.de.minfba.schereg.view.async.servererror.body"]);
 	__translator.getTranslations();
 }
 
@@ -187,4 +189,48 @@ SchemaEditor.prototype.addElement = function(e) {
 	}
 	this.graph.selectedItems[0].addChild(e);
 	this.graph.update();
+};
+
+SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
+	var _this = this;
+	var form_identifier = "upload-file-" + schemaId;
+	
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/forms/import/",
+		identifier: form_identifier,
+		//additionalModalClasses: "wider-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.body"}
+		                ],
+		completeCallback: function() {_this.refresh();}
+	});
+	
+	modalFormHandler.fileUploadElements.push({
+		selector: "#schema_source",				// selector for identifying where to put widget
+		formSource: "/forms/fileupload",		// where is the form
+		uploadTarget: "/async/upload", 			// where to we upload the file(s) to
+		multiFiles: false, 						// one or multiple files
+		elementChangeCallback: _this.handleFileValidatedOrFailed
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
+
+
+SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
+	var select = $("#schema_root");
+	select.html("");
+	if (data==null || data.pojo==null || data.pojo.length==0) {
+		select.prop("disabled", "disabled");
+		$("#btn-submit-schema-elements").prop("disabled", "disabled");
+		return;
+	}
+	
+	var option;
+	for (var i=0; i<data.pojo.length; i++) {
+		option = "<option value='" + i + "'>" + data.pojo[i].name + " <small>(" + data.pojo[i].namespace + ")</small>" + "</option>";
+		select.append(option);
+	}
+	select.removeProp("disabled");
+	$("#btn-submit-schema-elements").removeProp("disabled");
 };

@@ -13,8 +13,18 @@
 	<mongo:mongo host="${db.host}" port="${db.port}" />
 	<mongo:db-factory dbname="${db.database}" />
  
+ 
+	<bean id="mongoMoxydomainConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
+        <constructor-arg index="0" ref="mongoDbFactory" />
+        <constructor-arg index="1">
+            <bean class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" />
+        </constructor-arg>
+        <property name="mapKeyDotReplacement" value="\\+"/>
+	</bean>
+ 
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
 		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
+		<constructor-arg name="mongoConverter" ref="mongoMoxydomainConverter" />
 	</bean>
 	
 	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />

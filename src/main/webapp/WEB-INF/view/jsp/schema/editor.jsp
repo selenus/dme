@@ -49,7 +49,11 @@
 								<div class="col-xs-12 col-md-6">
 									<div id="schema-editor-context">
 										<form id="schema-editor-context-form" role="form"></form>
-										<div id="schema-editor-context-response"></div>
+										<div id="schema-editor-context-response">
+											<button onclick='schemaEditor.triggerUploadFile("id"); 'class='btn btn-default btn-sm' type='button'>
+												<span class='glyphicon glyphicon-edit'></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.import" />
+											</button> 
+										</div>
 									</div>
 								</div>
 							</div>
