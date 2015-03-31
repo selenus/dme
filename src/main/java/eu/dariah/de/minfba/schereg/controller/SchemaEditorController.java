@@ -179,12 +179,7 @@ public class SchemaEditorController extends BaseTranslationController implements
 	public @ResponseBody Element getHierarchy(@PathVariable String schemaId, Model model, Locale locale) {
 		return elementService.findRootBySchemaId(schemaId, true);
 	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/{parentElementId}/createSubelement")
-	public @ResponseBody Element createSubelement(@PathVariable String schemaId, @PathVariable String parentElementId, Model model, Locale locale) {
-		return elementService.findRootBySchemaId(schemaId);
-	}
-	
+		
 	public static String humanReadableByteCount(long bytes, boolean si) {
 	    int unit = si ? 1000 : 1024;
 	    if (bytes < unit) return bytes + " B";

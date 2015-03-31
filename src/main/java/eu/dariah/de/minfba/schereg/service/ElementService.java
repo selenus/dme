@@ -13,4 +13,8 @@ public interface ElementService {
 	public void deleteBySchemaId(String schemaId);
 
 	public Reference saveElementHierarchy(Element e);
+	public Element saveElement(Element e);
+	
+	public Element createAndAppendElement(String schemaId, String parentElementId);
+	public Element removeElement(String schemaId, String elementId);
 }

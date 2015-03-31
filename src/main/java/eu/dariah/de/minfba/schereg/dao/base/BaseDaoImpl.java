@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
@@ -17,7 +18,7 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected final Class<T> clazz;
 	
-	@Autowired protected MongoTemplate mongoTemplate;
+	@Autowired private MongoTemplate mongoTemplate;
 	
 	public BaseDaoImpl(Class<T> clazz) {
 		this.clazz = clazz;
@@ -49,6 +50,21 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	@Override
 	public T findById(String id) {
 		return mongoTemplate.findById(id, clazz, this.getCollectionName());
+	}
+
+	@Override
+	public List<T> find(Query q) {
+		return mongoTemplate.find(q, this.clazz, this.getCollectionName());
+	}
+	
+	@Override
+	public T findOne(Query q) {
+		return mongoTemplate.findOne(q, this.clazz, this.getCollectionName());
+	}
+	
+	@Override
+	public void findAndModify(Query query, Update update) {
+		mongoTemplate.findAndModify(query, update, this.clazz, this.getCollectionName());
 	}
 	
 	/*@Override

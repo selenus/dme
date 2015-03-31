@@ -27,7 +27,7 @@ public class SchemaDaoImpl extends BaseDaoImpl<Schema> implements SchemaDao {
 		Query q = new Query();
 		q.fields().exclude("namespaces");
 		
-		return mongoTemplate.find(q, clazz, this.getCollectionName());
+		return this.find(q);
 	}
 	
 	@Override
@@ -38,7 +38,7 @@ public class SchemaDaoImpl extends BaseDaoImpl<Schema> implements SchemaDao {
         Criteria filterContainedNamespace = Criteria.where("namespaces").elemMatch(Criteria.where("prefix").is(string));
                 
         BasicQuery query = new BasicQuery(findParentSchema.getCriteriaObject(), filterContainedNamespace.getCriteriaObject());	    
-	    XmlSchema result = mongoTemplate.findOne(query, XmlSchema.class, this.getCollectionName());
+	    XmlSchema result = (XmlSchema)this.findOne(query);
 		
 		if (result.getNamespaces()!=null && result.getNamespaces().size()>0) {
 			return result.getNamespaces().get(0);
@@ -64,6 +64,6 @@ public class SchemaDaoImpl extends BaseDaoImpl<Schema> implements SchemaDao {
 	    Update update = new Update(); 
 	    update.set("namespaces.$.url", string2);
 	    	    
-	    mongoTemplate.findAndModify(query, update, XmlSchema.class, this.getCollectionName());
+	    this.findAndModify(query, update);
 	}
 }

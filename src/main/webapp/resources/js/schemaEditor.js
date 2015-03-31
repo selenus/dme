@@ -140,18 +140,18 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	// TODO Show details in context response
 	var actions = [];
 	if (e.elementSubtype === "Nonterminal") {
-		actions[0] = ["addNonterminal", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal")];
+		actions[0] = ["addElement", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal")];
 		actions[1] = ["addDescription", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
 		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];	
 	} else if (e.elementSubtype === "DescriptiveFunction") {
 		actions[0] = ["addTransformation", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function")];
 		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
 	} else if (e.elementSubtype === "OutputFunction") {
-		actions[0] = ["addLabel", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
+		actions[0] = ["addElement", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
 		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];	
 		_this.getOutputFunctionInfo(e.elementId);
 	} else if (e.elementSubtype === "Label") {
-		actions[0] = ["addLabel", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
+		actions[0] = ["addElement", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
 		actions[1] = ["addDescription", "plus", "primary", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
 		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
 	}
@@ -167,28 +167,36 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	}
 };
 
-SchemaEditor.prototype.addNonterminal = function() {
+SchemaEditor.prototype.addElement = function() {
+	var _this = this;
 	$.ajax({
-	    url: this.pathname + "/async/" + this.graph.selectedItems[0].id + "/createSubelement",
+	    url: this.pathname + "/element/" + this.graph.selectedItems[0].id + "/async/createSubelement",
 	    type: "GET",
 	    dataType: "json",
 	    success: function(data) {
-	    	this.addElement(this.schema.addElement(editorTemplate, -1, "new Nonterminal*", this.graph.selectedItems[0], "Nonterminal"));
+	    	var e = _this.schema.addElement(editorTemplate, data.id, data.name, _this.graph.selectedItems[0], data.simpleType);
+	    	
+	    	// TODO Expand if not expanded
+	    	if (_this.graph.selectedItems[0].isExpanded) {
+	    		e.isVisible = true;
+	    	}
+	    	_this.graph.selectedItems[0].addChild(e);
+	    	_this.graph.update();
 	    }
 	});
 };
 
-SchemaEditor.prototype.removeElement = function() {
-	this.schema.removeElement(this.graph.selectedItems[0]);
-	this.graph.update();
-};
-
-SchemaEditor.prototype.addElement = function(e) {
-	if (this.graph.selectedItems[0].isExpanded) {
-		e.isVisible = true;
-	}
-	this.graph.selectedItems[0].addChild(e);
-	this.graph.update();
+SchemaEditor.prototype.removeElement = function() { 
+	var _this = this;
+	$.ajax({
+	    url: this.pathname + "/element/" + this.graph.selectedItems[0].id + "/async/remove",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	_this.schema.removeElement(_this.graph.selectedItems[0]);
+	    	_this.graph.update();
+	    }
+	});
 };
 
 SchemaEditor.prototype.triggerUploadFile = function(schemaId) {

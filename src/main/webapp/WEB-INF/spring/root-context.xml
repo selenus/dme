@@ -19,7 +19,7 @@
         <constructor-arg index="1">
             <bean class="org.springframework.data.mongodb.core.mapping.MongoMappingContext" />
         </constructor-arg>
-        <property name="mapKeyDotReplacement" value="\\+"/>
+        <property name="mapKeyDotReplacement" value="~"/>
 	</bean>
  
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
@@ -28,6 +28,11 @@
 	</bean>
 	
 	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+	
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	<bean id="validatingMongoEventListener" class="org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener">
+		<constructor-arg name="validator" ref="validator" />
+	</bean>
 	
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.dao"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.service"/>
