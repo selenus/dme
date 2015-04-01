@@ -41,6 +41,7 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.button.add_label", 
 	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
 	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_detete",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.head",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.body",
 	                              "~eu.dariah.de.minfba.schereg.model.element.name",
@@ -227,29 +228,31 @@ SchemaEditor.prototype.getElement = function(id) {
         		
         	_this.contextContainerInfo.append(details);  	
         	
-        	$.ajax({
-        		url: _this.pathname + "/element/" + id + "/async/getTerminal",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                	var details = $("<div class=\"clearfix tab-details-block\">");
-                	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));
-                		
-                	_this.contextContainerInfo.append(details);
-                },
-                error: function(textStatus) { 
-                	var details = $("<div class=\"clearfix tab-details-block\">");
-                	details.append("<div class='alert alert-sm alert-warning' role='alert'>" + 
-                			"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +
-                			__translator.translate("~eu.dariah.de.minfba.schereg.notification.no_terminal_configured") +
-                			"</div>");
-                	_this.contextContainerInfo.append(details);
-                }
-         	});    
+        	if (data.terminalId!=null && data.terminalId!="") {
+	        	$.ajax({
+	        		url: _this.pathname + "/element/" + id + "/async/getTerminal",
+	                type: "GET",
+	                dataType: "json",
+	                success: function(data) {
+	                	var details = $("<div class=\"clearfix tab-details-block\">");
+	                	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
+	                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
+	                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
+	                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
+	                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));
+	                		
+	                	_this.contextContainerInfo.append(details);
+	                },
+	                error: function(textStatus) {}
+	         	});    
+        	} else {
+            	var details = $("<div class=\"clearfix tab-details-block\">");
+            	details.append("<div class='alert alert-sm alert-warning' role='alert'>" + 
+            			"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +
+            			__translator.translate("~eu.dariah.de.minfba.schereg.notification.no_terminal_configured") +
+            			"</div>");
+            	_this.contextContainerInfo.append(details);
+        	}
         },
         error: function(textStatus) { /*alert("error");*/ }
  	});
@@ -289,6 +292,7 @@ SchemaEditor.prototype.editElement = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
+		//additionalModalClasses: "wide-modal",               
 		completeCallback: function() {_this.refresh();}
 	});
 		
@@ -298,7 +302,7 @@ SchemaEditor.prototype.editElement = function() {
 SchemaEditor.prototype.addElement = function() {
 	var _this = this;
 	$.ajax({
-	    url: this.pathname + "/element/" + this.graph.selectedItems[0].id + "/async/createSubelement",
+	    url: _this.pathname + "/element/" + this.graph.selectedItems[0].id + "/async/createSubelement",
 	    type: "GET",
 	    dataType: "json",
 	    success: function(data) {
@@ -316,16 +320,71 @@ SchemaEditor.prototype.addElement = function() {
 
 SchemaEditor.prototype.removeElement = function() { 
 	var _this = this;
-	$.ajax({
-	    url: this.pathname + "/element/" + this.graph.selectedItems[0].id + "/async/remove",
-	    type: "GET",
-	    dataType: "json",
-	    success: function(data) {
-	    	_this.schema.removeElement(_this.graph.selectedItems[0]);
-	    	_this.graph.update();
-	    }
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_detete"), this.graph.selectedItems[0].id), function(result) {
+		if(result) {
+			$.ajax({
+			    url: _this.pathname + "/element/" + _this.graph.selectedItems[0].id + "/async/remove",
+			    type: "GET",
+			    dataType: "json",
+			    success: function(data) {
+			    	_this.schema.removeElement(_this.graph.selectedItems[0]);
+			    	_this.graph.update();
+			    }
+			});
+		}
 	});
 };
+
+SchemaEditor.prototype.addTerminal = function() {
+	this.innerEditTerminal("-1");
+};
+
+SchemaEditor.prototype.editTerminal = function() {
+	var terminalId = $("#terminalId").val();
+	this.innerEditTerminal(terminalId);
+};
+
+SchemaEditor.prototype.innerEditTerminal = function(id) {
+	var _this = this;
+	var form_identifier = "edit-terminal" + id;
+	
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/terminal/" + id + "/form/edit",
+		identifier: form_identifier,
+		//additionalModalClasses: "wider-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],
+		//additionalModalClasses: "wide-modal",               
+		completeCallback: function() {_this.refresh();}
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
+
+SchemaEditor.prototype.removeTerminal = function() {
+	var terminalId = $("#terminalId").val();
+	
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_detete"), terminalId), function(result) {
+		if(result) {
+			$.ajax({
+			    url: _this.pathname + "/terminal/" + terminalId + "/async/remove",
+			    type: "GET",
+			    dataType: "json",
+			    success: function(data) {
+			    	_this.graph.update();
+			    	_this.updateTerminalList();
+			    }
+			});
+		}
+	});
+};
+
+SchemaEditor.prototype.updateTerminalList = function() {
+	
+};
+
 
 SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
 	var _this = this;

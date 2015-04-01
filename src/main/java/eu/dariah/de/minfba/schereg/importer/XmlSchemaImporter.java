@@ -29,18 +29,20 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class XmlSchemaImporter implements SchemaImporter {
+public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 	private static final Logger logger = LoggerFactory.getLogger(XmlSchemaImporter.class);
 
 	private SchemaImportListener listener;
 	private Map<String, XmlTerminal> existingTerminalQNs = new HashMap<String, XmlTerminal>();
 	private XSModel model;
 	
-	private String schemaId;
+	private XmlSchema schema;
 	private String schemaFilePath;
 	private String rootElementNs;
 	private String rootElementName; 
@@ -48,8 +50,8 @@ public class XmlSchemaImporter implements SchemaImporter {
 	
 	private Nonterminal rootNonterminal;
 	
-	public String getSchemaId() { return schemaId; }
-	@Override public void setSchemaId(String schemaId) { this.schemaId = schemaId; }
+	public XmlSchema getSchema() { return schema; }
+	@Override public void setSchema(XmlSchema schema) { this.schema = schema; }
 	
 	public String getSchemaFilePath() { return schemaFilePath; }
 	@Override public void setSchemaFilePath(String schemaFilePath) { this.schemaFilePath = schemaFilePath; }
@@ -75,12 +77,17 @@ public class XmlSchemaImporter implements SchemaImporter {
 		try {
 			this.importXmlSchema();
 			if (this.getListener()!=null) {
-				this.getListener().registerImportFinished(schemaId, rootNonterminal, new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
+				schema.setNamespaces(new ArrayList<XmlNamespace>());
+				for (String ns : namespaces) {
+					schema.getNamespaces().add(new XmlNamespace("", ns));
+				}				
+				schema.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
+				this.getListener().registerImportFinished(schema, rootNonterminal);
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing XML Schema", e);
 			if (this.getListener()!=null) {
-				this.getListener().registerImportFailed(schemaId);
+				this.getListener().registerImportFailed(schema);
 			}
 		}
 	}
@@ -236,7 +243,7 @@ public class XmlSchemaImporter implements SchemaImporter {
 		n.setId(new ObjectId().toString());
 		n.setName(this.createNonterminalName(terminalName));
 		n.setTerminalId(terminalId);
-		n.setSchemaId(this.schemaId);
+		n.setSchemaId(this.schema.getId());
 		return n;
 	}
 	

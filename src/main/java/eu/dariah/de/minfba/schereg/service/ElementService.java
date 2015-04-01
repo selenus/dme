@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.service;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
 public interface ElementService {
@@ -19,4 +20,5 @@ public interface ElementService {
 	
 	public Element createAndAppendElement(String schemaId, String parentElementId);
 	public Element removeElement(String schemaId, String elementId);
+	public Terminal removeTerminal(String schemaId, String terminalId);
 }

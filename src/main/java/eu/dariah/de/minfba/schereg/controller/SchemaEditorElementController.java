@@ -1,5 +1,9 @@
 package eu.dariah.de.minfba.schereg.controller;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +37,21 @@ public class SchemaEditorElementController extends BaseTranslationController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/nonterminal")
-	public String getElement(@PathVariable String schemaId, @PathVariable String elementId, Model model) {
+	public String getElement(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
 		model.addAttribute("element", elementService.findById(elementId));
+		
+		Schema s = schemaService.findSchemaById(schemaId);
+		Map<String,String> availableTerminals = new HashMap<String,String>();
+		
+		if (s instanceof XmlSchema) {	
+			if (((XmlSchema)s).getTerminals()!=null) {
+				for (XmlTerminal t : ((XmlSchema)s).getTerminals()) {
+					availableTerminals.put(t.getId(), t.getName() + " (" + t.getNamespace() + ")");
+				}
+			}
+		}
+
+		model.addAttribute("availableTerminals", availableTerminals);
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");
 		return "schemaEditor/form/element/edit_nonterminal";
 	}

@@ -67,6 +67,16 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 		mongoTemplate.findAndModify(query, update, this.clazz, this.getCollectionName());
 	}
 	
+	@Override
+	public void updateMulti(Query query, Update update) {
+		mongoTemplate.updateMulti(query, update, this.clazz, this.getCollectionName());
+	}
+	
+	@Override
+	public void upsert(Query query, Update update) {
+		mongoTemplate.upsert(query, update, this.clazz, this.getCollectionName());
+	}
+	
 	/*@Override
 	public long count() {
 		// TODO Auto-generated method stub
@@ -118,4 +128,6 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	public String getCollectionName() {
 		return clazz.getSimpleName();
 	}
+
+
 }

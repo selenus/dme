@@ -12,7 +12,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
+
+import com.mongodb.DBObject;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
@@ -23,6 +28,7 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.service.ElementService;
 import eu.dariah.de.minfba.schereg.service.SchemaService;
+import eu.dariah.de.minfba.schereg.service.SchemaServiceImpl;
 
 @Component
 public class SchemaImportWorker implements ApplicationContextAware, SchemaImportListener {
@@ -86,7 +92,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		
 		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
 		importer.setListener(this);
-		importer.setSchemaId(s.getId());
+		importer.setSchema(s);
 		importer.setSchemaFilePath(filePath);
 		importer.setRootElementNs(s.getRootElementNamespace());
 		importer.setRootElementName(s.getRootElementName());                                                                                                                                                                                                                                                                                                                                                                                                                                                  
@@ -95,38 +101,17 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(String schemaId, Nonterminal root, List<? extends Terminal> terminals) {
-		Schema s = schemaService.findSchemaById(schemaId);
-		if (s != null && root!=null) {
-			elementService.deleteBySchemaId(schemaId);
+	public synchronized void registerImportFinished(Schema schema, Nonterminal root) {
+		if (root!=null) {
+			elementService.deleteBySchemaId(schema.getId());
 		}
 		elementService.saveElementHierarchy(root);
-		s.setRootNonterminalId(root.getId());
-		
-		if (terminals.size()>0 && terminals.get(0) instanceof XmlTerminal) {
-			XmlSchema sXml;
-			if (s instanceof XmlSchema) {
-				sXml = (XmlSchema)s;
-			} else {
-				sXml = schemaService.convertSchema(new XmlSchema(), s);
-			}
-			sXml.setTerminals(new ArrayList<XmlTerminal>(terminals.size()));
-			for (Terminal t : terminals) {
-				sXml.getTerminals().add((XmlTerminal)t);
-			}
-			schemaService.saveSchema(sXml);
-		} else {
-			schemaService.saveSchema(s);
-		}
-		
-		
-		Element e = elementService.findRootByElementId(root.getId());
-
-		logger.info("Schema successfully imported");
+		schema.setRootNonterminalId(root.getId());
+		schemaService.saveSchema(schema);
 	}
 
 	@Override 
-	public synchronized void registerImportFailed(String schemaId) { 
+	public synchronized void registerImportFailed(Schema schema) { 
 		logger.warn("Schema import failed");
 	}
 }

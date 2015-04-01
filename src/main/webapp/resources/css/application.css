@@ -340,5 +340,29 @@ noscript div {
 
 .tab-buttons {
 	margin-bottom: 10px;
+	margin-top: 10px;
 	padding: 0 4px;
+}
+
+/*!
+ *	Modals
+ */
+body .wide-modal {
+	width: 650px;
+	margin-left: -300px;
+}
+
+body .wider-modal {
+	width: 800px;
+	margin-left: -400px;
+}
+
+body .narrow-modal {
+	width: 350px;
+	margin-left: -170px;
+}
+
+body .modal450 {
+	width: 450px;
+	margin-left: -225px;
 }

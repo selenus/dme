@@ -97,6 +97,7 @@
 	</definition>
 	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
 	<definition name="schemaEditor/form/element/edit_nonterminal" template="/WEB-INF/view/jsp/schema/editor/edit_nonterminal.jsp" />
+	<definition name="schemaEditor/form/element/edit_terminal" template="/WEB-INF/view/jsp/schema/editor/edit_terminal.jsp" />
 	
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 

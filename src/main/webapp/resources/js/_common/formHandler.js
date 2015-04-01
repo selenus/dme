@@ -269,6 +269,7 @@ ModalFormHandler.prototype.processSubmitResponse = function(data) {
 		if (data.objectErrors !== null) {
 			var list = $("</ul>");
 			$(data.objectErrors).each(function() {list.append($("<li>").text(this));});
+			msg += $(list).html();
 		}
 		this.addMessage("danger", _this.translate("~*validationerrors.head"), msg);
 		

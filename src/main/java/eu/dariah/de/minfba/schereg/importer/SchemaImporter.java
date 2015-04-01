@@ -3,13 +3,12 @@ package eu.dariah.de.minfba.schereg.importer;
 import java.util.List;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 
-public interface SchemaImporter extends Runnable {
-	public void setSchemaId(String schemaId);
+public interface SchemaImporter<T extends Schema> extends Runnable {
+	public void setSchema(T schema);
 	public void setSchemaFilePath(String schemaFilePath);
-	public void setRootElementNs(String rootElementNs);
-	public void setRootElementName(String rootElementName);
 	
 	public boolean getIsSupported();
 	
@@ -17,4 +16,6 @@ public interface SchemaImporter extends Runnable {
 	public Nonterminal getRootNonterminal();
 	public void setListener(SchemaImportListener importWorker);
 	public List<? extends Terminal> getPossibleRootTerminals();
+	public void setRootElementNs(String rootElementNs);
+	public void setRootElementName(String rootElementName);
 }

@@ -7,12 +7,17 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.dao.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.ReferenceDao;
 import eu.dariah.de.minfba.schereg.dao.SchemaDao;
@@ -88,11 +93,14 @@ public class ElementServiceImpl implements ElementService {
 	
 	@Override
 	public void deleteByRootElementId(String rootElementId) {
+		// TODO: What about the reference hierarchy?
 		elementDao.delete(rootElementId);
 	}
 	
 	@Override
 	public void deleteBySchemaId(String schemaId) {
+		// TODO: What about the reference hierarchy?
+		
 		Schema s = schemaDao.findById(schemaId);
 		if (s!=null && s.getRootNonterminalId()!=null) {
 			elementDao.delete(s.getRootNonterminalId());
@@ -304,5 +312,31 @@ public class ElementServiceImpl implements ElementService {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public Terminal removeTerminal(String schemaId, String terminalId) {
+		Schema s = schemaDao.findById(schemaId);
+		Terminal tRemove = null;
+		if (s.getTerminals()!=null) {
+			for (Terminal t : s.getTerminals()) {
+				if (t.getId().equals(terminalId)) {
+					tRemove = t;
+					break;
+				}
+			}
+		}
+		if (tRemove!=null) {
+			s.getTerminals().remove(tRemove);
+			schemaDao.save(s);
+						
+			elementDao.updateMulti(
+					Query.query(Criteria.where("schemaId").is(schemaId).and("terminalId").is(terminalId)), 
+					Update.update("terminalId", ""));
+			
+			return tRemove;
+		} else {
+			return null;
+		}
 	}
 }

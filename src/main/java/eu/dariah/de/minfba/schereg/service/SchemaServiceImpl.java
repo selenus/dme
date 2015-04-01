@@ -3,6 +3,8 @@ package eu.dariah.de.minfba.schereg.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -30,6 +32,11 @@ public class SchemaServiceImpl implements SchemaService {
 	@Override
 	public void deleteSchemaById(String id) {
 		schemaDao.delete(id);
+	}
+	
+	@Override
+	public void upsertSchema(Query query, Update update) {
+		schemaDao.upsert(query, update);
 	}
 
 	@Override
