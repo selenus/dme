@@ -104,6 +104,14 @@
 	min-height: 60px;
 }
 
+.alert.alert-sm {
+	font-size: 85%;
+    margin-bottom: 8px;
+    padding: 6px 9px;
+    clear: both;
+    float: left;
+}
+
 /*!
  *	Side navigation
  */
@@ -324,6 +332,10 @@ noscript div {
 .schema-metadata-label {
 	font-weight: bold;
 	text-align: right;
+}
+
+.tab-details-block {
+	margin-top: 10px;
 }
 
 .tab-buttons {

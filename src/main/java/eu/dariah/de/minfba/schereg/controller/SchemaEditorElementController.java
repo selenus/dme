@@ -72,7 +72,7 @@ public class SchemaEditorElementController extends BaseTranslationController {
 		
 		Schema s = schemaService.findSchemaById(schemaId);
 		if (s instanceof XmlSchema) {
-			if (terminalId==null) {
+			if (terminalId==null || terminalId.isEmpty()) {
 				// None assigned yet
 				return null;
 			} else {

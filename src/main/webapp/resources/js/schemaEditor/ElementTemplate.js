@@ -6,7 +6,7 @@ var targetRootTemplate = new ElementTemplate(true, true, false);
 
 // Schema Editor
 var editorTemplate = new ElementTemplate(false, false, true);
-var editorRootTemplate = new ElementTemplate(false, false, true);
+var editorRootTemplate = new ElementTemplate(false, true, true);
 
 function ElementTemplate(isTarget, isRoot, isAlone)
 {
@@ -31,43 +31,44 @@ function ElementTemplate(isTarget, isRoot, isAlone)
    		  		position: function(element) { return { x: element.getRectangle().width, y: Math.floor(element.getRectangle().height / 2) }; },
 				isInteractive: false,
 				isMappable: false });
-		
-		if (isTarget) {
-			this.connectorTemplates.push({
-   				name: "children",
-   				type: "Person [out] [array]",
-   				description: "Children",
-   				position: function(element) { return { x: element.getRectangle().width - 10, y: element.getRectangle().height }; },
-   				isInteractive: false,
-				isMappable: false });
-			if (!isAlone) {
-				this.connectorTemplates.push({ 
-	   				name: "mappings",   
-	   				type: "Mapping [in] [array]",
-	   				description: "Mappings in",
-	   				position: function(element) { return { x: 0, y: Math.floor(element.getRectangle().height / 2) }; },
-	   				isInteractive: true,
-					isMappable: true });
-			}
-		} else {
-			this.connectorTemplates.push({
-   				name: "children",
-   				type: "Person [out] [array]",
-   				description: "Children",
-   				position: function(element) { return { x: 10, y: element.getRectangle().height }; },
-   				isInteractive: false,
-				isMappable: false });
-			if (!isAlone) {
-				this.connectorTemplates.push({ 	
-	       	  		name: "mappings",
-	       			type: "Mapping [out] [array]",
-	       			description: "Mappings out",
-	       			position: function(element) { return { x: element.getRectangle().width, y: Math.floor(element.getRectangle().height / 2) }; },
-	       			isInteractive: true,
-					isMappable: true });
-			}
+	}
+	
+	if (isTarget) {
+		this.connectorTemplates.push({
+			name: "children",
+			type: "Person [out] [array]",
+			description: "Children",
+			position: function(element) { return { x: element.getRectangle().width - 10, y: element.getRectangle().height }; },
+			isInteractive: false,
+			isMappable: false });
+		if (!isAlone) {
+			this.connectorTemplates.push({ 
+   				name: "mappings",   
+   				type: "Mapping [in] [array]",
+   				description: "Mappings in",
+   				position: function(element) { return { x: 0, y: Math.floor(element.getRectangle().height / 2) }; },
+   				isInteractive: true,
+				isMappable: true });
+		}
+	} else {
+		this.connectorTemplates.push({
+			name: "children",
+			type: "Person [out] [array]",
+			description: "Children",
+			position: function(element) { return { x: 10, y: element.getRectangle().height }; },
+			isInteractive: false,
+			isMappable: false });
+		if (!isAlone) {
+			this.connectorTemplates.push({ 	
+       	  		name: "mappings",
+       			type: "Mapping [out] [array]",
+       			description: "Mappings out",
+       			position: function(element) { return { x: element.getRectangle().width, y: Math.floor(element.getRectangle().height / 2) }; },
+       			isInteractive: true,
+				isMappable: true });
 		}
 	}
+	
 	
 	// Expander for showing/hiding child elements
 	if (isTarget) {
@@ -89,8 +90,8 @@ ElementTemplate.prototype.paint = function(element, context)
 	
 	
 	if (this.isRoot) {
-		lightColor = "#13304B";
-		darkColor = "#000000"		
+		lightColor = "#e6f1ff";
+		darkColor = "#0049a6";
 	} else {
 		if (element.typeInfo==="Label") {
 			lightColor = "#f3e6ff";
@@ -113,13 +114,13 @@ ElementTemplate.prototype.paint = function(element, context)
 	context.textAlign = "center";
 	context.fillText(element.getContent(), rectangle.x + (rectangle.width / 2), rectangle.y + 20);
 	
-	if (this.isRoot == null) {
-		var schemaIcon = new Image();
-		schemaIcon.src = "../resources/img/schema.png";
+	if (element.icon != null) {
+		var icon = new Image();
+		icon.src = element.icon;
 		if (this.isTarget) {
-			context.drawImage(schemaIcon, rectangle.x + 3, rectangle.y + 3); 
+			context.drawImage(icon, rectangle.x + 3, rectangle.y + 4); 
 		} else {
-			context.drawImage(schemaIcon, rectangle.x + rectangle.width - 23, rectangle.y + 3); 
+			context.drawImage(icon, rectangle.x + rectangle.width - 23, rectangle.y + 4); 
 		}
 	}
 };

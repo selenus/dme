@@ -205,12 +205,13 @@ Area.prototype.getElement = function(id) {
 	}
 };
 
-Area.prototype.addElement = function(template, id, label, parent, typeInfo) {
+Area.prototype.addElement = function(template, id, label, parent, typeInfo, icon) {
 	var element = new Element(template, {x: 0, y: 0}, id, parent);
 	element.content = label;
 	element.insertInto(this);
 	element.invalidate();
 	element.typeInfo = typeInfo;
+	element.icon = icon;
 	
 	if (parent != null) {
 		this.addHierarchyConnection(parent.getConnector("children"), element.getConnector("parent"));
@@ -224,7 +225,7 @@ Area.prototype.removeElement = function(element) {
 };
 
 
-Area.prototype.addRoot = function(template, point, id, label, typeInfo) {
+Area.prototype.addRoot = function(template, point, id, label, typeInfo, icon) {
 	
 	this.root = new Element(template, point, id, null);
 	this.root.content = label;
@@ -232,6 +233,7 @@ Area.prototype.addRoot = function(template, point, id, label, typeInfo) {
 	this.root.isVisible = true;
 	this.root.isExpanded = false;
 	this.root.typeInfo = typeInfo;
+	this.root.icon = icon;
 	
 	this.root.invalidate();
 	

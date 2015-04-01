@@ -24,6 +24,8 @@ var SchemaEditor = function() {
 	this.elementTab = $("#tab-element-metadata");
 	this.activityTab = $("#tab-element-activity");
 	
+	this.warningIcon = __util.getBaseUrl() + "resources/img/warning.png";
+	
 	this.schema = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
  	this.graph.addArea(this.schema);
 	
@@ -44,7 +46,8 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.model.element.name",
 	                              "~eu.dariah.de.minfba.schereg.model.element.namespace",
 	                              "~eu.dariah.de.minfba.schereg.model.element.attribute",
-	                              "~eu.dariah.de.minfba.schereg.model.element.transient"]);
+	                              "~eu.dariah.de.minfba.schereg.model.element.transient",
+	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured"]);
 	__translator.getTranslations();
 }
 
@@ -81,7 +84,7 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, data.name, "Nonterminal");
+	var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, data.name, "Nonterminal", null);
 	this.generateTree(this.schema, parent, data.childNonterminals, null, data.functions, true);
 	
 	this.schema.root.setExpanded(true);
@@ -89,10 +92,14 @@ SchemaEditor.prototype.processElementHierarchy = function(data) {
 };
 
 SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, functions,  isSource) {
-	
+
 	if (nonterminals!=null && nonterminals instanceof Array) {
 		for (var i=0; i<nonterminals.length; i++) {
-			var e = this.schema.addElement(editorTemplate, nonterminals[i].id, nonterminals[i].name, parent, "Nonterminal");
+			var icon = null;
+			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
+				icon = this.warningIcon;
+			}
+			var e = this.schema.addElement(editorTemplate, nonterminals[i].id, nonterminals[i].name, parent, "Nonterminal", icon);
 			if (parent != null) {
 				parent.addChild(e);
 			}
@@ -101,17 +108,17 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (functions != null && functions instanceof Array) {
 		for (var i=0; i<functions.length; i++) {
-			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, "fDesc", parent, "fDesc");
+			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, "fDesc", parent, "fDesc", null);
 			parent.addChild(fDesc);
 			if (functions[i].dataTransformationFunctions != null && functions[i].dataTransformationFunctions instanceof Array) {
 				for (var j=0; j<functions[i].dataTransformationFunctions.length; j++) {
-					var fOut = this.schema.addElement(functionTemplate, functions[i].dataTransformationFunctions[j].id, "fOut", fDesc, "fOut");
+					var fOut = this.schema.addElement(functionTemplate, functions[i].dataTransformationFunctions[j].id, "fOut", fDesc, "fOut", null);
 					fDesc.addChild(fOut);
 					if (functions[i].dataTransformationFunctions[j].outputElements != null && functions[i].dataTransformationFunctions[j].outputElements instanceof Array) {
 						for (var k=0; k<functions[i].dataTransformationFunctions[j].outputElements.length; k++) {
 							var e = this.schema.addElement(editorRootTemplate, 
 									functions[i].dataTransformationFunctions[j].outputElements[k].id, 
-									functions[i].dataTransformationFunctions[j].outputElements[k].name, fOut, "Label");
+									functions[i].dataTransformationFunctions[j].outputElements[k].name, fOut, "Label", null);
 							fOut.addChild(e);
 							this.generateTree(area, e, 
 									functions[i].dataTransformationFunctions[j].outputElements[k].childNonterminals,
@@ -125,7 +132,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (subelements!=null && subelements instanceof Array) {
 		for (var i=0; i<subelements.length; i++) {
-			var e = this.schema.addElement(editorRootTemplate, subelements[i].id, subelements[i].name, parent, "Label");
+			var e = this.schema.addElement(editorRootTemplate, subelements[i].id, subelements[i].name, parent, "Label", null);
 			if (parent != null) {
 				parent.addChild(e);
 			}
@@ -224,15 +231,22 @@ SchemaEditor.prototype.getElement = function(id) {
                 type: "GET",
                 dataType: "json",
                 success: function(data) {
-                	var details = $("<div class=\"clearfix\">");
+                	var details = $("<div class=\"clearfix tab-details-block\">");
                 	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));
                 		
-                	_this.contextContainerInfo.append(details);  	
+                	_this.contextContainerInfo.append(details);
                 },
-                error: function(textStatus) { /*alert("error");*/ }
+                error: function(textStatus) { 
+                	var details = $("<div class=\"clearfix tab-details-block\">");
+                	details.append("<div class='alert alert-sm alert-warning' role='alert'>" + 
+                			"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +
+                			__translator.translate("~eu.dariah.de.minfba.schereg.notification.no_terminal_configured") +
+                			"</div>");
+                	_this.contextContainerInfo.append(details);
+                }
          	});    
         },
         error: function(textStatus) { /*alert("error");*/ }

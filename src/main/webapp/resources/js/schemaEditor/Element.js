@@ -15,6 +15,7 @@ var Element = function(template, point, id, parent)
 	this.expander = null;
 	this.connectors = [];
 	this.maxChildScore = 0;
+	this.icon = null;
 	
 	for (var i = 0; i < template.connectorTemplates.length; i++)
 	{
