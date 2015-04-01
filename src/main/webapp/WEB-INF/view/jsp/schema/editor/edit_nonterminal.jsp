@@ -6,13 +6,13 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="element" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.schemas.form.edit" /></h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.edit" /></h3>	
 		<sf:hidden path="id" />
 		<sf:hidden path="terminalId" />
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="element_name"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.element.name" />:</label>
+			<label class="col-sm-3 control-label" for="element_name"><s:message code="~eu.dariah.de.minfba.schereg.model.element.name" />:</label>
 			<div class="col-sm-7">
 				<sf:input path="name" class="form-control" id="element_name" />
 				<sf:errors path="name" cssClass="error" />
@@ -21,15 +21,15 @@
 		<div class="form-group">
 			<div class="col-sm-7 col-sm-offset-3">
 				<div class="checkbox">
-					<label><sf:checkbox path="transient" /> <s:message code="~eu.dariah.de.minfba.schereg.schemas.model.element.transient" /></label>
+					<label><sf:checkbox path="transient" /> <s:message code="~eu.dariah.de.minfba.schereg.model.element.transient" /></label>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.view.common.cancel" /></button>
-			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.view.common.save" /></button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
+			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
 		</div>
 	</div>
 </sf:form>

@@ -7,24 +7,24 @@
 	<div class="form-header">
 		<c:choose>
 			<c:when test="${schema.id!=null && schema.id!=''}">
-				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.schemas.form.edit" /></h3>
+				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.edit" /></h3>
 			</c:when>
 			<c:otherwise>
-				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.schemas.form.create" /></h3>
+				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.create" /></h3>
 			</c:otherwise>
 		</c:choose>		
 		<sf:hidden path="id" />
 	</div>
 	<div class="form-content">
 		<div class="control-group">
-			<label class="control-label" for="schema_label"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.label" />:</label>
+			<label class="control-label" for="schema_label"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" />:</label>
 			<div class="controls">
 				<sf:input path="label" class="form-control" id="schema_label" />
 				<sf:errors path="label" cssClass="error" />
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label" for="schema_description"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.description" />:</label>
+			<label class="control-label" for="schema_description"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.description" />:</label>
 			<div class="controls">
 				<sf:textarea path="description" class="form-control" rows="4" id="schema_description" />
 			</div>
@@ -32,8 +32,8 @@
 	</div>
 	<div class="form-footer control-group">
 		<div class="controls">
-			<button class="btn btn-default cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.view.common.cancel" /></button>
-			<button class="btn btn-primary start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.view.common.save" /></button>
+			<button class="btn btn-default cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
+			<button class="btn btn-primary start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
 		</div>
 	</div>
 </sf:form>

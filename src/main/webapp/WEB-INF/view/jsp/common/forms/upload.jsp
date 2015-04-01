@@ -5,7 +5,7 @@
 <div>
 	<div class="fileupload-buttonbar">
 		<span class="btn btn-primary fileinput-button"> <span class="glyphicon glyphicon-cloud-upload" aria-hidden="true"></span> 
-			<s:message code="~eu.dariah.de.minfba.common.view.common.upload" />
+			<s:message code="~eu.dariah.de.minfba.common.link.upload" />
 		<input type="file" name="file" /></span>
 	</div>
 	<div class="fileupload-progress hide">

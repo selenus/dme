@@ -221,6 +221,7 @@ SchemaEditor.prototype.getElement = function(id) {
         dataType: "json",
         success: function(data) { 
         	var details = $("<div class=\"clearfix\">");
+        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.transient));
         		
@@ -233,6 +234,7 @@ SchemaEditor.prototype.getElement = function(id) {
                 success: function(data) {
                 	var details = $("<div class=\"clearfix tab-details-block\">");
                 	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));

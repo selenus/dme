@@ -139,8 +139,8 @@ public class SchemaEditorController extends BaseTranslationController implements
 			if (rootTerminals!=null) {
 				result.setSuccess(true);
 				MessagePojo msg = result.new MessagePojo("success", 
-						messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.head", null, locale), 
-						messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.body", null, locale));
+						messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.head", null, locale), 
+						messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.body", null, locale));
 				result.setMessage(msg);
 				result.setPojo(rootTerminals);
 				return result;
@@ -149,8 +149,8 @@ public class SchemaEditorController extends BaseTranslationController implements
 		result.setSuccess(false);
 		// TODO: Error message
 		MessagePojo msg = result.new MessagePojo("danger", 
-				messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationfailed.head", null, locale), 
-				messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.validationfailed.body", null, locale));
+				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.head", null, locale), 
+				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.body", null, locale));
 		result.setMessage(msg);
 		return result;
 	}
@@ -167,8 +167,8 @@ public class SchemaEditorController extends BaseTranslationController implements
 			}
 		} catch (Exception e) {
 			MessagePojo msg = result.new MessagePojo("danger", 
-					messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.generalerror.head", null, locale), 
-					messageSource.getMessage("~eu.dariah.de.minfba.schereg.view.async.file.generalerror.body", new Object[] {e.getLocalizedMessage()}, locale));
+					messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.generalerror.head", null, locale), 
+					messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.generalerror.body", new Object[] {e.getLocalizedMessage()}, locale));
 			result.setMessage(msg);
 		}
 		result.setSuccess(false);
