@@ -16,10 +16,10 @@ String.prototype.startsWith = function(start) {
 };
 
 var Util = function() {
-        __translator.addTranslations(["~eu.dariah.de.minfba.common.login.login_required.head",
-                                      "~eu.dariah.de.minfba.common.login.login_required.body",
-                                      "~eu.dariah.de.minfba.common.view.common.yes",
-                                      "~eu.dariah.de.minfba.common.view.common.no"])
+        __translator.addTranslations(["~eu.dariah.de.minfba.common.view.notifications.login_required.head",
+                                      "~eu.dariah.de.minfba.common.view.notifications.login_required.body",
+                                      "~eu.dariah.de.minfba.common.link.yes",
+                                      "~eu.dariah.de.minfba.common.link.no"])
         // We depend on the view's main js for this call
     //__translator.getTranslations();
         this.entityMap = {
@@ -44,8 +44,8 @@ Util.prototype.showLoginNote = function() {
         var _this = this;
 
         bootbox.dialog({
-                message : __translator.translate("~eu.dariah.de.minfba.common.login.login_required.body"),
-                title : __translator.translate("~eu.dariah.de.minfba.common.login.login_required.head"),
+                message : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.body"),
+                title : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.head"),
                 buttons : {
                         no : {
                                 label : __translator.translate("~eu.dariah.de.minfba.common.view.common.no"),

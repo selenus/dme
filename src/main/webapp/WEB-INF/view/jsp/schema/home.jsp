@@ -11,7 +11,7 @@
 				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title" /></div>
 			</div>
 			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
-				<h1><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_short" /></h1>
+				<h1><s:message code="~eu.dariah.de.minfba.schereg.view.home.title_short" /></h1>
 			</div>
 		</div>
 	</div>
@@ -23,16 +23,16 @@
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
 				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
-				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_short" /></li>
+				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.view.home.title_short" /></li>
 			</ul>
 			<div id="main-content">
 				<div class="row">
 					<div class="col-md-7">
-						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title" /></h2>
+						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.home.title_short" /></h2>
 						<div id="data-details-container">
 							<div class="pull-right">
 								<div class="data-table-filter">
-									<input type="text" class="form-control" placeholder='<s:message code="~eu.dariah.de.minfba.common.view.common.filter"/>'>
+									<input type="text" class="form-control" placeholder='<s:message code="~eu.dariah.de.minfba.common.link.filter"/>'>
 								</div>
 								<div class="data-table-count">
 									<select class="form-control">
@@ -40,19 +40,19 @@
 									  <option>25</option>
 									  <option>50</option>
 									  <option>100</option>
-									  <option><s:message code="~eu.dariah.de.minfba.common.view.common.all"/></option>
+									  <option><s:message code="~eu.dariah.de.minfba.common.link.all"/></option>
 									</select>
 								</div>
 								<button id="btn-add-schema" class="btn btn-default btn-sm">
-									<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.add" />
+									<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add" />
 								</button> 								
 							</div>
 							<table id="schema-table" class="table table-striped table-bordered table-condensed">
 								<thead>
 									<tr>
 										<th></th> <!-- Status -->
-										<th><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.label" /></th>
-										<th><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.type" /></th>
+										<th><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" /></th>
+										<th><s:message code="~eu.dariah.de.minfba.schereg.model.schema.type" /></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -65,9 +65,9 @@
 					</div>
 					<div class="col-md-5 details-container" role="tabpanel">
 						<ul class="nav nav-tabs" role="tablist">
-							<li role="presentation" id="tab-schema-activity" class="active"><a href="#schema-activity" aria-controls="schema-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.activity" /></a></li>
-							<li role="presentation" id="tab-schema-metadata" class="hide"><a href="#schema-metadata" aria-controls="schema-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.schema" /></a></li>
-							<li role="presentation" id="tab-schema-elements" class="hide"><a href="#schema-elements" aria-controls="schema-elements" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.elements" /></a></li>
+							<li role="presentation" id="tab-schema-activity" class="active"><a href="#schema-activity" aria-controls="schema-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.link.activity" /></a></li>
+							<li role="presentation" id="tab-schema-metadata" class="hide"><a href="#schema-metadata" aria-controls="schema-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.schema" /></a></li>
+							<li role="presentation" id="tab-schema-elements" class="hide"><a href="#schema-elements" aria-controls="schema-elements" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.elements" /></a></li>
 						</ul>
 						<div class="tab-content">
 							<div role="tabpanel" class="tab-pane active" id="schema-activity">...</div>

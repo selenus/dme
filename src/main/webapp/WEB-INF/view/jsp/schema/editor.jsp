@@ -11,7 +11,7 @@
 				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title" /></div>
 			</div>
 			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
-				<h1><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_short" /></h1>
+				<h1><s:message code="~eu.dariah.de.minfba.schereg.view.home.title_short" /></h1>
 			</div>
 		</div>
 	</div>
@@ -23,19 +23,35 @@
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
 				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
-				<li><a href='<s:url value="/schema" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_short" /></a></li>
-				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_editor" /></li>
+				<li><a href='<s:url value="/schema" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.view.home.title_short" /></a></li>
+				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /></li>
 			</ul>
 			<input type="hidden" id="schema-id" value="${schema.id}" />
 			<div id="main-content">
 				<div class="row">
 					<div class="col-md-6 col-lg-7">
 						<div class="clearfix">
-							<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.schemas.title_editor" /> <small>${schema.label}</small>&nbsp;</h2>		
+							<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> <small>${schema.label}</small>&nbsp;</h2>		
 							<div class="pull-left schema-editor-buttons">
-								<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.expand_all" /></button>
-				      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.collapse_all" /></button>
-				      			<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm pull-left" ><span class='glyphicon glyphicon-edit'></span> <s:message code="~eu.dariah.de.minfba.schereg.schemas.button.import" /></button>
+								<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
+				      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
+
+								<div class="btn-group">
+									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+										<s:message code="~eu.dariah.de.minfba.common.link.actions" /> <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<li><a href="#" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;"><span class='glyphicon glyphicon-edit'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></a></li>
+										<li class="divider"></li>
+										<li>
+											<ul>
+												<li><a href="#">Another action</a></li>
+												<li><a href="#">Something else here</a></li>	
+											</ul>
+										</li>
+									</ul>
+								</div>    			
+				      			
 							</div>
 						</div>
 						<div class="clearfix">
@@ -46,8 +62,8 @@
 					</div>
 					<div class="col-md-6 col-lg-5 details-container schema-editor-context" role="tabpanel">
 						<ul class="nav nav-tabs" role="tablist">
-							<li role="presentation" id="tab-element-activity" class="active"><a href="#element-activity" aria-controls="element-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.activity" /></a></li>
-							<li role="presentation" id="tab-element-metadata" class="hide"><a href="#element-metadata" aria-controls="element-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.schemas.model.schema" /></a></li>
+							<li role="presentation" id="tab-element-activity" class="active"><a href="#element-activity" aria-controls="element-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.link.activity" /></a></li>
+							<li role="presentation" id="tab-element-metadata" class="hide"><a href="#element-metadata" aria-controls="element-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.model.element.element" /></a></li>
 						</ul>
 						<div class="tab-content">
 							<div role="tabpanel" class="tab-pane active" id="element-activity">

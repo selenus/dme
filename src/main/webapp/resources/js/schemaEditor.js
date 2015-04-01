@@ -30,27 +30,29 @@ var SchemaEditor = function() {
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
 	
-	__translator.addTranslations(["~eu.dariah.de.minfba.common.id",
-	                              "~eu.dariah.de.minfba.common.type",
-	                              "~eu.dariah.de.minfba.common.view.common.edit",
-	                              "~eu.dariah.de.minfba.common.view.common.delete",
-	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal",
-	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_label", 
-	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function",
-	                              "~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function",
-	                              "~eu.dariah.de.minfba.schereg.view.async.servererror.head",
-	                              "~eu.dariah.de.minfba.schereg.view.async.servererror.body",
-	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.name",
-	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.namespace",
-	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.attribute",
-	                              "~eu.dariah.de.minfba.schereg.schemas.model.element.transient"]);
+	__translator.addTranslations(["~eu.dariah.de.minfba.common.model.id",
+	                              "~eu.dariah.de.minfba.common.model.type",
+	                              "~eu.dariah.de.minfba.common.link.edit",
+	                              "~eu.dariah.de.minfba.common.link.delete",
+	                              "~eu.dariah.de.minfba.schereg.button.add_nonterminal",
+	                              "~eu.dariah.de.minfba.schereg.button.add_label", 
+	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
+	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
+	                              "~eu.dariah.de.minfba.common.view.forms.servererror.head",
+	                              "~eu.dariah.de.minfba.common.view.forms.servererror.body",
+	                              "~eu.dariah.de.minfba.schereg.model.element.name",
+	                              "~eu.dariah.de.minfba.schereg.model.element.namespace",
+	                              "~eu.dariah.de.minfba.schereg.model.element.attribute",
+	                              "~eu.dariah.de.minfba.schereg.model.element.transient"]);
 	__translator.getTranslations();
 }
 
 SchemaEditor.prototype.resize = function() {
 	var height = Math.floor($(window).height() - this.editorContainer.offset().top - this.footerOffset);
 	this.editorContainer.css("height", height + "px");
-	this.contextContainer.css("margin-top", Math.floor(this.editorContainer.offset().top - this.contextContainer.parent().offset().top - 40) + "px");
+	this.contextContainer.find(".tab-content").css("height", height + "px");
+	
+	this.contextContainer.css("margin-top", Math.floor(this.editorContainer.offset().top - this.contextContainer.parent().offset().top - 42) + "px");
 	
 	if (this.context.canvas) {
 		this.context.canvas.width = this.editorContainer.width() - 1; // border-bottom
@@ -151,23 +153,23 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	// TODO Show details in context response
 	var actions = [];
 	if (e.elementSubtype === "Nonterminal") {
-		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_nonterminal")];
-		actions[1] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
-		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
-		actions[3] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.view.common.edit")];
+		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+		actions[1] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
+		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		actions[3] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 		_this.getElement(e.elementId);	
 	} else if (e.elementSubtype === "DescriptiveFunction") {
-		actions[0] = ["addTransformation", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_trans_function")];
-		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
+		actions[0] = ["addTransformation", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
+		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 	} else if (e.elementSubtype === "OutputFunction") {
-		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
-		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];	
+		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
+		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];	
 		_this.getOutputFunctionInfo(e.elementId);
 	} else if (e.elementSubtype === "Label") {
-		actions[0] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.view.common.edit")];
-		actions[1] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_label")];
-		actions[2] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.schemas.button.add_desc_function")];
-		actions[3] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.view.common.delete")];
+		actions[0] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+		actions[1] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
+		actions[2] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
+		actions[3] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 	}
 	
 	var button;
@@ -190,9 +192,9 @@ SchemaEditor.prototype.getElement = function(id) {
         success: function(data) { 
         	var details = $("<div class=\"clearfix\">");
         	details.append(_this.renderContextTabDetail("", "<h4>~Element details</h4>"));
-        	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.id"), data.id));
-        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.name"), data.name));
-        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.transient"), data.transient));
+        	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
+        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
+        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.transient));
         		
         	_this.contextContainerInfo.append(details);  	
         	
@@ -203,11 +205,11 @@ SchemaEditor.prototype.getElement = function(id) {
                 success: function(data) {
                 	var details = $("<div class=\"clearfix\">");
                 	details.append(_this.renderContextTabDetail("", "<h4>~Source parser details</h4>"));
-                	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.id"), data.id));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.type"), data.simpleType));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.name"), data.name));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.transient"), data.namespace));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.schemas.model.element.attribute"), data.attribute));
+                	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.type"), data.simpleType));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
+                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));
                 		
                 	_this.contextContainerInfo.append(details);  	
                 },
@@ -249,8 +251,8 @@ SchemaEditor.prototype.editElement = function() {
 		formUrl: "/element/" + this.graph.selectedItems[0].id + "/form/nonterminal",
 		identifier: form_identifier,
 		//additionalModalClasses: "wider-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});
@@ -298,8 +300,8 @@ SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
 		formUrl: "/forms/import/",
 		identifier: form_identifier,
 		//additionalModalClasses: "wider-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});

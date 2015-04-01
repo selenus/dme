@@ -5,24 +5,24 @@ var modalFormHandler = null;
   * 	- ~*file... in the SchemaSourceSelector
   * Usually only the ~*... ones are required unless the file upload dialog is used
   */
-/*this.translations = [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.new.servererror.head"},
-            		 	{placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.new.servererror.body"},
-            		 	{placeholder: "~*uploadsuccessful.head", key: "~eu.dariah.de.minfba.schereg.view.async.new.importsuccessful.head"},
-            		 	{placeholder: "~*uploadsuccessful.body", key: "~eu.dariah.de.minfba.schereg.view.async.new.importsuccessful.body"},
-            		 	{placeholder: "~*validationerrors.head", key: "~eu.dariah.de.minfba.schereg.view.async.new.validationerrors.head"},
-            		 	{placeholder: "~*validationerrors.body", key: "~eu.dariah.de.minfba.schereg.view.async.new.validationerrors.body"},
-            		 	{placeholder: "~*file.validationsucceeded.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.head"},
-            		 	{placeholder: "~*file.validationsucceeded.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.body"},
-            		 	{placeholder: "~*file.servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.new.servererror.head"},
-            		 	{placeholder: "~*file.servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.new.servererror.body"},
-            		 	{placeholder: "~*file.generalerror.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.generalerror.head"},
-            		 	{placeholder: "~*file.generalerror.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.generalerror.body"},
-            		 	{placeholder: "~*file.uploaderror.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploaderror.head"},
-            		 	{placeholder: "~*file.uploaderror.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploaderror.body"},
-            		 	{placeholder: "~*file.deletesucceeded.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.deletesucceeded.head"},
-            		 	{placeholder: "~*file.deletesucceeded.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.deletesucceeded.body"},
-            		 	{placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploadcomplete.head"},
-            		 	{placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploadcomplete.body"}
+/*this.translations = [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.new.servererror.head"},
+            		 	{placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.new.servererror.body"},
+            		 	{placeholder: "~*uploadsuccessful.head", key: "~eu.dariah.de.minfba.common.view.forms.new.importsuccessful.head"},
+            		 	{placeholder: "~*uploadsuccessful.body", key: "~eu.dariah.de.minfba.common.view.forms.new.importsuccessful.body"},
+            		 	{placeholder: "~*validationerrors.head", key: "~eu.dariah.de.minfba.common.view.forms.new.validationerrors.head"},
+            		 	{placeholder: "~*validationerrors.body", key: "~eu.dariah.de.minfba.common.view.forms.new.validationerrors.body"},
+            		 	{placeholder: "~*file.validationsucceeded.head", key: "~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.head"},
+            		 	{placeholder: "~*file.validationsucceeded.body", key: "~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.body"},
+            		 	{placeholder: "~*file.servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.new.servererror.head"},
+            		 	{placeholder: "~*file.servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.new.servererror.body"},
+            		 	{placeholder: "~*file.generalerror.head", key: "~eu.dariah.de.minfba.common.view.forms.file.generalerror.head"},
+            		 	{placeholder: "~*file.generalerror.body", key: "~eu.dariah.de.minfba.common.view.forms.file.generalerror.body"},
+            		 	{placeholder: "~*file.uploaderror.head", key: "~eu.dariah.de.minfba.common.view.forms.file.uploaderror.head"},
+            		 	{placeholder: "~*file.uploaderror.body", key: "~eu.dariah.de.minfba.common.view.forms.file.uploaderror.body"},
+            		 	{placeholder: "~*file.deletesucceeded.head", key: "~eu.dariah.de.minfba.common.view.forms.file.deletesucceeded.head"},
+            		 	{placeholder: "~*file.deletesucceeded.body", key: "~eu.dariah.de.minfba.common.view.forms.file.deletesucceeded.body"},
+            		 	{placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.head"},
+            		 	{placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.body"}
             		 ];*/
 var ModalFormHandler = function(options) {
 	this.options = options;
@@ -38,24 +38,24 @@ var ModalFormHandler = function(options) {
 	 * NOTE: These are the defaults in the DARIAH Generic Search; adapt or set on initialization accordingly
 	 */
 	//this.translations = [];
-	this.translations = [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.head"},
-	                     {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.servererror.body"},
-	                     {placeholder: "~*uploadsuccessful.head", key: "~eu.dariah.de.minfba.schereg.view.async.uploadsuccessful.head"},
-	                     {placeholder: "~*uploadsuccessful.body", key: "~eu.dariah.de.minfba.schereg.view.async.uploadsuccessful.body"},
-	                     {placeholder: "~*validationerrors.head", key: "~eu.dariah.de.minfba.schereg.view.async.validationerrors.head"},
-	                     {placeholder: "~*validationerrors.body", key: "~eu.dariah.de.minfba.schereg.view.async.validationerrors.body"},
-	                     {placeholder: "~*file.validationsucceeded.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.head"},
-	            		 {placeholder: "~*file.validationsucceeded.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.validationsucceeded.body"},
-	            		 {placeholder: "~*file.servererror.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.servererror.head", defaultText: "Problem interacting with server"},
-	            		 {placeholder: "~*file.servererror.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.servererror.body", defaultText: "Could not interact with server. Please check the internet connectivity of your computer, try again or inform the administrator if this problem pertains."},
-	            		 {placeholder: "~*file.generalerror.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.generalerror.head"},
-	            		 {placeholder: "~*file.generalerror.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.generalerror.body"},
-	            		 {placeholder: "~*file.uploaderror.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploaderror.head"},
-	            		 {placeholder: "~*file.uploaderror.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploaderror.body"},
-	            		 {placeholder: "~*file.deletesucceeded.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.deletesucceeded.head"},
-	            		 {placeholder: "~*file.deletesucceeded.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.deletesucceeded.body"},
-	            		 {placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploadcomplete.head"},
-	            		 {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.schereg.view.async.file.uploadcomplete.body"}];
+	this.translations = [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+	                     {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"},
+	                     {placeholder: "~*uploadsuccessful.head", key: "~eu.dariah.de.minfba.common.view.forms.uploadsuccessful.head"},
+	                     {placeholder: "~*uploadsuccessful.body", key: "~eu.dariah.de.minfba.common.view.forms.uploadsuccessful.body"},
+	                     {placeholder: "~*validationerrors.head", key: "~eu.dariah.de.minfba.common.view.forms.validationerrors.head"},
+	                     {placeholder: "~*validationerrors.body", key: "~eu.dariah.de.minfba.common.view.forms.validationerrors.body"},
+	                     {placeholder: "~*file.validationsucceeded.head", key: "~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.head"},
+	            		 {placeholder: "~*file.validationsucceeded.body", key: "~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.body"},
+	            		 {placeholder: "~*file.servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.file.servererror.head", defaultText: "Problem interacting with server"},
+	            		 {placeholder: "~*file.servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.file.servererror.body", defaultText: "Could not interact with server. Please check the internet connectivity of your computer, try again or inform the administrator if this problem pertains."},
+	            		 {placeholder: "~*file.generalerror.head", key: "~eu.dariah.de.minfba.common.view.forms.file.generalerror.head"},
+	            		 {placeholder: "~*file.generalerror.body", key: "~eu.dariah.de.minfba.common.view.forms.file.generalerror.body"},
+	            		 {placeholder: "~*file.uploaderror.head", key: "~eu.dariah.de.minfba.common.view.forms.file.uploaderror.head"},
+	            		 {placeholder: "~*file.uploaderror.body", key: "~eu.dariah.de.minfba.common.view.forms.file.uploaderror.body"},
+	            		 {placeholder: "~*file.deletesucceeded.head", key: "~eu.dariah.de.minfba.common.view.forms.file.deletesucceeded.head"},
+	            		 {placeholder: "~*file.deletesucceeded.body", key: "~eu.dariah.de.minfba.common.view.forms.file.deletesucceeded.body"},
+	            		 {placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.head"},
+	            		 {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.body"}];
 	
 	this.setupCallback = null;
 	this.completeCallback = null;
