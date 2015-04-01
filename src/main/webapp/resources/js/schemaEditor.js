@@ -19,7 +19,8 @@ var SchemaEditor = function() {
 	this.contextContainer = $(".schema-editor-context");
 	this.contextContainerInfo = $("#schema-editor-context-info");
 	
-	this.menuContainer = $("#schema-editor-dynamic-buttons");
+	this.menuContainer0 = $("#schema-editor-dynamic-buttons-0");
+	this.menuContainer1 = $("#schema-editor-dynamic-buttons-1");
 	this.elementTab = $("#tab-element-metadata");
 	this.activityTab = $("#tab-element-activity");
 	
@@ -136,7 +137,11 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 SchemaEditor.prototype.deselectionHandler = function() {
 	var _this = schemaEditor;
 		
-	_this.menuContainer.html("");
+	_this.menuContainer0.find(".context-button").remove();
+	_this.menuContainer1.html("");
+	_this.menuContainer0.closest(".btn-group").find(".btn").addClass("btn-default");
+	_this.menuContainer0.closest(".btn-group").find(".btn").removeClass("btn-primary");
+	
 	_this.contextContainerInfo.html("");
 	_this.elementTab.addClass("hide");
 	_this.activityTab.find("a").tab('show');
@@ -145,7 +150,8 @@ SchemaEditor.prototype.deselectionHandler = function() {
 SchemaEditor.prototype.selectionHandler = function(e) {
 	var _this = schemaEditor;
 	
-	_this.menuContainer.html("");
+	_this.menuContainer0.find(".context-button").remove();
+	_this.menuContainer1.html("");
 	_this.contextContainerInfo.html("");
 	_this.elementTab.removeClass("hide");
 	_this.elementTab.find("a").tab('show');
@@ -153,34 +159,51 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	// TODO Show details in context response
 	var actions = [];
 	if (e.elementSubtype === "Nonterminal") {
-		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
-		actions[1] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
-		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
-		actions[3] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+		actions[1] = [0, "addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
+		actions[2] = [1, "editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+		actions[3] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 		_this.getElement(e.elementId);	
 	} else if (e.elementSubtype === "DescriptiveFunction") {
-		actions[0] = ["addTransformation", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
-		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		actions[0] = [0, "addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
+		actions[1] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 	} else if (e.elementSubtype === "OutputFunction") {
-		actions[0] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
-		actions[1] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];	
+		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
+		actions[1] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];	
 		_this.getOutputFunctionInfo(e.elementId);
 	} else if (e.elementSubtype === "Label") {
-		actions[0] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[1] = ["addElement", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
-		actions[2] = ["addDescription", "cog", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
-		actions[3] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
+		actions[1] = [0, "addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
+		actions[2] = [1, "editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+		actions[3] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 	}
 	
 	var button;
 	for (var i=0; i<actions.length; i++) {
-		button = "<button " +
-					"class='btn btn-" + actions[i][2] + " btn-sm pull-right' " +
-					"onclick='schemaEditor." + actions[i][0] + "(); return false;' type='button'>" +
-						"<span class='glyphicon glyphicon-" + actions[i][1] + "'></span> " + actions[i][3] + 
-				 "</button> ";
-		_this.menuContainer.append(button);
+		if (actions[i][0]==0) {
+			button = "<li class='context-button'><a href='#' " +
+						//"class='btn btn-" + actions[i][3] + " btn-sm pull-right' " +
+						"onclick='schemaEditor." + actions[i][1] + "(); return false;'>" +
+							"<span class='glyphicon glyphicon-" + actions[i][2] + "'></span> " + actions[i][4] + 
+					 "</a></li>";
+			_this.menuContainer0.append(button);
+		} else {
+			button = "<button " +
+						"class='btn btn-" + actions[i][3] + " btn-sm' " +
+						"onclick='schemaEditor." + actions[i][1] + "(); return false;' type='button'>" +
+							"<span class='glyphicon glyphicon-" + actions[i][2] + "'></span> " + actions[i][4] + 
+					 "</button> ";
+			_this.menuContainer1.append(button);
+		}
 	}
+	
+	if (_this.menuContainer0.find(".context-button").length > 0) {
+		$("<li class='divider context-button'>").insertBefore(_this.menuContainer0.find(".context-button").first());
+		
+		_this.menuContainer0.closest(".btn-group").find(".btn").addClass("btn-primary");
+		_this.menuContainer0.closest(".btn-group").find(".btn").removeClass("btn-default");
+	}
+	
 };
 
 SchemaEditor.prototype.getElement = function(id) {
@@ -191,8 +214,6 @@ SchemaEditor.prototype.getElement = function(id) {
         dataType: "json",
         success: function(data) { 
         	var details = $("<div class=\"clearfix\">");
-        	details.append(_this.renderContextTabDetail("", "<h4>~Element details</h4>"));
-        	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.transient));
         		
@@ -204,9 +225,7 @@ SchemaEditor.prototype.getElement = function(id) {
                 dataType: "json",
                 success: function(data) {
                 	var details = $("<div class=\"clearfix\">");
-                	details.append(_this.renderContextTabDetail("", "<h4>~Source parser details</h4>"));
-                	//details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.type"), data.simpleType));
+                	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
                 	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));

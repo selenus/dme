@@ -152,7 +152,7 @@ SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	
 	
 	var buttonBarContainer = $("<div class=\"row\">");
-	var buttonBar = $("<div class=\"schema-metadata-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
+	var buttonBar = $("<div class=\"tab-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
 	buttonBar.append(
 		"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
 			__translator.translate("~eu.dariah.de.minfba.common.link.edit") + 
@@ -186,7 +186,7 @@ SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
 	$("#schema-elements").html("");
 	
 	var buttonBarContainer = $("<div class=\"row\">");
-	var buttonBar = $("<div class=\"schema-elements-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
+	var buttonBar = $("<div class=\"tab-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
 	
 	// TODO: Move import behavior
 	/*buttonBar.append(

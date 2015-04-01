@@ -36,19 +36,12 @@
 								<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
 				      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
 
-								<div class="btn-group">
-									<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+								<div class="btn-group pull-left">
+									<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
 										<s:message code="~eu.dariah.de.minfba.common.link.actions" /> <span class="caret"></span>
 									</button>
-									<ul class="dropdown-menu" role="menu">
+									<ul id="schema-editor-dynamic-buttons-0" class="dropdown-menu" role="menu">
 										<li><a href="#" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;"><span class='glyphicon glyphicon-edit'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></a></li>
-										<li class="divider"></li>
-										<li>
-											<ul>
-												<li><a href="#">Another action</a></li>
-												<li><a href="#">Something else here</a></li>	
-											</ul>
-										</li>
 									</ul>
 								</div>    			
 				      			
@@ -70,7 +63,9 @@
 								...
 							</div>
 							<div role="tabpanel" class="tab-pane" id="element-metadata">
-								<div id="schema-editor-dynamic-buttons" class="pull-right"></div>
+								<div class="row">
+									<div id="schema-editor-dynamic-buttons-1" class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4 tab-buttons"></div>
+								</div>
 								<div id="schema-editor-context-info" class="clearfix"></div>
 							</div>
 						</div>

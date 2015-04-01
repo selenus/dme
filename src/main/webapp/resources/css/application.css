@@ -296,8 +296,13 @@ noscript div {
 }
 
 .schema-editor-buttons .btn {
-	margin-bottom: 10px;
+	margin-bottom: 5px;
 	margin-left: 3px;
+}
+
+.schema-editor-buttons .btn-group {
+	margin-bottom: 5px;
+	margin-left: 10px;
 }
 
 #schema-editor-dynamic-buttons .btn {
@@ -306,16 +311,14 @@ noscript div {
 }
 
 
-
-
-
-/*! 
- * Schema only
- */
 .schema-metadata-label,
 .schema-metadata-data {
 	font-size: 90%;
 	padding: 0 4px;
+}
+
+.schema-metadata-data h4 {
+	margin-top: 20px;
 }
 
 .schema-metadata-label {
@@ -323,7 +326,7 @@ noscript div {
 	text-align: right;
 }
 
-.schema-metadata-buttons {
+.tab-buttons {
 	margin-bottom: 10px;
 	padding: 0 4px;
 }
