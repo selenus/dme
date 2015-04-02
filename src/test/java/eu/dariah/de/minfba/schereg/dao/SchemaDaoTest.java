@@ -14,13 +14,13 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:orm-test-context.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"classpath:orm-test-context.xml"})
 public class SchemaDaoTest {
 	
 	@Autowired private SchemaDao schemaDao;
 	
-	@Test
+	//@Test
 	public void testCreateSchema() {
 		XmlSchema s = new XmlSchema();
 		s.setExternalLabel("lblExt");

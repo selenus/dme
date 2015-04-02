@@ -14,7 +14,7 @@ public class SchemaImporterTest {
 	private String rootElementName = "dc";
 	
 	
-	@Test
+	//@Test
 	public void testXmlSchemaImport() throws ClassNotFoundException, InstantiationException, IllegalAccessException, ClassCastException {
 		SchemaImporter si = new XmlSchemaImporter();
 		si.setSchemaFilePath(oaiDcSchemaPath);
