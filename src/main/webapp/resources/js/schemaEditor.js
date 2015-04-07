@@ -356,7 +356,7 @@ SchemaEditor.prototype.innerEditTerminal = function(id) {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		//additionalModalClasses: "wide-modal",               
-		completeCallback: function() {_this.refresh();}
+		completeCallback: function() { _this.updateTerminalList(); }
 	});
 		
 	modalFormHandler.show(form_identifier);
@@ -382,7 +382,24 @@ SchemaEditor.prototype.removeTerminal = function() {
 };
 
 SchemaEditor.prototype.updateTerminalList = function() {
-	
+	var _this = this;
+	$(".form-btn-submit").prop("disabled", "disabled");
+		
+	$.ajax({
+	    url: _this.pathname + "/async/getTerminals",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	$("#terminalId option.schema-terminal").remove();
+	    	for (var i=0; i<data.length; i++) {
+	    		$("#terminalId").append("<option class='schema-terminal' value='" + data[i].id + "'>" + 
+	    				data[i].name + " (" + data[i].namespace + ")" + 
+	    			"</option>");
+	    	}
+	    	
+	    	$(".form-btn-submit").removeProp("disabled");
+	    }
+	});
 };
 
 

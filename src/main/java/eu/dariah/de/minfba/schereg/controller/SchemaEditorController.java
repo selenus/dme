@@ -32,7 +32,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo.MessagePojo;
@@ -178,6 +180,15 @@ public class SchemaEditorController extends BaseTranslationController implements
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
 	public @ResponseBody Element getHierarchy(@PathVariable String schemaId, Model model, Locale locale) {
 		return elementService.findRootBySchemaId(schemaId, true);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")
+	public @ResponseBody List<? extends Terminal> getTerminals(@PathVariable String schemaId) {
+		Schema s = schemaService.findSchemaById(schemaId);
+		if (s instanceof XmlSchema) {	
+			return ((XmlSchema)s).getTerminals();
+		}
+		return null;
 	}
 		
 	public static String humanReadableByteCount(long bytes, boolean si) {

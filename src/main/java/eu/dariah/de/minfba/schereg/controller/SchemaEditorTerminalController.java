@@ -1,11 +1,8 @@
 package eu.dariah.de.minfba.schereg.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 import javax.validation.Valid;
 
 import org.bson.types.ObjectId;
@@ -18,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
@@ -39,6 +34,8 @@ public class SchemaEditorTerminalController extends BaseTranslationController {
 	public SchemaEditorTerminalController() {
 		super("schemaEditor");
 	}
+	
+	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
 	public @ResponseBody Terminal removeElement(@PathVariable String schemaId, @PathVariable String terminalId) {

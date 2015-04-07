@@ -31,7 +31,7 @@
 				<sf:select path="terminalId" class="form-control">
 					<sf:option value="" label="${assign_terminal}"  />
 					<sf:option value="-1" label="_________________" disabled="true"  />
-   					<sf:options items="${availableTerminals}" />
+   					<sf:options cssClass="schema-terminal" items="${availableTerminals}" />
 				</sf:select>
 				<sf:errors path="terminalId" cssClass="error" />
 				<div class="clearfix tab-buttons">
