@@ -181,7 +181,7 @@ public class ElementServiceImpl implements ElementService {
 	}
 
 	@Override
-	public Element createAndAppendElement(String schemaId, String parentElementId) {
+	public Element createAndAppendElement(String schemaId, String parentElementId, String label) {
 		Element eRoot = findRootBySchemaId(schemaId);
 		Element eParent = elementDao.findById(parentElementId);
 		Reference rRoot = referenceDao.findById(eRoot.getId());
@@ -189,10 +189,17 @@ public class ElementServiceImpl implements ElementService {
 		
 		Element eNew = null;
 		if (rParent!=null) {
-			if (eParent instanceof Nonterminal) {
-				eNew = new Nonterminal(schemaId, "new Nonterminal...");
+			
+			if (label==null || label.isEmpty()) {
+				label="???";
 			} else {
-				eNew = new Label(schemaId, "new Label...");
+				label = label.substring(0,1).toUpperCase() + label.substring(1);
+			}
+			
+			if (eParent instanceof Nonterminal) {
+				eNew = new Nonterminal(schemaId, label);
+			} else {
+				eNew = new Label(schemaId, label);
 			}
 			elementDao.save(eNew);
 			

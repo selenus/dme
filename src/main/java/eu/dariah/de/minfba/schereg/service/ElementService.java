@@ -18,7 +18,7 @@ public interface ElementService {
 	public Reference saveElementHierarchy(Element e);
 	public Element saveElement(Element e);
 	
-	public Element createAndAppendElement(String schemaId, String parentElementId);
+	public Element createAndAppendElement(String schemaId, String parentElementId, String label);
 	public Element removeElement(String schemaId, String elementId);
 	public Terminal removeTerminal(String schemaId, String terminalId);
 }

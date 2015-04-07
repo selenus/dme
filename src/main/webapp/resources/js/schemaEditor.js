@@ -42,6 +42,7 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
 	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_detete",
+	                              "~eu.dariah.de.minfba.schereg.dialog.element_label",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.head",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.body",
 	                              "~eu.dariah.de.minfba.schereg.model.element.name",
@@ -301,20 +302,25 @@ SchemaEditor.prototype.editElement = function() {
 
 SchemaEditor.prototype.addElement = function() {
 	var _this = this;
-	$.ajax({
-	    url: _this.pathname + "/element/" + this.graph.selectedItems[0].id + "/async/createSubelement",
-	    type: "GET",
-	    dataType: "json",
-	    success: function(data) {
-	    	var e = _this.schema.addElement(editorTemplate, data.id, data.name, _this.graph.selectedItems[0], data.simpleType);
-	    	
-	    	// TODO Expand if not expanded
-	    	if (_this.graph.selectedItems[0].isExpanded) {
-	    		e.isVisible = true;
-	    	}
-	    	_this.graph.selectedItems[0].addChild(e);
-	    	_this.graph.update();
-	    }
+	bootbox.prompt(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.element_label"), function(result) {                
+		if (result!=null) {                                             
+			$.ajax({
+			    url: _this.pathname + "/element/" + _this.graph.selectedItems[0].id + "/async/createSubelement",
+			    type: "POST",
+			    data: { label : result },
+			    dataType: "json",
+			    success: function(data) {
+			    	var e = _this.schema.addElement(editorTemplate, data.id, data.name, _this.graph.selectedItems[0], data.simpleType);
+			    	
+			    	// TODO Expand if not expanded
+			    	if (_this.graph.selectedItems[0].isExpanded) {
+			    		e.isVisible = true;
+			    	}
+			    	_this.graph.selectedItems[0].addChild(e);
+			    	_this.graph.update();
+			    }
+			});
+		}
 	});
 };
 

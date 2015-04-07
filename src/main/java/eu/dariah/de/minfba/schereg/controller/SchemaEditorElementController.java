@@ -12,8 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
@@ -57,9 +59,9 @@ public class SchemaEditorElementController extends BaseTranslationController {
 		return "schemaEditor/form/element/edit_nonterminal";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/createSubelement")
-	public @ResponseBody Element createSubelement(@PathVariable String schemaId, @PathVariable String elementId) {
-		return elementService.createAndAppendElement(schemaId, elementId);
+	@RequestMapping(method = RequestMethod.POST, value = "/async/createSubelement")
+	public @ResponseBody Element createSubelement(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam String label) {		
+		return elementService.createAndAppendElement(schemaId, elementId, label);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
