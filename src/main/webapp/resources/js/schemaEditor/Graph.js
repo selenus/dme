@@ -225,7 +225,7 @@ Graph.prototype.selectElement = function(element) {
 	
 	element.select();
 	
-	this.handleElementSelected();
+	this.handleElementSelected(element);
 };
 	
 Graph.prototype.pointerDown = function()

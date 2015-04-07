@@ -81,8 +81,98 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	_this.processElementHierarchy(data);
+	    	_this.graph.update();
 	    }
 	});
+};
+
+
+SchemaEditor.prototype.reload = function() {
+	var rootX = schemaEditor.schema.root.getRectangle().x;
+	var rootY = schemaEditor.schema.root.getRectangle().y;
+	
+	var expandedItemIds = this.getExpanded(this.schema.root);
+	
+	var selectedItemIds = [];
+	for (var i=0; i<this.graph.selectedItems.length; i++) {
+		selectedItemIds.push(this.graph.selectedItems[i].id);
+		this.graph.deselectAll(new SelectionUndoUnit());
+		this.graph.selectedItems = [];
+		
+		var deselectionEvent = document.createEvent("Event");
+		deselectionEvent.initEvent("deselectionEvent", true, true);
+		document.dispatchEvent(deselectionEvent);
+	}
+	
+	var _this = this;
+	$.ajax({
+	    url: this.pathname + "/async/getHierarchy",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	_this.processElementHierarchy(data);
+	    	
+	    	_this.schema.root.setRectangle(new Rectangle(
+	    			rootX, rootY,
+	    			_this.schema.root.getRectangle().width,
+	    			_this.schema.root.getRectangle().height
+	    	));
+	    	
+	    	if (selectedItemIds.contains(schemaEditor.schema.root.id)) {
+	    		_this.graph.selectElement(schemaEditor.schema.root);
+	    	}	    		
+	    	_this.selectChildren(schemaEditor.schema.root.children, selectedItemIds);
+	    	
+	    	if (expandedItemIds.contains(schemaEditor.schema.root.id)) {
+	    		schemaEditor.schema.root.setExpanded(true);
+	    	}	    		
+	    	_this.expandChildren(schemaEditor.schema.root.children, expandedItemIds);
+	    		    	
+	    	_this.graph.update();
+	    }
+	});	
+};
+
+SchemaEditor.prototype.getExpanded = function(parent) {
+	var expandedIds = [];
+	if (parent.isExpanded) {
+		expandedIds.push(parent.id);
+		if (parent.children!=null) {
+			for (var i=0; i<parent.children.length; i++) {
+				var expandedSubIds = this.getExpanded(parent.children[i]); 
+				if (expandedSubIds.length > 0) {
+					for (var j=0; j<expandedSubIds.length; j++) {
+						expandedIds.push(expandedSubIds[j]);
+					}
+				}
+			}
+		}
+	}
+	return expandedIds;
+};
+
+SchemaEditor.prototype.selectChildren = function(children, ids) {
+	var _this = schemaEditor;
+	if (children!=null) {
+		for (var i=0; i<children.length; i++) {
+			if (ids.contains(children[i].id)) {
+	    		_this.graph.selectElement(children[i]);
+	    	}	    		
+	    	_this.selectChildren(children[i].children, ids);
+		}
+	}
+};
+
+SchemaEditor.prototype.expandChildren = function(children, ids) {
+	var _this = schemaEditor;
+	if (children!=null) {
+		for (var i=0; i<children.length; i++) {
+			if (ids.contains(children[i].id)) {
+	    		children[i].setExpanded(true);
+	    	}	    		
+	    	_this.expandChildren(children[i].children, ids);
+		}
+	}
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
@@ -90,7 +180,6 @@ SchemaEditor.prototype.processElementHierarchy = function(data) {
 	this.generateTree(this.schema, parent, data.childNonterminals, null, data.functions, true);
 	
 	this.schema.root.setExpanded(true);
-	this.graph.update();	
 };
 
 SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, functions,  isSource) {
@@ -294,7 +383,7 @@ SchemaEditor.prototype.editElement = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		//additionalModalClasses: "wide-modal",               
-		completeCallback: function() {_this.refresh();}
+		completeCallback: function() {_this.reload();}
 	});
 		
 	modalFormHandler.show(form_identifier);
@@ -421,7 +510,7 @@ SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		completeCallback: function() {_this.refresh();}
+		completeCallback: function() {_this.reload();}
 	});
 	
 	modalFormHandler.fileUploadElements.push({
