@@ -212,7 +212,7 @@ Area.prototype.addElement = function(template, id, label, parent, typeInfo, icon
 	element.invalidate();
 	element.typeInfo = typeInfo;
 	element.icon = icon;
-	
+		
 	if (parent != null) {
 		this.addHierarchyConnection(parent.getConnector("children"), element.getConnector("parent"));
 	}

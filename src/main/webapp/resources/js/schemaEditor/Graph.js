@@ -198,6 +198,36 @@ Graph.prototype.touchMove = function(e)
 	}
 };
 
+Graph.prototype.selectElement = function(element) {
+	if (element != this.activeObject) {
+		if (this.activeObject !== null) {
+			this.activeObject.hover = false;
+		}
+		this.activeObject = element;
+		if (this.activeObject !== null) {
+			this.activeObject.hover = true;
+		}
+	}
+	
+	this.undoService.begin();
+	var selectionUndoUnit = new SelectionUndoUnit();
+	if (!this.shiftKey)
+	{
+		this.deselectAll(selectionUndoUnit);
+		while (this.selectedItems.length > 0) {
+			this.selectedItems.remove(this.selectedItems[0]);
+		}
+	}
+	selectionUndoUnit.select(this.activeObject);
+	this.selectedItems.push(this.activeObject);
+	this.undoService.add(selectionUndoUnit);
+	this.undoService.commit();
+	
+	element.select();
+	
+	this.handleElementSelected();
+};
+	
 Graph.prototype.pointerDown = function()
 {
 	var point = this.pointerPosition;
@@ -251,25 +281,15 @@ Graph.prototype.pointerDown = function()
 				selectionEvent.output = this.activeObject.to.owner.id;
 				document.dispatchEvent(selectionEvent);
 			} else if (this.activeObject instanceof Element) {
-				var selectionEvent = document.createEvent("Event");
-				selectionEvent.initEvent("selectionEvent", true, true);
-				selectionEvent.elementType = "Function";
-				if (this.activeObject.template instanceof FunctionTemplate) {
-					if (this.activeObject.typeInfo === "fDesc") {
-						selectionEvent.elementSubtype = "DescriptiveFunction";
-					} else {
-						selectionEvent.elementSubtype = "OutputFunction";
-					}				
+				if (!this.activeObject.selected) {
+					this.handleElementSelected(this.activeObject);
 				} else {
-					selectionEvent.elementType = "Element";
-					selectionEvent.elementSubtype = this.activeObject.typeInfo;				
+					this.handleElementDeselected();
 				}
-				selectionEvent.elementId = this.activeObject.id;
-				document.dispatchEvent(selectionEvent);
+			} else if (this.activeObject instanceof Expander) {
+				// Irrelevant for selection
 			} else {
-				var deselectionEvent = document.createEvent("Event");
-				deselectionEvent.initEvent("deselectionEvent", true, true);
-				document.dispatchEvent(deselectionEvent);
+				this.handleElementDeselected();
 			}
 			
 			// start connection
@@ -334,6 +354,30 @@ Graph.prototype.pointerDown = function()
 
 	this.update();
 	this.updateMouseCursor();
+};
+
+Graph.prototype.handleElementDeselected = function() {
+	var deselectionEvent = document.createEvent("Event");
+	deselectionEvent.initEvent("deselectionEvent", true, true);
+	document.dispatchEvent(deselectionEvent);
+};
+
+Graph.prototype.handleElementSelected = function(element) {
+	var selectionEvent = document.createEvent("Event");
+	selectionEvent.initEvent("selectionEvent", true, true);
+	selectionEvent.elementType = "Function";
+	if (element.template instanceof FunctionTemplate) {
+		if (element.typeInfo === "fDesc") {
+			selectionEvent.elementSubtype = "DescriptiveFunction";
+		} else {
+			selectionEvent.elementSubtype = "OutputFunction";
+		}				
+	} else {
+		selectionEvent.elementType = "Element";
+		selectionEvent.elementSubtype = element.typeInfo;				
+	}
+	selectionEvent.elementId = element.id;
+	document.dispatchEvent(selectionEvent);
 };
 
 Graph.prototype.pointerUp = function()

@@ -312,11 +312,12 @@ SchemaEditor.prototype.addElement = function() {
 			    success: function(data) {
 			    	var e = _this.schema.addElement(editorTemplate, data.id, data.name, _this.graph.selectedItems[0], data.simpleType);
 			    	
-			    	// TODO Expand if not expanded
-			    	if (_this.graph.selectedItems[0].isExpanded) {
-			    		e.isVisible = true;
-			    	}
 			    	_this.graph.selectedItems[0].addChild(e);
+			    	_this.graph.selectedItems[0].deselect();
+			    	_this.graph.selectedItems[0].setExpanded(true);
+			    	
+			    	_this.graph.selectElement(e);
+			    	
 			    	_this.graph.update();
 			    }
 			});
