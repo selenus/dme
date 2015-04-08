@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller;
+package eu.dariah.de.minfba.schereg.controller.editor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,11 @@ import eu.dariah.de.minfba.schereg.service.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/terminal/{terminalId}")
-public class SchemaEditorTerminalController extends BaseTranslationController {
+public class TerminalEditorController extends BaseTranslationController {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaService schemaService;
 	
-	public SchemaEditorTerminalController() {
+	public TerminalEditorController() {
 		super("schemaEditor");
 	}
 	

@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller;
+package eu.dariah.de.minfba.schereg.controller.editor;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
@@ -27,15 +28,17 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.service.ElementService;
+import eu.dariah.de.minfba.schereg.service.GrammarService;
 import eu.dariah.de.minfba.schereg.service.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/element/{elementId}")
-public class SchemaEditorElementController extends BaseTranslationController {
+public class ElementEditorController extends BaseTranslationController {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaService schemaService;
+	@Autowired private GrammarService grammarService;
 	
-	public SchemaEditorElementController() {
+	public ElementEditorController() {
 		super("schemaEditor");
 	}
 	
@@ -62,6 +65,11 @@ public class SchemaEditorElementController extends BaseTranslationController {
 	@RequestMapping(method = RequestMethod.POST, value = "/async/createSubelement")
 	public @ResponseBody Element createSubelement(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam String label) {		
 		return elementService.createAndAppendElement(schemaId, elementId, label);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/createGrammar")
+	public @ResponseBody DescriptionGrammar createGrammar(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam String label) {		
+		return grammarService.createAndAppendGrammar(schemaId, elementId, label);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")

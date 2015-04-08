@@ -5,29 +5,33 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
-
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.dao.ElementDao;
-import eu.dariah.de.minfba.schereg.dao.ReferenceDao;
+import eu.dariah.de.minfba.schereg.dao.GrammarDao;
 import eu.dariah.de.minfba.schereg.dao.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
 @Service
-public class ElementServiceImpl implements ElementService {
+public class ElementServiceImpl extends BaseReferenceServiceImpl implements ElementService {
+	private static Logger logger = LoggerFactory.getLogger(ElementServiceImpl.class);
+	
 	@Autowired private ElementDao elementDao;
 	@Autowired private SchemaDao schemaDao;
-	@Autowired private ReferenceDao referenceDao;
+	
+	@Autowired private GrammarDao grammarDao;
 	
 	@Override
 	public Element findRootBySchemaId(String schemaId) {
@@ -55,18 +59,19 @@ public class ElementServiceImpl implements ElementService {
 			return root;
 		}
 		
-		List<Element> elements = elementDao.findBySchemaId(root.getSchemaId());
-		Map<String, Element> elementMap = new HashMap<String, Element>(elements.size()); 
-		for (Element e : elements) {
+		List<Identifiable> elements = new ArrayList<Identifiable>();
+		elements.addAll(elementDao.findBySchemaId(root.getSchemaId()));
+		elements.addAll(grammarDao.findBySchemaId(root.getSchemaId()));
+		
+		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
+		for (Identifiable e : elements) {
 			elementMap.put(e.getId(), e);
 		}
-		
-		Reference r = referenceDao.findById(rootElementId);
-		return fillElement(r, elementMap);
+		return (Element)fillElement(findRootReferenceById(rootElementId), elementMap);
 	}
 	
-	public Element fillElement(Reference r, Map<String, Element> elementMap) {
-		Element e = elementMap.get(r.getId());
+	public Identifiable fillElement(Reference r, Map<String, Identifiable> elementMap) {
+		Identifiable e = elementMap.get(r.getId());
 		
 		if (r.getChildReferences()!=null) {
 			if (e instanceof Nonterminal && r.getChildReferences().containsKey(Nonterminal.class.getName())) {
@@ -80,6 +85,14 @@ public class ElementServiceImpl implements ElementService {
 				l.setSubLabels(new ArrayList<Label>());
 				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
 					l.getSubLabels().add((Label)fillElement(rChild, elementMap));
+				}	
+			}
+			if ( (e instanceof Nonterminal || e instanceof Label) && 
+					r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
+				Element elem = (Element)e;
+				elem.setFunctions(new ArrayList<DescriptionGrammarImpl>());
+				for (Reference rChild : r.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
+					elem.getFunctions().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
 				}	
 			}
 		}
@@ -109,7 +122,9 @@ public class ElementServiceImpl implements ElementService {
 
 	@Override
 	public Reference saveElementHierarchy(Element e) {
-		return referenceDao.save(this.saveElementsInHierarchy(e));
+		Reference rootReference = this.saveElementsInHierarchy(e);
+		saveRootReference(rootReference);
+		return rootReference;
 	}
 	
 	@Override
@@ -182,140 +197,51 @@ public class ElementServiceImpl implements ElementService {
 
 	@Override
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label) {
-		Element eRoot = findRootBySchemaId(schemaId);
-		Element eParent = elementDao.findById(parentElementId);
-		Reference rRoot = referenceDao.findById(eRoot.getId());
+		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
+		Element eParent = elementDao.findById(parentElementId);
 		
-		Element eNew = null;
+		Element element = null;
 		if (rParent!=null) {
-			
-			if (label==null || label.isEmpty()) {
-				label="???";
-			} else {
-				label = label.substring(0,1).toUpperCase() + label.substring(1);
-			}
-			
 			if (eParent instanceof Nonterminal) {
-				eNew = new Nonterminal(schemaId, label);
+				element = new Nonterminal(schemaId, this.getNonterminalLabel(label));
 			} else {
-				eNew = new Label(schemaId, label);
+				element = new Label(schemaId, this.getNonterminalLabel(label));
 			}
-			elementDao.save(eNew);
+			elementDao.save(element);
 			
-			if (rParent.getChildReferences()==null) {
-				rParent.setChildReferences(new HashMap<String, Reference[]>());
-			}
-			if (!rParent.getChildReferences().containsKey(eNew.getClass().getName())) {
-				rParent.getChildReferences().put(eNew.getClass().getName(), new Reference[]{ new Reference(eNew.getId()) });
-			} else {
-				Reference[] subRefs = rParent.getChildReferences().get(eNew.getClass().getName());
-				Reference[] newRefs = new Reference[subRefs.length + 1];
-				int i = 0;
-				while (i<subRefs.length) {
-					newRefs[i] = subRefs[i++];
-				}
-				newRefs[i] = new Reference(eNew.getId());
-				rParent.getChildReferences().put(eNew.getClass().getName(), newRefs);
-			}
-			
-			referenceDao.save(rRoot);
+			addChildReference(rParent, element);
+			saveRootReference(rRoot);
 		}
-		return eNew;
+		return element;
+	}
+	
+	
+	
+	
+	
+		
+	private String getNonterminalLabel(String label) {
+		if (label==null || label.trim().isEmpty()) {
+			return "???";
+		} else {
+			return label.substring(0,1).toUpperCase() + label.substring(1);
+		}
 	}
 	
 	@Override
 	public Element removeElement(String schemaId, String elementId) {
 		Element eRoot = findRootBySchemaId(schemaId);
-		Reference rRoot = referenceDao.findById(eRoot.getId());
 		Element eRemove = elementDao.findById(elementId);
-		
-		Reference rRemove = removeSubreference(rRoot, elementId); 
-		if (rRemove != null) {
-			// remove the selected element
-			elementDao.delete(elementId);
-			
-			// save the modified reference tree
-			referenceDao.save(rRoot);
-			
-			// based on the removed reference, find all subordinate elements and remove them
-			Map<String, Reference[]> removeMap = new HashMap<String, Reference[]>();
-			getAllSubordinateReferences(removeMap, rRemove);
-			for (String type : removeMap.keySet()) {
-				if (type.equals(Nonterminal.class.getName()) || type.equals(Label.class.getName())) {
-					for (Reference rDel : removeMap.get(type)) {
-						elementDao.delete(rDel.getId());
-					}
-				}
-			}			
-		}
-		return eRemove;
-	}
-	
-	public void getAllSubordinateReferences(Map<String, Reference[]> result, Reference reference) {
-		if (reference.getChildReferences()!=null) {
-			for (String type : reference.getChildReferences().keySet()) {
-				if (!result.containsKey(type)) {
-					result.put(type, reference.getChildReferences().get(type));
-				} else {
-					result.put(type, ArrayUtils.addAll(result.get(type), reference.getChildReferences().get(type)));
-				}
-				for (Reference rSub : reference.getChildReferences().get(type)) {
-					getAllSubordinateReferences(result, rSub);
-				}
-			}
-		}
-	}
-		
-	private Reference removeSubreference(Reference parent, String childId) {
-		Reference rRemove = null;
-		if (parent.getChildReferences()!=null) {
-			for (String subelemClass : parent.getChildReferences().keySet()) {
-				Reference[] subelem = parent.getChildReferences().get(subelemClass);
-				if (subelem != null) {
-					for (int i=0; i<subelem.length; i++) {
-						if (subelem[i].getId().equals(childId)) {
-							if (subelem.length==1) {
-								parent.getChildReferences().remove(subelemClass);
-							} else {
-								Reference[] newSubelem = new Reference[subelem.length-1];
-								int j = 0;
-								for (Reference rCopy : subelem) {
-									if (!rCopy.equals(subelem[i])) {
-										newSubelem[j++] = rCopy;
-									}
-								}
-								parent.getChildReferences().put(subelemClass, newSubelem);
-							}
-							return subelem[i];
-						} else {
-							rRemove = this.removeSubreference(subelem[i], childId);
-							if (rRemove!=null) {
-								return rRemove;
-							}
-						}
-					}
-				}
-			}
-		}
-		return rRemove;
-	}
-	
-	private Reference findSubreference(Reference tree, String id) {
-		if (tree.getId().equals(id)) {
-			return tree;
-		} else if (tree.getChildReferences()!=null) {
-			Reference match;
-			for (String subelemClass : tree.getChildReferences().keySet()) {
-				Reference[] subelem = tree.getChildReferences().get(subelemClass);
-				if (subelem != null) {
-					for (Reference rSub : subelem) {
-						match = this.findSubreference(rSub, id);
-						if (match!=null) {
-							return match;
-						}
-					}
-				}
+		if (eRemove != null) {
+			try {
+				this.removeReference(eRoot.getId(), elementId);
+				elementDao.delete(elementId);
+				return eRemove;
+			} catch (Exception e) {
+				logger.warn("An error occurred while deleting an element or its references. "
+						+ "The owning schema {} might be in an inconsistent state", schemaId, e);
 			}
 		}
 		return null;

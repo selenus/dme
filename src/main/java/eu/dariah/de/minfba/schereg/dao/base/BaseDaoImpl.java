@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.dao.base;
 
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,10 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 	
+	public MongoTemplate getMongoTemplate() {
+		return mongoTemplate;
+	}
+
 	public BaseDaoImpl(Class<T> clazz) {
 		this.clazz = clazz;
 	}
@@ -129,5 +134,7 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 		return clazz.getSimpleName();
 	}
 
-
+	public static boolean isValidObjectId(String id) {
+		return (id!=null && ObjectId.isValid(id)); 
+	}
 }

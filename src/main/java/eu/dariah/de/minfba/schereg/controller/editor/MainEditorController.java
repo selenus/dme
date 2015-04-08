@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller;
+package eu.dariah.de.minfba.schereg.controller.editor;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -45,7 +45,7 @@ import eu.dariah.de.minfba.schereg.service.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
-public class SchemaEditorController extends BaseTranslationController implements InitializingBean {
+public class MainEditorController extends BaseTranslationController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
@@ -55,7 +55,7 @@ public class SchemaEditorController extends BaseTranslationController implements
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaImportWorker importWorker;
 	
-	public SchemaEditorController() {
+	public MainEditorController() {
 		super("schemaEditor");
 	}
 	

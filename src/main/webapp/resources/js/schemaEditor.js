@@ -176,7 +176,7 @@ SchemaEditor.prototype.expandChildren = function(children, ids) {
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, data.name, "Nonterminal", null);
+	var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, data.name, "element", null);
 	this.generateTree(this.schema, parent, data.childNonterminals, null, data.functions, true);
 	
 	this.schema.root.setExpanded(true);
@@ -190,7 +190,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
 				icon = this.warningIcon;
 			}
-			var e = this.schema.addElement(editorTemplate, nonterminals[i].id, nonterminals[i].name, parent, "Nonterminal", icon);
+			var e = this.schema.addElement(editorTemplate, nonterminals[i].id, nonterminals[i].name, parent, "element", icon);
 			if (parent != null) {
 				parent.addChild(e);
 			}
@@ -199,17 +199,17 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (functions != null && functions instanceof Array) {
 		for (var i=0; i<functions.length; i++) {
-			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, "fDesc", parent, "fDesc", null);
+			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, "g:", parent, "grammar", null);
 			parent.addChild(fDesc);
 			if (functions[i].dataTransformationFunctions != null && functions[i].dataTransformationFunctions instanceof Array) {
 				for (var j=0; j<functions[i].dataTransformationFunctions.length; j++) {
-					var fOut = this.schema.addElement(functionTemplate, functions[i].dataTransformationFunctions[j].id, "fOut", fDesc, "fOut", null);
+					var fOut = this.schema.addElement(functionTemplate, functions[i].dataTransformationFunctions[j].id, "f:", fDesc, "function", null);
 					fDesc.addChild(fOut);
 					if (functions[i].dataTransformationFunctions[j].outputElements != null && functions[i].dataTransformationFunctions[j].outputElements instanceof Array) {
 						for (var k=0; k<functions[i].dataTransformationFunctions[j].outputElements.length; k++) {
 							var e = this.schema.addElement(editorRootTemplate, 
 									functions[i].dataTransformationFunctions[j].outputElements[k].id, 
-									functions[i].dataTransformationFunctions[j].outputElements[k].name, fOut, "Label", null);
+									functions[i].dataTransformationFunctions[j].outputElements[k].name, fOut, "element", null);
 							fOut.addChild(e);
 							this.generateTree(area, e, 
 									functions[i].dataTransformationFunctions[j].outputElements[k].childNonterminals,
@@ -223,7 +223,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (subelements!=null && subelements instanceof Array) {
 		for (var i=0; i<subelements.length; i++) {
-			var e = this.schema.addElement(editorRootTemplate, subelements[i].id, subelements[i].name, parent, "Label", null);
+			var e = this.schema.addElement(editorRootTemplate, subelements[i].id, subelements[i].name, parent, "element", null);
 			if (parent != null) {
 				parent.addChild(e);
 			}
@@ -256,24 +256,19 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	
 	// TODO Show details in context response
 	var actions = [];
-	if (e.elementSubtype === "Nonterminal") {
+	if (e.elementType === "element") {
 		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
 		actions[1] = [0, "addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
 		actions[2] = [1, "editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 		actions[3] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 		_this.getElement(e.elementId);	
-	} else if (e.elementSubtype === "DescriptiveFunction") {
+	} else if (e.elementType === "grammar") {
 		actions[0] = [0, "addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
 		actions[1] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
-	} else if (e.elementSubtype === "OutputFunction") {
+	} else if (e.elementType === "function") {
 		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
 		actions[1] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];	
 		_this.getOutputFunctionInfo(e.elementId);
-	} else if (e.elementSubtype === "Label") {
-		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
-		actions[1] = [0, "addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
-		actions[2] = [1, "editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[3] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 	}
 	
 	var button;
@@ -389,6 +384,24 @@ SchemaEditor.prototype.editElement = function() {
 	modalFormHandler.show(form_identifier);
 };
 
+SchemaEditor.prototype.addDescription = function() {
+	var _this = this;
+	bootbox.prompt(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.element_label"), function(result) {                
+		if (result!=null) {                                             
+			$.ajax({
+			    url: _this.pathname + "/element/" + _this.graph.selectedItems[0].id + "/async/createGrammar",
+			    type: "POST",
+			    data: { label : result },
+			    dataType: "json",
+			    success: function(data) {
+			    	_this.graph.selectedItems[0].setExpanded(true);
+			    	_this.reload();
+			    }
+			});
+		}
+	});
+};
+
 SchemaEditor.prototype.addElement = function() {
 	var _this = this;
 	bootbox.prompt(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.element_label"), function(result) {                
@@ -416,10 +429,12 @@ SchemaEditor.prototype.addElement = function() {
 
 SchemaEditor.prototype.removeElement = function() { 
 	var _this = this;
+	
 	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_detete"), this.graph.selectedItems[0].id), function(result) {
 		if(result) {
 			$.ajax({
-			    url: _this.pathname + "/element/" + _this.graph.selectedItems[0].id + "/async/remove",
+			    url: _this.pathname + "/" + _this.graph.selectedItems[0].typeInfo + "/" 
+			    		+ _this.graph.selectedItems[0].id + "/async/remove",
 			    type: "GET",
 			    dataType: "json",
 			    success: function(data) {

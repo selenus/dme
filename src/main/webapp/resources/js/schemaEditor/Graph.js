@@ -365,17 +365,7 @@ Graph.prototype.handleElementDeselected = function() {
 Graph.prototype.handleElementSelected = function(element) {
 	var selectionEvent = document.createEvent("Event");
 	selectionEvent.initEvent("selectionEvent", true, true);
-	selectionEvent.elementType = "Function";
-	if (element.template instanceof FunctionTemplate) {
-		if (element.typeInfo === "fDesc") {
-			selectionEvent.elementSubtype = "DescriptiveFunction";
-		} else {
-			selectionEvent.elementSubtype = "OutputFunction";
-		}				
-	} else {
-		selectionEvent.elementType = "Element";
-		selectionEvent.elementSubtype = element.typeInfo;				
-	}
+	selectionEvent.elementType = element.typeInfo;				
 	selectionEvent.elementId = element.id;
 	document.dispatchEvent(selectionEvent);
 };
