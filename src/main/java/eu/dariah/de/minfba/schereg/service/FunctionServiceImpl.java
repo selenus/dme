@@ -1,11 +1,16 @@
 package eu.dariah.de.minfba.schereg.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eu.dariah.de.minfba.core.metamodel.BaseElement;
+import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -53,5 +58,23 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public TransformationFunction findById(String functionId) {
+		return functionDao.findById(functionId);
+	}
+
+	@Override
+	public void saveFunction(TransformationFunctionImpl function) {
+		List<BaseElement> extElements = function.getExternalInputElements();
+		function.setExternalInputElements(null);
+		
+		List<Label> outputElements = function.getOutputElements();
+		function.setOutputElements(null);
+		
+		functionDao.save(function);
+		function.setExternalInputElements(extElements);
+		function.setOutputElements(outputElements);
 	}
 }

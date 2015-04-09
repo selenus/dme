@@ -1,10 +1,15 @@
 package eu.dariah.de.minfba.schereg.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -50,5 +55,18 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public DescriptionGrammar findById(String grammarId) {
+		return grammarDao.findById(grammarId);
+	}
+
+	@Override
+	public void saveGrammar(DescriptionGrammarImpl grammar) {
+		List<TransformationFunctionImpl> transformationFunctions = grammar.getTransformationFunctions();
+		grammar.setTransformationFunctions(null);
+		grammarDao.save(grammar);
+		grammar.setTransformationFunctions(transformationFunctions);
 	}
 }

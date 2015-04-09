@@ -29,7 +29,7 @@
 			<input type="hidden" id="schema-id" value="${schema.id}" />
 			<div id="main-content">
 				<div class="row">
-					<div class="col-md-6 col-lg-7">
+					<div class="col-md-6">
 						<div class="clearfix">
 							<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> <small>${schema.label}</small>&nbsp;</h2>		
 							<div class="pull-left schema-editor-buttons">
@@ -54,7 +54,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-6 col-lg-5 details-container schema-editor-context" role="tabpanel">
+					<div class="col-md-6 details-container schema-editor-context" role="tabpanel">
 						<ul class="nav nav-tabs" role="tablist">
 							<li role="presentation" id="tab-element-activity" class="active"><a href="#element-activity" aria-controls="element-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.link.activity" /></a></li>
 							<li role="presentation" id="tab-element-metadata" class="hide"><a href="#element-metadata" aria-controls="element-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.model.element.element" /></a></li>

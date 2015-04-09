@@ -1,7 +1,6 @@
 package eu.dariah.de.minfba.schereg.controller.editor;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -12,12 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
@@ -42,24 +41,28 @@ public class ElementEditorController extends BaseTranslationController {
 		super("schemaEditor");
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/form/nonterminal")
-	public String getElement(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
-		model.addAttribute("element", elementService.findById(elementId));
+	@RequestMapping(method = RequestMethod.GET, value = "/form/element")
+	public String getElementForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
+		Element elem = elementService.findById(elementId);
+		model.addAttribute("element", elem);
 		
-		Schema s = schemaService.findSchemaById(schemaId);
-		Map<String,String> availableTerminals = new HashMap<String,String>();
-		
-		if (s instanceof XmlSchema) {	
-			if (((XmlSchema)s).getTerminals()!=null) {
-				for (XmlTerminal t : ((XmlSchema)s).getTerminals()) {
-					availableTerminals.put(t.getId(), t.getName() + " (" + t.getNamespace() + ")");
+		if (elem instanceof Nonterminal) {
+			Schema s = schemaService.findSchemaById(schemaId);
+			Map<String,String> availableTerminals = new HashMap<String,String>();
+			if (s instanceof XmlSchema) {	
+				if (((XmlSchema)s).getTerminals()!=null) {
+					for (XmlTerminal t : ((XmlSchema)s).getTerminals()) {
+						availableTerminals.put(t.getId(), t.getName() + " (" + t.getNamespace() + ")");
+					}
 				}
 			}
+			model.addAttribute("availableTerminals", availableTerminals);
+			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");
+			return "schemaEditor/form/element/edit_nonterminal";
+		} else {
+			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveLabel");
+			return "schemaEditor/form/element/edit_label";
 		}
-
-		model.addAttribute("availableTerminals", availableTerminals);
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");
-		return "schemaEditor/form/element/edit_nonterminal";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/create/element")
@@ -77,15 +80,24 @@ public class ElementEditorController extends BaseTranslationController {
 		return elementService.findById(elementId);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveLabel")
+	public @ResponseBody ModelActionPojo saveLabel(@Valid Label element, BindingResult bindingResult) {
+		return saveElement(element, bindingResult);
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNonterminal")
 	public @ResponseBody ModelActionPojo saveNonterminal(@Valid Nonterminal element, BindingResult bindingResult) {
+		return saveElement(element, bindingResult);
+	}
+	
+	private ModelActionPojo saveElement(Element element, BindingResult bindingResult) {
 		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
 		if (element.getId().isEmpty()) {
 			element.setId(null);
 		}
 		elementService.saveElement(element);
 		return result;
-	}
+	} 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminal")
 	public @ResponseBody Terminal getTerminal(@PathVariable String schemaId, @PathVariable String elementId) throws Exception {
