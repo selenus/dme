@@ -1,10 +1,9 @@
-var Element = function(template, point, id, parent)
+var Element = function(owner, template, point, id, parent, label, icon)
 {
 	this.id = id;
 	this.template = template;
-	this.rectangle = new Rectangle(point.x, point.y, template.defaultWidth, template.defaultHeight);
-	this.content = template.defaultContent;
-	this.owner = null;
+	this.content = label;
+	this.owner = owner;
 	this.hover = false;
 	this.selected = false;
 	this.tracker = null;
@@ -15,7 +14,16 @@ var Element = function(template, point, id, parent)
 	this.expander = null;
 	this.connectors = [];
 	this.maxChildScore = 0;
-	this.icon = null;
+	this.icon = icon;
+	
+	context = this.owner.owner.context;
+	context.font = this.template.font;	
+	width = context.measureText(this.content).width + 45
+	if (icon != null) {
+		width += 20
+	}
+	
+	this.rectangle = new Rectangle(point.x, point.y, width, template.defaultHeight);
 	
 	for (var i = 0; i < template.connectorTemplates.length; i++)
 	{
@@ -165,8 +173,8 @@ Element.prototype.getExpanderPosition = function() {
 	return new Point(this.rectangle.x + this.template.expanderPosition.x, this.rectangle.y + this.template.expanderPosition.y);
 };
 
-Element.prototype.invalidate = function()
-{
+Element.prototype.invalidate = function() {
+	
 };
 
 Element.prototype.insertInto = function(owner)

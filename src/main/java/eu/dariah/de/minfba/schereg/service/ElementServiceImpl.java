@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,11 +14,13 @@ import org.springframework.stereotype.Service;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
+import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -29,11 +29,10 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 
 @Service
 public class ElementServiceImpl extends BaseReferenceServiceImpl implements ElementService {
-	private static Logger logger = LoggerFactory.getLogger(ElementServiceImpl.class);
-	
 	@Autowired private ElementDao elementDao;
 	@Autowired private SchemaDao schemaDao;
 	@Autowired private GrammarDao grammarDao;
+	@Autowired private FunctionDao functionDao;
 	
 	@Override
 	public Element findRootBySchemaId(String schemaId) {
@@ -64,6 +63,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		List<Identifiable> elements = new ArrayList<Identifiable>();
 		elements.addAll(elementDao.findBySchemaId(root.getSchemaId()));
 		elements.addAll(grammarDao.findBySchemaId(root.getSchemaId()));
+		elements.addAll(functionDao.findBySchemaId(root.getSchemaId()));
 		
 		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
 		for (Identifiable e : elements) {
@@ -97,6 +97,20 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 					elem.getFunctions().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
 				}	
 			}
+			if (e instanceof DescriptionGrammarImpl && r.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
+				DescriptionGrammarImpl g = (DescriptionGrammarImpl)e;
+				g.setTransformationFunctions(new ArrayList<TransformationFunctionImpl>());
+				for (Reference rChild : r.getChildReferences().get(TransformationFunctionImpl.class.getName())) {
+					g.getTransformationFunctions().add((TransformationFunctionImpl)fillElement(rChild, elementMap));
+				}	
+			}
+			if (e instanceof TransformationFunctionImpl && r.getChildReferences().containsKey(Label.class.getName())) {
+				TransformationFunctionImpl f = (TransformationFunctionImpl)e;
+				f.setOutputElements(new ArrayList<Label>());
+				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
+					f.getOutputElements().add((Label)fillElement(rChild, elementMap));
+				}	
+			}
 		}
 		return e;		
 	}
@@ -106,22 +120,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		return elementDao.findById(elementId);
 	}
 	
-	/*@Override
-	public void deleteByRootElementId(String rootElementId) {
-		// TODO: What about the reference hierarchy?
-		elementDao.delete(rootElementId);
-	}
-	
-	@Override
-	public void deleteBySchemaId(String schemaId) {
-		// TODO: What about the reference hierarchy?
-		
-		Schema s = schemaDao.findById(schemaId);
-		if (s!=null && s.getRootNonterminalId()!=null) {
-			elementDao.delete(s.getRootNonterminalId());
-		}
-	}*/
-
 	@Override
 	public Reference saveElementHierarchy(Element e) {
 		Reference rootReference = this.saveElementsInHierarchy(e);
@@ -207,9 +205,9 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		Element element = null;
 		if (rParent!=null) {
 			if (eParent instanceof Nonterminal) {
-				element = new Nonterminal(schemaId, this.getNonterminalLabel(label));
+				element = new Nonterminal(schemaId, getNormalizedName(label));
 			} else {
-				element = new Label(schemaId, this.getNonterminalLabel(label));
+				element = new Label(schemaId, getNormalizedName(label));
 			}
 			elementDao.save(element);
 			
@@ -218,15 +216,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		return element;
 	}
-		
-	private String getNonterminalLabel(String label) {
-		if (label==null || label.trim().isEmpty()) {
-			return "???";
-		} else {
-			return label.substring(0,1).toUpperCase() + label.substring(1);
-		}
-	}
-	
+			
 	@Override
 	public Element removeElement(String schemaId, String elementId) {
 		Element eRoot = findRootBySchemaId(schemaId);

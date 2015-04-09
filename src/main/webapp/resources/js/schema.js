@@ -104,7 +104,7 @@ SchemaEditor.prototype.assignTableEvents = function() {
 SchemaEditor.prototype.handleSelection = function(id) {
 	var _this = this;
 	
-	if (id==null) {
+	if (id==null || id=="") {
 		$('#tab-schema-activity a').tab('show');
 		$("#tab-schema-metadata").addClass("hide");
 		$("#tab-schema-elements").addClass("hide");

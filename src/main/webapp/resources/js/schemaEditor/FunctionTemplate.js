@@ -7,6 +7,7 @@ function FunctionTemplate()
 	this.defaultWidth = 70;
 	this.defaultHeight = 25;
 	this.defaultContent = "f(x)";
+	this.font = "bold 10px Verdana";
 
 	// All elements get the child connector, 
 	//  the other connectors depend on whether the element is root and/or target
@@ -50,7 +51,7 @@ FunctionTemplate.prototype.paint = function(element, context)
 	context.strokeStyle = element.selected ? lightColor : darkColor;
 	this.drawRoundRect(context, rectangle.x, rectangle.y, rectangle.width, rectangle.height, 5, true, true)
 	
-	context.font = "bold 10px Verdana";
+	context.font = this.font;
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "bottom";
 	context.textAlign = "center";

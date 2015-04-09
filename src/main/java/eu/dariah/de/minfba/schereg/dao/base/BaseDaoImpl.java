@@ -19,18 +19,17 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected final Class<T> clazz;
+	protected final String collectionName;
 	
 	@Autowired private MongoTemplate mongoTemplate;
 	
-	@Override
-	public Class<?> getClazz() { return clazz; }
-
-	public MongoTemplate getMongoTemplate() {
-		return mongoTemplate;
-	}
-
+	@Override public Class<?> getClazz() { return clazz; }
+	@Override public String getCollectionName() { return collectionName; }
+	
+	
 	public BaseDaoImpl(Class<T> clazz) {
 		this.clazz = clazz;
+		this.collectionName = clazz.getSimpleName().substring(0,1).toLowerCase() + clazz.getSimpleName().substring(1);
 	}
 
 	/*@Override
@@ -45,6 +44,8 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 		return null;
 	}*/
 
+	
+	
 	@Override
 	public List<T> findAll() {
 		return mongoTemplate.findAll(clazz, this.getCollectionName());
@@ -126,7 +127,7 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 
 	@Override
 	public <S extends T> S save(S entity) {
-		mongoTemplate.save(entity, clazz.getSimpleName());
+		mongoTemplate.save(entity, this.getCollectionName());
 		return entity;
 	}
 
@@ -136,12 +137,11 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 		return null;
 	}
 
-	
-	
-	@Override
-	public String getCollectionName() {
-		return clazz.getSimpleName();
+	protected MongoTemplate getMongoTemplate() {
+		return mongoTemplate;
 	}
+	
+	
 
 	public static boolean isValidObjectId(String id) {
 		return (id!=null && ObjectId.isValid(id)); 

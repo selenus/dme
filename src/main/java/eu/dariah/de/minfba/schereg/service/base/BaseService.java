@@ -11,8 +11,8 @@ public abstract class BaseService {
 		if (label==null || label.trim().isEmpty()) {
 			label = "g" + new ObjectId().toString().toUpperCase();
 		}
-		label = label.replaceAll("\\W", "");
-		label = label.substring(0,1).toLowerCase() + label.substring(1);
+		//label = label.replaceAll("\\W", "");
+		label = label.substring(0,1).toUpperCase() + label.substring(1);
 		return label;
 	}
 }

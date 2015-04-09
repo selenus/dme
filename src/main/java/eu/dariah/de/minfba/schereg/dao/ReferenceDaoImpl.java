@@ -7,14 +7,9 @@ import java.util.Map;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
-import com.mongodb.WriteResult;
-
-import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.base.Dao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;

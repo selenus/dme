@@ -17,6 +17,7 @@ function ElementTemplate(isTarget, isRoot, isAlone)
 	this.defaultContent = "";
 	this.isTarget = isTarget;
 	this.isRoot = isRoot;
+	this.font = "bold 10px Verdana"
 	
 	// All elements get the child connector, 
 	//  the other connectors depend on whether the element is root and/or target
@@ -93,7 +94,7 @@ ElementTemplate.prototype.paint = function(element, context)
 		lightColor = "#e6f1ff";
 		darkColor = "#0049a6";
 	} else {
-		if (element.typeInfo==="Label") {
+		if (element.subtypeInfo==="Label") {
 			lightColor = "#f3e6ff";
 			darkColor = "#5700a6";
 		} else {
@@ -102,17 +103,18 @@ ElementTemplate.prototype.paint = function(element, context)
 		}
 	}
 	
+	
 	context.fillStyle = element.selected ? darkColor : lightColor;
 	context.strokeStyle = element.selected ? lightColor : darkColor;
 	//context.fillRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	//context.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	this.drawRect(context, rectangle.x, rectangle.y, rectangle.width, rectangle.height, true, true)
 	
-	context.font = "bold 10px Verdana";
+	context.font = this.font;
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "bottom";
-	context.textAlign = "center";
-	context.fillText(element.getContent(), rectangle.x + (rectangle.width / 2), rectangle.y + 20);
+	context.textAlign = "left";
+	context.fillText(element.getContent(), rectangle.x + 25, rectangle.y + 19);
 	
 	if (element.icon != null) {
 		var icon = new Image();

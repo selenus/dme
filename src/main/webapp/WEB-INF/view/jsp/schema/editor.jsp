@@ -41,7 +41,8 @@
 										<s:message code="~eu.dariah.de.minfba.common.link.actions" /> <span class="caret"></span>
 									</button>
 									<ul id="schema-editor-dynamic-buttons-0" class="dropdown-menu" role="menu">
-										<li><a href="#" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;"><span class='glyphicon glyphicon-edit'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></a></li>
+										<li><a href="#" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></a></li>
+										<li><a href="#" onclick="schemaEditor.reload(); return false;"><span class='glyphicon glyphicon-refresh'></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></a></li>
 									</ul>
 								</div>    			
 				      			

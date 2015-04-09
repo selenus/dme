@@ -1,8 +1,5 @@
 package eu.dariah.de.minfba.schereg.service;
 
-import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,14 +16,13 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private SchemaDao schemaDao;
 	
-	
 	@Override
 	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label) {
 		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		
-		DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(schemaId, getGrammarName(label));
+		DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(schemaId, getNormalizedName(label));
 		grammarDao.save(grammar);
 		
 		addChildReference(rParent, grammar);
@@ -54,14 +50,5 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 			}
 		}
 		return null;
-	}
-	
-	private String getGrammarName(String label) {
-		if (label==null || label.trim().isEmpty()) {
-			label = "g" + new ObjectId().toString().toUpperCase();
-		}
-		label = label.replaceAll("\\W", "");
-		label = label.substring(0,1).toLowerCase() + label.substring(1);
-		return label;
 	}
 }

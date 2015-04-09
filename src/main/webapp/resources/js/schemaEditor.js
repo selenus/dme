@@ -188,7 +188,7 @@ SchemaEditor.prototype.expandChildren = function(children, ids) {
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, data.name, "element", null);
+	var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, this.formatLabel(data.name), "element", data.simpleType, null);
 	this.generateTree(this.schema, parent, data.childNonterminals, null, data.functions, true);
 	
 	this.schema.root.setExpanded(true);
@@ -202,7 +202,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
 				icon = this.warningIcon;
 			}
-			var e = this.schema.addElement(editorTemplate, nonterminals[i].id, nonterminals[i].name, parent, "element", icon);
+			var e = this.schema.addElement(editorTemplate, nonterminals[i].id, this.formatLabel(nonterminals[i].name), parent, "element", nonterminals[i].simpleType, icon);
 			if (parent != null) {
 				parent.addChild(e);
 			}
@@ -211,22 +211,25 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (functions != null && functions instanceof Array) {
 		for (var i=0; i<functions.length; i++) {
-			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, "g:", parent, "grammar", null);
+			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), parent, "grammar", functions[i].simpleType, null);
 			parent.addChild(fDesc);
-			if (functions[i].dataTransformationFunctions != null && functions[i].dataTransformationFunctions instanceof Array) {
-				for (var j=0; j<functions[i].dataTransformationFunctions.length; j++) {
-					var fOut = this.schema.addElement(functionTemplate, functions[i].dataTransformationFunctions[j].id, "f:", fDesc, "function", null);
+			if (functions[i].transformationFunctions != null && functions[i].transformationFunctions instanceof Array) {
+				for (var j=0; j<functions[i].transformationFunctions.length; j++) {
+					var fOut = this.schema.addElement(functionTemplate, functions[i].transformationFunctions[j].id, 
+							this.formatLabel("f: " + functions[i].transformationFunctions[j].name), fDesc, 
+							"function", functions[i].transformationFunctions[j].simpleType, null);
 					fDesc.addChild(fOut);
-					if (functions[i].dataTransformationFunctions[j].outputElements != null && functions[i].dataTransformationFunctions[j].outputElements instanceof Array) {
-						for (var k=0; k<functions[i].dataTransformationFunctions[j].outputElements.length; k++) {
-							var e = this.schema.addElement(editorRootTemplate, 
-									functions[i].dataTransformationFunctions[j].outputElements[k].id, 
-									functions[i].dataTransformationFunctions[j].outputElements[k].name, fOut, "element", null);
+					if (functions[i].transformationFunctions[j].outputElements != null && functions[i].transformationFunctions[j].outputElements instanceof Array) {
+						for (var k=0; k<functions[i].transformationFunctions[j].outputElements.length; k++) {
+							var e = this.schema.addElement(editorTemplate, 
+									functions[i].transformationFunctions[j].outputElements[k].id, 
+									this.formatLabel(functions[i].transformationFunctions[j].outputElements[k].name), 
+									fOut, "element", functions[i].transformationFunctions[j].outputElements[k].simpleType, null);
 							fOut.addChild(e);
 							this.generateTree(area, e, 
-									functions[i].dataTransformationFunctions[j].outputElements[k].childNonterminals,
-									functions[i].dataTransformationFunctions[j].outputElements[k].subLabels,
-									functions[i].dataTransformationFunctions[j].outputElements[k].functions, isSource);
+									functions[i].transformationFunctions[j].outputElements[k].childNonterminals,
+									functions[i].transformationFunctions[j].outputElements[k].subLabels,
+									functions[i].transformationFunctions[j].outputElements[k].functions, isSource);
 						}
 					}
 				}
@@ -235,13 +238,22 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (subelements!=null && subelements instanceof Array) {
 		for (var i=0; i<subelements.length; i++) {
-			var e = this.schema.addElement(editorRootTemplate, subelements[i].id, subelements[i].name, parent, "element", null);
+			var e = this.schema.addElement(editorTemplate, subelements[i].id, this.formatLabel(subelements[i].name), parent, 
+					"element", subelements[i].simpleType, null);
 			if (parent != null) {
 				parent.addChild(e);
 			}
 			this.generateTree(area, e, null, subelements[i].subLabels, subelements[i].functions, isSource);
 		}
 	}
+};
+
+SchemaEditor.prototype.formatLabel = function(label) {
+	if (label.length > 25) {
+		return label.substring(0,25) + "...";
+	} else {
+		return label;
+	}	
 };
 
 SchemaEditor.prototype.deselectionHandler = function() {
@@ -280,7 +292,6 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	} else if (e.elementType === "function") {
 		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
 		actions[1] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];	
-		_this.getOutputFunctionInfo(e.elementId);
 	}
 	
 	var button;
@@ -342,7 +353,7 @@ SchemaEditor.prototype.getElement = function(id) {
 	                },
 	                error: function(textStatus) {}
 	         	});    
-        	} else {
+        	} else if (data.simpleType==="Nonterminal") {
             	var details = $("<div class=\"clearfix tab-details-block\">");
             	details.append("<div class='alert alert-sm alert-warning' role='alert'>" + 
             			"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +

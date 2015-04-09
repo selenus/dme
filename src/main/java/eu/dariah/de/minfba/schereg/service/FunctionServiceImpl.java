@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
@@ -38,7 +39,19 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 
 	@Override
 	public TransformationFunction deleteFunctionById(String schemaId, String id) {
-		// TODO Auto-generated method stub
+		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		
+		TransformationFunction function = functionDao.findById(id);
+		if (function != null) {
+			try {
+				this.removeReference(rootElementId, id);
+				functionDao.delete(function);
+				return function;
+			} catch (Exception e) {
+				logger.warn("An error occurred while deleting an element or its references. "
+						+ "The owning schema {} might be in an inconsistent state", schemaId, e);
+			}
+		}
 		return null;
 	}
 }

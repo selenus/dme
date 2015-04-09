@@ -10,12 +10,12 @@ import org.springframework.stereotype.Service;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
-import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
+import eu.dariah.de.minfba.schereg.service.base.BaseService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Service
-public class SchemaServiceImpl extends BaseReferenceServiceImpl implements SchemaService {
+public class SchemaServiceImpl extends BaseService implements SchemaService {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaDao schemaDao;
 

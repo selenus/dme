@@ -205,13 +205,12 @@ Area.prototype.getElement = function(id) {
 	}
 };
 
-Area.prototype.addElement = function(template, id, label, parent, typeInfo, icon) {
-	var element = new Element(template, {x: 0, y: 0}, id, parent);
-	element.content = label;
+Area.prototype.addElement = function(template, id, label, parent, typeInfo, subtypeInfo, icon) {
+	var element = new Element(this, template, {x: 0, y: 0}, id, parent, label, icon);
 	element.insertInto(this);
 	element.invalidate();
 	element.typeInfo = typeInfo;
-	element.icon = icon;
+	element.subtypeInfo = subtypeInfo;
 		
 	if (parent != null) {
 		this.addHierarchyConnection(parent.getConnector("children"), element.getConnector("parent"));
@@ -225,15 +224,14 @@ Area.prototype.removeElement = function(element) {
 };
 
 
-Area.prototype.addRoot = function(template, point, id, label, typeInfo, icon) {
+Area.prototype.addRoot = function(template, point, id, label, typeInfo, subtypeInfo, icon) {
 	
-	this.root = new Element(template, point, id, null);
-	this.root.content = label;
+	this.root = new Element(this, template, point, id, null, label, icon);
 	this.root.insertInto(this);
 	this.root.isVisible = true;
 	this.root.isExpanded = false;
 	this.root.typeInfo = typeInfo;
-	this.root.icon = icon;
+	this.root.subtypeInfo = subtypeInfo;
 	
 	this.root.invalidate();
 	
