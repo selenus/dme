@@ -3,6 +3,7 @@ package eu.dariah.de.minfba.schereg.controller.editor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 import javax.validation.Valid;
 
 import org.bson.types.ObjectId;
@@ -22,8 +23,8 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.schereg.service.ElementService;
-import eu.dariah.de.minfba.schereg.service.SchemaService;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/terminal/{terminalId}")

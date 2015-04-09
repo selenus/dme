@@ -26,9 +26,9 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
-import eu.dariah.de.minfba.schereg.service.ElementService;
-import eu.dariah.de.minfba.schereg.service.SchemaService;
 import eu.dariah.de.minfba.schereg.service.SchemaServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Component
 public class SchemaImportWorker implements ApplicationContextAware, SchemaImportListener {
@@ -103,7 +103,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	@Override
 	public synchronized void registerImportFinished(Schema schema, Nonterminal root) {
 		if (root!=null) {
-			elementService.deleteBySchemaId(schema.getId());
+			elementService.removeElementTree(schema.getId());
 		}
 		elementService.saveElementHierarchy(root);
 		schema.setRootNonterminalId(root.getId());

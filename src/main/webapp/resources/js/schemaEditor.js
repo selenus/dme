@@ -1,8 +1,7 @@
 var schemaEditor;
 $(document).ready(function() {
 	schemaEditor = new SchemaEditor();
-	schemaEditor.loadElementHierarchy();
-	schemaEditor.resize();
+	schemaEditor.initGraph();
 });
 $(window).resize(function() {
 	schemaEditor.resize();
@@ -12,7 +11,6 @@ var SchemaEditor = function() {
 	this.schemaId = $("#schema-id").val();
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId;
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
-	this.graph = new Graph(this.context.canvas);
 	this.footerOffset = 70;	
 	
 	this.editorContainer = $("#schema-editor-container");
@@ -25,10 +23,7 @@ var SchemaEditor = function() {
 	this.activityTab = $("#tab-element-activity");
 	
 	this.warningIcon = __util.getBaseUrl() + "resources/img/warning.png";
-	
-	this.schema = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
- 	this.graph.addArea(this.schema);
-	
+		
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
@@ -52,6 +47,15 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured"]);
 	__translator.getTranslations();
 }
+
+SchemaEditor.prototype.initGraph = function() {
+	this.graph = new Graph(this.context.canvas);
+	this.schema = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
+ 	this.graph.addArea(this.schema);
+ 	
+ 	schemaEditor.loadElementHierarchy();
+	schemaEditor.resize();
+};
 
 SchemaEditor.prototype.resize = function() {
 	var height = Math.floor($(window).height() - this.editorContainer.offset().top - this.footerOffset);
@@ -88,6 +92,11 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 
 
 SchemaEditor.prototype.reload = function() {
+	if (schemaEditor.schema.root==null) {
+		this.loadElementHierarchy();
+		return;
+	}
+	
 	var rootX = schemaEditor.schema.root.getRectangle().x;
 	var rootY = schemaEditor.schema.root.getRectangle().y;
 	
@@ -129,6 +138,9 @@ SchemaEditor.prototype.reload = function() {
 	    	_this.expandChildren(schemaEditor.schema.root.children, expandedItemIds);
 	    		    	
 	    	_this.graph.update();
+	    },
+	    error: function() {
+	    	_this.initGraph();
 	    }
 	});	
 };
@@ -384,43 +396,31 @@ SchemaEditor.prototype.editElement = function() {
 	modalFormHandler.show(form_identifier);
 };
 
+
 SchemaEditor.prototype.addDescription = function() {
+	this.addNode("element", "grammar");
+};
+
+SchemaEditor.prototype.addTransformation = function() {
+	this.addNode("grammar", "function");
+};
+
+SchemaEditor.prototype.addElement = function() {
+	this.addNode("element", "element");
+};
+
+SchemaEditor.prototype.addNode = function(type, childType) {
 	var _this = this;
 	bootbox.prompt(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.element_label"), function(result) {                
 		if (result!=null) {                                             
 			$.ajax({
-			    url: _this.pathname + "/element/" + _this.graph.selectedItems[0].id + "/async/createGrammar",
+			    url: _this.pathname + "/" + type + "/" + _this.graph.selectedItems[0].id + "/async/create/" + childType,
 			    type: "POST",
 			    data: { label : result },
 			    dataType: "json",
 			    success: function(data) {
 			    	_this.graph.selectedItems[0].setExpanded(true);
 			    	_this.reload();
-			    }
-			});
-		}
-	});
-};
-
-SchemaEditor.prototype.addElement = function() {
-	var _this = this;
-	bootbox.prompt(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.element_label"), function(result) {                
-		if (result!=null) {                                             
-			$.ajax({
-			    url: _this.pathname + "/element/" + _this.graph.selectedItems[0].id + "/async/createSubelement",
-			    type: "POST",
-			    data: { label : result },
-			    dataType: "json",
-			    success: function(data) {
-			    	var e = _this.schema.addElement(editorTemplate, data.id, data.name, _this.graph.selectedItems[0], data.simpleType);
-			    	
-			    	_this.graph.selectedItems[0].addChild(e);
-			    	_this.graph.selectedItems[0].deselect();
-			    	_this.graph.selectedItems[0].setExpanded(true);
-			    	
-			    	_this.graph.selectElement(e);
-			    	
-			    	_this.graph.update();
 			    }
 			});
 		}
@@ -438,8 +438,8 @@ SchemaEditor.prototype.removeElement = function() {
 			    type: "GET",
 			    dataType: "json",
 			    success: function(data) {
-			    	_this.schema.removeElement(_this.graph.selectedItems[0]);
-			    	_this.graph.update();
+			    	_this.graph.selectedItems[0].deselect();
+			    	_this.reload();
 			    }
 			});
 		}

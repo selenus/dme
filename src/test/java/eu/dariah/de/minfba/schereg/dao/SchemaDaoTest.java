@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"classpath:orm-test-context.xml"})

@@ -40,8 +40,8 @@ import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
-import eu.dariah.de.minfba.schereg.service.ElementService;
-import eu.dariah.de.minfba.schereg.service.SchemaService;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")

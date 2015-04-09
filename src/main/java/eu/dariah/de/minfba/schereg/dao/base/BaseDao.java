@@ -8,9 +8,7 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
-public interface BaseDao<T extends Identifiable> {
-	public String getCollectionName();
-	
+public interface BaseDao<T extends Identifiable> extends Dao {
 	public List<T> findAll();
 	public List<T> findAll(Sort sort);
 	public T findById(String id);

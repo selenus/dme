@@ -8,10 +8,15 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.schereg.dao.SchemaDao;
+import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
+import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
+import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Service
-public class SchemaServiceImpl implements SchemaService {
+public class SchemaServiceImpl extends BaseReferenceServiceImpl implements SchemaService {
+	@Autowired private ElementService elementService;
 	@Autowired private SchemaDao schemaDao;
 
 	@Override
@@ -31,7 +36,13 @@ public class SchemaServiceImpl implements SchemaService {
 
 	@Override
 	public void deleteSchemaById(String id) {
-		schemaDao.delete(id);
+		Schema s = findSchemaById(id);
+		if (s != null) {
+			if (BaseDaoImpl.isValidObjectId(s.getRootNonterminalId())) {
+				elementService.removeElement(s.getId(), s.getRootNonterminalId());
+			}
+			schemaDao.delete(s);
+		}
 	}
 	
 	@Override

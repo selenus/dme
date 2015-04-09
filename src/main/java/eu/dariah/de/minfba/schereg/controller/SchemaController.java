@@ -6,6 +6,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -17,14 +18,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import eu.dariah.de.minfba.core.metamodel.BaseSchema;
 import eu.dariah.de.minfba.core.metamodel.BaseTerminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.schereg.service.ElementService;
-import eu.dariah.de.minfba.schereg.service.SchemaService;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema")

@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.dao;
+package eu.dariah.de.minfba.schereg.dao.interfaces;
 
 import java.util.Map;
 

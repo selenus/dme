@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.dao.base;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -21,6 +22,9 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	
 	@Autowired private MongoTemplate mongoTemplate;
 	
+	@Override
+	public Class<?> getClazz() { return clazz; }
+
 	public MongoTemplate getMongoTemplate() {
 		return mongoTemplate;
 	}
@@ -92,10 +96,15 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	public void delete(String id) {
 		mongoTemplate.findAllAndRemove(new Query(Criteria.where("_id").is(id)), clazz, this.getCollectionName());
 	}
+	
+	@Override
+	public int delete(Collection<String> ids) {
+		return mongoTemplate.findAllAndRemove(new Query(Criteria.where("_id").in(ids)), clazz, this.getCollectionName()).size();
+	}
 
 	@Override
 	public void delete(T entity) {
-		mongoTemplate.remove(entity);
+		mongoTemplate.remove(entity, this.getCollectionName());
 	}
 
 	@Override

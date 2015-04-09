@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -19,10 +20,12 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.schereg.dao.ElementDao;
-import eu.dariah.de.minfba.schereg.dao.GrammarDao;
-import eu.dariah.de.minfba.schereg.dao.SchemaDao;
+import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
+import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
+import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 
 @Service
 public class ElementServiceImpl extends BaseReferenceServiceImpl implements ElementService {
@@ -30,7 +33,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Autowired private ElementDao elementDao;
 	@Autowired private SchemaDao schemaDao;
-	
 	@Autowired private GrammarDao grammarDao;
 	
 	@Override
@@ -104,7 +106,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		return elementDao.findById(elementId);
 	}
 	
-	@Override
+	/*@Override
 	public void deleteByRootElementId(String rootElementId) {
 		// TODO: What about the reference hierarchy?
 		elementDao.delete(rootElementId);
@@ -118,7 +120,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		if (s!=null && s.getRootNonterminalId()!=null) {
 			elementDao.delete(s.getRootNonterminalId());
 		}
-	}
+	}*/
 
 	@Override
 	public Reference saveElementHierarchy(Element e) {
@@ -216,11 +218,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		return element;
 	}
-	
-	
-	
-	
-	
 		
 	private String getNonterminalLabel(String label) {
 		if (label==null || label.trim().isEmpty()) {
@@ -233,6 +230,9 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Override
 	public Element removeElement(String schemaId, String elementId) {
 		Element eRoot = findRootBySchemaId(schemaId);
+		if (eRoot.getId().equals(elementId)) {
+			return removeElementTree(schemaId);
+		}
 		Element eRemove = elementDao.findById(elementId);
 		if (eRemove != null) {
 			try {
@@ -245,6 +245,24 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			}
 		}
 		return null;
+	}
+	
+	@Override
+	public Element removeElementTree(String schemaId) {
+		Schema s = schemaDao.findById(schemaId);
+		Element eRoot = findRootBySchemaId(schemaId);
+		if (eRoot!=null) {	
+			try {
+				this.removeTree(eRoot.getId());
+				elementDao.delete(eRoot);
+				
+				s.setRootNonterminalId(null);
+				schemaDao.save(s);
+			} catch (IllegalArgumentException | ClassNotFoundException e) {
+				logger.error("Failed to remove tree by schemaID", e);
+			}
+		}
+		return eRoot;
 	}
 
 	@Override

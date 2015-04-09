@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.dao;
+package eu.dariah.de.minfba.schereg.dao.interfaces;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;

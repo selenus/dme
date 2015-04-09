@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.service;
+package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
 

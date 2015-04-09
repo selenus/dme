@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.service;
+package eu.dariah.de.minfba.schereg.service.base;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.schereg.dao.ReferenceDao;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
+import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
-public abstract class BaseReferenceServiceImpl {
+public abstract class BaseReferenceServiceImpl extends BaseService {
 	@Autowired private ReferenceDao referenceDao;
 	
 	protected Reference findRootReferenceById(String referenceId) {
@@ -74,8 +74,27 @@ public abstract class BaseReferenceServiceImpl {
 			referenceDao.deleteAll(subordinateReferenceMap);
 			
 			// Delete the removable element from the tree
-			referenceDao.delete(removeReference);
+			referenceDao.save(rootReference);
 		}
+	}
+	
+	/**
+	 * Removes the specified tree and deletes all entities referenced by within any of the references. 
+	 * Does not delete the root element and does not update the schema
+	 * 
+	 * @param rootReferenceId - The ID of the root reference
+	 * @throws IllegalArgumentException Thrown if any of the references in the deleted subtree has an invalid ID
+	 * @throws ClassNotFoundException Thrown if a class name is specified that cannot be found by the current classloader 
+	 */
+	protected void removeTree(String rootReferenceId) throws IllegalArgumentException, ClassNotFoundException {
+		Reference rootReference = referenceDao.findById(rootReferenceId);
+		Assert.notNull(rootReference);
+		
+		Map<String, Reference[]> subordinateReferenceMap = new HashMap<String, Reference[]>();
+		getAllSubordinateReferences(rootReference, subordinateReferenceMap);
+		
+		referenceDao.deleteAll(subordinateReferenceMap);
+		referenceDao.delete(rootReference);
 	}
 	
 	/**

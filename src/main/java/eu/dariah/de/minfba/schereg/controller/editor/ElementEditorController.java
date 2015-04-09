@@ -27,9 +27,9 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.schereg.service.ElementService;
-import eu.dariah.de.minfba.schereg.service.GrammarService;
-import eu.dariah.de.minfba.schereg.service.SchemaService;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
+import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/element/{elementId}")
@@ -62,12 +62,12 @@ public class ElementEditorController extends BaseTranslationController {
 		return "schemaEditor/form/element/edit_nonterminal";
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/createSubelement")
+	@RequestMapping(method = RequestMethod.POST, value = "/async/create/element")
 	public @ResponseBody Element createSubelement(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam String label) {		
 		return elementService.createAndAppendElement(schemaId, elementId, label);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/createGrammar")
+	@RequestMapping(method = RequestMethod.POST, value = "/async/create/grammar")
 	public @ResponseBody DescriptionGrammar createGrammar(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam String label) {		
 		return grammarService.createAndAppendGrammar(schemaId, elementId, label);
 	}

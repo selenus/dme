@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.service;
+package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
@@ -12,8 +12,8 @@ public interface ElementService {
 	
 	public Element findById(String elementId);
 	
-	public void deleteByRootElementId(String rootElementId);
-	public void deleteBySchemaId(String schemaId);
+	/*public void deleteByRootElementId(String rootElementId);
+	public void deleteBySchemaId(String schemaId);*/
 
 	public Reference saveElementHierarchy(Element e);
 	public Element saveElement(Element e);
@@ -21,4 +21,5 @@ public interface ElementService {
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label);
 	public Element removeElement(String schemaId, String elementId);
 	public Terminal removeTerminal(String schemaId, String terminalId);
+	public Element removeElementTree(String id);
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
+import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 
 @Repository
 public class GrammarDaoImpl extends BaseDaoImpl<DescriptionGrammar> implements GrammarDao {

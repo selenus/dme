@@ -15,6 +15,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
+import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 
 @Repository
 public class SchemaDaoImpl extends BaseDaoImpl<Schema> implements SchemaDao {

@@ -1,0 +1,44 @@
+package eu.dariah.de.minfba.schereg.service;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
+import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
+
+@Service
+public class FunctionServiceImpl extends BaseReferenceServiceImpl implements FunctionService {
+	@Autowired private SchemaDao schemaDao;
+	@Autowired private FunctionDao functionDao;
+	
+	@Override
+	public TransformationFunction createAndAppendFunction(String schemaId, String grammarId, String label) {
+		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		Reference rRoot = this.findRootReferenceById(rootElementId);
+		Reference rParent = findSubreference(rRoot, grammarId);
+		
+		TransformationFunction grammar = new TransformationFunctionImpl(schemaId, getNormalizedName(label));
+		functionDao.save(grammar);
+		
+		addChildReference(rParent, grammar);
+		saveRootReference(rRoot);
+
+		return grammar;
+	}
+
+	@Override
+	public void deleteFunctionsBySchemaId(String schemaId) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public TransformationFunction deleteFunctionById(String schemaId, String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+}
