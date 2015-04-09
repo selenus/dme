@@ -41,10 +41,13 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.dialog.element_label",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.head",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.body",
+	                              "~eu.dariah.de.minfba.schereg.model.element.element",
 	                              "~eu.dariah.de.minfba.schereg.model.element.name",
 	                              "~eu.dariah.de.minfba.schereg.model.element.namespace",
 	                              "~eu.dariah.de.minfba.schereg.model.element.attribute",
 	                              "~eu.dariah.de.minfba.schereg.model.element.transient",
+	                              "~eu.dariah.de.minfba.schereg.model.function.function",
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar",
 	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured"]);
 	__translator.getTranslations();
 }
@@ -286,16 +289,19 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 		actions[1] = [0, "addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
 		actions[2] = [1, "editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 		actions[3] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		_this.elementTab.find("a").html(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.element"));
 		_this.getElement(e.elementId);	
 	} else if (e.elementType === "grammar") {
 		actions[0] = [0, "addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
 		actions[1] = [1, "editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 		actions[2] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		_this.elementTab.find("a").html(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar"));
 		_this.getGrammar(e.elementId);
 	} else if (e.elementType === "function") {
 		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
 		actions[1] = [1, "editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 		actions[2] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		_this.elementTab.find("a").html(__translator.translate("~eu.dariah.de.minfba.schereg.model.function.function"));
 		_this.getFunction(e.elementId);
 	}
 	
