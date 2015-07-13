@@ -14,7 +14,7 @@ var SchemaEditor = function() {
 	this.footerOffset = 70;	
 	
 	this.editorContainer = $("#schema-editor-container");
-	this.contextContainer = $(".schema-editor-context");
+	this.contextContainer = $(".editor-tab-pane");
 	this.contextContainerInfo = $("#schema-editor-context-info");
 	
 	this.menuContainer0 = $("#schema-editor-dynamic-buttons-0");
@@ -63,14 +63,20 @@ SchemaEditor.prototype.initGraph = function() {
 
 SchemaEditor.prototype.resize = function() {
 	var height = Math.floor($(window).height() - this.editorContainer.offset().top - this.footerOffset);
-	this.editorContainer.css("height", height + "px");
 	this.contextContainer.find(".tab-content").css("height", height + "px");
 	
-	this.contextContainer.css("margin-top", Math.floor(this.editorContainer.offset().top - this.contextContainer.parent().offset().top - 42) + "px");
+	//this.contextContainer.css("margin-top", Math.floor(this.editorContainer.offset().top - this.contextContainer.parent().offset().top - 42) + "px");
+	
+	var editorHeight = height - (this.editorContainer.offset().top - this.editorContainer.offsetParent().offset().top);
+	
+	this.editorContainer.css("height", editorHeight + "px");
+	
+	$("#schema-sample-textarea").css("height", editorHeight + "px");
+	$("#schema-sample-container").css("height", editorHeight + "px");
 	
 	if (this.context.canvas) {
 		this.context.canvas.width = this.editorContainer.width() - 1; // border-bottom
-		this.context.canvas.height = height - 2; // border-left and -right
+		this.context.canvas.height = editorHeight - 2; // border-left and -right
 		window.scroll(0, 0);			
 		if (this.graph !== null) {
 			if (this.schema != null) {

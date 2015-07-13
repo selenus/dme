@@ -318,6 +318,20 @@ noscript div {
 	margin-left: 3px;
 }
 
+.editor-tab-pane .tab-content {
+	border-left: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	padding: 10px;
+	overflow: hidden;
+	position: relative;
+}
+
+#schema-sample-textarea {
+	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+	font-size: 90%;
+}
+ 
 
 .schema-metadata-label,
 .schema-metadata-data {
