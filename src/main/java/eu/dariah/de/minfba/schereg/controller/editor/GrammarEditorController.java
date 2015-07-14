@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
@@ -47,18 +48,30 @@ public class GrammarEditorController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getEditForm(@PathVariable String schemaId, @PathVariable String grammarId, Model model, Locale locale) {
-		model.addAttribute("grammar", grammarService.findById(grammarId));
+		DescriptionGrammarImpl g = (DescriptionGrammarImpl)grammarService.findById(grammarId);
+		if (g.getGrammarContainer()==null) {
+			g.setGrammarContainer(new GrammarContainer());
+		}
+		model.addAttribute("grammar", g);		
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/save");
 		return "schemaEditor/form/grammar/edit";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveNonterminal(@Valid DescriptionGrammarImpl grammar, BindingResult bindingResult) {
+	public @ResponseBody ModelActionPojo saveNonterminal(@Valid DescriptionGrammarImpl grammar, 
+			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult) {
 		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
 		if (grammar.getId().isEmpty()) {
 			grammar.setId(null);
 		}
 		grammarService.saveGrammar(grammar);
 		return result;
-	} 
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/validate")
+	public @ResponseBody ModelActionPojo validateGrammar(@RequestParam String lexerGrammar, @RequestParam String parserGrammar) {
+		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
+		
+		return result;
+	}
 }

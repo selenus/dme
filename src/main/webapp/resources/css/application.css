@@ -57,7 +57,16 @@
 	padding: 10px;
 	overflow: hidden;
 }
- 
+
+
+/*!
+ *	Generic
+ */
+.codearea {
+	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+	font-size: 90%;
+}
+
 
 /*!
  *	Content wrapping
@@ -331,7 +340,6 @@ noscript div {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 	font-size: 90%;
 }
- 
 
 .schema-metadata-label,
 .schema-metadata-data {

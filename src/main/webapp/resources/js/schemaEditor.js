@@ -9,6 +9,7 @@ $(window).resize(function() {
 
 var SchemaEditor = function() {
 	this.schemaId = $("#schema-id").val();
+	this.selectedElementId = -1;
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId;
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
 	this.footerOffset = 70;	
@@ -268,7 +269,9 @@ SchemaEditor.prototype.formatLabel = function(label) {
 
 SchemaEditor.prototype.deselectionHandler = function() {
 	var _this = schemaEditor;
-		
+	
+	_this.selectedElementId = -1;
+	
 	_this.menuContainer0.find(".context-button").remove();
 	_this.menuContainer1.html("");
 	_this.menuContainer0.closest(".btn-group").find(".btn").addClass("btn-default");
@@ -281,6 +284,8 @@ SchemaEditor.prototype.deselectionHandler = function() {
 
 SchemaEditor.prototype.selectionHandler = function(e) {
 	var _this = schemaEditor;
+	
+	_this.selectedElementId = e.elementId;
 	
 	_this.menuContainer0.find(".context-button").remove();
 	_this.menuContainer1.html("");
@@ -349,6 +354,11 @@ SchemaEditor.prototype.getGrammar = function(id) {
         	var details = $("<div class=\"clearfix\">");
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.grammarName));
+        	
+        	if (data.grammarContainer!=null) {
+        		details.append(_this.renderContextTabDetail("~Lexer grammar", data.grammarContainer.lexerGrammar));
+        		details.append(_this.renderContextTabDetail("~Parser grammar", data.grammarContainer.parserGrammar));
+        	}
         	
         	_this.contextContainerInfo.append(details);  	
         },
@@ -465,12 +475,12 @@ SchemaEditor.prototype.editGrammar = function() {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/grammar/" + this.graph.selectedItems[0].id + "/form/edit",
 		identifier: form_identifier,
-		//additionalModalClasses: "wider-modal",
+		additionalModalClasses: "wider-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		//additionalModalClasses: "wide-modal",               
-		completeCallback: function() {_this.reload();}
+		setupCallback: function() { grammarEditor = new GrammarEditor(); },       
+		completeCallback: function() { _this.reload(); }
 	});
 		
 	modalFormHandler.show(form_identifier);

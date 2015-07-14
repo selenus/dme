@@ -18,6 +18,11 @@ public class GrammarDaoImpl extends BaseDaoImpl<DescriptionGrammar> implements G
 	
 	@Override
 	public List<DescriptionGrammar> findBySchemaId(String schemaId) {		
-		return this.find(Query.query(Criteria.where("schemaId").is(schemaId)));
+		Query q = Query.query(Criteria.where("schemaId").is(schemaId));
+		
+		// Exclude the verbous grammars when loading whole schema
+		q.fields().exclude("grammarContainer");
+		
+		return this.find(q);
 	}
 }
