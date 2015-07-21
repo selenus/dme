@@ -36,5 +36,6 @@
 	
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.dao"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.service"/>
+	<context:component-scan base-package="eu.dariah.de.minfba.schereg.util"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.importer"/>
 </beans>

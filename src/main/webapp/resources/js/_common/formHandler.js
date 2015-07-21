@@ -57,6 +57,7 @@ var ModalFormHandler = function(options) {
 	            		 {placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.head"},
 	            		 {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.body"}];
 	
+	this.displayCallback = null;
 	this.setupCallback = null;
 	this.completeCallback = null;
 };
@@ -161,6 +162,12 @@ ModalFormHandler.prototype.setUpForm = function() {
 	
 	// Form finally presented to the user
 	$(this.container).modal('show');
+	
+	if (_this.options.displayCallback != undefined && typeof _this.options.displayCallback == 'function') {
+		$(this.container).on('shown.bs.modal', function (e) {
+			_this.options.displayCallback(this.container);
+		})
+	}
 };
 
 ModalFormHandler.prototype.addMessage = function(type, header, message) {

@@ -356,8 +356,10 @@ SchemaEditor.prototype.getGrammar = function(id) {
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.grammarName));
         	
         	if (data.grammarContainer!=null) {
-        		details.append(_this.renderContextTabDetail("~Lexer grammar", data.grammarContainer.lexerGrammar));
-        		details.append(_this.renderContextTabDetail("~Parser grammar", data.grammarContainer.parserGrammar));
+        		if (data.grammarContainer.lexerGrammar!==null && data.grammarContainer.lexerGrammar !=="") {
+        			details.append(_this.renderContextTabDetail("~Lexer grammar", data.grammarContainer.lexerGrammar, true));
+        		}
+        		details.append(_this.renderContextTabDetail("~Parser grammar", data.grammarContainer.parserGrammar, true));
         	}
         	
         	_this.contextContainerInfo.append(details);  	
@@ -427,7 +429,7 @@ SchemaEditor.prototype.getElement = function(id) {
  	});
 };
 
-SchemaEditor.prototype.renderContextTabDetail = function(label, data) {
+SchemaEditor.prototype.renderContextTabDetail = function(label, data, pre) {
 	var detail = $("<div class=\"row\">");
 	
 	if (label!=null && label!="") {
@@ -436,7 +438,7 @@ SchemaEditor.prototype.renderContextTabDetail = function(label, data) {
 		detail.append("<div class=\"col-xs-3 col-md-4\">&nbsp;</div>");
 	}
 	
-	var dataE = "<div class=\"schema-metadata-data col-xs-9 col-md-8\">";
+	var dataE = "<div class=\"schema-metadata-data col-xs-9 col-md-8\">" + (pre ? "<pre>" : "");
 	if (data===true) {
 		dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
 	} else if (data===false) {
@@ -445,7 +447,7 @@ SchemaEditor.prototype.renderContextTabDetail = function(label, data) {
 		dataE += data;
 	}
 	
-	detail.append(dataE + "</div>");
+	detail.append(dataE + (pre ? "</pre>" : "") + "</div>");
 	
 	return detail;
 };

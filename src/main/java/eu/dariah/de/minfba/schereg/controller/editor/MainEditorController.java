@@ -40,17 +40,17 @@ import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
+import eu.dariah.de.minfba.schereg.service.TemporaryFileServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
+import eu.dariah.de.minfba.schereg.service.interfaces.TemporaryFileService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
 public class MainEditorController extends BaseTranslationController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
-	@Value(value="${paths.tmpUploadDir:/tmp}")
-	private String tmpUploadDirPath;
-	
+	@Autowired private TemporaryFileService tmpFileService;
 	@Autowired private SchemaService schemaService;
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaImportWorker importWorker;
@@ -58,15 +58,7 @@ public class MainEditorController extends BaseTranslationController implements I
 	public MainEditorController() {
 		super("schemaEditor");
 	}
-	
-	
-	public void afterPropertiesSet() throws Exception {
-		super.afterPropertiesSet();
-		if (!Files.exists(Paths.get(tmpUploadDirPath))) {
-			Files.createDirectories(Paths.get(tmpUploadDirPath));
-		}
-	}
-	
+		
 	@RequestMapping(method=GET, value={"/", ""})
 	public String getEditor(@PathVariable String schemaId, Model model, Locale locale) {
 		model.addAttribute("schema", schemaService.findSchemaById(schemaId));
@@ -102,7 +94,7 @@ public class MainEditorController extends BaseTranslationController implements I
 		}
 
 		String tmpId = UUID.randomUUID().toString();
-		String tmpFilePath = String.format("%s/%s_%s", tmpUploadDirPath, tmpId, file.getOriginalFilename());
+		String tmpFilePath = String.format("%s/%s_%s", tmpFileService.getTmpUploadDirPath(), tmpId, file.getOriginalFilename());
 		Files.write(Paths.get(tmpFilePath), file.getBytes());
 		
 		temporaryFilesMap.put(tmpId, tmpFilePath);

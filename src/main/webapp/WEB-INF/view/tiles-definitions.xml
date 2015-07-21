@@ -104,6 +104,8 @@
 	<definition name="schemaEditor/form/grammar/edit" template="/WEB-INF/view/jsp/schema/editor/edit_grammar.jsp" />
 	<definition name="schemaEditor/form/function/edit" template="/WEB-INF/view/jsp/schema/editor/edit_function.jsp" />
 	
+	<definition name="schemaEditor/form/grammar/process" template="/WEB-INF/view/jsp/schema/editor/process_grammar.jsp" />
+	
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 
 	

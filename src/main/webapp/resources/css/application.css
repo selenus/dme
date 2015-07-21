@@ -215,6 +215,15 @@
 	white-space: nowrap;
 }
 
+.mini-loader {
+	background-image: url("../img/mini-loader.gif");
+	background-repeat: no-repeat;
+	background-position: top center;
+	height: 14px;
+	width: 14px;
+	display: inline-block;
+}
+
 .loader {
 	background-image: url("../img/loader.gif");
 	background-repeat: no-repeat;
