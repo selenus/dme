@@ -2,9 +2,12 @@ package eu.dariah.de.minfba.schereg.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,13 +24,16 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
-import eu.dariah.de.minfba.schereg.service.interfaces.TemporaryFileService;
 
 @Service
 public class GrammarServiceImpl extends BaseReferenceServiceImpl implements GrammarService {
+		
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private SchemaDao schemaDao;
-	@Autowired private TemporaryFileService tmpFileService;
+
+	@Value(value="${paths.grammars}")
+	private String grammarsRootPath;
+	
 		
 	@Override
 	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label) {
@@ -43,19 +49,33 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 
 		return grammar;
 	}
+
+	private String getGrammarDirectory(String grammarId, boolean temporary) {
+		return grammarsRootPath + File.separator + (temporary ? "gTmp" : "g") + grammarId + File.separator;
+	}
+	
+	private String getGrammarFilePrefix(String grammarId, boolean temporary) {
+		return getGrammarDirectory(grammarId, temporary) + (temporary ? "gTmp" : "g") + grammarId;
+	}
 	
 	@Override
 	public void saveTemporaryGrammar(String grammarId, String lexerGrammar, String parserGrammar) throws IOException {
-		tmpFileService.createDirectory("g" + grammarId);
+		String dirPath = getGrammarDirectory(grammarId, true);
+		String filePathPrefix = getGrammarFilePrefix(grammarId, true);
 		
+		if (!Files.exists(Paths.get(dirPath))) {
+				Files.createDirectories(Paths.get(dirPath));
+		}
+				
 		if (lexerGrammar!=null && !lexerGrammar.trim().isEmpty()) {
-			lexerGrammar = "lexer grammar g" + grammarId + "Lexer;\n\n" + lexerGrammar;
-			parserGrammar = "parser grammar g" + grammarId + "Parser;\n\n" + parserGrammar;
-			tmpFileService.writeString("g" + grammarId + File.separator + "g" + grammarId + "Lexer.g4", lexerGrammar);
-			tmpFileService.writeString("g" + grammarId + File.separator + "g" + grammarId + "Parser.g4", parserGrammar);
+			lexerGrammar = "lexer grammar gTmp" + grammarId + "Lexer;\n\n" + lexerGrammar;
+			Files.write(Paths.get(filePathPrefix + "Lexer.g4"), lexerGrammar.getBytes());
+			
+			parserGrammar = "parser grammar gTmp" + grammarId + "Parser;\n\n" + parserGrammar;
+			Files.write(Paths.get(filePathPrefix + "Parser.g4"), parserGrammar.getBytes());
 		} else {
-			parserGrammar = "grammar g" + grammarId + ";\n\n" + parserGrammar;
-			tmpFileService.writeString("g" + grammarId + File.separator + "g" + grammarId + ".g4", parserGrammar);
+			parserGrammar = "grammar gTmp" + grammarId + ";\n\n" + parserGrammar;
+			Files.write(Paths.get(filePathPrefix + ".g4"), parserGrammar.getBytes());
 		}
 	}
 	
@@ -63,7 +83,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public void parseTemporaryGrammar(String grammarId) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
 		//try {
-			grammarCompiler.init(new File(tmpFileService.getTmpUploadDirPath() + File.separator + "g" + grammarId), "g" + grammarId);
+			grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
 			grammarCompiler.generateGrammar();
 		/*} catch (GrammarProcessingException e) {
 			logger.error("Failed to parse temporary grammar", e);
@@ -74,11 +94,15 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public void compileTemporaryGrammar(String grammarId) throws GrammarProcessingException, IOException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
 		//try {
-			grammarCompiler.init(new File(tmpFileService.getTmpUploadDirPath() + File.separator + "g" + grammarId), "g" + grammarId);
+			grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
 			grammarCompiler.compileGrammar();
 		/*} catch (GrammarProcessingException | IOException e) {
 			logger.error("Failed to compile temporary grammar", e);
 		}*/
+	}
+	
+	public void copyTemporaryGrammar(String grammarId) {
+		
 	}
 	
 	

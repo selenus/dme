@@ -432,22 +432,46 @@ SchemaEditor.prototype.getElement = function(id) {
 SchemaEditor.prototype.renderContextTabDetail = function(label, data, pre) {
 	var detail = $("<div class=\"row\">");
 	
-	if (label!=null && label!="") {
-		detail.append("<div class=\"schema-metadata-label col-xs-3 col-md-4\">" + label + ":</div>");
+	if (pre) {
+		if (label!=null && label!="") {
+			detail.append("<div class=\"schema-metadata-label\">" + label + ":</div>");
+		} else {
+			detail.append("<div>&nbsp;</div>");
+		}
+		
+		var dataE = "<div class=\"schema-metadata-data\"><pre>";
+		if (data===true) {
+			dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
+		} else if (data===false) {
+			dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
+		} else {
+			dataE += data;
+		}
+		
+		detail.append(dataE + "</pre></div>");
+		
+		
 	} else {
-		detail.append("<div class=\"col-xs-3 col-md-4\">&nbsp;</div>");
+		if (label!=null && label!="") {
+			detail.append("<div class=\"schema-metadata-label col-xs-3 col-md-4\">" + label + ":</div>");
+		} else {
+			detail.append("<div class=\"col-xs-3 col-md-4\">&nbsp;</div>");
+		}
+		
+		var dataE = "<div class=\"schema-metadata-data col-xs-9 col-md-8\">";
+		if (data===true) {
+			dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
+		} else if (data===false) {
+			dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
+		} else {
+			dataE += data;
+		}
+		
+		detail.append(dataE + "</div>");
 	}
 	
-	var dataE = "<div class=\"schema-metadata-data col-xs-9 col-md-8\">" + (pre ? "<pre>" : "");
-	if (data===true) {
-		dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
-	} else if (data===false) {
-		dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
-	} else {
-		dataE += data;
-	}
 	
-	detail.append(dataE + (pre ? "</pre>" : "") + "</div>");
+	
 	
 	return detail;
 };
@@ -477,7 +501,7 @@ SchemaEditor.prototype.editGrammar = function() {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/grammar/" + this.graph.selectedItems[0].id + "/form/edit",
 		identifier: form_identifier,
-		additionalModalClasses: "wider-modal",
+		additionalModalClasses: "max-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],

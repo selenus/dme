@@ -388,6 +388,12 @@ body .wider-modal {
 	margin-left: -400px;
 }
 
+body .max-modal {
+	min-width: 1000px;
+	width: 80%;
+	margin-left: -40%;
+}
+
 body .narrow-modal {
 	width: 350px;
 	margin-left: -170px;

@@ -60,6 +60,7 @@
 	<definition name="schemaEditor" extends="template_editors">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/editor.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="jquery/jquery.ui.layout.js" />
 			<add-attribute type="string" value="jquery/jquery.ui.widget.js" />
 			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
 			<add-attribute type="string" value="jquery/jquery.fileupload.js" />

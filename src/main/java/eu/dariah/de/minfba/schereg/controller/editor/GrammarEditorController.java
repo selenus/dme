@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.controller.editor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -15,6 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.unibamberg.minf.gtf.TransformationEngine;
+import de.unibamberg.minf.gtf.description.syntaxtree.NonterminalSyntaxTreeNode;
+import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
+import de.unibamberg.minf.gtf.transformation.model.TestDescriptionGrammar;
+import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
@@ -29,6 +35,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 public class GrammarEditorController extends BaseTranslationController {
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
+	@Autowired protected TransformationEngine engine;
 		
 	public GrammarEditorController() {
 		super("schemaEditor");
@@ -109,5 +116,25 @@ public class GrammarEditorController extends BaseTranslationController {
 			return new ModelActionPojo(false);
 		}
 		return new ModelActionPojo(true);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String sample) {
+		ModelActionPojo result = new ModelActionPojo(false);
+		try {
+			DescriptionGrammar g = new DescriptionGrammarImpl();
+			g.setGrammarName("gTmp" + grammarId);
+			g.setBaseMethod("init");
+			
+			if (engine.checkGrammar(g)!=null) {
+				String svg = engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>()));
+				result.setSuccess(true);
+				result.setPojo(svg);
+			}
+			
+		} catch (Exception e) {
+			logger.error("Transformation error", e);
+		}
+		return result;
 	}
 }

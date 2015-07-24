@@ -117,6 +117,24 @@ GrammarEditor.prototype.compileGrammar = function() {
 	});
 };
 
+GrammarEditor.prototype.parseSample = function() {
+	var _this = this;
+		
+	$.ajax({
+	    url: _this.pathname + "/async/parseSample",
+	    type: "POST",
+	    data: { 
+	    	sample : $("#grammar-sample-input").val()
+	    },
+	    dataType: "json",
+	    success: function(data) {
+	    	alert("Something done")
+	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	
+	    }
+	});
+};
+
 
 GrammarEditor.prototype.setLexerParserCombined = function() {
 	$("#form-group-lexer-grammar").addClass("hide");

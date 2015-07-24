@@ -30,7 +30,10 @@
 		<appender-ref ref="dailyRolling" />
 	</root>
 	
-	<logger name="eu.dariah.de.minfba.schereg">
+	<logger name="eu.dariah.de.minfba">
+		<level value="debug" />
+	</logger>
+	<logger name="de.unibamberg.minf.gtf">
 		<level value="debug" />
 	</logger>
 </configuration>
