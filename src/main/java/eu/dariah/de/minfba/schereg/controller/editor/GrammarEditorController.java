@@ -17,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.gtf.TransformationEngine;
-import de.unibamberg.minf.gtf.description.syntaxtree.NonterminalSyntaxTreeNode;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
-import de.unibamberg.minf.gtf.transformation.model.TestDescriptionGrammar;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;

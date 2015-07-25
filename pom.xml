@@ -18,11 +18,11 @@
 		<eu.dariah.de.minfba.core-metamodel.version>0.0.3-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
 		<de.unibamberg.minf.gtf-version>0.1-SNAPSHOT</de.unibamberg.minf.gtf-version>
 
-		<org.springframework-version>4.1.5.RELEASE</org.springframework-version>
-		<org.springsecurity-version>3.2.6.RELEASE</org.springsecurity-version>
+		<org.springframework-version>4.1.7.RELEASE</org.springframework-version>
+		<org.springsecurity-version>4.0.2.RELEASE</org.springsecurity-version>
 		<org.apache.tiles-version>3.0.5</org.apache.tiles-version>
-		<org.slf4j-version>1.7.10</org.slf4j-version>
-		<ch.qos.logback.version>1.1.2</ch.qos.logback.version>
+		<org.slf4j-version>1.7.12</org.slf4j-version>
+		<ch.qos.logback.version>1.1.3</ch.qos.logback.version>
 	</properties>
 
 	<dependencies>
@@ -56,6 +56,16 @@
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${org.springframework-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
