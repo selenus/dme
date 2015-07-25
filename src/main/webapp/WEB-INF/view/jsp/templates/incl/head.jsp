@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Tobias Gradl, University of Bamberg">
     <meta name="description" content="<tiles:insertAttribute name="title" />">
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <!-- default header name is X-CSRF-TOKEN -->
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <tiles:importAttribute name="styles" />  	
   	<c:forEach items="${styles}" var="css">
   		<link rel="stylesheet" href="<s:url value="/resources/css/${css}" />" type="text/css" media="screen, projection" />

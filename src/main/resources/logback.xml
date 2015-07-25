@@ -33,7 +33,7 @@
 	<logger name="eu.dariah.de.minfba">
 		<level value="debug" />
 	</logger>
-	<logger name="de.unibamberg.minf.gtf">
+	<logger name="de.unibamberg.minf">
 		<level value="debug" />
 	</logger>
 </configuration>
