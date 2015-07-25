@@ -59,6 +59,12 @@ public class MainEditorController extends BaseTranslationController implements I
 		super("schemaEditor");
 	}
 		
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		super.afterPropertiesSet();
+		Files.createDirectories(Paths.get(tmpUploadDirPath));
+	}
+	
 	@RequestMapping(method=GET, value={"/", ""})
 	public String getEditor(@PathVariable String schemaId, Model model, Locale locale) {
 		model.addAttribute("schema", schemaService.findSchemaById(schemaId));

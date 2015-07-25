@@ -63,13 +63,18 @@
 			<div class="form-group">
 				<label class="control-label" for="grammar-sample-input">~Sample input:</label>
 				<div>
-					<textarea id="grammar-sample-input" rows="6" class="form-control codearea"></textarea>
+					<textarea id="grammar-sample-input" rows="6" class="form-control codearea">{1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, {1, {3, 5}, 5, 9}}, 5, 9}, 9}, 9}, 9}, 9}, 9}, 9}</textarea>
 				</div>
 			</div>	
-			<div class="controls">
+			<div class="clearfix">
 				<button class="btn btn-info btn-sm pull-right" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Parse input</button>
+				<button class="btn btn-info btn-sm pull-right" onclick="grammarEditor.maximizeTree(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Max tree</button>
 			</div>
+			<div id="grammar-sample-svg-container">
 			
+		
+						
+			</div>
 				
 		</div>
 	

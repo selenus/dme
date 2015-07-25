@@ -119,7 +119,13 @@ GrammarEditor.prototype.compileGrammar = function() {
 
 GrammarEditor.prototype.parseSample = function() {
 	var _this = this;
+	
+	if ($("#grammar-sample-svg").length) {
+		svgPanZoom("#grammar-sample-svg").destroy();
 		
+		$("#grammar-sample-svg-container").text("");
+	}
+	
 	$.ajax({
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",
@@ -128,12 +134,52 @@ GrammarEditor.prototype.parseSample = function() {
 	    },
 	    dataType: "json",
 	    success: function(data) {
-	    	alert("Something done")
+	    	if (data.success===true) {
+	    		var svg = $(data.pojo);
+	    		svg.prop("id", "grammar-sample-svg");
+	    		
+	    		$("#grammar-sample-svg-container").html(svg);
+	    		
+	    		svgPanZoom("#grammar-sample-svg", {
+	    			//controlIconsEnabled: true,
+	    			fit: false,
+	    			center: false
+	    		});
+
+	    		
+	    	} else {
+	    		alert("Some error");
+	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	
+	    	alert("Some error");
 	    }
 	});
 };
+
+GrammarEditor.prototype.maximizeTree = function() {
+	var height = $(window).height() - 100;
+	
+	var modal = $("<div class='modal fade max-modal'>");
+	
+	var container = $("<div id='grammar-sample-svg-max-container'>");
+	container.height(height + "px");
+	
+	var svg = $($("#grammar-sample-svg-container").html());
+	svg.prop("id", "grammar-sample-svg-max");
+
+	container.html(svg);
+	modal.html(container);
+	$(modal).modal('show');
+	
+	$(modal).on('shown.bs.modal', function (e) {
+		svgPanZoom("#grammar-sample-svg-max", {
+			//controlIconsEnabled: true,
+			fit: false,
+			center: false
+		});
+	})
+}
+
 
 
 GrammarEditor.prototype.setLexerParserCombined = function() {
