@@ -107,9 +107,13 @@
 	<definition name="schemaEditor/form/function/edit" template="/WEB-INF/view/jsp/schema/editor/edit_function.jsp" />
 	
 	<definition name="schemaEditor/form/grammar/process" template="/WEB-INF/view/jsp/schema/editor/process_grammar.jsp" />
+	<definition name="schemaEditor/form/grammar/parsedInputContainer" template="/WEB-INF/view/jsp/schema/editor/max_parsed_input.jsp" />
 	
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 
+	<!-- Help views -->
+	<definition name="schemaEditor/help/grammar/editGrammar" template="/WEB-INF/view/jsp/help/help_edit_grammar.jsp" />
+	
 	
 	<!-- Test views -->
 	<definition name="test/simple" extends="template_simple">

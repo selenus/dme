@@ -6,19 +6,29 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="grammar">
 	<div class="form-header">
-		<h3 id="form-header-title">~Grammar editor</h3>	
+		<h3 id="form-header-title">~Grammar editor <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
 		<sf:hidden path="id" />
 	</div>
 	<div class="form-content row">
 		<div class="col-md-7" style="border-right: 1px solid #E5E5E5;">
 			<legend><strong>1</strong> Edit grammar</legend>
-			<div class="form-group">
-				<label class="control-label" for="grammar_name"><s:message code="~eu.dariah.de.minfba.common.model.label" />:</label>
-				<div>
-					<sf:input path="grammarName" class="form-control" id="grammar_name" />
-					<sf:errors path="grammarName" cssClass="error" />
+			<div class="form-group row">
+				<div class="col-sm-6">
+					<label class="control-label" for="grammar_name">~Grammar name:</label>
+					<div>
+						<sf:input path="grammarName" class="form-control" id="grammar_name" />
+						<sf:errors path="grammarName" cssClass="error" />
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<label class="control-label" for="base_method">~Base rule:</label>
+					<div>
+						<sf:input path="baseMethod" class="form-control" id="base_method" />
+						<sf:errors path="baseMethod" cssClass="error" />
+					</div>
 				</div>
 			</div>
+			
 			<div class="form-group">
 				<label class="control-label" for="grammarContainer_lexerGrammar">~Grammar layout:</label>
 				<div>
@@ -35,6 +45,9 @@
 	  					</label>
 					</div>
 				</div>
+			</div>
+			<div class="clearfix">
+				<div class="alert alert-sm alert-info" role="alert">~This is a passthrough grammar. Input will not be decomposed.</div>
 			</div>
 			<div class="form-group" id="form-group-lexer-grammar">
 				<label class="control-label" for="grammarContainer_lexerGrammar">~Lexer Grammar:</label>
@@ -68,13 +81,19 @@
 			</div>	
 			<div class="clearfix">
 				<button class="btn btn-info btn-sm pull-right" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Parse input</button>
-				<button class="btn btn-info btn-sm pull-right" onclick="grammarEditor.maximizeTree(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Max tree</button>
 			</div>
-			<div id="grammar-sample-svg-container">
+			<legend><strong>3</strong> Analyze sample results</legend>
+			<div id="grammar-sample-svg-embedded" class="grammar-sample-svg">
+				<div class="grammar-sample-svg-container"></div>
+				<div class="grammar-svg-controls">
+					<button class="btn btn-link btn-sm btn-svg-zoomin"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+					<button class="btn btn-link btn-sm btn-svg-zoomout"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
+					<button class="btn btn-link btn-sm btn-svg-reset"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
+					<button class="btn btn-link btn-sm btn-svg-newwindow"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></button>
+				</div>
+			</div>
 			
-		
-						
-			</div>
+			
 				
 		</div>
 	

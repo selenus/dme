@@ -67,6 +67,10 @@
 	font-size: 90%;
 }
 
+.help-sign {
+	color: #2AABD2;
+	cursor: pointer;
+}
 
 /*!
  *	Content wrapping
@@ -378,10 +382,8 @@ noscript div {
 /*!
  *	Grammar Editor
  */
-#grammar-sample-svg-container {
-	position: relative; 
-	height: 200px; 
-	width: 100%; 
+#grammar-sample-svg-embedded {
+	height: 200px;
 	border: 1px solid #CCC;
 	
 	/* Android ≤ 1.6, iOS 1-3.2, Safari 3-4 */
@@ -390,14 +392,17 @@ noscript div {
     border-radius: 5px;
 }
 
-#grammar-sample-svg-max-container {
+#grammar-sample-svg-max {}
+ 
+.grammar-sample-svg,
+.grammar-sample-svg-container {
 	overflow: hidden;
 	position: relative; 
-	width: 100%; 
+	width: 100%;
+	height: 100%;
 }
 
-#grammar-sample-svg,
-#grammar-sample-svg-max {
+.grammar-sample-svg svg {
 	overflow: hidden; 
 	display: inline; 
 	width: inherit; 
@@ -406,6 +411,25 @@ noscript div {
 	height: inherit; 
 	min-height: inherit; 
 	max-height: inherit; 
+}
+
+.grammar-svg-controls {
+	position: absolute;	
+	top: 0;
+	right: 0;
+	
+	background-color: #DDD;
+	border: 1px solid #BBB;
+	
+	/* Android ≤ 1.6, iOS 1-3.2, Safari 3-4 */
+  	-webkit-border-radius: 5px; 	
+  	/* Android 2.1+, Chrome, Firefox 4+, IE 9+, iOS 4+, Opera 10.50+, Safari 5+ */
+    border-radius: 5px;
+
+}
+
+.grammar-svg-controls button {
+	display: block;	
 }
 
 

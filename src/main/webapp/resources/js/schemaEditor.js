@@ -505,7 +505,7 @@ SchemaEditor.prototype.editGrammar = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		setupCallback: function() { grammarEditor = new GrammarEditor(); },       
+		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal); },       
 		completeCallback: function() { _this.reload(); }
 	});
 		

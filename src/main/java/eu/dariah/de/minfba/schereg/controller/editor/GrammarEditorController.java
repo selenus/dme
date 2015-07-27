@@ -86,6 +86,16 @@ public class GrammarEditorController extends BaseTranslationController {
 		return "schemaEditor/form/grammar/process";
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/help/editGrammar")
+	public String showHelpEditGrammar(Model model, Locale locale) {	
+		return "schemaEditor/help/grammar/editGrammar";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/parsedInputContainer")
+	public String showParsedInputDialog(Model model, Locale locale) {	
+		return "schemaEditor/form/grammar/parsedInputContainer";
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/upload")
 	public @ResponseBody ModelActionPojo uploadGrammar(@PathVariable String grammarId, @RequestParam String lexerGrammar, @RequestParam String parserGrammar) {
 		try {

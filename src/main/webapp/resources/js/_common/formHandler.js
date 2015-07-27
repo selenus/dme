@@ -62,6 +62,10 @@ var ModalFormHandler = function(options) {
 	this.completeCallback = null;
 };
 
+ModalFormHandler.prototype.update = function() {
+	$(this.container).modal("handleUpdate");
+};
+
 ModalFormHandler.prototype.show = function(identifier) {
 	if (this.container===null) { 
 		// new form
@@ -153,21 +157,21 @@ ModalFormHandler.prototype.setUpForm = function() {
 		return false;
 	});
 	
-	// TODO: This should initialize but not show before setupCallback is executed
-	$(this.container).modal();
+	
 	
 	if (_this.options.setupCallback != undefined && typeof _this.options.setupCallback == 'function') {
-		_this.options.setupCallback(this.container);
-	}
-	
-	// Form finally presented to the user
-	$(this.container).modal('show');
-	
+		$(this.container).on('show.bs.modal', function (e) {
+			_this.options.setupCallback(_this.container);
+		});
+	}	
+
 	if (_this.options.displayCallback != undefined && typeof _this.options.displayCallback == 'function') {
 		$(this.container).on('shown.bs.modal', function (e) {
-			_this.options.displayCallback(this.container);
-		})
+			_this.options.displayCallback(_this.container);
+		});
 	}
+	
+	$(this.container).modal();
 };
 
 ModalFormHandler.prototype.addMessage = function(type, header, message) {
