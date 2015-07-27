@@ -154,7 +154,10 @@ GrammarEditor.prototype.parseSample = function() {
 	$.ajax({
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",
-	    data: { sample : $("#grammar-sample-input").val() },
+	    data: { 
+	    	sample : $("#grammar-sample-input").val(),
+	    	initRule : $("#base_method").val()
+	    },
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success===true) {

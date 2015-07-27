@@ -127,12 +127,12 @@ public class GrammarEditorController extends BaseTranslationController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String sample) {
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
 			DescriptionGrammar g = new DescriptionGrammarImpl();
 			g.setGrammarName("gTmp" + grammarId);
-			g.setBaseMethod("init");
+			g.setBaseMethod(initRule);
 			
 			if (engine.checkGrammar(g)!=null) {
 				String svg = engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>()));
