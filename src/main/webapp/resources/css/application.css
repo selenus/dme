@@ -72,6 +72,40 @@
 	cursor: pointer;
 }
 
+.glyphicon-color-info {
+	color: #2AABD2;
+}
+
+.glyphicon-color-success {
+	color: #419641;
+}
+
+.glyphicon-color-warning {
+	color: #EB9316;
+}
+
+.glyphicon-color-danger {
+	color: #AC2925;
+}
+
+.legend {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: -moz-use-text-color -moz-use-text-color #e5e5e5;
+    border-image: none;
+    border-style: none none solid;
+    border-width: 0 0 1px;
+    color: #333;
+    display: block;
+    font-size: 21px;
+    line-height: inherit;
+    margin-bottom: 20px;
+    padding: 0;
+    width: 100%;
+}
+
 /*!
  *	Content wrapping
  */

@@ -126,6 +126,13 @@ public class GrammarEditorController extends BaseTranslationController {
 		return new ModelActionPojo(true);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/sandbox")
+	public @ResponseBody ModelActionPojo sandboxGrammar(@PathVariable String grammarId) {
+		// Reserved for future use
+		return new ModelActionPojo(true);
+	}
+	
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
 	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample) {
 		ModelActionPojo result = new ModelActionPojo(false);

@@ -3,30 +3,68 @@ var grammarEditor;
 var GrammarEditor = function(modal) {
 	this.modal = modal;
 	this.combinedGrammar = true;
+	this.originalMode = "";
+	this.originalModeModified = false;
+	this.grammarModified = false;
+	this.validated = false;
 	this.schemaId = schemaEditor.schemaId;
 	this.grammarId = schemaEditor.selectedElementId;
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/grammar/" + this.grammarId;
 	this.init();
 }
 
+GrammarEditor.prototype.updateGrammarState = function() {
+	var state = "";
+	if ($(this.modal).find("#passthrough").val()=="true") {
+		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> ~passthrough</span>";
+	} else if (this.originalModeModified || this.grammarModified) {
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed</span>";
+	} else if (this.validated) {
+		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> validated</span>";
+	} else {
+		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> ok</span>";
+	}
+	$(this.modal).find("#grammar_state").html(state);
+};
+
 GrammarEditor.prototype.init = function() {
 	var _this = this;
 	
-	if ($(_this.modal).find("#grammarContainer_lexerGrammar").val()!==null && $(_this.modal).find("#grammarContainer_lexerGrammar").val()!=="") {
+	if ($(_this.modal).find("#passthrough").val()=="true") {
+		this.originalMode = "passthrough";
+		this.setLexerParserPassthrough();
+		$(_this.modal).find("#lexer-parser-option-passthrough").prop("checked", "checked");
+	} else if ($(_this.modal).find("#grammarContainer_lexerGrammar").val()!==null && $(_this.modal).find("#grammarContainer_lexerGrammar").val()!=="") {
+		this.originalMode = "separate";
 		this.setLexerParserSeparate();
 		$(_this.modal).find("#lexer-parser-option-separate").prop("checked", "checked");
 	} else {
+		this.originalMode = "combined";
 		this.setLexerParserCombined();
 		$(_this.modal).find("#lexer-parser-option-combined").prop("checked", "checked");
 	}
 	
+	this.updateGrammarState();
+	
+	$(_this.modal).find("#grammarContainer_lexerGrammar").on('change keyup paste', function() {
+		_this.grammarModified = true;
+		_this.updateGrammarState();
+	});
+	$(_this.modal).find("#grammarContainer_parserGrammar").on('change keyup paste', function() {
+		_this.grammarModified = true;
+		_this.updateGrammarState();
+	});
+	
 	$(_this.modal).find(".lexer-parser-option").change(function() {
 		  if($(this).val()=="combined") {
 			  _this.setLexerParserCombined();
-		  } else {
+		  } else if($(this).val()=="passthrough") {
+			  _this.setLexerParserPassthrough();
+		  } else{
 			  _this.setLexerParserSeparate();
 		  }
 		  $(_this.modal).modal("layout");
+		  _this.updateGrammarState();
 	});
 };
 
@@ -45,14 +83,50 @@ GrammarEditor.prototype.showHelp = function() {
 	modalFormHandler.show(form_identifier);
 };
 
-GrammarEditor.prototype.setLexerParserCombined = function() {
-	$(this.modal).find("#form-group-lexer-grammar").addClass("hide");
+GrammarEditor.prototype.setLexerParserCombined = function() {	
+	$(this.modal).find(".non-passthrough-only").removeClass("hide");
+	$(this.modal).find(".passthrough-only").addClass("hide");
+	$(this.modal).find("#passthrough").val("false");
+	
+	$(this.modal).find("#form-group-lexer-grammar").addClass("hide");	
+		
 	this.combinedGrammar = true;
+	
+	if (this.originalMode!=="combined") {
+		this.originalModeModified = true;
+	} else {
+		this.originalModeModified = false;
+	}
 }
 
-GrammarEditor.prototype.setLexerParserSeparate = function() {
+GrammarEditor.prototype.setLexerParserSeparate = function() {	
+	$(this.modal).find(".non-passthrough-only").removeClass("hide");
+	$(this.modal).find(".passthrough-only").addClass("hide");	
+	$(this.modal).find("#passthrough").val("false");
+	
 	$(this.modal).find("#form-group-lexer-grammar").removeClass("hide");
+	
 	this.combinedGrammar = false;
+	
+	if (this.originalMode!=="separate") {
+		this.originalModeModified = true;
+	} else {
+		this.originalModeModified = false;
+	}
+}
+
+GrammarEditor.prototype.setLexerParserPassthrough = function() {
+	$(this.modal).find(".non-passthrough-only").addClass("hide");
+	$(this.modal).find(".passthrough-only").removeClass("hide");
+	$(this.modal).find("#passthrough").val("true");
+	
+	this.combinedGrammar = false;
+	
+	if (this.originalMode!=="passthrough") {
+		this.originalModeModified = true;
+	} else {
+		this.originalModeModified = false;
+	}
 }
 
 GrammarEditor.prototype.validateGrammar = function() {
@@ -66,7 +140,7 @@ GrammarEditor.prototype.validateGrammar = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		displayCallback: function() { _this.uploadGrammar(); },
-		//additionalModalClasses: "narrow-modal",
+		additionalModalClasses: "wide-modal",
 		completeCallback: function() {_this.reload();}
 	});
 	modalFormHandler.show(form_identifier);
@@ -87,13 +161,15 @@ GrammarEditor.prototype.uploadGrammar = function() {
 	    },
 	    dataType: "json",
 	    success: function(data) {
-	    	$("#grammar-uploading").addClass("alert-success");
+	    	$("#grammar-uploading").removeClass("panel-default");
+	    	$("#grammar-uploading").addClass("panel-success");
 	    	$("#grammar-uploading .grammar-loading").addClass("hide");
 	    	$("#grammar-uploading .grammar-ok").removeClass("hide");
 	    	
 	    	_this.parseGrammar();
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	$("#grammar-uploading").addClass("alert-danger");
+	    	$("#grammar-uploading").removeClass("panel-default");
+	    	$("#grammar-uploading").addClass("panel-alert");
 	    	$("#grammar-uploading .grammar-loading").addClass("hide");
 	    	$("#grammar-uploading .grammar-error").removeClass("hide");
 	    }
@@ -110,14 +186,15 @@ GrammarEditor.prototype.parseGrammar = function() {
 	    url: _this.pathname + "/async/parse",
 	    type: "GET",
 	    success: function(data) {
-	    	$("#grammar-parsing").addClass("alert-success");
+	    	$("#grammar-parsing").removeClass("panel-default");
+	    	$("#grammar-parsing").addClass("panel-success");
 	    	$("#grammar-parsing .grammar-loading").addClass("hide");
 	    	$("#grammar-parsing .grammar-ok").removeClass("hide");
 	    	
 	    	_this.compileGrammar();
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	$("#grammar-parsing").addClass("alert-danger");
-	    	$("#grammar-parsing .grammar-loading").addClass("hide");
+	    	$("#grammar-parsing").removeClass("panel-default");
+	    	$("#grammar-parsing").addClass("panel-alert");
 	    	$("#grammar-parsing .grammar-error").removeClass("hide");
 	    }
 	});
@@ -133,16 +210,49 @@ GrammarEditor.prototype.compileGrammar = function() {
 	    url: _this.pathname + "/async/compile",
 	    type: "GET",
 	    success: function(data) {
-	    	$("#grammar-compiling").addClass("alert-success");
+	    	$("#grammar-compiling").removeClass("panel-default");
+	    	$("#grammar-compiling").addClass("panel-success");
 	    	$("#grammar-compiling .grammar-loading").addClass("hide");
 	    	$("#grammar-compiling .grammar-ok").removeClass("hide");
+	    	
+	    	_this.sandboxGrammar();
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	$("#grammar-compiling").addClass("alert-danger");
+	    	$("#grammar-compiling").removeClass("panel-default");
+	    	$("#grammar-compiling").addClass("panel-alert");
 	    	$("#grammar-compiling .grammar-loading").addClass("hide");
 	    	$("#grammar-compiling .grammar-error").removeClass("hide");
 	    }
 	});
 };
+
+GrammarEditor.prototype.sandboxGrammar = function() {
+	var _this = this;
+	
+	$("#grammar-sandboxing .grammar-waiting").addClass("hide");
+	$("#grammar-sandboxing .grammar-loading").removeClass("hide");
+	
+	$.ajax({
+	    url: _this.pathname + "/async/sandbox",
+	    type: "GET",
+	    success: function(data) {
+	    	$("#grammar-sandboxing").removeClass("panel-default");
+	    	$("#grammar-sandboxing").addClass("panel-success");
+	    	$("#grammar-sandboxing .grammar-loading").addClass("hide");
+	    	$("#grammar-sandboxing .grammar-ok").removeClass("hide");
+	    	
+	    	_this.originalModeModified = false;
+	    	_this.grammarModified = false;
+	    	_this.validated = true;
+	    	_this.updateGrammarState();
+	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	$("#grammar-sandboxing").removeClass("panel-default");
+	    	$("#grammar-sandboxing").addClass("panel-alert");
+	    	$("#grammar-sandboxing .grammar-loading").addClass("hide");
+	    	$("#grammar-sandboxing .grammar-error").removeClass("hide");
+	    }
+	});
+};
+
 
 GrammarEditor.prototype.parseSample = function() {
 	var _this = this;

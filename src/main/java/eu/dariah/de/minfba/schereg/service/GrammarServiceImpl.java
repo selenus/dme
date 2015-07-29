@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -63,9 +64,10 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		String dirPath = getGrammarDirectory(grammarId, true);
 		String filePathPrefix = getGrammarFilePrefix(grammarId, true);
 		
-		if (!Files.exists(Paths.get(dirPath))) {
-				Files.createDirectories(Paths.get(dirPath));
+		if (Files.exists(Paths.get(dirPath))) {				
+			FileUtils.deleteDirectory(new File(dirPath));
 		}
+		Files.createDirectories(Paths.get(dirPath));
 				
 		if (lexerGrammar!=null && !lexerGrammar.trim().isEmpty()) {
 			lexerGrammar = "lexer grammar gTmp" + grammarId + "Lexer;\n\n" + lexerGrammar;
