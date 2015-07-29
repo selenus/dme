@@ -10,16 +10,11 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -61,8 +56,13 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	
 	@Override
 	public void saveTemporaryGrammar(String grammarId, String lexerGrammar, String parserGrammar) throws IOException {
-		String dirPath = getGrammarDirectory(grammarId, true);
-		String filePathPrefix = getGrammarFilePrefix(grammarId, true);
+		saveGrammarToFilesystem(grammarId, lexerGrammar, parserGrammar, true);
+	}
+	
+	private void saveGrammarToFilesystem(String grammarId, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
+		String dirPath = getGrammarDirectory(grammarId, temporary);
+		String filePathPrefix = getGrammarFilePrefix(grammarId, temporary);
+		String grammarPrefix = temporary ? "gTmp" : "g";
 		
 		if (Files.exists(Paths.get(dirPath))) {				
 			FileUtils.deleteDirectory(new File(dirPath));
@@ -70,13 +70,15 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		Files.createDirectories(Paths.get(dirPath));
 				
 		if (lexerGrammar!=null && !lexerGrammar.trim().isEmpty()) {
-			lexerGrammar = "lexer grammar gTmp" + grammarId + "Lexer;\n\n" + lexerGrammar;
+			lexerGrammar = "lexer grammar " + grammarPrefix + grammarId + "Lexer;\n\n" + lexerGrammar;
 			Files.write(Paths.get(filePathPrefix + "Lexer.g4"), lexerGrammar.getBytes());
 			
-			parserGrammar = "parser grammar gTmp" + grammarId + "Parser;\n\n" + parserGrammar;
+			parserGrammar = "parser grammar " + grammarPrefix + grammarId + "Parser;\n\n" + 
+							"options { tokenVocab= " + grammarPrefix + grammarId + "Lexer; }\n\n" + 
+							parserGrammar;
 			Files.write(Paths.get(filePathPrefix + "Parser.g4"), parserGrammar.getBytes());
 		} else {
-			parserGrammar = "grammar gTmp" + grammarId + ";\n\n" + parserGrammar;
+			parserGrammar = "grammar " + grammarPrefix + grammarId + ";\n\n" + parserGrammar;
 			Files.write(Paths.get(filePathPrefix + ".g4"), parserGrammar.getBytes());
 		}
 	}
@@ -84,23 +86,17 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	@Override
 	public void parseTemporaryGrammar(String grammarId) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		//try {
-			grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
-			grammarCompiler.generateGrammar();
-		/*} catch (GrammarProcessingException e) {
-			logger.error("Failed to parse temporary grammar", e);
-		}*/
+		
+		grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
+		grammarCompiler.generateGrammar();
 	}
 	
 	@Override
 	public void compileTemporaryGrammar(String grammarId) throws GrammarProcessingException, IOException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		//try {
-			grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
-			grammarCompiler.compileGrammar();
-		/*} catch (GrammarProcessingException | IOException e) {
-			logger.error("Failed to compile temporary grammar", e);
-		}*/
+		
+		grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
+		grammarCompiler.compileGrammar();
 	}
 	
 	public void copyTemporaryGrammar(String grammarId) {
@@ -138,7 +134,23 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public void saveGrammar(DescriptionGrammarImpl grammar) {
 		List<TransformationFunctionImpl> transformationFunctions = grammar.getTransformationFunctions();
 		grammar.setTransformationFunctions(null);
+		grammar.setLocked(true);
 		grammarDao.save(grammar);
 		grammar.setTransformationFunctions(transformationFunctions);
+		
+		try {
+			saveGrammarToFilesystem(grammar.getId(), grammar.getGrammarContainer().getLexerGrammar(), grammar.getGrammarContainer().getParserGrammar(), false);
+			
+			GrammarCompiler grammarCompiler = new GrammarCompiler();
+			grammarCompiler.init(new File(getGrammarDirectory(grammar.getId(), false)), "g" + grammar.getId());
+			grammarCompiler.generateGrammar();
+			grammarCompiler.compileGrammar();
+			grammar.setError(false);
+		} catch (IOException | GrammarProcessingException e) {
+			grammar.setError(true);
+		}
+		
+		grammar.setLocked(false);
+		grammarDao.save(grammar);
 	}
 }

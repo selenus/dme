@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
+import org.antlr.v4.tool.ANTLRMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.gtf.TransformationEngine;
+import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -25,6 +27,7 @@ import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo.FieldErrorPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 
@@ -97,33 +100,52 @@ public class GrammarEditorController extends BaseTranslationController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/upload")
-	public @ResponseBody ModelActionPojo uploadGrammar(@PathVariable String grammarId, @RequestParam String lexerGrammar, @RequestParam String parserGrammar) {
-		try {
-			grammarService.saveTemporaryGrammar(grammarId, lexerGrammar, parserGrammar);
-		} catch (IOException e) {
-			return new ModelActionPojo(false);
+	public @ResponseBody ModelActionPojo uploadGrammar(@PathVariable String grammarId, @RequestParam boolean combined, @RequestParam String lexerGrammar, @RequestParam String parserGrammar) {
+		ModelActionPojo result = new ModelActionPojo(false);
+		if (parserGrammar==null || parserGrammar.trim().isEmpty()) {
+			result.addFieldError("grammarContainer_parserGrammar", "~Parser grammar cannot be empty!");
 		}
-		return new ModelActionPojo(true);
+		if (!combined && (lexerGrammar==null || lexerGrammar.trim().isEmpty())) {
+			result.addFieldError("grammarContainer_lexerGrammar", "~Lexer grammar cannot be empty for separate layout grammars!");
+		}
+		
+		if (result.getErrorCount()==0) {
+			try {
+				grammarService.saveTemporaryGrammar(grammarId, lexerGrammar, parserGrammar);
+				result.setSuccess(true);
+			} catch (IOException e) {
+				result.addObjectError("Failed to upload grammar: " + e.getClass().getName());
+			}
+		}
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/parse")
 	public @ResponseBody ModelActionPojo parseGrammar(@PathVariable String grammarId) {
+		ModelActionPojo result = new ModelActionPojo(false);
 		try {
 			grammarService.parseTemporaryGrammar(grammarId);
+			result.setSuccess(true);
+		} catch (GrammarGenerationException e) {
+			for (ANTLRMessage m : e.getErrors()) {
+				result.addFieldError(e.getGrammarType().name(), String.format("~%s:%s => %s", m.line, m.charPosition, m.getMessageTemplate(true).render()));
+			}
 		} catch (Exception e) {
-			return new ModelActionPojo(false);
+			result.addObjectError("Unspecified error while parsing grammar: " + e.getClass().getName());
 		}
-		return new ModelActionPojo(true);
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/compile")
 	public @ResponseBody ModelActionPojo validateGrammar(@PathVariable String grammarId) {
+		ModelActionPojo result = new ModelActionPojo(false);
 		try {
-			grammarService.compileTemporaryGrammar(grammarId);	
+			grammarService.compileTemporaryGrammar(grammarId);
+			result.setSuccess(true);
 		} catch (Exception e) {
-			return new ModelActionPojo(false);
+			result.addObjectError("Unspecified error while compiling grammar: " + e.getClass().getName());
 		}
-		return new ModelActionPojo(true);
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/sandbox")

@@ -9,6 +9,7 @@
 		<h3 id="form-header-title">~Grammar editor <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
 		<sf:hidden path="id" />
 		<sf:hidden path="passthrough" />
+		<sf:hidden path="error" />
 	</div>
 	<div class="form-content row" style="padding-bottom: 0px;">
 		<div class="col-md-7" style="border-right: 1px solid #E5E5E5;">

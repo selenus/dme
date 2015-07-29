@@ -7,6 +7,7 @@ var GrammarEditor = function(modal) {
 	this.originalModeModified = false;
 	this.grammarModified = false;
 	this.validated = false;
+	this.error = false;
 	this.schemaId = schemaEditor.schemaId;
 	this.grammarId = schemaEditor.selectedElementId;
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/grammar/" + this.grammarId;
@@ -17,6 +18,8 @@ GrammarEditor.prototype.updateGrammarState = function() {
 	var state = "";
 	if ($(this.modal).find("#passthrough").val()=="true") {
 		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> ~passthrough</span>";
+	} else if (this.error || $(this.modal).find("#error").val()=="true") {
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error</span>";
 	} else if (this.originalModeModified || this.grammarModified) {
 		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed</span>";
 	} else if (this.validated) {
@@ -130,8 +133,7 @@ GrammarEditor.prototype.setLexerParserPassthrough = function() {
 }
 
 GrammarEditor.prototype.validateGrammar = function() {
-	var _this = this;
-	
+	var _this = this;	
 	var form_identifier = "process-grammar";
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/grammar/" + this.grammarId + "/async/processGrammarDialog",
@@ -139,8 +141,13 @@ GrammarEditor.prototype.validateGrammar = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		displayCallback: function() { _this.uploadGrammar(); },
-		additionalModalClasses: "wide-modal",
+		displayCallback: function() { 
+			_this.validated = false;
+			_this.error = true;
+			_this.updateGrammarState();
+			_this.uploadGrammar(); 
+		},
+		additionalModalClasses: "wider-modal",
 		completeCallback: function() {_this.reload();}
 	});
 	modalFormHandler.show(form_identifier);
@@ -149,29 +156,27 @@ GrammarEditor.prototype.validateGrammar = function() {
 GrammarEditor.prototype.uploadGrammar = function() {
 	var _this = this;
 	
-	$("#grammar-uploading .grammar-waiting").addClass("hide");
-	$("#grammar-uploading .grammar-loading").removeClass("hide");
+	this.setGrammarProcessingPanelStatus("grammar-uploading", "loading");
 	
 	$.ajax({
 	    url: _this.pathname + "/async/upload",
 	    type: "POST",
-	    data: { 
+	    data: {
+	    	combined : this.combinedGrammar,
 	    	lexerGrammar : this.combinedGrammar ? null : $("#grammarContainer_lexerGrammar").val(),
 	    	parserGrammar : $("#grammarContainer_parserGrammar").val()
 	    },
 	    dataType: "json",
 	    success: function(data) {
-	    	$("#grammar-uploading").removeClass("panel-default");
-	    	$("#grammar-uploading").addClass("panel-success");
-	    	$("#grammar-uploading .grammar-loading").addClass("hide");
-	    	$("#grammar-uploading .grammar-ok").removeClass("hide");
-	    	
-	    	_this.parseGrammar();
+	    	if (data.success) {
+	    		_this.setGrammarProcessingPanelStatus("grammar-uploading", "success");
+	    	   	_this.parseGrammar();
+	    	} else {
+	    		_this.setGrammarProcessingPanelStatus("grammar-uploading", "error");
+	    		_this.setGrammarProcessingPanelErrors("grammar-uploading", data.objectErrors, data.fieldErrors)
+	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	$("#grammar-uploading").removeClass("panel-default");
-	    	$("#grammar-uploading").addClass("panel-alert");
-	    	$("#grammar-uploading .grammar-loading").addClass("hide");
-	    	$("#grammar-uploading .grammar-error").removeClass("hide");
+	    	_this.setGrammarProcessingPanelStatus("grammar-uploading", "error");
 	    }
 	});
 };
@@ -179,23 +184,21 @@ GrammarEditor.prototype.uploadGrammar = function() {
 GrammarEditor.prototype.parseGrammar = function() {
 	var _this = this;
 	
-	$("#grammar-parsing .grammar-waiting").addClass("hide");
-	$("#grammar-parsing .grammar-loading").removeClass("hide");
-	
+	this.setGrammarProcessingPanelStatus("grammar-parsing", "loading");
+		
 	$.ajax({
 	    url: _this.pathname + "/async/parse",
 	    type: "GET",
 	    success: function(data) {
-	    	$("#grammar-parsing").removeClass("panel-default");
-	    	$("#grammar-parsing").addClass("panel-success");
-	    	$("#grammar-parsing .grammar-loading").addClass("hide");
-	    	$("#grammar-parsing .grammar-ok").removeClass("hide");
-	    	
-	    	_this.compileGrammar();
+	    	if (data.success) {
+	    		_this.setGrammarProcessingPanelStatus("grammar-parsing", "success");
+	    		_this.compileGrammar();
+	    	} else {
+	    		_this.setGrammarProcessingPanelStatus("grammar-parsing", "error");
+	    		_this.setGrammarProcessingPanelErrors("grammar-parsing", data.objectErrors, data.fieldErrors)
+	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	$("#grammar-parsing").removeClass("panel-default");
-	    	$("#grammar-parsing").addClass("panel-alert");
-	    	$("#grammar-parsing .grammar-error").removeClass("hide");
+	    	_this.setGrammarProcessingPanelStatus("grammar-parsing", "error");
 	    }
 	});
 };
@@ -203,24 +206,21 @@ GrammarEditor.prototype.parseGrammar = function() {
 GrammarEditor.prototype.compileGrammar = function() {
 	var _this = this;
 	
-	$("#grammar-compiling .grammar-waiting").addClass("hide");
-	$("#grammar-compiling .grammar-loading").removeClass("hide");
+	this.setGrammarProcessingPanelStatus("grammar-compiling", "loading");
 	
 	$.ajax({
 	    url: _this.pathname + "/async/compile",
 	    type: "GET",
 	    success: function(data) {
-	    	$("#grammar-compiling").removeClass("panel-default");
-	    	$("#grammar-compiling").addClass("panel-success");
-	    	$("#grammar-compiling .grammar-loading").addClass("hide");
-	    	$("#grammar-compiling .grammar-ok").removeClass("hide");
-	    	
-	    	_this.sandboxGrammar();
+	    	if (data.success) {
+	    		_this.setGrammarProcessingPanelStatus("grammar-compiling", "success");
+	    		_this.sandboxGrammar();
+	    	} else {
+	    		_this.setGrammarProcessingPanelStatus("grammar-compiling", "error");
+	    		_this.setGrammarProcessingPanelErrors("grammar-compiling", data.objectErrors, data.fieldErrors)
+	    	}	    	
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	$("#grammar-compiling").removeClass("panel-default");
-	    	$("#grammar-compiling").addClass("panel-alert");
-	    	$("#grammar-compiling .grammar-loading").addClass("hide");
-	    	$("#grammar-compiling .grammar-error").removeClass("hide");
+	    	_this.setGrammarProcessingPanelStatus("grammar-compiling", "error");
 	    }
 	});
 };
@@ -228,29 +228,72 @@ GrammarEditor.prototype.compileGrammar = function() {
 GrammarEditor.prototype.sandboxGrammar = function() {
 	var _this = this;
 	
-	$("#grammar-sandboxing .grammar-waiting").addClass("hide");
-	$("#grammar-sandboxing .grammar-loading").removeClass("hide");
+	this.setGrammarProcessingPanelStatus("grammar-sandboxing", "loading");
 	
 	$.ajax({
 	    url: _this.pathname + "/async/sandbox",
 	    type: "GET",
 	    success: function(data) {
-	    	$("#grammar-sandboxing").removeClass("panel-default");
-	    	$("#grammar-sandboxing").addClass("panel-success");
-	    	$("#grammar-sandboxing .grammar-loading").addClass("hide");
-	    	$("#grammar-sandboxing .grammar-ok").removeClass("hide");
-	    	
-	    	_this.originalModeModified = false;
-	    	_this.grammarModified = false;
-	    	_this.validated = true;
-	    	_this.updateGrammarState();
+	    	if (data.success) {
+	    		_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "success");
+	    		
+	    		_this.originalModeModified = false;
+		    	_this.grammarModified = false;
+		    	_this.validated = true;
+		    	_this.error = false;
+		    	_this.updateGrammarState();
+	    	} else {
+	    		_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "error");
+	    		_this.setGrammarProcessingPanelErrors("grammar-sandboxing", data.objectErrors, data.fieldErrors)
+	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	$("#grammar-sandboxing").removeClass("panel-default");
-	    	$("#grammar-sandboxing").addClass("panel-alert");
-	    	$("#grammar-sandboxing .grammar-loading").addClass("hide");
-	    	$("#grammar-sandboxing .grammar-error").removeClass("hide");
+	    	_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "error");
 	    }
 	});
+};
+
+GrammarEditor.prototype.setGrammarProcessingPanelErrors = function(id, objectErrors, fieldErrors) {	
+	$("#" + id + " .panel-body").html();
+	$("#" + id + " .panel-body").removeClass("hide");
+	
+	$("#accordion-validate-grammar .panel-collapse").removeClass("in");
+	$("#" + id + " .panel-collapse").addClass("in");
+	
+	if (objectErrors!=null && objectErrors.length > 0) {
+		var errorList = $("<ul>");
+		for (var i=0; i<objectErrors.length; i++) {
+			errorList.append("<li>" + objectErrors[i] + "</li>");
+		}
+		$("#" + id + " .panel-body").append(errorList);
+	}
+	
+	if (fieldErrors!=null && fieldErrors.length > 0) {
+		for (var i=0; i<fieldErrors.length; i++) {
+			var errorList = $("<ul>");
+			for (var j=0; j<fieldErrors[i].errors.length; j++) {
+				errorList.append("<li>" + fieldErrors[i].errors[j] + "</li>");
+			}
+			$("#" + id + " .panel-body").append("<h4>" + fieldErrors[i].field + "</h4>");
+			$("#" + id + " .panel-body").append(errorList);
+		}
+	}
+}
+
+GrammarEditor.prototype.setGrammarProcessingPanelStatus = function(id, state) {
+	if (state==="loading") {
+		$("#" + id + " .grammar-waiting").addClass("hide");
+		$("#" + id + " .grammar-loading").removeClass("hide");
+	} else if (state==="success") {
+		$("#" + id).removeClass("panel-default");
+		$("#" + id).addClass("panel-success");
+		$("#" + id + " .grammar-loading").addClass("hide");
+		$("#" + id + " .grammar-ok").removeClass("hide");
+	} else if (state==="error") {
+		$("#" + id).removeClass("panel-default");
+		$("#" + id).addClass("panel-danger");
+		$("#" + id + " .grammar-loading").addClass("hide");
+		$("#" + id + " .grammar-error").removeClass("hide");
+	} 
 };
 
 

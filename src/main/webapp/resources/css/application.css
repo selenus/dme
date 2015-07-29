@@ -466,6 +466,10 @@ noscript div {
 	display: block;	
 }
 
+#accordion-validate-grammar .panel-body ul {
+	list-style: none;
+	font-size: 90%;
+}
 
 /*!
  *	Modals
