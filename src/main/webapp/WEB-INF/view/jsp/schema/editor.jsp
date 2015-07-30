@@ -29,70 +29,62 @@
 			<input type="hidden" id="schema-id" value="${schema.id}" />
 			<div id="main-content">
 				<div class="row">
-					<div class="col-md-12">
+					<div class="col-xs-12">
 						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> <small>${schema.label}</small>&nbsp;</h2>		
-							
 					</div>
-				
-					<div class="col-md-6 editor-tab-pane" role="tabpanel">
-					
-						<ul class="nav nav-tabs" role="tablist">
-							<li role="presentation" id="tab-element-schema" class="active"><a href="#schema" aria-controls="schema" role="tab" data-toggle="tab">~Schema</a></li>
-							<li role="presentation" id="tab-element-sample"><a href="#sample" aria-controls="sample" role="tab" data-toggle="tab">~Sample</a></li>
-						</ul>
-						<div class="tab-content">
-							<div role="tabpanel" class="tab-pane active" id="schema">
-							
-							
-								<div class="clearfix">
-									<div class="pull-left schema-editor-buttons">
-										<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
-						      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
-		
-										<div class="btn-group pull-left">
-											<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-												<s:message code="~eu.dariah.de.minfba.common.link.actions" /> <span class="caret"></span>
-											</button>
-											<ul id="schema-editor-dynamic-buttons-0" class="dropdown-menu" role="menu">
-												<li><a href="#" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></a></li>
-												<li><a href="#" onclick="schemaEditor.reload(); return false;"><span class='glyphicon glyphicon-refresh'></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></a></li>
-											</ul>
-										</div>    			
-						      			
-									</div>
+					<div class="col-xs-12">
+						<div id="schema-editor-layout-container" class="hide">
+							<div class="ui-layout-center">
+								<div class="ui-pane-title">
+									<h4>~Element structure</h4>
 								</div>
-								<div class="row">		
-									<div id="schema-editor-container">
-										<canvas id="schema-editor-canvas"></canvas>
-									</div>
-								</div>
-							</div>
-							<div role="tabpanel" class="tab-pane" id="sample">
-								<label>~Provide sample input to analyze transformation...</label>
 								
-								<div id="schema-sample-container">
-									<textarea id="schema-sample-textarea" class="form-control" rows="3"></textarea>
-								</div>								
-							</div>
-						</div>
-					
-					
-						
-					</div>
-					<div class="col-md-6 editor-tab-pane" role="tabpanel">
-						<ul class="nav nav-tabs" role="tablist">
-							<li role="presentation" id="tab-element-activity" class="active"><a href="#element-activity" aria-controls="element-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.link.activity" /></a></li>
-							<li role="presentation" id="tab-element-metadata" class="hide"><a href="#element-metadata" aria-controls="element-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.model.element.element" /></a></li>
-						</ul>
-						<div class="tab-content">
-							<div role="tabpanel" class="tab-pane active" id="element-activity">
-								...
-							</div>
-							<div role="tabpanel" class="tab-pane" id="element-metadata">
-								<div class="row">
-									<div id="schema-editor-dynamic-buttons-1" class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4 tab-buttons"></div>
+								<div class="schema-editor-buttons clearfix">
+									<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
+					      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
+					      			<button type="button" onclick="schemaEditor.schema.performAction('resetView'); schemaEditor.reload(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-refresh"></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></button>		
 								</div>
-								<div id="schema-editor-context-info" class="clearfix"></div>
+								<div id="schema-editor-container">
+									<canvas id="schema-editor-canvas"></canvas>
+								</div>
+							</div>
+							
+							<div class="ui-layout-east">
+								<div class="ui-pane-title">
+									<h4>~Details and Actions</h4>
+								</div>
+								<div id="schema-context-container">
+									<div class="alert alert-info alert-sm">
+										~Click on any node in the element structure to view and modify details in this pane 
+									</div>
+									<h5>~Schema actions</h5>
+									<div>
+										<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
+										<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> ~Delete schema</button>
+									</div>
+									<h5>~Schema activity</h5>
+									<div>...</div>
+								</div>
+								<div id="schema-element-context-container" class="hide">
+									<h5>~Actions</h5>
+									<div id="schema-element-context-buttons"></div>
+									<h5>~Details</h5>
+									<div id="schema-element-context-info" class="clearfix"></div>
+									<h5>~Activity</h5>
+									<div>...</div>
+								</div>
+							</div>
+							
+							<div class="ui-layout-west">
+								<div class="ui-pane-title">
+									<h4>Sample input</h4>
+								</div>
+								<div class="alert alert-info alert-sm">
+									~Provide any exemplary content here in order to perform live schema transformation on that data
+								</div>
+								<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3"></textarea>
+								
+								<button type="button" onclick="return false;" class="btn btn-info btn-sm pull-right"><span class="glyphicon glyphicon-resize-full"></span> ~Apply</button>
 							</div>
 						</div>
 					</div>

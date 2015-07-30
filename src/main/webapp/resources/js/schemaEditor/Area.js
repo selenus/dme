@@ -32,14 +32,14 @@ Area.prototype.setSize = function(rectangle) {
 	
 	// Make room for the horizontal "scrollbar"
 	if (this.isLeft) {
-		this.rectangle.x += 30;
+		this.rectangle.x += 20;
 	} 
-	this.rectangle.width -= 30;
+	this.rectangle.width -= 20;
 	
 	
-	this.hNavBar = new HNavBar(this, new Rectangle(this.isLeft ? this.rectangle.x - 30 : this.rectangle.x + this.rectangle.width,
+	this.hNavBar = new HNavBar(this, new Rectangle(this.isLeft ? this.rectangle.x - 20 : this.rectangle.x + this.rectangle.width,
 											 this.rectangle.y,  
-											 30, this.rectangle.height));
+											 20, this.rectangle.height));
 	
 	if (this.isLeft == false && this.rectangle !== null && this.root !== null) {
 		deltaX = this.rectangle.width + this.rectangle.x - oldSpanX;

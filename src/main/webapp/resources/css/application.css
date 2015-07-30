@@ -356,7 +356,9 @@ noscript div {
 	#schema-editor-context-response
 */
 #schema-editor-container {
-	border: 1px solid #DDD;	 
+	border-top: 1px solid #DDD;
+	margin-left: -15px;
+	margin-right: -15px;
 }
 
 .schema-editor-buttons .btn {
@@ -386,6 +388,10 @@ noscript div {
 #schema-sample-textarea {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 	font-size: 90%;
+	resize: none;
+	min-height: 100px;
+	min-width: 100px;
+	margin-bottom: 10px;
 }
 
 .schema-metadata-label,

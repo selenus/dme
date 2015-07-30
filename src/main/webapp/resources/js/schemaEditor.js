@@ -1,10 +1,12 @@
 var schemaEditor;
 $(document).ready(function() {
 	schemaEditor = new SchemaEditor();
+	schemaEditor.initLayout();
 	schemaEditor.initGraph();
 });
 $(window).resize(function() {
-	schemaEditor.resize();
+	schemaEditor.resizeLayout();
+	schemaEditor.resizeContent();
 });
 
 var SchemaEditor = function() {
@@ -14,14 +16,18 @@ var SchemaEditor = function() {
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
 	this.footerOffset = 70;	
 	
+	this.layout = null;
+	this.layoutContainer = $("#schema-editor-layout-container");
 	this.editorContainer = $("#schema-editor-container");
-	this.contextContainer = $(".editor-tab-pane");
-	this.contextContainerInfo = $("#schema-editor-context-info");
 	
-	this.menuContainer0 = $("#schema-editor-dynamic-buttons-0");
-	this.menuContainer1 = $("#schema-editor-dynamic-buttons-1");
-	this.elementTab = $("#tab-element-metadata");
-	this.activityTab = $("#tab-element-activity");
+	this.sampleTextbox = $("#schema-sample-textarea");
+	
+	this.schemaContextContainer = $("#schema-context-container");
+	this.elementContextContainer = $("#schema-element-context-container");
+	
+	this.elementContextDetail = $("#schema-element-context-info");	
+	this.elementContextDetail = $("#schema-element-context-info");
+	this.elementContextButtons = $("#schema-element-context-buttons");
 	
 	this.warningIcon = __util.getBaseUrl() + "resources/img/warning.png";
 		
@@ -53,31 +59,65 @@ var SchemaEditor = function() {
 	__translator.getTranslations();
 }
 
+SchemaEditor.prototype.initLayout = function() {
+	var _this = this;
+	
+	var initWestClosed = true;
+	if (this.layoutContainer.width()>1200) {
+		initWestClosed = false;
+	}
+
+	this.layout = this.layoutContainer.layout({
+		defaults : {
+			fxName : "slide",
+			fxSpeed : "slow",
+			spacing_closed : 14,
+			minWidth : 200,
+			minHeight : 400
+		},
+		west : {
+			initClosed : initWestClosed,
+			size : "25%"
+		},
+		east : {
+			size : "40%"
+		},
+		center : {
+			minWidth : 200,
+			minHeight : 400,
+		},
+		onresize: function () {
+			_this.resizeContent();
+	        return false;
+	    }
+	});
+	this.layoutContainer.removeClass("hide");
+};
+
 SchemaEditor.prototype.initGraph = function() {
 	this.graph = new Graph(this.context.canvas);
 	this.schema = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
  	this.graph.addArea(this.schema);
  	
  	schemaEditor.loadElementHierarchy();
-	schemaEditor.resize();
+	schemaEditor.resizeLayout();
+	schemaEditor.resizeContent();
 };
 
-SchemaEditor.prototype.resize = function() {
-	var height = Math.floor($(window).height() - this.editorContainer.offset().top - this.footerOffset);
-	this.contextContainer.find(".tab-content").css("height", height + "px");
+SchemaEditor.prototype.resizeLayout = function() {
+	var height = Math.floor($(window).height() - this.layoutContainer.offset().top - this.footerOffset);
 	
-	//this.contextContainer.css("margin-top", Math.floor(this.editorContainer.offset().top - this.contextContainer.parent().offset().top - 42) + "px");
-	
-	var editorHeight = height - (this.editorContainer.offset().top - this.editorContainer.offsetParent().offset().top);
-	
+	this.layoutContainer.height(height);
+	this.layout.resizeAll();
+}
+
+SchemaEditor.prototype.resizeContent = function() {
+	var editorHeight = Math.floor(this.editorContainer.offsetParent().innerHeight() - (this.editorContainer.offset().top - this.editorContainer.offsetParent().offset().top));
 	this.editorContainer.css("height", editorHeight + "px");
-	
-	$("#schema-sample-textarea").css("height", editorHeight + "px");
-	$("#schema-sample-container").css("height", editorHeight + "px");
 	
 	if (this.context.canvas) {
 		this.context.canvas.width = this.editorContainer.width() - 1; // border-bottom
-		this.context.canvas.height = editorHeight - 2; // border-left and -right
+		this.context.canvas.height = editorHeight - 4; // border-top
 		window.scroll(0, 0);			
 		if (this.graph !== null) {
 			if (this.schema != null) {
@@ -86,6 +126,9 @@ SchemaEditor.prototype.resize = function() {
 			this.graph.update();
 		}
 	}
+	
+	var sampleTextboxHeight = Math.floor(this.sampleTextbox.offsetParent().innerHeight() - (this.sampleTextbox.offset().top - this.sampleTextbox.offsetParent().offset().top));
+	this.sampleTextbox.height(sampleTextboxHeight - 70);
 };
 
 SchemaEditor.prototype.loadElementHierarchy = function() {
@@ -271,77 +314,51 @@ SchemaEditor.prototype.deselectionHandler = function() {
 	var _this = schemaEditor;
 	
 	_this.selectedElementId = -1;
+	_this.elementContextDetail.text("");
+	_this.elementContextButtons.text("");
 	
-	_this.menuContainer0.find(".context-button").remove();
-	_this.menuContainer1.html("");
-	_this.menuContainer0.closest(".btn-group").find(".btn").addClass("btn-default");
-	_this.menuContainer0.closest(".btn-group").find(".btn").removeClass("btn-primary");
-	
-	_this.contextContainerInfo.html("");
-	_this.elementTab.addClass("hide");
-	_this.activityTab.find("a").tab('show');
+	_this.elementContextContainer.addClass("hide");
+	_this.schemaContextContainer.removeClass("hide");
 };
 
 SchemaEditor.prototype.selectionHandler = function(e) {
 	var _this = schemaEditor;
-	
 	_this.selectedElementId = e.elementId;
 	
-	_this.menuContainer0.find(".context-button").remove();
-	_this.menuContainer1.html("");
-	_this.contextContainerInfo.html("");
-	_this.elementTab.removeClass("hide");
-	_this.elementTab.find("a").tab('show');
+	_this.elementContextDetail.text("");
+	_this.elementContextButtons.text("");
 	
-	// TODO Show details in context response
 	var actions = [];
 	if (e.elementType === "element") {
-		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
-		actions[1] = [0, "addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
-		actions[2] = [1, "editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[3] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
-		_this.elementTab.find("a").html(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.element"));
+		actions[0] = ["addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+		actions[1] = ["addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
+		actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+		actions[3] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 		_this.getElement(e.elementId);	
 	} else if (e.elementType === "grammar") {
-		actions[0] = [0, "addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
-		actions[1] = [1, "editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[2] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
-		_this.elementTab.find("a").html(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar"));
+		actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
+		actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 		_this.getGrammar(e.elementId);
 	} else if (e.elementType === "function") {
-		actions[0] = [0, "addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
-		actions[1] = [1, "editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[2] = [1, "removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
-		_this.elementTab.find("a").html(__translator.translate("~eu.dariah.de.minfba.schereg.model.function.function"));
+		actions[0] = ["addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
+		actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
 		_this.getFunction(e.elementId);
 	}
 	
 	var button;
 	for (var i=0; i<actions.length; i++) {
-		if (actions[i][0]==0) {
-			button = "<li class='context-button'><a href='#' " +
-						//"class='btn btn-" + actions[i][3] + " btn-sm pull-right' " +
-						"onclick='schemaEditor." + actions[i][1] + "(); return false;'>" +
-							"<span class='glyphicon glyphicon-" + actions[i][2] + "'></span> " + actions[i][4] + 
-					 "</a></li>";
-			_this.menuContainer0.append(button);
-		} else {
-			button = "<button " +
-						"class='btn btn-" + actions[i][3] + " btn-sm' " +
-						"onclick='schemaEditor." + actions[i][1] + "(); return false;' type='button'>" +
-							"<span class='glyphicon glyphicon-" + actions[i][2] + "'></span> " + actions[i][4] + 
-					 "</button> ";
-			_this.menuContainer1.append(button);
-		}
+		button = "<button " +
+					"class='btn btn-" + actions[i][2] + " btn-sm' " +
+					"onclick='schemaEditor." + actions[i][0] + "(); return false;' type='button'>" +
+						"<span class='glyphicon glyphicon-" + actions[i][1] + "'></span> " + actions[i][3] + 
+				 "</button> ";
+		_this.elementContextButtons.append(button);
 	}
 	
-	if (_this.menuContainer0.find(".context-button").length > 0) {
-		$("<li class='divider context-button'>").insertBefore(_this.menuContainer0.find(".context-button").first());
-		
-		_this.menuContainer0.closest(".btn-group").find(".btn").addClass("btn-primary");
-		_this.menuContainer0.closest(".btn-group").find(".btn").removeClass("btn-default");
-	}
-	
+	_this.elementContextContainer.removeClass("hide");
+	_this.schemaContextContainer.addClass("hide");
 };
 
 SchemaEditor.prototype.getGrammar = function(id) {
@@ -362,7 +379,7 @@ SchemaEditor.prototype.getGrammar = function(id) {
         		details.append(_this.renderContextTabDetail("~Parser grammar", data.grammarContainer.parserGrammar, true));
         	}
         	
-        	_this.contextContainerInfo.append(details);  	
+        	_this.elementContextDetail.append(details);  	
         },
         error: function(textStatus) { /*alert("error");*/ }
  	});
@@ -379,7 +396,7 @@ SchemaEditor.prototype.getFunction = function(id) {
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.name));
         	
-        	_this.contextContainerInfo.append(details);  	
+        	_this.elementContextDetail.append(details);  	
         },
         error: function(textStatus) { /*alert("error");*/ }
  	});
@@ -397,7 +414,7 @@ SchemaEditor.prototype.getElement = function(id) {
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.transient));
         		
-        	_this.contextContainerInfo.append(details);  	
+        	_this.elementContextDetail.append(details);  	
         	
         	if (data.terminalId!=null && data.terminalId!="") {
 	        	$.ajax({
@@ -412,7 +429,7 @@ SchemaEditor.prototype.getElement = function(id) {
 	                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
 	                	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));
 	                		
-	                	_this.contextContainerInfo.append(details);
+	                	_this.elementContextDetail.append(details);
 	                },
 	                error: function(textStatus) {}
 	         	});    
@@ -422,7 +439,7 @@ SchemaEditor.prototype.getElement = function(id) {
             			"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +
             			__translator.translate("~eu.dariah.de.minfba.schereg.notification.no_terminal_configured") +
             			"</div>");
-            	_this.contextContainerInfo.append(details);
+            	_this.elementContextDetail.append(details);
         	}
         },
         error: function(textStatus) { /*alert("error");*/ }
