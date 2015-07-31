@@ -38,6 +38,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		
 		DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(schemaId, getNormalizedName(label));
+		grammar.setPassthrough(true);
 		grammarDao.save(grammar);
 		
 		addChildReference(rParent, grammar);
@@ -138,16 +139,20 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		grammarDao.save(grammar);
 		grammar.setTransformationFunctions(transformationFunctions);
 		
-		try {
-			saveGrammarToFilesystem(grammar.getId(), grammar.getGrammarContainer().getLexerGrammar(), grammar.getGrammarContainer().getParserGrammar(), false);
-			
-			GrammarCompiler grammarCompiler = new GrammarCompiler();
-			grammarCompiler.init(new File(getGrammarDirectory(grammar.getId(), false)), "g" + grammar.getId());
-			grammarCompiler.generateGrammar();
-			grammarCompiler.compileGrammar();
+		if (grammar.isPassthrough()) {
 			grammar.setError(false);
-		} catch (IOException | GrammarProcessingException e) {
-			grammar.setError(true);
+		} else {
+			try {
+				saveGrammarToFilesystem(grammar.getId(), grammar.getGrammarContainer().getLexerGrammar(), grammar.getGrammarContainer().getParserGrammar(), false);
+				
+				GrammarCompiler grammarCompiler = new GrammarCompiler();
+				grammarCompiler.init(new File(getGrammarDirectory(grammar.getId(), false)), "g" + grammar.getId());
+				grammarCompiler.generateGrammar();
+				grammarCompiler.compileGrammar();
+				grammar.setError(false);
+			} catch (IOException | GrammarProcessingException e) {
+				grammar.setError(true);
+			}
 		}
 		
 		grammar.setLocked(false);

@@ -69,7 +69,7 @@ public class GrammarEditorController extends BaseTranslationController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveNonterminal(@Valid DescriptionGrammarImpl grammar, 
+	public @ResponseBody ModelActionPojo saveGrammar(@Valid DescriptionGrammarImpl grammar, 
 			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult) {
 		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
 		if (grammar.getId().isEmpty()) {

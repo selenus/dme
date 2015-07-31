@@ -54,22 +54,19 @@
 									<h4>~Details and Actions</h4>
 								</div>
 								<div id="schema-context-container">
-									<div class="alert alert-info alert-sm">
-										~Click on any node in the element structure to view and modify details in this pane 
-									</div>
 									<h5>~Schema actions</h5>
-									<div>
+									<div id="schema-context-buttons" class="ui-pane-subcontainer">
 										<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
-										<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> ~Delete schema</button>
+										<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
 									</div>
 									<h5>~Schema activity</h5>
-									<div>...</div>
+									<div class="ui-pane-subcontainer">...</div>
 								</div>
 								<div id="schema-element-context-container" class="hide">
 									<h5>~Actions</h5>
-									<div id="schema-element-context-buttons"></div>
+									<div id="schema-element-context-buttons" class="ui-pane-subcontainer"></div>
 									<h5>~Details</h5>
-									<div id="schema-element-context-info" class="clearfix"></div>
+									<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
 									<h5>~Activity</h5>
 									<div>...</div>
 								</div>

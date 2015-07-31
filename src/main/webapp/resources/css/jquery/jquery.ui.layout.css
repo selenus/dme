@@ -31,6 +31,15 @@
 	border-bottom: 1px solid #BBB;
 }
 
+.ui-pane-subcontainer {
+	padding: 0px 15px 10px 15px;
+	margin-left: -15px;
+	margin-right: -15px;
+	overflow: hidden;
+	
+	border-bottom: 1px solid #DDD;
+}
+
 /*! ================================================================== */
 /*
  *	PANES & CONTENT-DIVs

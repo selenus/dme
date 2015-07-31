@@ -333,17 +333,17 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 		actions[0] = ["addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
 		actions[1] = ["addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
 		actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[3] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		actions[3] = ["removeElement", "trash", "danger", ""];
 		_this.getElement(e.elementId);	
 	} else if (e.elementType === "grammar") {
 		actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
 		actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		actions[2] = ["removeElement", "trash", "danger", ""];
 		_this.getGrammar(e.elementId);
 	} else if (e.elementType === "function") {
 		actions[0] = ["addElement", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
 		actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[2] = ["removeElement", "trash", "danger", __translator.translate("~eu.dariah.de.minfba.common.link.delete")];
+		actions[2] = ["removeElement", "trash", "danger", ""];
 		_this.getFunction(e.elementId);
 	}
 	
@@ -368,15 +368,31 @@ SchemaEditor.prototype.getGrammar = function(id) {
         type: "GET",
         dataType: "json",
         success: function(data) { 
+        	
+        	
+        	/*
+        	 * locked, baseMethod, passthrough, error
+        	 */
+        	
         	var details = $("<div class=\"clearfix\">");
+        	
+        	details.append(_this.renderContextTabDetail("State", 
+        			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
+        			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
+        			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "") +
+        			(data.passthrough==true ? "<span class='glyphicon glyphicon-forward' aria-hidden='true'></span>&nbsp;" : "")
+        	));
+        	
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.grammarName));
+        	details.append(_this.renderContextTabDetail("~Base rule", data.baseMethod));
         	
-        	if (data.grammarContainer!=null) {
+        	if (data.passthrough!=true && data.grammarContainer!=null) {
         		if (data.grammarContainer.lexerGrammar!==null && data.grammarContainer.lexerGrammar !=="") {
-        			details.append(_this.renderContextTabDetail("~Lexer grammar", data.grammarContainer.lexerGrammar, true));
+        			details.append(_this.renderContextTabDetail("~Grammar layout", "separate lexer/parser grammars"));
+        		} else {
+        			details.append(_this.renderContextTabDetail("~Grammar layout", "combined grammar"));
         		}
-        		details.append(_this.renderContextTabDetail("~Parser grammar", data.grammarContainer.parserGrammar, true));
         	}
         	
         	_this.elementContextDetail.append(details);  	

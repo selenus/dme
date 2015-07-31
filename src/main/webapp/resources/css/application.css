@@ -361,28 +361,16 @@ noscript div {
 	margin-right: -15px;
 }
 
-.schema-editor-buttons .btn {
+.schema-editor-buttons .btn,
+#schema-context-buttons .btn,
+#schema-element-context-buttons .btn {
 	margin-bottom: 5px;
 	margin-left: 3px;
 }
 
-.schema-editor-buttons .btn-group {
-	margin-bottom: 5px;
-	margin-left: 10px;
-}
-
-#schema-editor-dynamic-buttons .btn {
-	margin-bottom: 5px;
-	margin-left: 3px;
-}
-
-.editor-tab-pane .tab-content {
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
-	padding: 10px;
-	overflow: hidden;
-	position: relative;
+#schema-context-buttons,
+#schema-element-context-buttons {
+	text-align: right;
 }
 
 #schema-sample-textarea {
@@ -407,16 +395,6 @@ noscript div {
 .schema-metadata-label {
 	font-weight: bold;
 	text-align: right;
-}
-
-.tab-details-block {
-	margin-top: 10px;
-}
-
-.tab-buttons {
-	margin-bottom: 10px;
-	margin-top: 10px;
-	padding: 0 4px;
 }
 
 /*!
