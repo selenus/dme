@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.controller.editor;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -70,8 +71,8 @@ public class GrammarEditorController extends BaseTranslationController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
 	public @ResponseBody ModelActionPojo saveGrammar(@Valid DescriptionGrammarImpl grammar, 
-			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult) {
-		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
+			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (grammar.getId().isEmpty()) {
 			grammar.setId(null);
 		}
@@ -149,9 +150,25 @@ public class GrammarEditorController extends BaseTranslationController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/sandbox")
-	public @ResponseBody ModelActionPojo sandboxGrammar(@PathVariable String grammarId) {
-		// Reserved for future use
-		return new ModelActionPojo(true);
+	public @ResponseBody ModelActionPojo sandboxGrammar(@PathVariable String grammarId, @RequestParam String baseMethod) {
+		ModelActionPojo result = new ModelActionPojo(false);
+		try {
+			if (baseMethod==null || baseMethod.trim().isEmpty()) {
+				result.setSuccess(true);				
+			} else {
+				List<String> parserRules = grammarService.getParserRules(grammarId);
+				if (parserRules.contains(baseMethod.trim())) {
+					result.setSuccess(true);
+				} else {
+					result.addFieldError("base_method", "~Specified base method was not found in grammar");
+				}
+			}
+			
+			
+		} catch (Exception e) {
+			result.addObjectError("Unspecified error while compiling grammar: " + e.getClass().getName());
+		}
+		return result;
 	}
 	
 	

@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -60,6 +61,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		saveGrammarToFilesystem(grammarId, lexerGrammar, parserGrammar, true);
 	}
 	
+	
 	private void saveGrammarToFilesystem(String grammarId, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
 		String dirPath = getGrammarDirectory(grammarId, temporary);
 		String filePathPrefix = getGrammarFilePrefix(grammarId, temporary);
@@ -100,7 +102,14 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		grammarCompiler.compileGrammar();
 	}
 	
-	public void copyTemporaryGrammar(String grammarId) {
+	@Override
+	public List<String> getParserRules(String grammarId) throws GrammarProcessingException {
+		GrammarCompiler grammarCompiler = new GrammarCompiler();
+		grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);		
+		return grammarCompiler.getParserRules();
+	}
+	
+	public void copyTemporaryGrammar(String grammarId) throws GrammarProcessingException {
 		
 	}
 	
@@ -149,6 +158,14 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 				grammarCompiler.init(new File(getGrammarDirectory(grammar.getId(), false)), "g" + grammar.getId());
 				grammarCompiler.generateGrammar();
 				grammarCompiler.compileGrammar();
+				
+				if ( (grammar.getBaseMethod()==null || grammar.getBaseMethod().trim().isEmpty()) && 
+						(grammarCompiler.getParserRules()!=null && grammarCompiler.getParserRules().size()>0 ) ) {
+					grammar.setBaseMethod(grammarCompiler.getParserRules().get(0));
+				}
+				if (grammarCompiler.getParserRules()!=null && !grammarCompiler.getParserRules().contains(grammar.getBaseMethod())) {
+					grammar.setError(true);
+				}
 				grammar.setError(false);
 			} catch (IOException | GrammarProcessingException e) {
 				grammar.setError(true);
@@ -158,4 +175,6 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		grammar.setLocked(false);
 		grammarDao.save(grammar);
 	}
+
+
 }

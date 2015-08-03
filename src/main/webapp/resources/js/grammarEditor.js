@@ -233,6 +233,7 @@ GrammarEditor.prototype.sandboxGrammar = function() {
 	$.ajax({
 	    url: _this.pathname + "/async/sandbox",
 	    type: "GET",
+	    data: { baseMethod: $("#base_method").val() },
 	    success: function(data) {
 	    	if (data.success) {
 	    		_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "success");
