@@ -6,17 +6,66 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="function" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.edit" /></h3>	
+		<h3 id="form-header-title">~Function editor</h3>	
 		<sf:hidden path="id" />
+		<sf:hidden path="error" />
+		<input type="hidden" id="grammar_id" name="grammar_id" />
 	</div>
-	<div class="form-content">
-		<div class="form-group">
-			<label class="col-sm-3 control-label" for="function_name"><s:message code="~eu.dariah.de.minfba.common.model.label" />:</label>
-			<div class="col-sm-8">
-				<sf:input path="name" class="form-control" id="function_name" />
-				<sf:errors path="name" cssClass="error" />
+	<div class="form-content row" style="padding-bottom: 0px;">
+		<div class="col-md-7" style="border-right: 1px solid #E5E5E5;">
+			<div class="legend"><strong>1</strong> ~Edit function</div>
+			<div class="form-group">
+				<div class="col-sm-6">
+					<label class="control-label" for="function_name">~Function name:</label>
+					<div>
+						<sf:input path="name" class="form-control" id="function_name" />
+						<sf:errors path="name" cssClass="error" />
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<label class="control-label" for="base_method">~Language version:</label>
+					<div>
+						?
+					</div>
+				</div>
 			</div>
-		</div>		
+			<div class="form-group">
+				<label class="control-label">~Function state:</label>
+				<span id="function_state"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ~ok</span>
+				<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.validateFunction(); return false;"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> ~Validate</button>
+			</div>
+			<div class="form-group">
+				<label class="control-label" for="function_function">~Transformation function:</label>
+				<div>
+					<sf:textarea path="function" rows="12" class="form-control codearea" id="function_function" />
+					<sf:errors path="function" cssClass="error" />
+				</div>
+			</div>		
+			<div class="form-footer">
+				<div class="controls">
+					<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
+					<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-5" style="border-left: 1px solid #E5E5E5; margin-left: -1px;">
+			<div class="legend"><strong>2</strong> ~Perform sample transformation</div>
+			<div>
+				<div class="form-group">
+					<label class="control-label" for="function-sample-input">~Sample input:</label>
+					<div>
+						<textarea id="function-sample-input" rows="6" class="form-control codearea">{1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, {1, {3, 5}, 5, 9}}, 5, 9}, 9}, 9}, 9}, 9}, 9}, 9}</textarea>
+					</div>
+				</div>
+				<div class="clearfix">
+					<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.performTransformation(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Process input</button>
+				</div>
+			</div>
+			<div class="legend"><strong>3</strong> Transformation result</div>
+			<div>
+				...
+			</div>
+		</div>	
 	</div>
 	<div class="form-footer">
 		<div class="controls">
