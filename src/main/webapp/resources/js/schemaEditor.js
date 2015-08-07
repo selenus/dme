@@ -368,12 +368,9 @@ SchemaEditor.prototype.getGrammar = function(id) {
         type: "GET",
         dataType: "json",
         success: function(data) { 
-        	
-        	
         	/*
         	 * locked, baseMethod, passthrough, error
         	 */
-        	
         	var details = $("<div class=\"clearfix\">");
         	
         	details.append(_this.renderContextTabDetail("State", 
@@ -553,12 +550,12 @@ SchemaEditor.prototype.editFunction = function() {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/function/" + this.graph.selectedItems[0].id + "/form/edit",
 		identifier: form_identifier,
-		//additionalModalClasses: "wider-modal",
+		additionalModalClasses: "max-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		//additionalModalClasses: "wide-modal",               
-		completeCallback: function() {_this.reload();}
+        setupCallback: function(modal) { functionEditor = new FunctionEditor(modal); },       
+		completeCallback: function() { _this.reload(); }
 	});
 		
 	modalFormHandler.show(form_identifier);

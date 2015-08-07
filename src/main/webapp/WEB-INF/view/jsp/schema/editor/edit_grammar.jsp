@@ -108,12 +108,7 @@
 			</div>
 			<div class="passthrough-only">
 				~Passthrough mode: All input is forwarded as provided
-			</div>
-			
-				
+			</div>	
 		</div>
-	
-			
 	</div>
-	
 </sf:form>

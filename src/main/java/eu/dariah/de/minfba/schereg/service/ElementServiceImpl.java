@@ -60,11 +60,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			return root;
 		}
 		
-		List<Identifiable> elements = new ArrayList<Identifiable>();
-		elements.addAll(elementDao.findBySchemaId(root.getSchemaId()));
-		elements.addAll(grammarDao.findBySchemaId(root.getSchemaId()));
-		elements.addAll(functionDao.findBySchemaId(root.getSchemaId()));
-		
+		List<Identifiable> elements = this.getAllElements(root.getSchemaId());		
 		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
 		for (Identifiable e : elements) {
 			elementMap.put(e.getId(), e);
@@ -279,5 +275,13 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		} else {
 			return null;
 		}
+	}
+	
+	private List<Identifiable> getAllElements(String schemaId) {
+		List<Identifiable> elements = new ArrayList<Identifiable>();
+		elements.addAll(elementDao.findBySchemaId(schemaId));
+		elements.addAll(grammarDao.findBySchemaId(schemaId));
+		elements.addAll(functionDao.findBySchemaId(schemaId));
+		return elements;
 	}
 }

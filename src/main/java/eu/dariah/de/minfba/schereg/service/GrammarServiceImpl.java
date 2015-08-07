@@ -165,8 +165,9 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 				}
 				if (grammarCompiler.getParserRules()!=null && !grammarCompiler.getParserRules().contains(grammar.getBaseMethod())) {
 					grammar.setError(true);
+				} else {
+					grammar.setError(false);
 				}
-				grammar.setError(false);
 			} catch (IOException | GrammarProcessingException e) {
 				grammar.setError(true);
 			}
