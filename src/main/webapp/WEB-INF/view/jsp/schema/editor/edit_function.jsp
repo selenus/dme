@@ -17,28 +17,40 @@
 		<div class="col-md-7" style="border-right: 1px solid #E5E5E5;">
 			<div class="legend"><strong>1</strong> ~Edit function</div>
 			<div class="form-group row">
-				<div class="col-sm-6">
+				<div class="col-sm-8">
 					<label class="control-label" for="function_name">~Function name:</label>
 					<div>
 						<sf:input path="name" class="form-control" id="function_name" />
 						<sf:errors path="name" cssClass="error" />
 					</div>
 				</div>
-				<div class="col-sm-6">
+				<div class="col-sm-4">
 					<label class="control-label" for="base_method">~Language version:</label>
 					<div>
-						?
+						<select class="form-control"><option>v1.2</option></select>
 					</div>
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label">~Function state:</label>
 				<span id="function_state"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ~ok</span>
-				<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.validateFunction(); return false;"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> ~Validate</button>
+				<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.processFunction(); return false;"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> ~Validate</button>
 			</div>
 			<div class="form-group">
 				<label class="control-label">~Evaluated grammar:</label>
-				<span>${grammar.grammarName}</span>
+				<span>${grammar.grammarName}</span> (<span id="grammar_state">
+					<c:choose>
+						<c:when test="${grammar.passthrough}">
+							<span class="glyphicon glyphicon-forward" aria-hidden="true"></span> ~passthrough
+						</c:when>
+						<c:when test="${grammar.error}">
+							<span class="glyphicon glyphicon-exclamation-sign glyphicon-color-danger" aria-hidden="true"></span> ~error
+						</c:when>
+						<c:otherwise>
+							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ~ok
+						</c:otherwise>
+					</c:choose>
+				</span>)
 			</div>
 			<div class="form-group">
 				<label class="control-label" for="function_function">~Transformation function:</label>
@@ -60,7 +72,7 @@
 				<div class="form-group">
 					<label class="control-label" for="function-sample-input">~Sample input:</label>
 					<div>
-						<textarea id="function-sample-input" rows="6" class="form-control codearea">{1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, 5}, {1, {3, {1, {3, 5}, 5, 9}}, 5, 9}, 9}, 9}, 9}, 9}, 9}, 9}</textarea>
+						<textarea id="function-sample-input" rows="6" class="form-control codearea">?</textarea>
 					</div>
 				</div>
 				<div class="clearfix">

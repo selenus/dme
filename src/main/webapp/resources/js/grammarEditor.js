@@ -17,15 +17,15 @@ var GrammarEditor = function(modal) {
 GrammarEditor.prototype.updateGrammarState = function() {
 	var state = "";
 	if ($(this.modal).find("#passthrough").val()=="true") {
-		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> ~passthrough</span>";
+		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> ~passthrough";
 	} else if (this.error || $(this.modal).find("#error").val()=="true") {
-		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error</span>";
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error";
 	} else if (this.originalModeModified || this.grammarModified) {
-		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed</span>";
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed";
 	} else if (this.validated) {
-		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> validated</span>";
+		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> validated";
 	} else {
-		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> ok</span>";
+		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> ok";
 	}
 	$(this.modal).find("#grammar_state").html(state);
 };

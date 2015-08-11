@@ -108,42 +108,17 @@
 	<definition name="schemaEditor/form/element/edit_label" template="/WEB-INF/view/jsp/schema/editor/edit_label.jsp" />
 	<definition name="schemaEditor/form/element/edit_terminal" template="/WEB-INF/view/jsp/schema/editor/edit_terminal.jsp" />
 	<definition name="schemaEditor/form/grammar/edit" template="/WEB-INF/view/jsp/schema/editor/edit_grammar.jsp" />
+
 	<definition name="schemaEditor/form/function/edit" template="/WEB-INF/view/jsp/schema/editor/edit_function.jsp" />
+	<definition name="schemaEditor/form/function/process" template="/WEB-INF/view/jsp/schema/editor/process_function.jsp" />
 	
 	<definition name="schemaEditor/form/grammar/process" template="/WEB-INF/view/jsp/schema/editor/process_grammar.jsp" />
 	<definition name="schemaEditor/form/grammar/parsedInputContainer" template="/WEB-INF/view/jsp/schema/editor/max_parsed_input.jsp" />
 	
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 
+
 	<!-- Help views -->
-	<definition name="schemaEditor/help/grammar/editGrammar" template="/WEB-INF/view/jsp/help/help_edit_grammar.jsp" />
-	
-	
-	<!-- Test views -->
-	<definition name="test/simple" extends="template_simple">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/test/simple.jsp" />
-		<put-attribute name="fluidLayout" cascade="true" value="false" />
-	</definition>
-	<definition name="test/simpleFluid" extends="template_simple">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/test/simple.jsp" />
-		<put-attribute name="fluidLayout" cascade="true" value="true" />
-	</definition>
-	<definition name="test/jumbo" extends="template_simple">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/test/jumbo.jsp" />
-		<put-attribute name="fluidLayout" cascade="true" value="false" />
-	</definition>
-	<definition name="test/jumboFluid" extends="template_simple">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/test/jumbo.jsp" />
-		<put-attribute name="fluidLayout" cascade="true" value="true" />
-	</definition>
-	<definition name="test/main" extends="template_main">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/test/main.jsp" />
-		<put-attribute name="fluidLayout" cascade="true" value="false" />
-	</definition>
-	<definition name="test/mainFluid" extends="template_main">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/test/main.jsp" />
-		<put-attribute name="fluidLayout" cascade="true" value="true" />
-	</definition>
-	
+	<definition name="schemaEditor/help/grammar/editGrammar" template="/WEB-INF/view/jsp/help/help_edit_grammar.jsp" />	
 	
 </tiles-definitions>

@@ -11,8 +11,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.unibamberg.minf.gtf.TransformationEngine;
+import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
+import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -26,6 +30,8 @@ public class FunctionEditorController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
 	@Autowired private GrammarService grammarService;
+	@Autowired private TransformationEngine engine;
+	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
 	public @ResponseBody TransformationFunction removeElement(@PathVariable String schemaId, @PathVariable String functionId) {
@@ -45,6 +51,28 @@ public class FunctionEditorController {
 		model.addAttribute("function", functionService.findById(functionId));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/function/" + functionId + "/async/save");
 		return "schemaEditor/form/function/edit";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/process")
+	public String validateFunction(Model model, Locale locale) {		
+		return "schemaEditor/form/function/process";
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/validate")
+	public @ResponseBody ModelActionPojo validateFunction(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func) {
+		ModelActionPojo result = new ModelActionPojo();
+		
+		try {
+			TransformationFunctionImpl f = new TransformationFunctionImpl(schemaId, functionId);
+			f.setFunction(func);
+			
+			CompiledTransformationFunction fCompiled = engine.compileOutputFunction(f, true);
+			
+			result.setPojo(fCompiled.getSvg());
+			
+			result.setSuccess(true);
+		} catch (Exception e) {	}
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
