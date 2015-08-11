@@ -72,7 +72,7 @@
 				<div class="form-group">
 					<label class="control-label" for="function-sample-input">~Sample input:</label>
 					<div>
-						<textarea id="function-sample-input" rows="6" class="form-control codearea">?</textarea>
+						<textarea id="function-sample-input" rows="6" class="form-control codearea">LATITUDE: -70.650000 * LONGITUDE: -8.250000 * DATE/TIME START: 1993-12-01 * DATE/TIME END: 1993-12-31 * MINIMUM ELEVATION: 42.0 m * MAXIMUM ELEVATION: 42.0 m</textarea>
 					</div>
 				</div>
 				<div class="clearfix">
