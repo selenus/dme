@@ -69,6 +69,7 @@
 			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
 			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
 			<add-attribute type="string" value="other/svg-pan-zoom.js" />
+			<add-attribute type="string" value="_common/svgviewer.js" />
 			<add-attribute type="string" value="schemaEditor.js" />
 			<add-attribute type="string" value="grammarEditor.js" />
 			<add-attribute type="string" value="functionEditor.js" />
@@ -113,10 +114,10 @@
 	<definition name="schemaEditor/form/function/process" template="/WEB-INF/view/jsp/schema/editor/process_function.jsp" />
 	
 	<definition name="schemaEditor/form/grammar/process" template="/WEB-INF/view/jsp/schema/editor/process_grammar.jsp" />
-	<definition name="schemaEditor/form/grammar/parsedInputContainer" template="/WEB-INF/view/jsp/schema/editor/max_parsed_input.jsp" />
+	
 	
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
-
+	<definition name="common/forms/maximizeSvg" template="/WEB-INF/view/jsp/common/forms/maximizeSvg.jsp" />
 
 	<!-- Help views -->
 	<definition name="schemaEditor/help/grammar/editGrammar" template="/WEB-INF/view/jsp/help/help_edit_grammar.jsp" />	

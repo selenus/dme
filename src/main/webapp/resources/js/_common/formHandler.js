@@ -95,9 +95,16 @@ ModalFormHandler.prototype.init = function() {
 	}
 	__translator.getTranslations();
 
+	var url = "";
+	if (_this.options.formFullUrl!=null && _this.options.formFullUrl!=undefined) {
+		url = _this.options.formFullUrl;
+	} else {
+		url = window.location.pathname + _this.options.formUrl;
+	}
+	
 	// Get the actual form to display
 	$.ajax({
-        url: window.location.pathname + _this.options.formUrl,
+        url: url,
         type: "GET",
         dataType: "html",
         success: function(data) {

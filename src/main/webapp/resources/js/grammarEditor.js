@@ -11,6 +11,9 @@ var GrammarEditor = function(modal) {
 	this.schemaId = schemaEditor.schemaId;
 	this.grammarId = schemaEditor.selectedElementId;
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/grammar/" + this.grammarId;
+	
+	this.svg = null;
+	
 	this.init();
 }
 
@@ -300,11 +303,12 @@ GrammarEditor.prototype.setGrammarProcessingPanelStatus = function(id, state) {
 
 GrammarEditor.prototype.parseSample = function() {
 	var _this = this;
-	var svgContainer = "#grammar-sample-svg-embedded";
-	var svgId = "grammar-sample-svg-image";
 	
-	this.destroySVG(svgContainer, svgId);
+	if (this.svg!=null) {
+		this.svg.destroy();
+	}
 	
+	var svgContainer = "#grammar-sample-svg-embedded";	
 	$.ajax({
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",
@@ -315,7 +319,7 @@ GrammarEditor.prototype.parseSample = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success===true) {
-	    		_this.showSVG(svgContainer, svgId, data.pojo);
+	    		_this.svg = new SvgViewer(svgContainer, data.pojo)
 	    	} else {
 	    		alert("Some error");
 	    	}
@@ -323,64 +327,4 @@ GrammarEditor.prototype.parseSample = function() {
 	    	alert("Some error");
 	    }
 	});
-};
-
-GrammarEditor.prototype.maximizeTree = function() {
-	var _this = this;
-	var height = $(window).height() - 300;
-	var svgContainer = "grammar-sample-svg-max";
-	var svgId = "grammar-sample-svg-image-max";
-	var form_identifier = "max-parsed-input";
-	var content = $($("#grammar-sample-svg-embedded .grammar-sample-svg-container").html());
-	
-	modalFormHandler = new ModalFormHandler({
-		formUrl: "/grammar/" + this.grammarId + "/async/parsedInputContainer",
-		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
-		                ],
-		setupCallback: function(modal) {
-			$(modal).find("#" + svgContainer).height(height + "px");
-		},
-		displayCallback: function() { 
-			_this.showSVG("#" + svgContainer, svgId, content);
-		},
-		additionalModalClasses: "max-modal",
-	});
-	modalFormHandler.show(form_identifier);
-}
-
-GrammarEditor.prototype.showSVG = function(selector, svgid, content) {
-	var _this = this;
-	var svg = $(content);
-	svg.prop("id", svgid);
-	
-	$(selector + " .grammar-sample-svg-container").html(svg);
-	
-	var panZoom = svgPanZoom("#" + svgid, {
-		fit: false,
-		center: false
-	});
-	
-	$(selector + " .btn-svg-zoomin").click(function() {
-		panZoom.zoomIn(); return false;
-	});
-	$(selector + " .btn-svg-zoomout").click(function() {
-		panZoom.zoomOut(); return false;
-	});
-	$(selector + " .btn-svg-reset").click(function() {
-		panZoom.reset(); return false;
-	});
-	$(selector + " .btn-svg-newwindow").click(function() {
-		_this.maximizeTree(); return false;
-	});
-};
-
-GrammarEditor.prototype.destroySVG = function(selector, svgid) {
-	if ($("#" + svgid).length) {
-		svgPanZoom("#" + svgid).destroy();
-		
-		$(selector + " .grammar-sample-svg-container").text("");
-		$(selector + " button").off();
-	}
 };
