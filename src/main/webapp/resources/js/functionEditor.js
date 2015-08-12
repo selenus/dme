@@ -54,7 +54,32 @@ FunctionEditor.prototype.validateFunction = function(f) {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) {
-	    		_this.svg = new SvgViewer("#function-svg", data.pojo)
+	    		_this.svg = new SvgViewer("#function-svg", data.pojo);
+	    	} else {
+	    		alert("error1");
+	    	}
+	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	alert("error2");
+	    }
+	});
+};
+
+FunctionEditor.prototype.performTransformation = function() {
+	var _this = this;
+	var f = $("#function_function").val();
+	var s = $("#function-sample-input").val();
+	
+	$.ajax({
+	    url: _this.pathname + "/async/parseSample",
+	    type: "POST",
+	    data: { 
+	    	func: f,
+	    	sample: s
+	    },
+	    dataType: "json",
+	    success: function(data) {
+	    	if (data.success) {
+	    		alert("success");
 	    	} else {
 	    		alert("error1");
 	    	}

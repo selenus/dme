@@ -107,7 +107,8 @@ public class GrammarEditorController extends BaseTranslationController {
 		
 		if (result.getErrorCount()==0) {
 			try {
-				grammarService.saveTemporaryGrammar(grammarId, lexerGrammar, parserGrammar);
+				DescriptionGrammar g = getTemporaryGrammar(grammarId);
+				grammarService.saveTemporaryGrammar(g, lexerGrammar, parserGrammar);
 				result.setSuccess(true);
 			} catch (IOException e) {
 				result.addObjectError("Failed to upload grammar: " + e.getClass().getName());
@@ -120,7 +121,8 @@ public class GrammarEditorController extends BaseTranslationController {
 	public @ResponseBody ModelActionPojo parseGrammar(@PathVariable String grammarId) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
-			grammarService.parseTemporaryGrammar(grammarId);
+			DescriptionGrammar g = getTemporaryGrammar(grammarId);
+			grammarService.parseTemporaryGrammar(g);
 			result.setSuccess(true);
 		} catch (GrammarGenerationException e) {
 			for (ANTLRMessage m : e.getErrors()) {
@@ -136,7 +138,8 @@ public class GrammarEditorController extends BaseTranslationController {
 	public @ResponseBody ModelActionPojo validateGrammar(@PathVariable String grammarId) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
-			grammarService.compileTemporaryGrammar(grammarId);
+			DescriptionGrammar g = getTemporaryGrammar(grammarId);
+			grammarService.compileTemporaryGrammar(g);
 			result.setSuccess(true);
 		} catch (Exception e) {
 			result.addObjectError("Unspecified error while compiling grammar: " + e.getClass().getName());
@@ -151,7 +154,8 @@ public class GrammarEditorController extends BaseTranslationController {
 			if (baseMethod==null || baseMethod.trim().isEmpty()) {
 				result.setSuccess(true);				
 			} else {
-				List<String> parserRules = grammarService.getParserRules(grammarId);
+				DescriptionGrammar g = getTemporaryGrammar(grammarId);
+				List<String> parserRules = grammarService.getParserRules(g);
 				if (parserRules.contains(baseMethod.trim())) {
 					result.setSuccess(true);
 				} else {
@@ -167,12 +171,15 @@ public class GrammarEditorController extends BaseTranslationController {
 	}
 	
 	
+	
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
 	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
-			DescriptionGrammar g = new DescriptionGrammarImpl();
-			g.setGrammarName("gTmp" + grammarId);
+			// TODO Find out if there is a gTmp - else use the (already existing g)
+			
+			DescriptionGrammar g = getTemporaryGrammar(grammarId);
 			g.setBaseMethod(initRule);
 			
 			if (engine.checkGrammar(g)!=null) {
@@ -185,5 +192,13 @@ public class GrammarEditorController extends BaseTranslationController {
 			logger.error("Transformation error", e);
 		}
 		return result;
+	}
+	
+	private DescriptionGrammar getTemporaryGrammar(String id) {
+		DescriptionGrammar g = new DescriptionGrammarImpl();
+		g.setTemporary(true);
+		g.setId(id);
+		g.setGrammarName(g.getIdentifier());
+		return g;
 	}
 }

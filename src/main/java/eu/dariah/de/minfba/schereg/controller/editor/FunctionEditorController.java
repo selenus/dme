@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.controller.editor;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.validation.Valid;
@@ -15,9 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.gtf.TransformationEngine;
+import de.unibamberg.minf.gtf.exception.DataTransformationException;
+import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
+import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
@@ -83,5 +88,29 @@ public class FunctionEditorController {
 		}
 		functionService.saveFunction(function);
 		return result;
-	} 
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample) {
+		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
+		DescriptionGrammar g = grammarService.findById(grammarId);
+		
+		TransformationFunction f = new TransformationFunctionImpl(schemaId, functionId);
+		f.setFunction(func);
+		
+		ModelActionPojo result = new ModelActionPojo();
+		
+		try {
+			engine.checkGrammar(g);
+			
+			List<OutputParam> pResult = engine.process(sample, g, f);
+			result.setSuccess(true);
+			result.setPojo(pResult);
+		} catch (GrammarProcessingException | DataTransformationException e) {
+			e.printStackTrace();
+		}
+		
+		
+		return result;
+	}
 }

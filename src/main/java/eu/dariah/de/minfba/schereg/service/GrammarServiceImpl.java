@@ -48,24 +48,23 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		return grammar;
 	}
 
-	private String getGrammarDirectory(String grammarId, boolean temporary) {
-		return grammarsRootPath + File.separator + (temporary ? "gTmp" : "g") + grammarId + File.separator;
+	private String getGrammarDirectory(DescriptionGrammar grammar, boolean temporary) {
+		return grammarsRootPath + File.separator + grammar.getIdentifier() + File.separator;
 	}
 	
-	private String getGrammarFilePrefix(String grammarId, boolean temporary) {
-		return getGrammarDirectory(grammarId, temporary) + (temporary ? "gTmp" : "g") + grammarId;
+	private String getGrammarFilePrefix(DescriptionGrammar grammar, boolean temporary) {
+		return getGrammarDirectory(grammar, temporary) + grammar.getIdentifier();
 	}
 	
 	@Override
-	public void saveTemporaryGrammar(String grammarId, String lexerGrammar, String parserGrammar) throws IOException {
-		saveGrammarToFilesystem(grammarId, lexerGrammar, parserGrammar, true);
+	public void saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException {
+		saveGrammarToFilesystem(grammar, lexerGrammar, parserGrammar, true);
 	}
 	
 	
-	private void saveGrammarToFilesystem(String grammarId, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
-		String dirPath = getGrammarDirectory(grammarId, temporary);
-		String filePathPrefix = getGrammarFilePrefix(grammarId, temporary);
-		String grammarPrefix = temporary ? "gTmp" : "g";
+	private void saveGrammarToFilesystem(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
+		String dirPath = getGrammarDirectory(grammar, temporary);
+		String filePathPrefix = getGrammarFilePrefix(grammar, temporary);
 		
 		if (Files.exists(Paths.get(dirPath))) {				
 			FileUtils.deleteDirectory(new File(dirPath));
@@ -73,39 +72,39 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		Files.createDirectories(Paths.get(dirPath));
 				
 		if (lexerGrammar!=null && !lexerGrammar.trim().isEmpty()) {
-			lexerGrammar = "lexer grammar " + grammarPrefix + grammarId + "Lexer;\n\n" + lexerGrammar;
+			lexerGrammar = "lexer grammar " + grammar.getIdentifier() + "Lexer;\n\n" + lexerGrammar;
 			Files.write(Paths.get(filePathPrefix + "Lexer.g4"), lexerGrammar.getBytes());
 			
-			parserGrammar = "parser grammar " + grammarPrefix + grammarId + "Parser;\n\n" + 
-							"options { tokenVocab= " + grammarPrefix + grammarId + "Lexer; }\n\n" + 
+			parserGrammar = "parser grammar " + grammar.getIdentifier() + "Parser;\n\n" + 
+							"options { tokenVocab= " + grammar.getIdentifier() + "Lexer; }\n\n" + 
 							parserGrammar;
 			Files.write(Paths.get(filePathPrefix + "Parser.g4"), parserGrammar.getBytes());
 		} else {
-			parserGrammar = "grammar " + grammarPrefix + grammarId + ";\n\n" + parserGrammar;
+			parserGrammar = "grammar " + grammar.getIdentifier() + ";\n\n" + parserGrammar;
 			Files.write(Paths.get(filePathPrefix + ".g4"), parserGrammar.getBytes());
 		}
 	}
 	
 	@Override
-	public void parseTemporaryGrammar(String grammarId) throws GrammarProcessingException {
+	public void parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
 		
-		grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
+		grammarCompiler.init(new File(getGrammarDirectory(grammar, true)), grammar.getIdentifier());
 		grammarCompiler.generateGrammar();
 	}
 	
 	@Override
-	public void compileTemporaryGrammar(String grammarId) throws GrammarProcessingException, IOException {
+	public void compileTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException, IOException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
 		
-		grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);
+		grammarCompiler.init(new File(getGrammarDirectory(grammar, true)), grammar.getIdentifier());
 		grammarCompiler.compileGrammar();
 	}
 	
 	@Override
-	public List<String> getParserRules(String grammarId) throws GrammarProcessingException {
+	public List<String> getParserRules(DescriptionGrammar grammar) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		grammarCompiler.init(new File(getGrammarDirectory(grammarId, true)), "gTmp" + grammarId);		
+		grammarCompiler.init(new File(getGrammarDirectory(grammar, true)), grammar.getIdentifier());		
 		return grammarCompiler.getParserRules();
 	}
 	
@@ -145,6 +144,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		List<TransformationFunctionImpl> transformationFunctions = grammar.getTransformationFunctions();
 		grammar.setTransformationFunctions(null);
 		grammar.setLocked(true);
+		grammar.setTemporary(false);
 		grammarDao.save(grammar);
 		grammar.setTransformationFunctions(transformationFunctions);
 		
@@ -152,10 +152,10 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 			grammar.setError(false);
 		} else {
 			try {
-				saveGrammarToFilesystem(grammar.getId(), grammar.getGrammarContainer().getLexerGrammar(), grammar.getGrammarContainer().getParserGrammar(), false);
+				this.saveGrammarToFilesystem(grammar, grammar.getGrammarContainer().getLexerGrammar(), grammar.getGrammarContainer().getParserGrammar(), false);
 				
 				GrammarCompiler grammarCompiler = new GrammarCompiler();
-				grammarCompiler.init(new File(getGrammarDirectory(grammar.getId(), false)), "g" + grammar.getId());
+				grammarCompiler.init(new File(this.getGrammarDirectory(grammar, false)), grammar.getIdentifier());
 				grammarCompiler.generateGrammar();
 				grammarCompiler.compileGrammar();
 				
@@ -170,6 +170,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 				}
 			} catch (IOException | GrammarProcessingException e) {
 				grammar.setError(true);
+				logger.error("Error while processing saved grammar", e);
 			}
 		}
 		

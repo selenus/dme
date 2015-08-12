@@ -17,9 +17,9 @@ public interface GrammarService {
 
 	public void saveGrammar(DescriptionGrammarImpl grammar);
 
-	public void saveTemporaryGrammar(String grammarId, String lexerGrammar, String parserGrammar) throws IOException;
-	public void parseTemporaryGrammar(String grammarId) throws GrammarProcessingException;
-	public void compileTemporaryGrammar(String grammarId) throws IOException, GrammarProcessingException;
+	public void saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException;
+	public void parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException;
+	public void compileTemporaryGrammar(DescriptionGrammar grammar) throws IOException, GrammarProcessingException;
 
-	public List<String> getParserRules(String grammarId) throws GrammarProcessingException;
+	public List<String> getParserRules(DescriptionGrammar grammar) throws GrammarProcessingException;
 }
