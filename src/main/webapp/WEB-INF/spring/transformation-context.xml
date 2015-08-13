@@ -13,6 +13,17 @@
 		<property name="parseErrorDumpPath" value="/tmp" />
 		<property name="autoCompile" value="true" />
 		<property name="cacheGrammars" value="false" />
+		<property name="objMapper" ref="objectMapper" />
+		<property name="commandDispatcher" ref="commandDispatcher"></property>
 	</bean>
+		
+	<bean id="commandDispatcher" class="de.unibamberg.minf.gtf.transformation.processing.GlobalCommandDispatcher">
+		<property name="commandDispatchers">
+			<map>
+				<entry key="CORE"><bean class="de.unibamberg.minf.gtf.transformation.commands.CoreCommandsDispatcher" /></entry>
+				<entry key="WIKI"><bean class="de.unibamberg.minf.gtf.extensions.wiki.commands.WikiCommandsDispatcher" /></entry>
+			</map>
+		</property>
+	</bean>	
 	
 </beans>

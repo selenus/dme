@@ -43,6 +43,21 @@
 			<artifactId>gtf-core</artifactId>
 			<version>${de.unibamberg.minf.gtf-version}</version>
 		</dependency>
+		<dependency>
+			<groupId>de.unibamberg.minf.gtf</groupId>
+			<artifactId>gtf-commands</artifactId>
+			<version>${de.unibamberg.minf.gtf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unibamberg.minf.gtf</groupId>
+			<artifactId>gtf-extension-wiki</artifactId>
+			<version>${de.unibamberg.minf.gtf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unibamberg.minf.gtf</groupId>
+			<artifactId>gtf-extensions-nlp</artifactId>
+			<version>${de.unibamberg.minf.gtf-version}</version>
+		</dependency>
 	
 		<!-- Spring -->
 		<dependency>
