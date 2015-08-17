@@ -19,7 +19,8 @@
 				</div>
 				<div id="collapse-function-parsing" class="panel-collapse" role="tabpanel" aria-labelledby="heading-function-parsing">
 					<div class="panel-body">
-						<div id="function-svg" class="outer-svg-container">
+						<div id="function-alerts"></div>
+						<div id="function-svg" class="outer-svg-container" style="height: 350px;">
 							<div class="inner-svg-container"></div>
 							<div class="svg-button-container">
 								<button class="btn btn-link btn-sm btn-svg-zoomin"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>

@@ -74,8 +74,8 @@ public class FunctionEditorController {
 			f.setFunction(func);
 			
 			CompiledTransformationFunction fCompiled = engine.compileOutputFunction(f, true);
-			
 			result.setPojo(fCompiled.getSvg());
+			result.setObjectErrors(fCompiled.getErrors());
 			
 			result.setSuccess(true);
 		} catch (Exception e) {	}

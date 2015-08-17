@@ -55,6 +55,16 @@ FunctionEditor.prototype.validateFunction = function(f) {
 	    success: function(data) {
 	    	if (data.success) {
 	    		_this.svg = new SvgViewer("#function-svg", data.pojo);
+	    		//function-alerts
+	    		
+	    		if (data.objectErrors!=null && data.objectErrors.length > 0) {
+	    			var errorList = $("<ul>");
+	    			for (var i=0; i<data.objectErrors.length; i++) {
+	    				errorList.append("<li>" + data.objectErrors[i] + "</li>");
+	    			}
+	    			$("#function-alerts").html(errorList);
+	    		}
+	    		
 	    	} else {
 	    		alert("error1");
 	    	}
