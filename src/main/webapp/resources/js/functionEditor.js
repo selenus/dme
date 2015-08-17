@@ -7,6 +7,10 @@ var FunctionEditor = function(modal) {
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/function/" + this.functionId;
 	this.svg = null;
 	
+	this.modified = false;
+	this.error = false;
+	this.validated = false;
+	
 	this.init();
 };
 
@@ -14,6 +18,30 @@ FunctionEditor.prototype.init = function() {
 	/* - load and set status of transformation function
 	 * 
 	 */
+	var _this = this;
+	
+	$(this.modal).find("#function_function").on('change keyup paste', function() {
+		_this.modified = true;
+		_this.updateFunctionState();
+	});
+	
+	this.updateFunctionState();
+};
+
+FunctionEditor.prototype.updateFunctionState = function() {
+	var state = "";
+	if (this.modified) {
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed";
+	} else if (this.error || $(this.modal).find("#error").val()=="true") {
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error";
+	} else if ($(this.modal).find("#grammar_error").val()=="true") {
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-warning\" aria-hidden=\"true\"></span> ~ error in grammar";
+	} else if (this.validated) {
+		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> validated";
+	} else {
+		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> ok";
+	}
+	$(this.modal).find("#function_state").html(state);
 };
 
 FunctionEditor.prototype.showHelp = function() {
@@ -54,24 +82,39 @@ FunctionEditor.prototype.validateFunction = function(f) {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) {
-	    		_this.svg = new SvgViewer("#function-svg", data.pojo);
-	    		//function-alerts
-	    		
-	    		if (data.objectErrors!=null && data.objectErrors.length > 0) {
-	    			var errorList = $("<ul>");
-	    			for (var i=0; i<data.objectErrors.length; i++) {
-	    				errorList.append("<li>" + data.objectErrors[i] + "</li>");
-	    			}
-	    			$("#function-alerts").html(errorList);
-	    		}
-	    		
+	    		_this.showValidationResult(data);
 	    	} else {
 	    		alert("error1");
 	    	}
+	    	_this.updateFunctionState();
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	alert("error2");
 	    }
 	});
+};
+
+FunctionEditor.prototype.showValidationResult = function(data) {
+	this.svg = new SvgViewer("#function-svg", data.pojo);
+	
+	var alert = $("<div class=\"alert\">");
+	if (data.objectErrors!=null && data.objectErrors.length > 0) {
+		var errorList = $("<ul>");
+		for (var i=0; i<data.objectErrors.length; i++) {
+			errorList.append("<li>" + data.objectErrors[i] + "</li>");
+		}
+		alert.html(errorList)
+		alert.addClass("alert-danger");
+		this.error = true;
+		this.validated = false;
+		this.modified = false;
+	} else {
+		alert.text("~ Validation of transformation function succeeded")
+		alert.addClass("alert-success");
+		this.error = false;
+		this.validated = true;
+		this.modified = false;
+	}
+	$("#function-alerts").html(alert);
 };
 
 FunctionEditor.prototype.performTransformation = function() {

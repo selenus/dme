@@ -472,6 +472,10 @@ noscript div {
 	font-style: italic;
 }
 
+#function-alerts ul {
+	list-style: circle;
+}
+
 /*!
  *	Modals
  */

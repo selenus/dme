@@ -33,7 +33,7 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label">~Function state:</label>
-				<span id="function_state"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ~ok</span>
+				<span id="function_state"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> ~ok</span>
 				<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.processFunction(); return false;"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> ~Validate</button>
 			</div>
 			<div class="form-group">
@@ -47,7 +47,7 @@
 							<span class="glyphicon glyphicon-exclamation-sign glyphicon-color-danger" aria-hidden="true"></span> ~error
 						</c:when>
 						<c:otherwise>
-							<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ~ok
+							<span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> ~ok
 						</c:otherwise>
 					</c:choose>
 				</span>)
