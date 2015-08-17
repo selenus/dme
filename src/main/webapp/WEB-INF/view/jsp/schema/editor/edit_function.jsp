@@ -80,7 +80,7 @@
 				</div>
 			</div>
 			<div class="legend"><strong>3</strong> Transformation result</div>
-			<div>
+			<div id="transformation-result-container">
 				...
 			</div>
 		</div>	

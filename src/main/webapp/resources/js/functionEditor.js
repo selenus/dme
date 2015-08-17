@@ -79,7 +79,7 @@ FunctionEditor.prototype.performTransformation = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) {
-	    		alert("success");
+	    		$("#transformation-result-container").text(JSON.stringify(data.pojo));
 	    	} else {
 	    		alert("error1");
 	    	}

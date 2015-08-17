@@ -105,7 +105,7 @@ public class FunctionEditorController {
 			
 			List<OutputParam> pResult = engine.process(sample, g, f);
 			result.setSuccess(true);
-			result.setPojo(pResult);
+			//result.setPojo(pResult);
 		} catch (GrammarProcessingException | DataTransformationException e) {
 			e.printStackTrace();
 		}
