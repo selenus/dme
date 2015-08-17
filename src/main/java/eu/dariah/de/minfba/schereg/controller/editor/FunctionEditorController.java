@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.controller.editor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +26,7 @@ import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
@@ -102,15 +104,38 @@ public class FunctionEditorController {
 		
 		try {
 			engine.checkGrammar(g);
-			
 			List<OutputParam> pResult = engine.process(sample, g, f);
 			result.setSuccess(true);
-			//result.setPojo(pResult);
+			
+			if (pResult!=null && pResult.size()>0) {
+				List<TreeElementPojo> resultPojos = new ArrayList<TreeElementPojo>(); 
+				for(OutputParam p : pResult) {
+					resultPojos.add(this.convertOutputParamToPojo(p));
+				}
+				result.setPojo(resultPojos);
+			}
 		} catch (GrammarProcessingException | DataTransformationException e) {
 			e.printStackTrace();
 		}
 		
 		
 		return result;
+	}
+	
+	private TreeElementPojo convertOutputParamToPojo(OutputParam param) {
+		if (param==null) {
+			return null;
+		}
+		TreeElementPojo pojo = new TreeElementPojo();
+		pojo.setLabel(param.getLabel());
+		pojo.setValue(param.getValue());
+		
+		if (param.getChildParameters()!=null) {
+			pojo.setChildren(new ArrayList<TreeElementPojo>());
+			for (OutputParam childParam : param.getChildParameters()) {
+				pojo.getChildren().add(this.convertOutputParamToPojo(childParam));
+			}
+		}		
+		return pojo;
 	}
 }

@@ -79,7 +79,8 @@ FunctionEditor.prototype.performTransformation = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) {
-	    		$("#transformation-result-container").text(JSON.stringify(data.pojo));
+	    		//$("#transformation-result-container").text(JSON.stringify(data.pojo));
+	    		_this.showTransformationResults(data.pojo);
 	    	} else {
 	    		alert("error1");
 	    	}
@@ -87,4 +88,30 @@ FunctionEditor.prototype.performTransformation = function() {
 	    	alert("error2");
 	    }
 	});
+};
+
+FunctionEditor.prototype.showTransformationResults = function(params) {
+	if (params==null || !Array.isArray(params)) {
+		alert("no array");
+		return;
+	}
+	var list = $("<ul>");
+	this.appendTransformationResults(params, list);
+	$("#transformation-result-container").html(list);
+};
+
+FunctionEditor.prototype.appendTransformationResults = function(elements, container) {
+	for (var i=0; i<elements.length; i++) {
+		var elem = $("<li>");
+		elem.append("<span class=\"transformation-result-label\">" + elements[i].label + "</span>");
+		if (elements[i].children!=null && Array.isArray(elements[i].children) && elements[i].children.length > 0) {
+			var subelem = $("<ul>");
+			this.appendTransformationResults(elements[i].children, subelem);
+			elem.append(subelem);
+		} else {
+			elem.append(": ");
+			elem.append("<span class=\"transformation-result-value\">" + elements[i].value + "</span>");
+		}
+		container.append(elem);
+	}
 };

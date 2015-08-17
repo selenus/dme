@@ -458,7 +458,20 @@ noscript div {
 	display: block;	
 }
 
+/*!
+ *  Transformation function editor
+ */
+.transformation-result-container ul {
+	list-style-type: circle;
+}
 
+.transformation-result-label {
+	font-weight: bold;
+}
+
+.transformation-result-value {
+	font-style: italic;
+}
 
 /*!
  *	Modals
