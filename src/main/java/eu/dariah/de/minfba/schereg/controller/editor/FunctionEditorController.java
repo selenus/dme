@@ -25,6 +25,7 @@ import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
@@ -33,12 +34,15 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/function/{functionId}")
-public class FunctionEditorController {
+public class FunctionEditorController extends BaseTranslationController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
 	@Autowired private GrammarService grammarService;
 	@Autowired private TransformationEngine engine;
 	
+	public FunctionEditorController() {
+		super("schemaEditor");
+	}	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
 	public @ResponseBody TransformationFunction removeElement(@PathVariable String schemaId, @PathVariable String functionId) {
@@ -83,11 +87,21 @@ public class FunctionEditorController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveNonterminal(@Valid TransformationFunctionImpl function, BindingResult bindingResult) {
-		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
+	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String schemaId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (function.getId().isEmpty()) {
 			function.setId(null);
 		}
+		
+		if (!function.getFunction().trim().isEmpty()) {
+			ModelActionPojo validationResult = this.validateFunction(schemaId, functionId, function.getFunction());
+			if (validationResult.isSuccess() && !validationResult.hasErrors()) {
+				function.setError(false);
+			} else {
+				function.setError(true);
+			}		
+		}
+		
 		functionService.saveFunction(function);
 		return result;
 	}
@@ -96,7 +110,7 @@ public class FunctionEditorController {
 	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample) {
 		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
 		DescriptionGrammar g = grammarService.findById(grammarId);
-		
+				
 		TransformationFunction f = new TransformationFunctionImpl(schemaId, functionId);
 		f.setFunction(func);
 		
@@ -115,7 +129,7 @@ public class FunctionEditorController {
 				result.setPojo(resultPojos);
 			}
 		} catch (GrammarProcessingException | DataTransformationException e) {
-			e.printStackTrace();
+			logger.error("Error performing sample transformation", e);
 		}
 		
 		

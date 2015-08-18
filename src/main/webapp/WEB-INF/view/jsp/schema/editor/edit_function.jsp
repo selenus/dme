@@ -76,12 +76,26 @@
 					</div>
 				</div>
 				<div class="clearfix">
-					<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.performTransformation(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Process input</button>
+					<c:choose>
+						<c:when test="${grammar.error}">
+							<button class="btn btn-warning disabled btn-sm pull-right"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> ~Process input</button>
+						</c:when>
+						<c:otherwise>
+							<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.performTransformation(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Process input</button>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 			<div class="legend"><strong>3</strong> Transformation result</div>
 			<div id="transformation-result-container">
-				...
+				<c:choose>
+					<c:when test="${grammar.error}">
+						<div class="alert alert-warning">~Sample transformation not possible due to errors in base grammar</div>
+					</c:when>
+					<c:otherwise>
+						<div class="alert alert-info">~Provide a sample above and select 'Process input' to test the transformation function</div>
+					</c:otherwise>
+				</c:choose>
 			</div>
 		</div>	
 	</div>

@@ -8,7 +8,8 @@ var FunctionEditor = function(modal) {
 	this.svg = null;
 	
 	this.modified = false;
-	this.error = false;
+	this.error = ($(this.modal).find("#error").val()=="true");
+	this.grammarError = ($(this.modal).find("#grammar_error").val()=="true");
 	this.validated = false;
 	
 	this.init();
@@ -18,8 +19,7 @@ FunctionEditor.prototype.init = function() {
 	/* - load and set status of transformation function
 	 * 
 	 */
-	var _this = this;
-	
+	var _this = this;	
 	$(this.modal).find("#function_function").on('change keyup paste', function() {
 		_this.modified = true;
 		_this.updateFunctionState();
@@ -32,9 +32,9 @@ FunctionEditor.prototype.updateFunctionState = function() {
 	var state = "";
 	if (this.modified) {
 		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed";
-	} else if (this.error || $(this.modal).find("#error").val()=="true") {
+	} else if (this.error) {
 		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error";
-	} else if ($(this.modal).find("#grammar_error").val()=="true") {
+	} else if (this.grammarError) {
 		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-warning\" aria-hidden=\"true\"></span> ~ error in grammar";
 	} else if (this.validated) {
 		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> validated";
@@ -121,7 +121,7 @@ FunctionEditor.prototype.performTransformation = function() {
 	var _this = this;
 	var f = $("#function_function").val();
 	var s = $("#function-sample-input").val();
-	
+		
 	$.ajax({
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",

@@ -406,6 +406,13 @@ SchemaEditor.prototype.getFunction = function(id) {
         dataType: "json",
         success: function(data) { 
         	var details = $("<div class=\"clearfix\">");
+        	
+        	details.append(_this.renderContextTabDetail("State", 
+        			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
+        			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
+        			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "")
+        	));
+        	
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
         	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.name));
         	
