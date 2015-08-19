@@ -117,6 +117,44 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 	
 	@Override
+	public Identifiable getElementSubtree(String schemaId, String elementId) {
+		Element root = this.findRootBySchemaId(schemaId, true);
+		return this.getElementSubtree(root, elementId);
+	}
+	
+	private Identifiable getElementSubtree(Element searchElement, String matchElementId) {
+		if (searchElement.getId().equals(matchElementId)) {
+			return searchElement;
+		}
+		if (searchElement.getAllChildElements()!=null) {
+			Identifiable result;
+			for (Element subElem : searchElement.getAllChildElements()) {
+				result = this.getElementSubtree(subElem, matchElementId);
+				if (result!=null) {
+					return result;
+				}
+			}
+		}
+		// Produced subelements of the grammars/functions are contained in getAllChildElements() above
+		if (searchElement.getFunctions()!=null) {
+			for (DescriptionGrammarImpl g : searchElement.getFunctions()) {
+				if (g.getId().equals(matchElementId)) {
+					return g;
+				} else {
+					if (g.hasTransformationFunctions()) {
+						for (TransformationFunctionImpl f : g.getTransformationFunctions()) {
+							if (f.getId().equals(matchElementId)) {
+								return f;
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	@Override
 	public Reference saveElementHierarchy(Element e) {
 		Reference rootReference = this.saveElementsInHierarchy(e);
 		saveRootReference(rootReference);

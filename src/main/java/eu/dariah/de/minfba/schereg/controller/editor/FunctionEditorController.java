@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,13 +22,17 @@ import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
+import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
@@ -38,6 +43,8 @@ public class FunctionEditorController extends BaseTranslationController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
 	@Autowired private GrammarService grammarService;
+	@Autowired private ElementService elementService;
+	
 	@Autowired private TransformationEngine engine;
 	
 	public FunctionEditorController() {
@@ -116,15 +123,20 @@ public class FunctionEditorController extends BaseTranslationController {
 		
 		ModelActionPojo result = new ModelActionPojo();
 		
+		TransformationFunctionImpl fLoaded = (TransformationFunctionImpl)elementService.getElementSubtree(schemaId, functionId);
+		
 		try {
 			engine.checkGrammar(g);
 			List<OutputParam> pResult = engine.process(sample, g, f);
 			result.setSuccess(true);
 			
+			boolean allMatched = true;
 			if (pResult!=null && pResult.size()>0) {
-				List<TreeElementPojo> resultPojos = new ArrayList<TreeElementPojo>(); 
+				List<TreeElementPojo> resultPojos = new ArrayList<TreeElementPojo>();
+				MutableBoolean pMatch = new MutableBoolean(true);
 				for(OutputParam p : pResult) {
-					resultPojos.add(this.convertOutputParamToPojo(p));
+					resultPojos.add(this.convertOutputParamToPojo(p, fLoaded.getOutputElements(), pMatch));
+					allMatched = allMatched && pMatch.booleanValue();
 				}
 				result.setPojo(resultPojos);
 			}
@@ -136,7 +148,7 @@ public class FunctionEditorController extends BaseTranslationController {
 		return result;
 	}
 	
-	private TreeElementPojo convertOutputParamToPojo(OutputParam param) {
+	private TreeElementPojo convertOutputParamToPojo(OutputParam param, List<Label> outputElements, MutableBoolean allMatched) {
 		if (param==null) {
 			return null;
 		}
@@ -144,10 +156,27 @@ public class FunctionEditorController extends BaseTranslationController {
 		pojo.setLabel(param.getLabel());
 		pojo.setValue(param.getValue());
 		
+		List<Label> sublabels = null;
+		if (outputElements==null) {
+			allMatched.setFalse();
+		} else {
+			boolean match = false;
+			for (Label l : outputElements) {
+				if (l.getName().equals(param.getLabel())) {
+					sublabels = l.getSubLabels();
+					match = true;
+					break;
+				}
+			}
+			if (match == false) {
+				allMatched.setFalse();
+			}
+		}
+		
 		if (param.getChildParameters()!=null) {
 			pojo.setChildren(new ArrayList<TreeElementPojo>());
 			for (OutputParam childParam : param.getChildParameters()) {
-				pojo.getChildren().add(this.convertOutputParamToPojo(childParam));
+				pojo.getChildren().add(this.convertOutputParamToPojo(childParam, sublabels, allMatched));
 			}
 		}		
 		return pojo;

@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
@@ -12,6 +13,8 @@ public interface ElementService {
 	
 	public Element findById(String elementId);
 	
+	public Identifiable getElementSubtree(String schemaId, String elementId);
+	
 	/*public void deleteByRootElementId(String rootElementId);
 	public void deleteBySchemaId(String schemaId);*/
 
@@ -22,4 +25,5 @@ public interface ElementService {
 	public Element removeElement(String schemaId, String elementId);
 	public Terminal removeTerminal(String schemaId, String terminalId);
 	public Element removeElementTree(String id);
+	
 }

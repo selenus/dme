@@ -37,7 +37,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo.MessagePojo;
+import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -138,7 +138,7 @@ public class MainEditorController extends BaseTranslationController implements I
 			List<? extends Terminal> rootTerminals = importWorker.getPossibleRootTerminals(temporaryFilesMap.get(fileId));
 			if (rootTerminals!=null) {
 				result.setSuccess(true);
-				MessagePojo msg = result.new MessagePojo("success", 
+				MessagePojo msg = new MessagePojo("success", 
 						messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.head", null, locale), 
 						messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.body", null, locale));
 				result.setMessage(msg);
@@ -148,7 +148,7 @@ public class MainEditorController extends BaseTranslationController implements I
 		}
 		result.setSuccess(false);
 		// TODO: Error message
-		MessagePojo msg = result.new MessagePojo("danger", 
+		MessagePojo msg = new MessagePojo("danger", 
 				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.head", null, locale), 
 				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.body", null, locale));
 		result.setMessage(msg);
@@ -166,7 +166,7 @@ public class MainEditorController extends BaseTranslationController implements I
 				return result;
 			}
 		} catch (Exception e) {
-			MessagePojo msg = result.new MessagePojo("danger", 
+			MessagePojo msg = new MessagePojo("danger", 
 					messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.generalerror.head", null, locale), 
 					messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.generalerror.body", new Object[] {e.getLocalizedMessage()}, locale));
 			result.setMessage(msg);

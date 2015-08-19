@@ -28,7 +28,7 @@ import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo.FieldErrorPojo;
+import eu.dariah.de.minfba.core.web.pojo.FieldErrorPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 
