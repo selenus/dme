@@ -11,7 +11,7 @@ var FunctionEditor = function(modal) {
 	this.error = ($(this.modal).find("#error").val()=="true");
 	this.grammarError = ($(this.modal).find("#grammar_error").val()=="true");
 	this.validated = false;
-	
+		
 	this.init();
 };
 
@@ -59,17 +59,14 @@ FunctionEditor.prototype.processFunction = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		displayCallback: function() { 
-			_this.validateFunction($("#function_function").val());
+			_this.validateFunction($("#function_function").val(), modalFormHandler.container);
 		},
-		additionalModalClasses: "wider-modal",
-		completeCallback: function() {
-			
-		}
+		additionalModalClasses: "wider-modal"
 	});
 	modalFormHandler.show(form_identifier);
 };
 
-FunctionEditor.prototype.validateFunction = function(f) {
+FunctionEditor.prototype.validateFunction = function(f, modal) {
 	var _this = this;
 	
 	if (this.svg!=null) {
@@ -81,14 +78,19 @@ FunctionEditor.prototype.validateFunction = function(f) {
 	    data: { func : f },
 	    dataType: "json",
 	    success: function(data) {
+	    	$("#collapse-function-parsing .panel-body").removeClass("hide");
+	    	$(".function-loading").addClass("hide");
 	    	if (data.success) {
 	    		_this.showValidationResult(data);
+	    		$(".function-ok").removeClass("hide");
 	    	} else {
-	    		alert("error1");
+	    		$(".function-error").removeClass("hide");
 	    	}
 	    	_this.updateFunctionState();
+	    	 $(modal).modal("layout");
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	alert("error2");
+	    	$(".function-loading").addClass("hide");
+	    	$(".function-error").removeClass("hide");
 	    }
 	});
 };
@@ -133,7 +135,7 @@ FunctionEditor.prototype.performTransformation = function() {
 	    success: function(data) {
 	    	if (data.success) {
 	    		//$("#transformation-result-container").text(JSON.stringify(data.pojo));
-	    		_this.showTransformationResults(data.pojo);
+	    		_this.showTransformationResults(data);
 	    	} else {
 	    		alert("error1");
 	    	}
@@ -143,14 +145,26 @@ FunctionEditor.prototype.performTransformation = function() {
 	});
 };
 
-FunctionEditor.prototype.showTransformationResults = function(params) {
-	if (params==null || !Array.isArray(params)) {
+FunctionEditor.prototype.showTransformationResults = function(data) {
+	if (data.pojo==null || !Array.isArray(data.pojo)) {
 		alert("no array");
 		return;
 	}
 	var list = $("<ul>");
-	this.appendTransformationResults(params, list);
-	$("#transformation-result-container").html(list);
+	this.appendTransformationResults(data.pojo, list);
+	$("#transformation-result").removeClass("hide");
+	$("#transformation-result").html(list);
+	$("#transformation-alerts").html("");
+	if (data.objectWarnings!=null && Array.isArray(data.objectWarnings)) {
+		for (var i=0; i<data.objectWarnings.length; i++) {
+			$("#transformation-alerts").append(
+					"<div class=\"alert alert-sm alert-warning\">" +
+						"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span> " 
+						+ data.objectWarnings[i] + 
+					"</div>");			
+		}
+	}
+	
 };
 
 FunctionEditor.prototype.appendTransformationResults = function(elements, container) {

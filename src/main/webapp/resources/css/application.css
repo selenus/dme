@@ -155,8 +155,8 @@
 	font-size: 85%;
     margin-bottom: 8px;
     padding: 6px 9px;
-    clear: both;
-    float: left;
+    /*clear: both;
+      float: left;*/
 }
 
 /*!
@@ -474,6 +474,14 @@ noscript div {
 
 #function-alerts ul {
 	list-style: circle;
+}
+
+#transformation-result {
+	height: 150px;
+}
+
+#transformation-result ul {
+	padding-left: 15px;
 }
 
 /*!

@@ -139,6 +139,9 @@ public class FunctionEditorController extends BaseTranslationController {
 					allMatched = allMatched && pMatch.booleanValue();
 				}
 				result.setPojo(resultPojos);
+				if (!allMatched) {
+					result.addObjectWarning("~ Not all produced labels are found in the schema definition");
+				}
 			}
 		} catch (GrammarProcessingException | DataTransformationException e) {
 			logger.error("Error performing sample transformation", e);

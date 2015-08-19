@@ -88,14 +88,18 @@
 			</div>
 			<div class="legend"><strong>3</strong> Transformation result</div>
 			<div id="transformation-result-container">
-				<c:choose>
-					<c:when test="${grammar.error}">
-						<div class="alert alert-warning">~Sample transformation not possible due to errors in base grammar</div>
-					</c:when>
-					<c:otherwise>
-						<div class="alert alert-info">~Provide a sample above and select 'Process input' to test the transformation function</div>
-					</c:otherwise>
-				</c:choose>
+				<div id="transformation-alerts">
+					<c:choose>
+						<c:when test="${grammar.error}">
+							<div class="alert alert-sm alert-warning">~Sample transformation not possible due to errors in base grammar</div>
+						</c:when>
+						<c:otherwise>
+							<div class="alert alert-sm alert-info">~Provide a sample above and select 'Process input' to test the transformation function</div>
+						</c:otherwise>
+					</c:choose>
+				</div>
+				<pre id="transformation-result" class="hide">
+				</pre>
 			</div>
 		</div>	
 	</div>

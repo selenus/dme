@@ -10,15 +10,15 @@
 			<div id="function-parsing" class="panel panel-default">
 				<div class="panel-heading" role="tab" id="heading-function-parsing">
 					<h4 class="panel-title"> 
-						<span class="mini-loader grammar-loading hide"></span>
-						<span class="glyphicon glyphicon-console function-waiting" aria-hidden="true"></span>
+						<span class="mini-loader function-loading"></span>
+						<span class="glyphicon glyphicon-console function-waiting hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok function-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign function-error hide" aria-hidden="true"></span>
 						 ~Parsing function
 					</h4>
 				</div>
 				<div id="collapse-function-parsing" class="panel-collapse" role="tabpanel" aria-labelledby="heading-function-parsing">
-					<div class="panel-body">
+					<div class="panel-body hide">
 						<div id="function-alerts"></div>
 						<div id="function-svg" class="outer-svg-container" style="height: 350px;">
 							<div class="inner-svg-container"></div>
