@@ -96,7 +96,10 @@
 			</div>
 			<div class="legend"><strong>3</strong> Analyze sample results</div>
 			<div class="non-passthrough-only">
-				<div id="grammar-sample-svg-embedded" class="outer-svg-container">
+				<div id="grammar-parse-alerts">
+					<div class="alert alert-sm alert-info">~Provide a sample above and select 'Parse input' to verify the input against the grammar</div>
+				</div>
+				<div id="grammar-sample-svg-embedded" class="outer-svg-container hide">
 					<div class="inner-svg-container"></div>
 					<div class="svg-button-container">
 						<button class="btn btn-link btn-sm btn-svg-zoomin"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>

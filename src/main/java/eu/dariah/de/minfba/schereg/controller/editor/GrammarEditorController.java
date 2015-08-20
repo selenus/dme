@@ -183,9 +183,8 @@ public class GrammarEditorController extends BaseTranslationController {
 			g.setBaseMethod(initRule);
 			
 			if (engine.checkGrammar(g)!=null) {
-				String svg = engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>()));
 				result.setSuccess(true);
-				result.setPojo(svg);
+				result.setPojo(engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>())));
 			}
 			
 		} catch (Exception e) {

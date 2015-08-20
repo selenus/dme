@@ -304,6 +304,7 @@ GrammarEditor.prototype.setGrammarProcessingPanelStatus = function(id, state) {
 GrammarEditor.prototype.parseSample = function() {
 	var _this = this;
 	
+	$("#grammar-parse-alerts").html("");
 	if (this.svg!=null) {
 		this.svg.destroy();
 	}
@@ -319,6 +320,7 @@ GrammarEditor.prototype.parseSample = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success===true) {
+	    		$("#grammar-sample-svg-embedded").removeClass("hide");
 	    		_this.svg = new SvgViewer(svgContainer, data.pojo)
 	    	} else {
 	    		alert("Some error");
