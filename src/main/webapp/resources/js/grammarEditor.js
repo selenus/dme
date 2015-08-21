@@ -7,7 +7,7 @@ var GrammarEditor = function(modal) {
 	this.originalModeModified = false;
 	this.grammarModified = false;
 	this.validated = false;
-	this.error = false;
+	this.error = $(this.modal).find("#error").val()=="true";
 	this.schemaId = schemaEditor.schemaId;
 	this.grammarId = schemaEditor.selectedElementId;
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/grammar/" + this.grammarId;
@@ -21,16 +21,33 @@ GrammarEditor.prototype.updateGrammarState = function() {
 	var state = "";
 	if ($(this.modal).find("#passthrough").val()=="true") {
 		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> ~passthrough";
-	} else if (this.error || $(this.modal).find("#error").val()=="true") {
-		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error";
+		this.setSampleParseFunctionality(false);
 	} else if (this.originalModeModified || this.grammarModified) {
 		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed";
+		this.setSampleParseFunctionality(false);
+	} else if (this.error) {
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error";
+		this.setSampleParseFunctionality(false);
 	} else if (this.validated) {
 		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> validated";
+		this.setSampleParseFunctionality(true);
 	} else {
 		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> ok";
+		this.setSampleParseFunctionality(true);
 	}
 	$(this.modal).find("#grammar_state").html(state);
+};
+
+GrammarEditor.prototype.setSampleParseFunctionality = function(enabled) {
+	if (enabled) {
+		$(this.modal).find("#btn-parse-sample").removeClass("disabled");
+		$(this.modal).find("#btn-parse-sample").removeClass("btn-warning");
+		$(this.modal).find("#btn-parse-sample").addClass("btn-info");
+	} else {
+		$(this.modal).find("#btn-parse-sample").addClass("disabled");
+		$(this.modal).find("#btn-parse-sample").addClass("btn-warning");
+		$(this.modal).find("#btn-parse-sample").removeClass("btn-info");
+	}
 };
 
 GrammarEditor.prototype.init = function() {
@@ -146,7 +163,7 @@ GrammarEditor.prototype.validateGrammar = function() {
 		                ],
 		displayCallback: function() { 
 			_this.validated = false;
-			_this.error = true;
+			_this.grammarModified = true;
 			_this.updateGrammarState();
 			_this.uploadGrammar(); 
 		},
@@ -297,6 +314,7 @@ GrammarEditor.prototype.setGrammarProcessingPanelStatus = function(id, state) {
 		$("#" + id).addClass("panel-danger");
 		$("#" + id + " .grammar-loading").addClass("hide");
 		$("#" + id + " .grammar-error").removeClass("hide");
+		this.error = true;
 	} 
 };
 
@@ -308,8 +326,7 @@ GrammarEditor.prototype.parseSample = function() {
 	if (this.svg!=null) {
 		this.svg.destroy();
 	}
-	
-	var svgContainer = "#grammar-sample-svg-embedded";	
+
 	$.ajax({
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",
@@ -320,13 +337,48 @@ GrammarEditor.prototype.parseSample = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success===true) {
-	    		$("#grammar-sample-svg-embedded").removeClass("hide");
-	    		_this.svg = new SvgViewer(svgContainer, data.pojo)
+	    		_this.showParseSampleResult(data.pojo.svg, null, data.pojo.errors);
 	    	} else {
-	    		alert("Some error");
+	    		_this.showParseSampleResult(null, data.objectErrors, data.objectWarnings);
 	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	alert("Some error");
 	    }
 	});
+};
+
+GrammarEditor.prototype.showParseSampleResult = function(svg, errors, warnings) {
+	if (errors!=null && Array.isArray(errors) && errors.length > 0) {
+		var list = $("<ul>");
+		for (var i=0; i<errors.length; i++) {
+			$(list).append("<li>" + errors[i] + "</li>");
+		}
+
+		var alerts = $("<div class=\"alert alert-sm alert-error\"> " +
+				"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>" +
+				"~Errors" +
+			"</div>");
+		
+		$(alerts).append(list)
+		$("#grammar-parse-alerts").append(alerts);
+	}
+	if (warnings!=null && Array.isArray(warnings) && warnings.length > 0) {
+		var list = $("<ul>");
+		for (var i=0; i<warnings.length; i++) {
+			$(list).append("<li>" + warnings[i] + "</li>");
+		}
+
+		var alerts = $("<div class=\"alert alert-sm alert-warning\"> " +
+				"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>" +
+				"~Warnings" +
+			"</div>");
+		
+		$(alerts).append(list)
+		$("#grammar-parse-alerts").append(alerts);
+	}
+	if (svg != null) {
+		var svgContainer = "#grammar-sample-svg-embedded";	
+		$("#grammar-sample-svg-embedded").removeClass("hide");
+		this.svg = new SvgViewer(svgContainer, svg)
+	}
 };

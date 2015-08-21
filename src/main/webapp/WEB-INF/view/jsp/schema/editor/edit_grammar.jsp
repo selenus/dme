@@ -89,7 +89,7 @@
 					</div>
 				</div>
 				<div class="clearfix">
-					<button class="btn btn-info btn-sm pull-right" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Parse input</button>
+					<button id="btn-parse-sample" class="btn btn-warning btn-sm pull-right disabled" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> ~Parse input</button>
 				</div>
 			</div>
 			<div class="passthrough-only">

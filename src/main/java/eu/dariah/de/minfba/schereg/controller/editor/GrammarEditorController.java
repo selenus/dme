@@ -185,6 +185,9 @@ public class GrammarEditorController extends BaseTranslationController {
 			if (engine.checkGrammar(g)!=null) {
 				result.setSuccess(true);
 				result.setPojo(engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>())));
+			} else {
+				// Grammar not on server yet (new or error)
+				result.addObjectWarning("~ No grammar available on server, validate first");
 			}
 			
 		} catch (Exception e) {
