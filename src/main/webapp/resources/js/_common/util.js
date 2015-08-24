@@ -1,14 +1,14 @@
 var _csrf = $('meta[name=_csrf]').attr("content");
 var _csrfHeader = $('meta[name=_csrf_header]').attr("content");
 
-$.ajaxSetup({
+/*
     beforeSend: function(xhr, settings) {
         if (settings.type == 'POST' || settings.type == 'PUT' || settings.type == 'DELETE') {
         	xhr.setRequestHeader(_csrfHeader, _csrf);
         }
     }
 });
-
+*/
 if (!String.format) {
         String.format = function(format) {
                 var args = Array.prototype.slice.call(arguments, 1);
