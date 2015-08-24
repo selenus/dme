@@ -354,7 +354,8 @@ GrammarEditor.prototype.parseSample = function() {
 	    type: "POST",
 	    data: { 
 	    	sample : $("#grammar-sample-input").val(),
-	    	initRule : $("#base_method").val()
+	    	initRule : $("#base_method").val(),
+	    	temporary : _this.originalModeModified || _this.grammarModified || _this.validated
 	    },
 	    dataType: "json",
 	    success: function(data) {

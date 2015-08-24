@@ -25,5 +25,5 @@ public interface GrammarService {
 
 	public List<String> getParserRules(DescriptionGrammar grammar) throws GrammarProcessingException;
 
-	public void clearTemporaryGrammar(DescriptionGrammar g);
+	public void clearGrammar(DescriptionGrammar g);
 }

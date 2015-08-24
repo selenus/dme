@@ -76,6 +76,11 @@ public class GrammarEditorController extends BaseTranslationController {
 		if (grammar.getId().isEmpty()) {
 			grammar.setId(null);
 		}
+		
+		DescriptionGrammar gTmp = this.getTemporaryGrammar(grammar.getId());
+		grammarService.clearGrammar(gTmp);
+		
+		grammarService.clearGrammar(grammar);
 		grammarService.saveGrammar(grammar);
 		return result;
 	}
@@ -108,7 +113,7 @@ public class GrammarEditorController extends BaseTranslationController {
 		if (result.getErrorCount()==0) {
 			try {
 				DescriptionGrammar g = getTemporaryGrammar(grammarId);
-				grammarService.clearTemporaryGrammar(g);
+				grammarService.clearGrammar(g);
 				
 				result.setPojo(grammarService.saveTemporaryGrammar(g, lexerGrammar, parserGrammar));
 				result.setSuccess(true);
@@ -176,12 +181,16 @@ public class GrammarEditorController extends BaseTranslationController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample) {
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample, @RequestParam(defaultValue="true") Boolean temporary) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
-			// TODO Find out if there is a gTmp - else use the (already existing g)
+			DescriptionGrammar g;
 			
-			DescriptionGrammar g = getTemporaryGrammar(grammarId);
+			if (temporary) {
+				g = getTemporaryGrammar(grammarId);
+			} else {
+				g = grammarService.findById(grammarId);
+			}
 			List<String> parserRules = grammarService.getParserRules(g);
 			
 			if (initRule==null || initRule.trim().isEmpty()) {
