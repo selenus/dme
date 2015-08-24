@@ -79,9 +79,9 @@
 								<div class="alert alert-info alert-sm">
 									~Provide any exemplary content here in order to perform live schema transformation on that data
 								</div>
-								<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3"></textarea>
+								<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
 								
-								<button type="button" onclick="return false;" class="btn btn-info btn-sm pull-right"><span class="glyphicon glyphicon-resize-full"></span> ~Apply</button>
+								<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-info btn-sm pull-right"><span class="glyphicon glyphicon-resize-full"></span> ~Apply</button>
 							</div>
 						</div>
 					</div>

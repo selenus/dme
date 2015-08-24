@@ -18,11 +18,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
@@ -45,6 +47,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
+@SessionAttributes("sample")
 public class MainEditorController extends BaseTranslationController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
@@ -66,7 +69,7 @@ public class MainEditorController extends BaseTranslationController implements I
 	}
 	
 	@RequestMapping(method=GET, value={"/", ""})
-	public String getEditor(@PathVariable String schemaId, Model model, Locale locale) {
+	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale) {
 		model.addAttribute("schema", schemaService.findSchemaById(schemaId));
 		return "schemaEditor";
 	}
@@ -187,6 +190,16 @@ public class MainEditorController extends BaseTranslationController implements I
 			return ((XmlSchema)s).getTerminals();
 		}
 		return null;
+	}
+	
+	@RequestMapping(method=POST, value={"/async/applySample"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo applySample(@PathVariable String schemaId, @RequestParam String sample, Model model, Locale locale) {
+		// TODO: Persist this in db for the session or user and store only an id in the session
+		model.addAttribute("sample", sample);
+		
+		ModelActionPojo result = new ModelActionPojo(true);
+		result.addObjectInfo("~ Sample set for your current session");
+		return result;
 	}
 		
 	public static String humanReadableByteCount(long bytes, boolean si) {

@@ -730,3 +730,20 @@ SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
 	select.removeProp("disabled");
 	$("#btn-submit-schema-elements").removeProp("disabled");
 };
+
+SchemaEditor.prototype.applySample = function() {
+	var _this = this;
+	$.ajax({
+	    url: _this.pathname + "/async/applySample",
+	    type: "POST",
+	    data: { sample : $("#schema-sample-textarea").val() },
+	    dataType: "json",
+	    success: function(data) {
+	    	if (data.success) { 
+	    		
+	    		alert ("Sample uploaded");
+	    	}
+	    }, 
+	    error: function(jqXHR, textStatus, errorThrown ) { }
+	});
+};
