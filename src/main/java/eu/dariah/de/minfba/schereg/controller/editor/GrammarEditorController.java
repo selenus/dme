@@ -108,7 +108,9 @@ public class GrammarEditorController extends BaseTranslationController {
 		if (result.getErrorCount()==0) {
 			try {
 				DescriptionGrammar g = getTemporaryGrammar(grammarId);
-				grammarService.saveTemporaryGrammar(g, lexerGrammar, parserGrammar);
+				grammarService.clearTemporaryGrammar(g);
+				
+				result.setPojo(grammarService.saveTemporaryGrammar(g, lexerGrammar, parserGrammar));
 				result.setSuccess(true);
 			} catch (IOException e) {
 				result.addObjectError("Failed to upload grammar: " + e.getClass().getName());
@@ -122,7 +124,7 @@ public class GrammarEditorController extends BaseTranslationController {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
 			DescriptionGrammar g = getTemporaryGrammar(grammarId);
-			grammarService.parseTemporaryGrammar(g);
+			result.setPojo(grammarService.parseTemporaryGrammar(g));
 			result.setSuccess(true);
 		} catch (GrammarGenerationException e) {
 			for (ANTLRMessage m : e.getErrors()) {
@@ -139,7 +141,7 @@ public class GrammarEditorController extends BaseTranslationController {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
 			DescriptionGrammar g = getTemporaryGrammar(grammarId);
-			grammarService.compileTemporaryGrammar(g);
+			result.setPojo(grammarService.compileTemporaryGrammar(g));
 			result.setSuccess(true);
 		} catch (Exception e) {
 			result.addObjectError("Unspecified error while compiling grammar: " + e.getClass().getName());
@@ -180,8 +182,17 @@ public class GrammarEditorController extends BaseTranslationController {
 			// TODO Find out if there is a gTmp - else use the (already existing g)
 			
 			DescriptionGrammar g = getTemporaryGrammar(grammarId);
-			g.setBaseMethod(initRule);
+			List<String> parserRules = grammarService.getParserRules(g);
 			
+			if (initRule==null || initRule.trim().isEmpty()) {
+				g.setBaseMethod(parserRules.get(0));
+			} else {
+				g.setBaseMethod(initRule);
+				if (!parserRules.contains(initRule.trim())) {
+					result.addObjectError("~Specified base method was not found in grammar");
+					return result;
+				}
+			}
 			if (engine.checkGrammar(g)!=null) {
 				result.setSuccess(true);
 				result.setPojo(engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>())));

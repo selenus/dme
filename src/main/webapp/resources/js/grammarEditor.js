@@ -12,6 +12,8 @@ var GrammarEditor = function(modal) {
 	this.grammarId = schemaEditor.selectedElementId;
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/grammar/" + this.grammarId;
 	
+	this.processGrammarModal = null;
+	
 	this.svg = null;
 	
 	this.init();
@@ -155,7 +157,7 @@ GrammarEditor.prototype.setLexerParserPassthrough = function() {
 GrammarEditor.prototype.validateGrammar = function() {
 	var _this = this;	
 	var form_identifier = "process-grammar";
-	modalFormHandler = new ModalFormHandler({
+	this.processGrammarModal = new ModalFormHandler({
 		formUrl: "/grammar/" + this.grammarId + "/async/processGrammarDialog",
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
@@ -170,7 +172,7 @@ GrammarEditor.prototype.validateGrammar = function() {
 		additionalModalClasses: "wider-modal",
 		completeCallback: function() {_this.reload();}
 	});
-	modalFormHandler.show(form_identifier);
+	this.processGrammarModal.show(form_identifier);
 };
 
 GrammarEditor.prototype.uploadGrammar = function() {
@@ -190,11 +192,13 @@ GrammarEditor.prototype.uploadGrammar = function() {
 	    success: function(data) {
 	    	if (data.success) {
 	    		_this.setGrammarProcessingPanelStatus("grammar-uploading", "success");
+	    		_this.setGrammarProcessingPanelSuccessFiles("grammar-uploading", data.pojo);
 	    	   	_this.parseGrammar();
 	    	} else {
 	    		_this.setGrammarProcessingPanelStatus("grammar-uploading", "error");
 	    		_this.setGrammarProcessingPanelErrors("grammar-uploading", data.objectErrors, data.fieldErrors)
 	    	}
+	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	_this.setGrammarProcessingPanelStatus("grammar-uploading", "error");
 	    }
@@ -212,11 +216,13 @@ GrammarEditor.prototype.parseGrammar = function() {
 	    success: function(data) {
 	    	if (data.success) {
 	    		_this.setGrammarProcessingPanelStatus("grammar-parsing", "success");
+	    		_this.setGrammarProcessingPanelSuccessFiles("grammar-parsing", data.pojo);
 	    		_this.compileGrammar();
 	    	} else {
 	    		_this.setGrammarProcessingPanelStatus("grammar-parsing", "error");
 	    		_this.setGrammarProcessingPanelErrors("grammar-parsing", data.objectErrors, data.fieldErrors)
 	    	}
+	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	_this.setGrammarProcessingPanelStatus("grammar-parsing", "error");
 	    }
@@ -234,11 +240,13 @@ GrammarEditor.prototype.compileGrammar = function() {
 	    success: function(data) {
 	    	if (data.success) {
 	    		_this.setGrammarProcessingPanelStatus("grammar-compiling", "success");
+	    		_this.setGrammarProcessingPanelSuccessFiles("grammar-compiling", data.pojo);
 	    		_this.sandboxGrammar();
 	    	} else {
 	    		_this.setGrammarProcessingPanelStatus("grammar-compiling", "error");
 	    		_this.setGrammarProcessingPanelErrors("grammar-compiling", data.objectErrors, data.fieldErrors)
-	    	}	    	
+	    	}	    
+	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	_this.setGrammarProcessingPanelStatus("grammar-compiling", "error");
 	    }
@@ -267,6 +275,7 @@ GrammarEditor.prototype.sandboxGrammar = function() {
 	    		_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "error");
 	    		_this.setGrammarProcessingPanelErrors("grammar-sandboxing", data.objectErrors, data.fieldErrors)
 	    	}
+	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "error");
 	    }
@@ -318,6 +327,19 @@ GrammarEditor.prototype.setGrammarProcessingPanelStatus = function(id, state) {
 	} 
 };
 
+GrammarEditor.prototype.setGrammarProcessingPanelSuccessFiles = function(id, files) {
+	$("#" + id + " .panel-body").html();
+	$("#" + id + " .panel-body").removeClass("hide");
+	
+	//$("#accordion-validate-grammar .panel-collapse").removeClass("in");
+	$("#" + id + " .panel-collapse").addClass("in");
+	
+	var fileList = $("<ul>");
+	for (var i=0; i<files.length; i++) {
+		fileList.append("<li>" + files[i] + "</li>");
+	}
+	$("#" + id + " .panel-body").append(fileList);
+};
 
 GrammarEditor.prototype.parseSample = function() {
 	var _this = this;
@@ -354,7 +376,7 @@ GrammarEditor.prototype.showParseSampleResult = function(svg, errors, warnings) 
 			$(list).append("<li>" + errors[i] + "</li>");
 		}
 
-		var alerts = $("<div class=\"alert alert-sm alert-error\"> " +
+		var alerts = $("<div class=\"alert alert-sm alert-danger\"> " +
 				"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span>" +
 				"~Errors" +
 			"</div>");

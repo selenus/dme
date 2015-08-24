@@ -1,6 +1,8 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
@@ -17,9 +19,11 @@ public interface GrammarService {
 
 	public void saveGrammar(DescriptionGrammarImpl grammar);
 
-	public void saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException;
-	public void parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException;
-	public void compileTemporaryGrammar(DescriptionGrammar grammar) throws IOException, GrammarProcessingException;
+	public Collection<String> saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException;
+	public Collection<String> parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException;
+	public Collection<String> compileTemporaryGrammar(DescriptionGrammar grammar) throws IOException, GrammarProcessingException;
 
 	public List<String> getParserRules(DescriptionGrammar grammar) throws GrammarProcessingException;
+
+	public void clearTemporaryGrammar(DescriptionGrammar g);
 }

@@ -135,7 +135,10 @@
 					.css(prop, value);
 			}
 
-			var modalOverflow = $(window).height() - 10 < this.$element.height();
+			var windowHeight = $(window).height();
+			var elementHeight = this.$element.height();
+			
+			var modalOverflow = windowHeight - 10 < elementHeight;
             
 			if (modalOverflow || this.options.modalOverflow) {
 				this.$element

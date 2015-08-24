@@ -1,16 +1,23 @@
 package eu.dariah.de.minfba.schereg.service;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -27,6 +34,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private SchemaDao schemaDao;
+	@Autowired private TransformationEngine engine;
 
 	@Value(value="${paths.grammars}")
 	private String grammarsRootPath;
@@ -57,48 +65,40 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 	
 	@Override
-	public void saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException {
+	public void clearTemporaryGrammar(DescriptionGrammar g) {
+		File dirPath = new File(getGrammarDirectory(g, true));
+		try {
+			engine.unloadGrammar(g, dirPath);
+			FileUtils.deleteDirectory(dirPath);
+		} catch (IOException | GrammarProcessingException e) {
+			logger.error(String.format("Could not delete temporary grammar directory", dirPath.getAbsolutePath()), e);
+		}
+	}
+	
+	@Override
+	public Collection<String> saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException {
 		saveGrammarToFilesystem(grammar, lexerGrammar, parserGrammar, true);
-	}
-	
-	
-	private void saveGrammarToFilesystem(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
-		String dirPath = getGrammarDirectory(grammar, temporary);
-		String filePathPrefix = getGrammarFilePrefix(grammar, temporary);
 		
-		if (Files.exists(Paths.get(dirPath))) {				
-			FileUtils.deleteDirectory(new File(dirPath));
-		}
-		Files.createDirectories(Paths.get(dirPath));
-				
-		if (lexerGrammar!=null && !lexerGrammar.trim().isEmpty()) {
-			lexerGrammar = "lexer grammar " + grammar.getIdentifier() + "Lexer;\n\n" + lexerGrammar;
-			Files.write(Paths.get(filePathPrefix + "Lexer.g4"), lexerGrammar.getBytes());
-			
-			parserGrammar = "parser grammar " + grammar.getIdentifier() + "Parser;\n\n" + 
-							"options { tokenVocab= " + grammar.getIdentifier() + "Lexer; }\n\n" + 
-							parserGrammar;
-			Files.write(Paths.get(filePathPrefix + "Parser.g4"), parserGrammar.getBytes());
-		} else {
-			parserGrammar = "grammar " + grammar.getIdentifier() + ";\n\n" + parserGrammar;
-			Files.write(Paths.get(filePathPrefix + ".g4"), parserGrammar.getBytes());
-		}
+		File dirPath = new File(getGrammarDirectory(grammar, true));
+		return collectFileNames(dirPath, ".g4");
 	}
-	
+		
 	@Override
-	public void parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException {
+	public Collection<String> parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		
-		grammarCompiler.init(new File(getGrammarDirectory(grammar, true)), grammar.getIdentifier());
+		File dirPath = new File(getGrammarDirectory(grammar, true));
+		grammarCompiler.init(dirPath, grammar.getIdentifier());
 		grammarCompiler.generateGrammar();
+		return collectFileNames(dirPath, ".java");
 	}
 	
 	@Override
-	public void compileTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException, IOException {
+	public Collection<String> compileTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException, IOException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		
-		grammarCompiler.init(new File(getGrammarDirectory(grammar, true)), grammar.getIdentifier());
+		File dirPath = new File(getGrammarDirectory(grammar, true));
+		grammarCompiler.init(dirPath, grammar.getIdentifier());
 		grammarCompiler.compileGrammar();
+		return collectFileNames(dirPath, ".class");
 	}
 	
 	@Override
@@ -112,6 +112,17 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		
 	}
 	
+	private Collection<String> collectFileNames(File dirPath, String suffix) {
+		if (dirPath==null || suffix==null) {
+			return null;
+		}
+		Collection<File> files = FileUtils.listFiles(dirPath, FileFilterUtils.suffixFileFilter(suffix), null);
+		Collection<String> names = new ArrayList<String>();
+		for (File f : files) {
+			names.add(f.getName());
+		}
+		return names;
+	}
 	
 	@Override
 	public void deleteGrammarsBySchemaId(String schemaId) {}
@@ -177,6 +188,31 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		grammar.setLocked(false);
 		grammarDao.save(grammar);
 	}
+
+
+	private void saveGrammarToFilesystem(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
+		String dirPath = getGrammarDirectory(grammar, temporary);
+		String filePathPrefix = getGrammarFilePrefix(grammar, temporary);
+		
+		if (Files.exists(Paths.get(dirPath))) {				
+			FileUtils.deleteDirectory(new File(dirPath));
+		}
+		Files.createDirectories(Paths.get(dirPath));
+				
+		if (lexerGrammar!=null && !lexerGrammar.trim().isEmpty()) {
+			lexerGrammar = "lexer grammar " + grammar.getIdentifier() + "Lexer;\n\n" + lexerGrammar;
+			Files.write(Paths.get(filePathPrefix + "Lexer.g4"), lexerGrammar.getBytes());
+			
+			parserGrammar = "parser grammar " + grammar.getIdentifier() + "Parser;\n\n" + 
+							"options { tokenVocab= " + grammar.getIdentifier() + "Lexer; }\n\n" + 
+							parserGrammar;
+			Files.write(Paths.get(filePathPrefix + "Parser.g4"), parserGrammar.getBytes());
+		} else {
+			parserGrammar = "grammar " + grammar.getIdentifier() + ";\n\n" + parserGrammar;
+			Files.write(Paths.get(filePathPrefix + ".g4"), parserGrammar.getBytes());
+		}
+	}
+
 
 
 }
