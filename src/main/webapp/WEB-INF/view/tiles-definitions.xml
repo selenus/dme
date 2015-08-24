@@ -19,6 +19,7 @@
 			<add-attribute type="string" value="jquery/jquery.js" />
 			<add-attribute type="string" value="bootstrap/bootstrap.js" />
 			<add-attribute type="string" value="bootstrap/bootbox.min.js" />
+			<add-attribute type="string" value="bootstrap/bootbox-init.js" />
 			<add-attribute type="string" value="bootstrap/bootstrap-modalmanager.js" />
 			<add-attribute type="string" value="bootstrap/bootstrap-modal.js" />
 			<add-attribute type="string" value="_common/appProperties.js" />
