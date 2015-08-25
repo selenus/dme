@@ -6,12 +6,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,12 +47,14 @@ import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
+import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
+import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
-@SessionAttributes("sample")
+@SessionAttributes({"sample", "log"})
 public class MainEditorController extends BaseTranslationController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
@@ -196,10 +203,50 @@ public class MainEditorController extends BaseTranslationController implements I
 	public @ResponseBody ModelActionPojo applySample(@PathVariable String schemaId, @RequestParam String sample, Model model, Locale locale) {
 		// TODO: Persist this in db for the session or user and store only an id in the session
 		model.addAttribute("sample", sample);
+		this.addLogEntry(model, schemaId, LogType.SUCCESS, "~ Sample set for your current session");
 		
-		ModelActionPojo result = new ModelActionPojo(true);
-		result.addObjectInfo("~ Sample set for your current session");
+		return new ModelActionPojo(true);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getLog")
+	public @ResponseBody Collection<LogEntryPojo> getLog(@PathVariable String schemaId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, Model model) {
+		List<LogEntryPojo> log = getLog(model, schemaId);
+		if (tsMin!=null && log.size()>0 && log.get(0).getNumericTimestamp()<=tsMin) {
+			return new ArrayList<LogEntryPojo>();
+		}
+		
+		if (log.size() > maxEntries) {
+			return log.subList(0, maxEntries);
+		}
+		return log;
+	}
+	
+	private List<LogEntryPojo> getLog(Model model, String schemaId) {
+		List<LogEntryPojo> result = this.checkLog(model, schemaId).get(schemaId);
+		Collections.sort(result);
+		Collections.reverse(result);
 		return result;
+	}
+	
+	private void addLogEntry(Model model, String schemaId, LogType type, String message) {
+		LogEntryPojo entry = new LogEntryPojo();
+		entry.setTimestamp(DateTime.now());
+		entry.setLogType(type);
+		entry.setMessage(message);
+		
+		this.checkLog(model, schemaId).get(schemaId).add(entry);
+	}
+	
+	private Map<String, List<LogEntryPojo>> checkLog(Model model, String schemaId) {
+		if (model.asMap().get("log")==null) {
+			model.addAttribute("log", new HashMap<String, List<LogEntryPojo>>());
+		}
+		
+		Map<String, List<LogEntryPojo>> log = (Map<String, List<LogEntryPojo>>)model.asMap().get("log");
+		if (!log.containsKey(schemaId)) {
+			log.put(schemaId, new ArrayList<LogEntryPojo>());
+		}
+		return log;
 	}
 		
 	public static String humanReadableByteCount(long bytes, boolean si) {

@@ -71,6 +71,7 @@
 			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
 			<add-attribute type="string" value="other/svg-pan-zoom.js" />
 			<add-attribute type="string" value="_common/svgviewer.js" />
+			<add-attribute type="string" value="logArea.js" />
 			<add-attribute type="string" value="schemaEditor.js" />
 			<add-attribute type="string" value="grammarEditor.js" />
 			<add-attribute type="string" value="functionEditor.js" />

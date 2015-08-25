@@ -34,19 +34,21 @@
 					</div>
 					<div class="col-xs-12">
 						<div id="schema-editor-layout-container" class="hide">
-							<div class="ui-layout-center">
+						
+							<div class="ui-layout-west">
 								<div class="ui-pane-title">
-									<h4>~Element structure</h4>
+									<h4>Sample input</h4>
 								</div>
+								<div class="alert alert-info alert-sm">
+									~Provide any exemplary content here in order to perform live schema transformation on that data
+								</div>
+								<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
 								
-								<div class="schema-editor-buttons clearfix">
-									<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
-					      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
-					      			<button type="button" onclick="schemaEditor.schema.performAction('resetView'); schemaEditor.reload(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-refresh"></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></button>		
-								</div>
-								<div id="schema-editor-container">
-									<canvas id="schema-editor-canvas"></canvas>
-								</div>
+								<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-info btn-sm pull-right"><span class="glyphicon glyphicon-resize-full"></span> ~Apply</button>
+							</div>
+							
+							<div class="ui-layout-south">
+								<ul id="schema-editor-log" class="log"></ul>
 							</div>
 							
 							<div class="ui-layout-east">
@@ -72,17 +74,23 @@
 								</div>
 							</div>
 							
-							<div class="ui-layout-west">
+							<div class="ui-layout-center">
 								<div class="ui-pane-title">
-									<h4>Sample input</h4>
+									<h4>~Element structure</h4>
 								</div>
-								<div class="alert alert-info alert-sm">
-									~Provide any exemplary content here in order to perform live schema transformation on that data
-								</div>
-								<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
 								
-								<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-info btn-sm pull-right"><span class="glyphicon glyphicon-resize-full"></span> ~Apply</button>
+								<div class="schema-editor-buttons clearfix">
+									<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
+					      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
+					      			<button type="button" onclick="schemaEditor.schema.performAction('resetView'); schemaEditor.reload(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-refresh"></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></button>		
+								</div>
+								<div id="schema-editor-container">
+									<canvas id="schema-editor-canvas"></canvas>
+								</div>
 							</div>
+							
+							
+							
 						</div>
 					</div>
 				</div>

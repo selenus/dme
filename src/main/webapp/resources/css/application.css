@@ -487,6 +487,30 @@ noscript div {
 }
 
 /*!
+ * Log Area
+ */
+.log {
+	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
+	list-style-type: none;
+	padding: 0;
+}
+
+.log li.log-INFO { }
+
+.log li.log-SUCCESS {
+	color: #008800;
+}
+
+.log li.log-WARNING {
+	color: #AA6600;
+}
+
+.log li.log-ERROR {
+	color: #AA0000;
+}
+
+
+/*!
  *	Modals
  */
 body .wide-modal {

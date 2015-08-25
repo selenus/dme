@@ -57,30 +57,39 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar",
 	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured"]);
 	__translator.getTranslations();
+	
+	this.logArea = new LogArea({
+		pathPrefix :  __util.getBaseUrl() + "schema/editor/" + this.schemaId
+	});
 }
 
 SchemaEditor.prototype.initLayout = function() {
 	var _this = this;
+	this.layoutContainer.addClass("fade");
+	this.layoutContainer.removeClass("hide");
 	
-	var initWestClosed = true;
+	/*var initWestClosed = true;
 	if (this.layoutContainer.width()>1200) {
 		initWestClosed = false;
-	}
-
+	}*/
+	
 	this.layout = this.layoutContainer.layout({
 		defaults : {
 			fxName : "slide",
 			fxSpeed : "slow",
 			spacing_closed : 14,
 			minWidth : 200,
-			minHeight : 400
 		},
 		west : {
-			initClosed : initWestClosed,
+			initClosed : true,
 			size : "25%"
 		},
 		east : {
 			size : "40%"
+		},
+		south : {
+			size : 100,
+			initClosed : true
 		},
 		center : {
 			minWidth : 200,
@@ -91,7 +100,7 @@ SchemaEditor.prototype.initLayout = function() {
 	        return false;
 	    }
 	});
-	this.layoutContainer.removeClass("hide");
+	this.layoutContainer.removeClass("fade");
 };
 
 SchemaEditor.prototype.initGraph = function() {
@@ -740,8 +749,7 @@ SchemaEditor.prototype.applySample = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) { 
-	    		
-	    		alert ("Sample uploaded");
+	    		_this.logArea.refresh();
 	    	}
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) { }
