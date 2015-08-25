@@ -16,7 +16,8 @@ var SchemaEditor = function() {
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
 	this.footerOffset = 70;	
 	
-	this.layout = null;
+	this.outerLayout = null;
+	this.innerLayout = null;
 	this.layoutContainer = $("#schema-editor-layout-container");
 	this.editorContainer = $("#schema-editor-container");
 	
@@ -68,38 +69,56 @@ SchemaEditor.prototype.initLayout = function() {
 	this.layoutContainer.addClass("fade");
 	this.layoutContainer.removeClass("hide");
 	
-	/*var initWestClosed = true;
-	if (this.layoutContainer.width()>1200) {
-		initWestClosed = false;
-	}*/
+	var initEastClosed = true;
+	if (this.layoutContainer.width()>1100) {
+		initEastClosed = false;
+	}
 	
-	this.layout = this.layoutContainer.layout({
+	this.outerLayout = this.layoutContainer.layout({
 		defaults : {
 			fxName : "slide",
 			fxSpeed : "slow",
 			spacing_closed : 14,
 			minWidth : 200,
-		},
-		west : {
-			initClosed : true,
-			size : "25%"
-		},
+		}, 
 		east : {
-			size : "40%"
-		},
-		south : {
-			size : 100,
-			initClosed : true
-		},
-		center : {
+			size : initEastClosed ? "40%" : "60%",
 			minWidth : 200,
 			minHeight : 400,
+			paneSelector : ".outer-east"
+		},
+		center : {
+			size : initEastClosed ? "60%" : "40%",
+			paneSelector : ".outer-center"
+		}, 
+		south : {
+			size : 100,
+			paneSelector : ".outer-south"
 		},
 		onresize: function () {
 			_this.resizeContent();
 	        return false;
 	    }
 	});
+	
+	this.innerLayout = this.layoutContainer.find(".outer-east").layout({
+		defaults : {
+			fxName : "slide",
+			fxSpeed : "slow",
+			spacing_closed : 14,
+			minWidth : 200,
+		}, 
+		east : {
+			size : "50%",
+			paneSelector : ".inner-east",
+			initClosed : initEastClosed
+		},
+		center : {
+			size : "50%",
+			paneSelector : ".inner-center"
+		}
+	});
+	
 	this.layoutContainer.removeClass("fade");
 };
 
@@ -117,7 +136,8 @@ SchemaEditor.prototype.resizeLayout = function() {
 	var height = Math.floor($(window).height() - this.layoutContainer.offset().top - this.footerOffset);
 	
 	this.layoutContainer.height(height);
-	this.layout.resizeAll();
+	this.outerLayout.resizeAll();
+	this.innerLayout.resizeAll();
 }
 
 SchemaEditor.prototype.resizeContent = function() {

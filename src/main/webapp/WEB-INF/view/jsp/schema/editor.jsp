@@ -35,46 +35,53 @@
 					<div class="col-xs-12">
 						<div id="schema-editor-layout-container" class="hide">
 						
-							<div class="ui-layout-west">
-								<div class="ui-pane-title">
-									<h4>Sample input</h4>
-								</div>
-								<div class="alert alert-info alert-sm">
-									~Provide any exemplary content here in order to perform live schema transformation on that data
-								</div>
-								<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
-								
-								<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-info btn-sm pull-right"><span class="glyphicon glyphicon-resize-full"></span> ~Apply</button>
-							</div>
-							
-							<div class="ui-layout-south">
+							<div class="outer-south">
 								<ul id="schema-editor-log" class="log"></ul>
 							</div>
 							
-							<div class="ui-layout-east">
-								<div class="ui-pane-title">
-									<h4>~Details and Actions</h4>
-								</div>
-								<div id="schema-context-container">
-									<h5>~Schema actions</h5>
-									<div id="schema-context-buttons" class="ui-pane-subcontainer">
-										<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
-										<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
+							<div class="outer-east">
+							
+								<div class="inner-center">
+									<div class="ui-pane-title">
+										<h4>~Details and Actions</h4>
 									</div>
-									<h5>~Schema activity</h5>
-									<div class="ui-pane-subcontainer">...</div>
+									<div id="schema-context-container">
+										<h5>~Schema actions</h5>
+										<div id="schema-context-buttons" class="ui-pane-subcontainer">
+											<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
+											<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
+										</div>
+										<h5>~Schema activity</h5>
+										<div class="ui-pane-subcontainer">...</div>
+									</div>
+									<div id="schema-element-context-container" class="hide">
+										<h5>~Actions</h5>
+										<div id="schema-element-context-buttons" class="ui-pane-subcontainer"></div>
+										<h5>~Details</h5>
+										<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
+										<h5>~Activity</h5>
+										<div>...</div>
+									</div>
 								</div>
-								<div id="schema-element-context-container" class="hide">
-									<h5>~Actions</h5>
-									<div id="schema-element-context-buttons" class="ui-pane-subcontainer"></div>
-									<h5>~Details</h5>
-									<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
-									<h5>~Activity</h5>
-									<div>...</div>
+								
+								<div class="inner-east">
+									<div class="ui-pane-title">
+										<h4>~ Transformation sample</h4>
+									</div>
+									<div class="alert alert-info alert-sm">
+										~Provide any exemplary content here in order to perform live schema transformation on that data
+									</div>
+									<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
+									
+									<div class="pull-right">
+										<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-default btn-sm">~ Apply</button>
+										<button type="button" onclick="schemaEditor.executeSample(); return false;" class="btn btn-default btn-sm">~ Execute</button>
+									</div>
 								</div>
+								
 							</div>
 							
-							<div class="ui-layout-center">
+							<div class="outer-center">
 								<div class="ui-pane-title">
 									<h4>~Element structure</h4>
 								</div>

@@ -361,6 +361,10 @@ noscript div {
 	margin-right: -15px;
 }
 
+.ui-layout-pane.outer-east {
+	padding: 0;
+}
+
 .schema-editor-buttons .btn,
 #schema-context-buttons .btn,
 #schema-element-context-buttons .btn {
