@@ -1,41 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?>
-  <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" 
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-           xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ 
-                               http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
-  <responseDate>2015-03-20T11:30:06Z</responseDate>
-<request verb="GetRecord" identifier="oai:lcoa1.loc.gov:loc.gmd/g3791p.rr002300" metadataPrefix="oai_dc">http://memory.loc.gov/cgi-bin/oai2_0</request>
-  <GetRecord>
-    <record>
-      <header>
-        <identifier>oai:lcoa1.loc.gov:loc.gmd/g3791p.rr002300</identifier>
-        <datestamp>2005-11-21T17:08:59Z</datestamp>
-        <setSpec>gmd</setSpec>
-      </header>
-      <metadata>
-<oai_dc:dc
-    xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/
-                         http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-<dc:title>New railroad map of the state of Maryland, Delaware, and the District of Columbia. Compiled and drawn by Frank Arnold Gray.</dc:title>
-<dc:creator>Gray, Frank Arnold.</dc:creator>
-<dc:subject>Railroads--Middle Atlantic States--Maps.</dc:subject>
-<dc:description>Shows drainage, canals, stations, cities and towns, counties, canals, roads completed, narrow gauge and proposed railroads with names of lines. Includes list of railroads.</dc:description>
-<dc:description>Scale 1:633,600.</dc:description>
-<dc:description>LC Railroad maps, 230</dc:description>
-<dc:description>Description derived from published bibliography.</dc:description>
-<dc:publisher>Philadelphia</dc:publisher>
-<dc:date>1876</dc:date>
-<dc:type>image</dc:type>
-<dc:type>map</dc:type>
-<dc:type>cartographic</dc:type>
-<dc:identifier>http://hdl.loc.gov/loc.gmd/g3791p.rr002300</dc:identifier>
-<dc:language>eng</dc:language>
-<dc:coverage>United States--Middle Atlantic States</dc:coverage>
-</oai_dc:dc>
-      </metadata>
-    </record>
-  </GetRecord>
-  </OAI-PMH> 
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+	xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<responseDate>2015-08-26T15:28:08Z</responseDate>
+	<request verb="GetRecord" metadataPrefix="oai_dc"
+		identifier="oai:pangaea.de:doi:10.1594/PANGAEA.678311">http://ws.pangaea.de/oai/provider</request>
+	<GetRecord>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.678311</identifier>
+				<datestamp>2015-05-06T15:34:51Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Physical properties measured on 21 sediment cores from METEOR cruise M23/1</dc:title>
+					<dc:creator>von Dobeneck, Tilo</dc:creator>
+					<dc:creator>Grigel, Jens</dc:creator>
+					<dc:creator>Richter, Monika</dc:creator>
+					<dc:creator>Schmidt, Andrea</dc:creator>
+					<dc:creator>Spieß, Volkhard</dc:creator>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>1994-01-18</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>application/zip, 21 datasets</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.678311</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.678311</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>CC-BY: Creative Commons Attribution 3.0 Unported</dc:rights>
+					<dc:rights>Access constraints: unrestricted</dc:rights>
+					<dc:relation>Spieß, Volkhard; Abelmann, Andrea; Bickert, Torsten; Brehme, Isa; Cordes, Rainer; Dehning, Klaus; von Dobeneck, Tilo; Donner, Barbara; Ehrhardt, Isabel; Giese, Martina; Grigel, Jens; Haese, Ralf R; Hale, Walter; Hinrichs, Sigrid; Kasten, Sabine; Cavalcanti de C Laier, Ana P; Teixeira de Oliveira, Maria E; Petermann, Harald; Rapp, Robert; Richter, Martina; Rogers, John; Schmidt, Andrea; Scholz, Maike; Skowronek, Frank; Zabel, Matthias (1994): Bericht und erste Ergebnisse der Meteor-Fahrt M23/1 Kapstadt-Rio de Janeiro, 4.2.-25.2.1993. Berichte aus dem Fachbereich Geowissenschaften der Universität Bremen, 42, 139 pp, urn:nbn:de:gbv:46-ep000101819</dc:relation>
+					<dc:coverage>MEDIAN LATITUDE: -34.336190 * MEDIAN LONGITUDE: -4.195000 * SOUTH-BOUND LATITUDE: -36.833333 * WEST-BOUND LONGITUDE: -20.923333 * NORTH-BOUND LATITUDE: -30.870000 * EAST-BOUND LONGITUDE: 14.343333 * DATE/TIME START: 1993-02-05T00:00:00 * DATE/TIME END: 1993-02-19T00:00:00</dc:coverage>
+					<dc:subject>Angola Basin; automated full waveform logging system; Bartington MS2C coil sensor; Cape Basin; CTD, SEA-BIRD SBE 19 SEACAT; Density, wet bulk; Depth; DEPTH, sediment/rock; GeoB; GeoB2004-2; GeoB2011-2; GeoB2016-1; GeoB2018-3; GeoB2019-1; GeoB2021-5; GeoB2022-2; Geosciences, University of Bremen; Gravity corer (Kiel type); kappa; KOL; M23/1; Meteor (1986); Multi-Sensor Core Logger; Multi-Sensor Core Logger 14, GEOTEK; Piston corer (Kiel type); SL; South African margin; Southwest Walvis Ridge; Susceptibility, volume; Velocity, compressional wave; Vp; WBD</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+	</GetRecord>
+</OAI-PMH>
