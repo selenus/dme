@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+    	
+    	
+    <bean id="xmlStringProcessor" class="eu.dariah.de.minfba.processing.service.xml2.XmlStringProcessingService" scope="prototype">
+    	<property name="elementProcessors">
+    		<list>
+				<ref bean="gtfElementProcessor" />
+			</list>
+    	</property>
+    	<property name="maxItems" value="100" />
+    	<property name="timeout" value="250000" />
+    </bean>
+    
+    
+    	
+
+    <bean id="gtfElementProcessor" class="de.unibamberg.minf.processing.gtf.GtfElementProcessor">
+		<property name="transformationEngine" ref="transformationEngine" />
+	</bean>
+	
+
+	<bean id="transformationEngine" class="de.unibamberg.minf.gtf.TransformationEngine">
+		<property name="autoCompile" value="true" />
+		<property name="forceRecompilation" value="true" />
+		<property name="commandDispatcher" ref="commandDispatcher" />
+		<property name="grammarsRoot" value="/tmp" />
+		<property name="parseErrorDumpPath" value="/tmp/wikitest_errors" />
+		<property name="objMapper" ref="objectMapper" />
+	</bean>
+	
+	
+	<bean id="commandDispatcher" class="de.unibamberg.minf.gtf.transformation.processing.GlobalCommandDispatcher">
+		<property name="commandDispatchers">
+			<map>
+				<entry key="CORE"><bean class="de.unibamberg.minf.gtf.transformation.commands.CoreCommandsDispatcher" /></entry>
+				<entry key="WIKI"><bean class="de.unibamberg.minf.gtf.extensions.wiki.commands.WikiCommandsDispatcher" /></entry>
+			</map>
+		</property>
+	</bean>			
+</beans>

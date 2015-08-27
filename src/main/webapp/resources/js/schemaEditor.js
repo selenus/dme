@@ -775,3 +775,19 @@ SchemaEditor.prototype.applySample = function() {
 	    error: function(jqXHR, textStatus, errorThrown ) { }
 	});
 };
+
+SchemaEditor.prototype.executeSample = function() {
+	var _this = this;
+	$.ajax({
+	    url: _this.pathname + "/async/executeSample",
+	    type: "GET",
+	    //data: { sample : $("#schema-sample-textarea").val() },
+	    dataType: "json",
+	    success: function(data) {
+	    	if (data.success) { 
+	    		_this.logArea.refresh();
+	    	}
+	    }, 
+	    error: function(jqXHR, textStatus, errorThrown ) { }
+	});
+};

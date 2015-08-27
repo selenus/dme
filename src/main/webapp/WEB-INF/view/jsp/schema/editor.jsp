@@ -68,15 +68,14 @@
 									<div class="ui-pane-title">
 										<h4>~ Transformation sample</h4>
 									</div>
-									<div class="alert alert-info alert-sm">
-										~Provide any exemplary content here in order to perform live schema transformation on that data
-									</div>
-									<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
-									
 									<div class="pull-right">
 										<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-default btn-sm">~ Apply</button>
 										<button type="button" onclick="schemaEditor.executeSample(); return false;" class="btn btn-default btn-sm">~ Execute</button>
 									</div>
+									
+									<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
+									
+									
 								</div>
 								
 							</div>
