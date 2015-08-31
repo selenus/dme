@@ -48,6 +48,7 @@
 									<div id="schema-context-container">
 										<h5>~Schema actions</h5>
 										<div id="schema-context-buttons" class="ui-pane-subcontainer">
+											<button type="button" onclick="schemaEditor.exportSchema(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-download'></span> ~ Export schema config</button>
 											<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
 											<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
 										</div>
@@ -68,7 +69,7 @@
 									<div class="ui-pane-title">
 										<h4>~ Transformation sample</h4>
 									</div>
-									<div class="pull-right">
+									<div class="ui-pane-subcontainer">
 										<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-default btn-sm">~ Apply</button>
 										<button type="button" onclick="schemaEditor.executeSample(); return false;" class="btn btn-default btn-sm">~ Execute</button>
 									</div>

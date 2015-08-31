@@ -715,6 +715,19 @@ SchemaEditor.prototype.updateTerminalList = function() {
 	});
 };
 
+SchemaEditor.prototype.exportSchema = function() {
+	var _this = this;
+
+	$.ajax({
+	    url: _this.pathname + "/async/export",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	blob = new Blob([JSON.stringify(data.pojo)], {type: "application/json; charset=utf-8"});
+	    	saveAs(blob, "schema_" + _this.schemaId + ".json");
+	    }
+	});
+};
 
 SchemaEditor.prototype.triggerUploadFile = function(schemaId) {
 	var _this = this;

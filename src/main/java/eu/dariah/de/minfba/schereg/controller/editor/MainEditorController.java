@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -42,6 +43,7 @@ import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
+import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -192,6 +194,24 @@ public class MainEditorController extends BaseTranslationController implements I
 			result.setMessage(msg);
 		}
 		result.setSuccess(false);
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/export")
+	public @ResponseBody ModelActionPojo exportSchema(@PathVariable String schemaId, Model model, Locale locale) {
+		Schema s = schemaService.findSchemaById(schemaId);
+		Element r = elementService.findRootBySchemaId(schemaId, true);
+		
+		SerializableSchemaContainer sp = new SerializableSchemaContainer();
+		sp.setSchema(s);
+		sp.setRoot(r);
+		
+		ModelActionPojo result = new ModelActionPojo(true);
+		/*try {
+			result.setPojo(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(sp));
+		} catch (JsonProcessingException e) {*/
+			result.setPojo(sp);
+		/*}*/
 		return result;
 	}
 	

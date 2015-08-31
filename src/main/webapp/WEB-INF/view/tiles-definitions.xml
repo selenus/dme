@@ -69,7 +69,9 @@
 			<add-attribute type="string" value="jquery/jquery.ui.widget.js" />
 			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
 			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
-			<add-attribute type="string" value="other/svg-pan-zoom.js" />
+			<add-attribute type="string" value="lib/svg-pan-zoom.js" />
+			<add-attribute type="string" value="lib/fileSaver.js" />
+			<add-attribute type="string" value="lib/blob.js" />
 			<add-attribute type="string" value="_common/svgviewer.js" />
 			<add-attribute type="string" value="logArea.js" />
 			<add-attribute type="string" value="schemaEditor.js" />
