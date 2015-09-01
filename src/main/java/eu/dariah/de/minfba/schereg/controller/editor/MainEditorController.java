@@ -48,7 +48,7 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.processing.exception.ProcessingConfigException;
-import eu.dariah.de.minfba.processing.service.xml2.XmlStringProcessingService;
+import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
@@ -245,10 +245,12 @@ public class MainEditorController extends BaseTranslationController implements I
 		XmlSchema s = (XmlSchema)schemaService.findSchemaById(schemaId);
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(schemaId, true);
 		
+		// TODO Need some ConsumptionServiceHere....
+		
 		processingSvc.setXmlString(sample);
 		processingSvc.setSchema(s);
 		try {
-			processingSvc.init(r, null);
+			processingSvc.init(r);
 			processingSvc.run();			
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);

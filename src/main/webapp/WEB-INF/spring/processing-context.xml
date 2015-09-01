@@ -6,14 +6,13 @@
     					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     	
     	
-    <bean id="xmlStringProcessor" class="eu.dariah.de.minfba.processing.service.xml2.XmlStringProcessingService" scope="prototype">
+    <bean id="xmlStringProcessor" class="eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService" scope="prototype">
     	<property name="elementProcessors">
     		<list>
 				<ref bean="gtfElementProcessor" />
 			</list>
     	</property>
     	<property name="maxItems" value="100" />
-    	<property name="timeout" value="250000" />
     </bean>
     
     
