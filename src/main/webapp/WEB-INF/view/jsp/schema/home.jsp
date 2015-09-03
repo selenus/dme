@@ -52,12 +52,12 @@
 									<tr>
 										<th></th> <!-- Status -->
 										<th><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" /></th>
-										<th><s:message code="~eu.dariah.de.minfba.schereg.model.schema.type" /></th>
+										<!-- <th><s:message code="~eu.dariah.de.minfba.schereg.model.schema.type" /></th> -->
 									</tr>
 								</thead>
 								<tbody>
 								<tr>
-									<td colspan="3" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
+									<td colspan="2" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
 								</tr>
 								</tbody>
 							</table>

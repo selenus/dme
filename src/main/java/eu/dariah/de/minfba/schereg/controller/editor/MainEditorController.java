@@ -20,6 +20,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -48,26 +49,26 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.processing.exception.ProcessingConfigException;
+import eu.dariah.de.minfba.processing.model.base.Resource;
 import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
+import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
-@SessionAttributes({"sample", "log"})
+@SessionAttributes({"sample", "sampleResources", "log", "valueMap"})
 public class MainEditorController extends BaseTranslationController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
 	@Autowired private SchemaService schemaService;
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaImportWorker importWorker;
-	
-	@Autowired private XmlStringProcessingService processingSvc;
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	private String tmpUploadDirPath;
@@ -245,20 +246,47 @@ public class MainEditorController extends BaseTranslationController implements I
 		XmlSchema s = (XmlSchema)schemaService.findSchemaById(schemaId);
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(schemaId, true);
 		
-		// TODO Need some ConsumptionServiceHere....
+		XmlStringProcessingService processingSvc = appContext.getBean(XmlStringProcessingService.class);
+		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
 		
 		processingSvc.setXmlString(sample);
 		processingSvc.setSchema(s);
+		processingSvc.addConsumptionService(consumptionService);
 		try {
 			processingSvc.init(r);
-			processingSvc.run();			
+			processingSvc.run();
+			
+			if (consumptionService.getResources()!=null && consumptionService.getResources().size()>0) {
+				model.addAttribute("sampleResources", consumptionService.getResources());
+				
+				Map<String, String> valueMap = new HashMap<String, String>();
+				this.fillValueMap(valueMap, consumptionService.getResources().get(0));
+				
+				model.addAttribute("valueMap", valueMap);
+				
+				for (Resource res : consumptionService.getResources()) {
+					this.addLogEntry(model, schemaId, LogType.SUCCESS, 
+							"~ Resource generated: \n" + objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(res));
+				}
+				this.addLogEntry(model, schemaId, LogType.INFO, String.format("~ Sample input processed: %s resource(s) found; the first is used as session sample", consumptionService.getResources().size()));
+			} else {
+				this.addLogEntry(model, schemaId, LogType.INFO, "~ Sample input processed: No resources found");
+			}
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);
 		}
-		
-		
-		this.addLogEntry(model, schemaId, LogType.INFO, "~ Sample executed");
 		return new ModelActionPojo(true);
+	}
+	
+	private void fillValueMap(Map<String, String> valueMap, Resource r) {
+		if (!valueMap.containsKey(r.getElementId())) {
+			valueMap.put(r.getElementId(), r.getValue()==null ? "" : r.getValue().toString());
+		}
+		if (r.getChildResources()!=null) {
+			for (Resource rChild : r.getChildResources()) {
+				this.fillValueMap(valueMap, rChild);
+			}
+		}
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getLog")

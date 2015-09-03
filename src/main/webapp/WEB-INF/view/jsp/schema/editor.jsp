@@ -42,50 +42,44 @@
 							<div class="outer-east">
 							
 								<div class="inner-center">
-									<div class="ui-pane-title">
-										<h4>~Details and Actions</h4>
-									</div>
 									<div id="schema-context-container">
-										<h5>~Schema actions</h5>
+										<div class="ui-pane-title">
+											<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.schema_details" /></h4>
+										</div>
+										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
 										<div id="schema-context-buttons" class="ui-pane-subcontainer">
-											<button type="button" onclick="schemaEditor.exportSchema(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-download'></span> ~ Export schema config</button>
+											<button type="button" onclick="schemaEditor.exportSchema(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-download'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.export" /></button>
 											<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
 											<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
 										</div>
-										<h5>~Schema activity</h5>
+										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
 										<div class="ui-pane-subcontainer">...</div>
 									</div>
 									<div id="schema-element-context-container" class="hide">
-										<h5>~Actions</h5>
+										<div class="ui-pane-title">
+											<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.element_details" /></h4>
+										</div>
+										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
 										<div id="schema-element-context-buttons" class="ui-pane-subcontainer"></div>
-										<h5>~Details</h5>
+										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.details" /></h5>
 										<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
-										<h5>~Activity</h5>
+										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
 										<div>...</div>
 									</div>
 								</div>
 								
 								<div class="inner-east">
 									<div class="ui-pane-title">
-										<h4>~ Transformation sample</h4>
+										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample" /></h4>
 									</div>
-									<div class="ui-pane-subcontainer">
-										<button type="button" onclick="schemaEditor.applySample(); return false;" class="btn btn-default btn-sm">~ Apply</button>
-										<button type="button" onclick="schemaEditor.executeSample(); return false;" class="btn btn-default btn-sm">~ Execute</button>
-									</div>
-									
-									<textarea id="schema-sample-textarea" class="form-control" placeholder="~ Enter sample data" rows="3">${sample}</textarea>
-									
-									
+									<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample_data" />" rows="3">${sample}</textarea>
+									<button type="button" onclick="schemaEditor.applyAndExecuteSample(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
 								</div>
-								
 							</div>
-							
 							<div class="outer-center">
 								<div class="ui-pane-title">
-									<h4>~Element structure</h4>
+									<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.element_model" /></h4>
 								</div>
-								
 								<div class="schema-editor-buttons clearfix">
 									<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
 					      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
@@ -95,9 +89,6 @@
 									<canvas id="schema-editor-canvas"></canvas>
 								</div>
 							</div>
-							
-							
-							
 						</div>
 					</div>
 				</div>

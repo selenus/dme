@@ -499,6 +499,18 @@ noscript div {
 	padding: 0;
 }
 
+.log pre {
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    display: block;
+    font-size: inherit;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
 .log li.log-INFO { }
 
 .log li.log-SUCCESS {

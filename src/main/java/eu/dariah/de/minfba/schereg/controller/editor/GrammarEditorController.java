@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
@@ -31,10 +33,13 @@ import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.FieldErrorPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
+import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/grammar/{grammarId}")
+@SessionAttributes({"valueMap"})
 public class GrammarEditorController extends BaseTranslationController {
+	@Autowired private ReferenceService referenceService;
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
 	@Autowired protected TransformationEngine engine;
@@ -64,6 +69,16 @@ public class GrammarEditorController extends BaseTranslationController {
 		if (g.getGrammarContainer()==null) {
 			g.setGrammarContainer(new GrammarContainer());
 		}
+		
+		if (model.asMap().containsKey("valueMap")) {	
+			Map<String, String> valueMap = (Map<String, String>)model.asMap().get("valueMap");
+			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
+			
+			if (valueMap.containsKey(elementId)) {
+				model.addAttribute("elementSample", valueMap.get(elementId));
+			}
+		}
+		
 		model.addAttribute("grammar", g);		
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/save");
 		return "schemaEditor/form/grammar/edit";
@@ -133,7 +148,8 @@ public class GrammarEditorController extends BaseTranslationController {
 			result.setSuccess(true);
 		} catch (GrammarGenerationException e) {
 			for (ANTLRMessage m : e.getErrors()) {
-				result.addFieldError(e.getGrammarType().name(), String.format("~%s:%s => %s", m.line, m.charPosition, m.getMessageTemplate(true).render()));
+				// TODO: Revert this
+				result.addFieldError(e.getGrammarType().name(), String.format("~%s:%s => %s", m.line, m.charPosition, m.toString() /*m.getMessageTemplate(true).render()*/));
 			}
 		} catch (Exception e) {
 			result.addObjectError("Unspecified error while parsing grammar: " + e.getClass().getName());

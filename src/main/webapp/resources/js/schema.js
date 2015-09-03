@@ -36,11 +36,11 @@ SchemaEditor.prototype.createTable = function() {
 		                 {	"aTargets": [1],
 		                 	"mData": "entity.label",
 		                 	"sWidth" : "100%"
-						 },
+						 }/*,
 						 {	"aTargets": [2], 
 							"mData": "entity.type", 
 		                 	"sClass": "td-no-wrap"
-						 }]
+						 }*/]
 	});
 };
 

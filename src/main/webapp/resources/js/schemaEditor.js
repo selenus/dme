@@ -22,6 +22,7 @@ var SchemaEditor = function() {
 	this.editorContainer = $("#schema-editor-container");
 	
 	this.sampleTextbox = $("#schema-sample-textarea");
+	this.sampleModified = true;
 	
 	this.schemaContextContainer = $("#schema-context-container");
 	this.elementContextContainer = $("#schema-element-context-container");
@@ -120,6 +121,10 @@ SchemaEditor.prototype.initLayout = function() {
 	});
 	
 	this.layoutContainer.removeClass("fade");
+	
+	$(this.sampleTextbox).on('change keyup paste', function() {
+		_this.sampleModified = true;
+	});
 };
 
 SchemaEditor.prototype.initGraph = function() {
@@ -156,7 +161,7 @@ SchemaEditor.prototype.resizeContent = function() {
 		}
 	}
 	
-	var sampleTextboxHeight = Math.floor(this.sampleTextbox.offsetParent().innerHeight() - (this.sampleTextbox.offset().top - this.sampleTextbox.offsetParent().offset().top));
+	var sampleTextboxHeight = Math.floor($(".outer-east").innerHeight() - (this.sampleTextbox.offset().top - this.sampleTextbox.offsetParent().offset().top));
 	this.sampleTextbox.height(sampleTextboxHeight - 70);
 };
 
@@ -773,7 +778,17 @@ SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
 	$("#btn-submit-schema-elements").removeProp("disabled");
 };
 
-SchemaEditor.prototype.applySample = function() {
+SchemaEditor.prototype.applyAndExecuteSample = function() {
+	if (this.sampleModified) {
+		this.applySample(function() {
+			this.executeSample();
+		})
+	} else {
+		this.executeSample();
+	}
+};
+
+SchemaEditor.prototype.applySample = function(callback) {
 	var _this = this;
 	$.ajax({
 	    url: _this.pathname + "/async/applySample",
@@ -783,6 +798,8 @@ SchemaEditor.prototype.applySample = function() {
 	    success: function(data) {
 	    	if (data.success) { 
 	    		_this.logArea.refresh();
+	    		_this.sampleModified = false;
+	    		callback();
 	    	}
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) { }

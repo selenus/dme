@@ -3,6 +3,7 @@ package eu.dariah.de.minfba.schereg.controller.editor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
@@ -39,6 +41,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/function/{functionId}")
+@SessionAttributes({"valueMap"})
 public class FunctionEditorController extends BaseTranslationController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
@@ -64,6 +67,15 @@ public class FunctionEditorController extends BaseTranslationController {
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getEditForm(@PathVariable String schemaId, @PathVariable String functionId, Model model, Locale locale) {
 		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
+		
+		if (model.asMap().containsKey("valueMap")) {	
+			Map<String, String> valueMap = (Map<String, String>)model.asMap().get("valueMap");
+			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
+			
+			if (valueMap.containsKey(elementId)) {
+				model.addAttribute("elementSample", valueMap.get(elementId));
+			}
+		}
 		
 		model.addAttribute("grammar", grammarService.findById(grammarId));
 		model.addAttribute("function", functionService.findById(functionId));

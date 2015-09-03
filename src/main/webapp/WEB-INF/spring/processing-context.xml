@@ -27,7 +27,7 @@
 		<property name="autoCompile" value="true" />
 		<property name="forceRecompilation" value="true" />
 		<property name="commandDispatcher" ref="commandDispatcher" />
-		<property name="grammarsRoot" value="/tmp" />
+		<property name="grammarsRoot" value="${paths.grammars}" />
 		<property name="parseErrorDumpPath" value="/tmp/wikitest_errors" />
 		<property name="objMapper" ref="objectMapper" />
 	</bean>
