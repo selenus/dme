@@ -1,40 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="oai2.xsl"?>
 <OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
 	xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<responseDate>2015-08-26T15:28:08Z</responseDate>
-	<request verb="GetRecord" metadataPrefix="oai_dc"
-		identifier="oai:pangaea.de:doi:10.1594/PANGAEA.678311">http://ws.pangaea.de/oai/provider</request>
-	<GetRecord>
+	<responseDate>2015-09-03T08:12:27Z</responseDate>
+	<request verb="ListRecords" metadataPrefix="oai_dc" set="project4094">http://ws.pangaea.de/oai/provider</request>
+	<ListRecords>
 		<record>
 			<header>
-				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.678311</identifier>
-				<datestamp>2015-05-06T15:34:51Z</datestamp>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.718300</identifier>
+				<datestamp>2015-04-09T04:58:19Z</datestamp>
 			</header>
 			<metadata>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
 					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
 					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
-					<dc:title>Physical properties measured on 21 sediment cores from METEOR cruise M23/1</dc:title>
-					<dc:creator>von Dobeneck, Tilo</dc:creator>
-					<dc:creator>Grigel, Jens</dc:creator>
-					<dc:creator>Richter, Monika</dc:creator>
-					<dc:creator>Schmidt, Andrea</dc:creator>
-					<dc:creator>Spieß, Volkhard</dc:creator>
+					<dc:title>Radiosonde measurements from station Boulder, SURFRAD (1996-05)</dc:title>
+					<dc:creator>Deluisi, John</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
 					<dc:publisher>PANGAEA</dc:publisher>
-					<dc:date>1994-01-18</dc:date>
+					<dc:date>2009-06-11</dc:date>
 					<dc:type>Dataset</dc:type>
-					<dc:format>application/zip, 21 datasets</dc:format>
-					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.678311</dc:identifier>
-					<dc:identifier>doi:10.1594/PANGAEA.678311</dc:identifier>
+					<dc:format>text/tab-separated-values, 16069 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.718300</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.718300</dc:identifier>
 					<dc:language>en</dc:language>
-					<dc:rights>CC-BY: Creative Commons Attribution 3.0 Unported</dc:rights>
-					<dc:rights>Access constraints: unrestricted</dc:rights>
-					<dc:relation>Spieß, Volkhard; Abelmann, Andrea; Bickert, Torsten; Brehme, Isa; Cordes, Rainer; Dehning, Klaus; von Dobeneck, Tilo; Donner, Barbara; Ehrhardt, Isabel; Giese, Martina; Grigel, Jens; Haese, Ralf R; Hale, Walter; Hinrichs, Sigrid; Kasten, Sabine; Cavalcanti de C Laier, Ana P; Teixeira de Oliveira, Maria E; Petermann, Harald; Rapp, Robert; Richter, Martina; Rogers, John; Schmidt, Andrea; Scholz, Maike; Skowronek, Frank; Zabel, Matthias (1994): Bericht und erste Ergebnisse der Meteor-Fahrt M23/1 Kapstadt-Rio de Janeiro, 4.2.-25.2.1993. Berichte aus dem Fachbereich Geowissenschaften der Universität Bremen, 42, 139 pp, urn:nbn:de:gbv:46-ep000101819</dc:relation>
-					<dc:coverage>MEDIAN LATITUDE: -34.336190 * MEDIAN LONGITUDE: -4.195000 * SOUTH-BOUND LATITUDE: -36.833333 * WEST-BOUND LONGITUDE: -20.923333 * NORTH-BOUND LATITUDE: -30.870000 * EAST-BOUND LONGITUDE: 14.343333 * DATE/TIME START: 1993-02-05T00:00:00 * DATE/TIME END: 1993-02-19T00:00:00</dc:coverage>
-					<dc:subject>Angola Basin; automated full waveform logging system; Bartington MS2C coil sensor; Cape Basin; CTD, SEA-BIRD SBE 19 SEACAT; Density, wet bulk; Depth; DEPTH, sediment/rock; GeoB; GeoB2004-2; GeoB2011-2; GeoB2016-1; GeoB2018-3; GeoB2019-1; GeoB2021-5; GeoB2022-2; Geosciences, University of Bremen; Gravity corer (Kiel type); kappa; KOL; M23/1; Meteor (1986); Multi-Sensor Core Logger; Multi-Sensor Core Logger 14, GEOTEK; Piston corer (Kiel type); SL; South African margin; Southwest Walvis Ridge; Susceptibility, volume; Velocity, compressional wave; Vp; WBD</dc:subject>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Deluisi, John (1996): BSRN Station-to-archive file for station Boulder (1996-05). ftp://ftp.bsrn.awi.de/bos/bos0596.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 40.125000 * LONGITUDE: -105.237000 * DATE/TIME START: 1996-05-01T00:00:00 * DATE/TIME END: 1996-05-31T12:48:00 * MINIMUM ALTITUDE: 1611.0 m * MAXIMUM ALTITUDE: 16453.0 m</dc:coverage>
+					<dc:subject>ALTITUDE; Baseline Surface Radiation Network; BOS; Boulder; BSRN; Colorado, United States of America; DATE/TIME; Dew/frost point; Monitoring station; MONS; Pressure, at given altitude; Radiosonde, Vaisala, RS80-57H; Temperature, air; WCRP/GEWEX; Wind direction; Wind speed</dc:subject>
 				</oai_dc:dc>
 			</metadata>
 		</record>
-	</GetRecord>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.680539</identifier>
+				<datestamp>2015-04-09T03:42:53Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Other measurements at 30 m from station Payerne (1994-12)</dc:title>
+					<dc:creator>Heimo, Alain</dc:creator>
+					<dc:source>Swiss Meteorological Agency, Payerne</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-25</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 803520 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.680539</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.680539</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Heimo, Alain (1994): BSRN Station-to-archive file for station Payerne (1994-12). ftp://ftp.bsrn.awi.de/pay/pay1294.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 46.815000 * LONGITUDE: 6.944000 * DATE/TIME START: 1994-12-01T00:00:00 * DATE/TIME END: 1994-12-31T23:59:00 * MINIMUM HEIGHT above ground: 30.0 m * MAXIMUM HEIGHT above ground: 30.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BSRN; DATE/TIME; HEIGHT above ground; Humidity, relative; Hygrometer; Long-wave downward radiation; Long-wave downward radiation, maximum; Long-wave downward radiation, minimum; Long-wave downward radiation, standard deviation; Long-wave upward radiation; Long-wave upward radiation, maximum; Long-wave upward radiation, minimum; Long-wave upward radiation, standard deviation; Monitoring station; MONS; PAY; Payerne; Pyranometer, Kipp &amp; Zonen, CM21, SN 930109, WRMC No. 21024; Pyranometer, Kipp &amp; Zonen, CM21, SN 930110, WRMC No. 21023; Pyrgeometer, Eppley, PIR, SN 29587F3, WRMC No. 21022; Pyrgeometer, Eppley, PIR, SN 29588F3, WRMC No. 21021; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, maximum; Short-wave downward (GLOBAL) radiation, minimum; Short-wave downward (GLOBAL) radiation, standard deviation; Short-wave upward (REFLEX) radiation; Short-wave upward (REFLEX) radiation, maximum; Short-wave upward (REFLEX) radiation, minimum; Short-wave upward (REFLEX) radiation, standard deviation; Switzerland; Temperature, air; Thermometer; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.707449</identifier>
+				<datestamp>2015-04-09T05:56:34Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Basic measurements of radiation at station Sede Boqer (2007-12)</dc:title>
+					<dc:creator>Zangvil, Abraham</dc:creator>
+					<dc:source>The Jacob Blaustein Institutes for Desert Research, Sede Boqer</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-11-18</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 727613 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.707449</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.707449</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Zangvil, Abraham (2007): BSRN Station-to-archive file for station Sede Boqer (2007-12). ftp://ftp.bsrn.awi.de/sbo/sbo1207.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 30.859720 * LONGITUDE: 34.779440 * DATE/TIME START: 2007-12-01T00:00:00 * DATE/TIME END: 2007-12-31T23:59:00 * MINIMUM HEIGHT above ground: 2.0 m * MAXIMUM HEIGHT above ground: 2.0 m</dc:coverage>
+					<dc:subject>Air temperature at 2 m height; Barometer; Baseline Surface Radiation Network; BSRN; DATE/TIME; Diffuse radiation; Diffuse radiation, maximum; Diffuse radiation, minimum; Diffuse radiation, standard deviation; Direct radiation; Direct radiation, maximum; Direct radiation, minimum; Direct radiation, standard deviation; HEIGHT above ground; Humidity, relative; Hygrometer; Israel; Long-wave downward radiation; Long-wave downward radiation, maximum; Long-wave downward radiation, minimum; Long-wave downward radiation, standard deviation; Monitoring station; MONS; Pyranometer, Eppley, PSP, SN 32455F3, WRMC No. 43003; Pyranometer, Eppley, PSP, SN 32456F3, WRMC No. 43002; Pyrgeometer, Eppley, PIR, SN 15380F3, WRMC No. 43004; Pyrheliometer, Eppley, NIP, SN 31752E6, WRMC No. 43001; SBO; Sede Boqer; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, maximum; Short-wave downward (GLOBAL) radiation, minimum; Short-wave downward (GLOBAL) radiation, standard deviation; Station pressure; Thermometer; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.723959</identifier>
+				<datestamp>2015-04-09T07:05:08Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Other measurements at 10 m from station Southern Great Plains (1996-01)</dc:title>
+					<dc:creator>Sisterson, Douglas L</dc:creator>
+					<dc:source>Argonne National Laboratory</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2009-07-06</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 87349 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.723959</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.723959</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Sisterson, Douglas L (1996): BSRN Station-to-archive file for station Southern Great Plains (1996-01). ftp://ftp.bsrn.awi.de/e13/e130196.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 36.605000 * LONGITUDE: -97.485000 * DATE/TIME START: 1996-01-01T00:00:00 * DATE/TIME END: 1996-01-31T23:59:00 * MINIMUM HEIGHT above ground: 10.0 m * MAXIMUM HEIGHT above ground: 10.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BSRN; DATE/TIME; E13; HEIGHT above ground; Long-wave upward radiation; Monitoring station; MONS; Oklahoma, United States of America; Pyranometer, Eppley, PSP, SN 30775F3, WRMC No. 27057; Pyrgeometer, Eppley, PIR, SN 30682F3, WRMC No. 27347; Short-wave upward (REFLEX) radiation; Southern Great Plains; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.677104</identifier>
+				<datestamp>2015-04-09T05:54:21Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Ozone measurements from station Boulder (1996-02)</dc:title>
+					<dc:creator>Dutton, Ellsworth G</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-15</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 23 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.677104</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.677104</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Dutton, Ellsworth G (1996): BSRN Station-to-archive file for station Boulder (1996-02). ftp://ftp.bsrn.awi.de/bou/bou0296.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 40.050000 * LONGITUDE: -105.007000 * DATE/TIME START: 1996-02-01T19:00:00 * DATE/TIME END: 1996-02-29T17:00:00 * MINIMUM ELEVATION: 1577.0 m * MAXIMUM ELEVATION: 1577.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BOU; Boulder; BSRN; Colorado, United States of America; DATE/TIME; Dobson Ozone Spectrophotometer, D061; Monitoring station; MONS; Ozone total; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.707450</identifier>
+				<datestamp>2015-04-09T05:56:28Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Meteorological synoptical observations from station Sede Boqer (2007-12)</dc:title>
+					<dc:creator>Zangvil, Abraham</dc:creator>
+					<dc:source>The Jacob Blaustein Institutes for Desert Research, Sede Boqer</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-11-18</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 490 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.707450</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.707450</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Zangvil, Abraham (2007): BSRN Station-to-archive file for station Sede Boqer (2007-12). ftp://ftp.bsrn.awi.de/sbo/sbo1207.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 30.859720 * LONGITUDE: 34.779440 * DATE/TIME START: 2007-12-01T06:00:00 * DATE/TIME END: 2007-12-31T18:00:00 * MINIMUM ELEVATION: 500.0 m * MAXIMUM ELEVATION: 500.0 m</dc:coverage>
+					<dc:subject>Anemometer; Baseline Surface Radiation Network; BSRN; Code; DATE/TIME; Dew/frost point; High cloud; Hygrometer; Israel; Low/middle cloud amount; Low cloud; Middle cloud; Monitoring station; MONS; Past weather1; Past weather2; Present weather; SBO; Sede Boqer; Temperature, air; Thermometer; Total cloud amount; Visual observation; WCRP/GEWEX; Wind direction; Wind speed</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.736238</identifier>
+				<datestamp>2015-04-09T07:03:50Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Meteorological synoptical observations from station Lindenberg (2000-05)</dc:title>
+					<dc:creator>Behrens, Klaus</dc:creator>
+					<dc:source>Meteorologisches Observatorium Potsdam</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2010-04-07</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 11050 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.736238</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.736238</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Behrens, Klaus (2000): BSRN Station-to-archive file for station Lindenberg (2000-05). ftp://ftp.bsrn.awi.de/lin/lin0500.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 52.210000 * LONGITUDE: 14.122000 * DATE/TIME START: 2000-05-01T00:00:00 * DATE/TIME END: 2000-05-31T23:00:00 * MINIMUM ELEVATION: 125.0 m * MAXIMUM ELEVATION: 125.0 m</dc:coverage>
+					<dc:subject>Amount of cloud layer 1; Amount of cloud layer 2; Amount of cloud layer 3; Anemometer; Barometer; Baseline Surface Radiation Network; BSRN; Cloud base height code, layer 1; Cloud base height code, layer 2; Cloud base height code, layer 3; Cloud layer 1; Cloud layer 2; Cloud layer 3; Code; DATE/TIME; Dew/frost point; Germany; High cloud; Hygrometer; LIN; Lindenberg; Low/middle cloud amount; Low cloud; Middle cloud; Monitoring station; MONS; Past weather1; Past weather2; Present weather; Pressure, atmospheric; Station pressure; Temperature, air; Thermometer; Total cloud amount; Visibility sensor; Visual observation; WCRP/GEWEX; Wind direction; Wind speed</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.677113</identifier>
+				<datestamp>2015-04-09T05:54:23Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Ozone measurements from station Boulder (1996-11)</dc:title>
+					<dc:creator>Dutton, Ellsworth G</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-15</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 21 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.677113</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.677113</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Dutton, Ellsworth G (1996): BSRN Station-to-archive file for station Boulder (1996-11). ftp://ftp.bsrn.awi.de/bou/bou1196.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 40.050000 * LONGITUDE: -105.007000 * DATE/TIME START: 1996-11-01T20:00:00 * DATE/TIME END: 1996-11-29T19:00:00 * MINIMUM ELEVATION: 1577.0 m * MAXIMUM ELEVATION: 1577.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BOU; Boulder; BSRN; Colorado, United States of America; DATE/TIME; Dobson Ozone Spectrophotometer, D061; Monitoring station; MONS; Ozone total; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.676969</identifier>
+				<datestamp>2015-04-09T03:42:40Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Ozone measurements from station Barrow (1992-04)</dc:title>
+					<dc:creator>Dutton, Ellsworth G</dc:creator>
+					<dc:source>Climate Monitoring &amp; Diagnostics Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-15</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 17 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.676969</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.676969</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Dutton, Ellsworth G (1992): BSRN Station-to-archive file for station Barrow (1992-04). ftp://ftp.bsrn.awi.de/bar/bar0492.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 71.323000 * LONGITUDE: -156.607000 * DATE/TIME START: 1992-04-03T00:00:00 * DATE/TIME END: 1992-04-30T19:00:00 * MINIMUM ELEVATION: 8.0 m * MAXIMUM ELEVATION: 8.0 m</dc:coverage>
+					<dc:subject>Alaska, USA; BAR; Barrow; Baseline Surface Radiation Network; BSRN; DATE/TIME; Dobson Ozone Spectrophotometer, D091; Monitoring station; MONS; Ozone total; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.680531</identifier>
+				<datestamp>2015-04-09T03:32:57Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Other measurements at 30 m from station Payerne (1994-04)</dc:title>
+					<dc:creator>Heimo, Alain</dc:creator>
+					<dc:source>Swiss Meteorological Agency, Payerne</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-25</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 775440 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.680531</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.680531</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Heimo, Alain (1994): BSRN Station-to-archive file for station Payerne (1994-04). ftp://ftp.bsrn.awi.de/pay/pay0494.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 46.815000 * LONGITUDE: 6.944000 * DATE/TIME START: 1994-04-01T00:00:00 * DATE/TIME END: 1994-04-30T23:59:00 * MINIMUM HEIGHT above ground: 30.0 m * MAXIMUM HEIGHT above ground: 30.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BSRN; DATE/TIME; HEIGHT above ground; Humidity, relative; Hygrometer; Long-wave downward radiation; Long-wave downward radiation, maximum; Long-wave downward radiation, minimum; Long-wave downward radiation, standard deviation; Long-wave upward radiation; Long-wave upward radiation, maximum; Long-wave upward radiation, minimum; Long-wave upward radiation, standard deviation; Monitoring station; MONS; PAY; Payerne; Pyranometer, Kipp &amp; Zonen, CM21, SN 930109, WRMC No. 21024; Pyranometer, Kipp &amp; Zonen, CM21, SN 930110, WRMC No. 21023; Pyrgeometer, Eppley, PIR, SN 29587F3, WRMC No. 21022; Pyrgeometer, Eppley, PIR, SN 29588F3, WRMC No. 21021; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, maximum; Short-wave downward (GLOBAL) radiation, minimum; Short-wave downward (GLOBAL) radiation, standard deviation; Short-wave upward (REFLEX) radiation; Short-wave upward (REFLEX) radiation, maximum; Short-wave upward (REFLEX) radiation, minimum; Short-wave upward (REFLEX) radiation, standard deviation; Switzerland; Temperature, air; Thermometer; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.721937</identifier>
+				<datestamp>2015-04-10T06:53:02Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Ultra-violet measurements from station Goodwin Creek (2004-04)</dc:title>
+					<dc:creator>Augustine, John</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2009-06-23</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 14400 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.721937</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.721937</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Augustine, John (2004): BSRN Station-to-archive file for station Goodwin Creek (2004-04). ftp://ftp.bsrn.awi.de/gcr/gcr0404.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 34.250000 * LONGITUDE: -89.870000 * DATE/TIME START: 2004-04-01T00:00:00 * DATE/TIME END: 2004-04-30T23:57:00 * MINIMUM HEIGHT above ground: 2.0 m * MAXIMUM HEIGHT above ground: 2.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BSRN; DATE/TIME; GCR; Goodwin Creek; HEIGHT above ground; Mississippi, United States of America; Monitoring station; MONS; UV-b global; UV-Radiometer, Yankee Env. Systems, UVB1, SN 930502, WRMC No. 31426; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.803668</identifier>
+				<datestamp>2015-04-09T04:51:45Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Basic measurements of radiation at station Tamanrasset (2012-07)</dc:title>
+					<dc:creator>Mimouni, Mohamed</dc:creator>
+					<dc:source>National Meteorological Office of Algeria</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2012-12-07</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 356712 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.803668</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.803668</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Mimouni, Mohamed (2012): BSRN Station-to-archive file for station Tamanrasset (2012-07). ftp://ftp.bsrn.awi.de/tam/tam0712.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 22.790300 * LONGITUDE: 5.529200 * DATE/TIME START: 2012-07-01T00:00:00 * DATE/TIME END: 2012-07-31T23:59:00 * MINIMUM HEIGHT above ground: 2.0 m * MAXIMUM HEIGHT above ground: 2.0 m</dc:coverage>
+					<dc:subject>Algeria; Baseline Surface Radiation Network; BSRN; DATE/TIME; Diffuse radiation; Diffuse radiation, standard deviation; Direct radiation; Direct radiation, standard deviation; HEIGHT above ground; Long-wave downward radiation; Long-wave downward radiation, standard deviation; Monitoring station; MONS; Pyranometer, Eppley, PSP, SN 30123 F3, WRMC No. 42001; Pyranometer, Eppley, PSP, SN 32608 F3, WRMC No. 42003; Pyrgeometer, Eppley, PIR, SN 32597 F3, WRMC No. 42006; Pyrheliometer, Eppley, NIP, SN 29948 E6, WRMC No. 42002; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, standard deviation; TAM; Tamanrasset; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.674033</identifier>
+				<datestamp>2015-04-10T06:52:55Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Radiosonde measurements from station Boulder (2004-05)</dc:title>
+					<dc:creator>Dutton, Ellsworth G</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2007-12-27</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 19439 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.674033</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.674033</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Dutton, Ellsworth G (2004): BSRN Station-to-archive file for station Boulder (2004-05). ftp://ftp.bsrn.awi.de/bou/bou0504.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 40.050000 * LONGITUDE: -105.007000 * DATE/TIME START: 2004-05-01T00:00:00 * DATE/TIME END: 2004-05-31T12:00:00 * MINIMUM ALTITUDE: 0.0 m * MAXIMUM ALTITUDE: 35390.0 m</dc:coverage>
+					<dc:subject>ALTITUDE; Baseline Surface Radiation Network; BOU; Boulder; BSRN; Colorado, United States of America; DATE/TIME; Dew/frost point; Monitoring station; MONS; Pressure, at given altitude; Radiosonde; Temperature, air; WCRP/GEWEX; Wind direction; Wind speed</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.718391</identifier>
+				<datestamp>2015-04-10T07:08:35Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Basic measurements of radiation at station Boulder, SURFRAD (1998-04)</dc:title>
+					<dc:creator>Deluisi, John</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2009-06-11</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 129600 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.718391</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.718391</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Deluisi, John (1998): BSRN Station-to-archive file for station Boulder (1998-04). ftp://ftp.bsrn.awi.de/bos/bos0498.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 40.125000 * LONGITUDE: -105.237000 * DATE/TIME START: 1998-04-01T00:00:00 * DATE/TIME END: 1998-04-30T23:57:00 * MINIMUM HEIGHT above ground: 2.0 m * MAXIMUM HEIGHT above ground: 2.0 m</dc:coverage>
+					<dc:subject>Barometer; Baseline Surface Radiation Network; BOS; Boulder; BSRN; Colorado, United States of America; DATE/TIME; Diffuse radiation; Diffuse radiation, standard deviation; Direct radiation; Direct radiation, standard deviation; HEIGHT above ground; Long-wave downward radiation; Long-wave downward radiation, standard deviation; Monitoring station; MONS; Pyranometer, Spectrosun, SR-75, SN 73-88, WRMC No. 31124; Pyranometer, Spectrosun, SR-75, SN 73-89, WRMC No. 31125; Pyrgeometer, Eppley, PIR, SN 31609F3, WRMC No. 31183; Pyrheliometer, Eppley, NIP, SN 30399E6, WRMC No. 31267; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, standard deviation; Station pressure; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.680645</identifier>
+				<datestamp>2015-04-09T04:49:56Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Other measurements at 30 m from station Payerne (2003-10)</dc:title>
+					<dc:creator>Vuilleumier, Laurent</dc:creator>
+					<dc:source>Swiss Meteorological Agency, Payerne</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-25</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 803508 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.680645</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.680645</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Vuilleumier, Laurent (2003): BSRN Station-to-archive file for station Payerne (2003-10). ftp://ftp.bsrn.awi.de/pay/pay1003.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 46.815000 * LONGITUDE: 6.944000 * DATE/TIME START: 2003-10-01T00:00:00 * DATE/TIME END: 2003-10-31T23:59:00 * MINIMUM HEIGHT above ground: 30.0 m * MAXIMUM HEIGHT above ground: 30.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BSRN; DATE/TIME; HEIGHT above ground; Humidity, relative; Hygrometer; Long-wave downward radiation; Long-wave downward radiation, maximum; Long-wave downward radiation, minimum; Long-wave downward radiation, standard deviation; Long-wave upward radiation; Long-wave upward radiation, maximum; Long-wave upward radiation, minimum; Long-wave upward radiation, standard deviation; Monitoring station; MONS; PAY; Payerne; Pyranometer, Kipp &amp; Zonen, CM21, SN 930109, WRMC No. 21024; Pyranometer, Kipp &amp; Zonen, CM21, SN 930110, WRMC No. 21023; Pyrgeometer, Eppley, PIR, SN 29587F3, WRMC No. 21022; Pyrgeometer, Eppley, PIR, SN 29588F3, WRMC No. 21021; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, maximum; Short-wave downward (GLOBAL) radiation, minimum; Short-wave downward (GLOBAL) radiation, standard deviation; Short-wave upward (REFLEX) radiation; Short-wave upward (REFLEX) radiation, maximum; Short-wave upward (REFLEX) radiation, minimum; Short-wave upward (REFLEX) radiation, standard deviation; Switzerland; Temperature, air; Thermometer; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.722022</identifier>
+				<datestamp>2015-04-10T07:21:07Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Basic measurements of radiation at station Goodwin Creek (2006-08)</dc:title>
+					<dc:creator>Augustine, John</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2009-06-23</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 133920 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.722022</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.722022</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Augustine, John (2006): BSRN Station-to-archive file for station Goodwin Creek (2006-08). ftp://ftp.bsrn.awi.de/gcr/gcr0806.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 34.250000 * LONGITUDE: -89.870000 * DATE/TIME START: 2006-08-01T00:00:00 * DATE/TIME END: 2006-08-31T23:57:00 * MINIMUM HEIGHT above ground: 2.0 m * MAXIMUM HEIGHT above ground: 2.0 m</dc:coverage>
+					<dc:subject>Barometer; Baseline Surface Radiation Network; BSRN; DATE/TIME; Diffuse radiation; Diffuse radiation, standard deviation; Direct radiation; Direct radiation, standard deviation; GCR; Goodwin Creek; HEIGHT above ground; Long-wave downward radiation; Long-wave downward radiation, standard deviation; Mississippi, United States of America; Monitoring station; MONS; Pyranometer, Eppley, 8-48, SN 32866, WRMC No. 31306; Pyranometer, Spectrosun, SR-75, SN 73-54, WRMC No. 31110; Pyrgeometer, Eppley, PIR, SN 31269F3, WRMC No. 31180; Pyrheliometer, Eppley, NIP, SN 30398E6, WRMC No. 31266; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, standard deviation; Station pressure; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.674028</identifier>
+				<datestamp>2015-04-10T06:52:53Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Radiosonde measurements from station Boulder (2002-01)</dc:title>
+					<dc:creator>Dutton, Ellsworth G</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2007-12-27</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 46134 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.674028</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.674028</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Dutton, Ellsworth G (2002): BSRN Station-to-archive file for station Boulder (2002-01). ftp://ftp.bsrn.awi.de/bou/bou0102.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 40.050000 * LONGITUDE: -105.007000 * DATE/TIME START: 2002-01-01T11:02:00 * DATE/TIME END: 2002-01-31T00:34:00 * MINIMUM ALTITUDE: 1611.0 m * MAXIMUM ALTITUDE: 32762.0 m</dc:coverage>
+					<dc:subject>ALTITUDE; Baseline Surface Radiation Network; BOU; Boulder; BSRN; Colorado, United States of America; DATE/TIME; Dew/frost point; Monitoring station; MONS; Pressure, at given altitude; Radiosonde; Temperature, air; WCRP/GEWEX; Wind direction; Wind speed</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.680676</identifier>
+				<datestamp>2015-04-09T05:55:24Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Other measurements at 30 m from station Payerne (2006-06)</dc:title>
+					<dc:creator>Vuilleumier, Laurent</dc:creator>
+					<dc:source>Swiss Meteorological Agency, Payerne</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-25</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 777588 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.680676</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.680676</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Vuilleumier, Laurent (2006): BSRN Station-to-archive file for station Payerne (2006-06). ftp://ftp.bsrn.awi.de/pay/pay0606.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 46.815000 * LONGITUDE: 6.944000 * DATE/TIME START: 2006-06-01T00:00:00 * DATE/TIME END: 2006-06-30T23:59:00 * MINIMUM HEIGHT above ground: 30.0 m * MAXIMUM HEIGHT above ground: 30.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BSRN; DATE/TIME; HEIGHT above ground; Humidity, relative; Hygrometer; Long-wave downward radiation; Long-wave downward radiation, maximum; Long-wave downward radiation, minimum; Long-wave downward radiation, standard deviation; Long-wave upward radiation; Long-wave upward radiation, maximum; Long-wave upward radiation, minimum; Long-wave upward radiation, standard deviation; Monitoring station; MONS; PAY; Payerne; Pyranometer, Kipp &amp; Zonen, CM21, SN 940215, WRMC No. 21043; Pyranometer, Kipp &amp; Zonen, CM21, SN 970428, WRMC No. 21041; Pyrgeometer, Eppley, PIR, SN 31965F3, WRMC No. 21044; Pyrgeometer, Eppley, PIR, SN 31966F3, WRMC No. 21046; Short-wave downward (GLOBAL) radiation; Short-wave downward (GLOBAL) radiation, maximum; Short-wave downward (GLOBAL) radiation, minimum; Short-wave downward (GLOBAL) radiation, standard deviation; Short-wave upward (REFLEX) radiation; Short-wave upward (REFLEX) radiation, maximum; Short-wave upward (REFLEX) radiation, minimum; Short-wave upward (REFLEX) radiation, standard deviation; Switzerland; Temperature, air; Thermometer; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:pangaea.de:doi:10.1594/PANGAEA.677117</identifier>
+				<datestamp>2015-04-09T05:54:24Z</datestamp>
+			</header>
+			<metadata>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/"
+					xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
+					xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+					<dc:title>Ozone measurements from station Boulder (1997-03)</dc:title>
+					<dc:creator>Dutton, Ellsworth G</dc:creator>
+					<dc:source>NOAA - Air Resources Laboratory, Boulder</dc:source>
+					<dc:publisher>PANGAEA</dc:publisher>
+					<dc:date>2008-01-15</dc:date>
+					<dc:type>Dataset</dc:type>
+					<dc:format>text/tab-separated-values, 27 data points</dc:format>
+					<dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.677117</dc:identifier>
+					<dc:identifier>doi:10.1594/PANGAEA.677117</dc:identifier>
+					<dc:language>en</dc:language>
+					<dc:rights>Access constraints: access rights needed</dc:rights>
+					<dc:relation>Dutton, Ellsworth G (1997): BSRN Station-to-archive file for station Boulder (1997-03). ftp://ftp.bsrn.awi.de/bou/bou0397.dat.gz</dc:relation>
+					<dc:coverage>LATITUDE: 40.050000 * LONGITUDE: -105.007000 * DATE/TIME START: 1997-03-01T17:00:00 * DATE/TIME END: 1997-03-31T19:00:00 * MINIMUM ELEVATION: 1577.0 m * MAXIMUM ELEVATION: 1577.0 m</dc:coverage>
+					<dc:subject>Baseline Surface Radiation Network; BOU; Boulder; BSRN; Colorado, United States of America; DATE/TIME; Dobson Ozone Spectrophotometer, D061; Monitoring station; MONS; Ozone total; WCRP/GEWEX</dc:subject>
+				</oai_dc:dc>
+			</metadata>
+		</record>
+		<resumptionToken expirationDate="2015-09-03T08:22:28Z"
+			cursor="0">5c4af462-2062-4308-a3e2-237b2efa940e</resumptionToken>
+	</ListRecords>
 </OAI-PMH>

@@ -56,6 +56,6 @@ LogArea.prototype.showLog = function(data) {
 		} else if (i>=this.options.maxLogEntries-1) {
 			break;
 		}
-		$(this.options.logList).append("<li class=\"log-" + data[i].logType + "\"><pre>" + data[i].displayTimestamp + " " + data[i].logType + " " + data[i].message + "</pre></li>");
+		$(this.options.logList).append("<li class=\"log-" + data[i].logType + "\">" + data[i].displayTimestamp + " " + data[i].logType + " " + data[i].message + "</li>");
 	}
 };

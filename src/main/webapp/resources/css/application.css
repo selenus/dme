@@ -361,7 +361,7 @@ noscript div {
 	margin-right: -15px;
 }
 
-.ui-layout-pane.outer-east {
+#schema-editor-outer-east-container {
 	padding: 0;
 }
 
@@ -377,6 +377,10 @@ noscript div {
 	text-align: right;
 }
 
+#schema-editor-sample-container {
+	padding-top: 10px;
+}
+
 #schema-sample-textarea {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 	font-size: 90%;
@@ -384,6 +388,25 @@ noscript div {
 	min-height: 100px;
 	min-width: 100px;
 	margin-bottom: 10px;
+	
+	border: 1px solid #DDD;
+	border-top: none;
+	
+	background-color: #F8F8F8;
+	
+	/* Android ≤ 1.6, iOS 1-3.2, Safari 3-4 */
+  	-webkit-border-radius: 0; 	
+  	/* Android 2.1+, Chrome, Firefox 4+, IE 9+, iOS 4+, Opera 10.50+, Safari 5+ */
+    border-radius: 0;
+	
+	box-shadow: none;
+}
+
+#schema-sample-output-container {
+	border: 1px solid #DDD;
+	border-top: none;
+	
+	background-color: #F8F8F8;
 }
 
 .schema-metadata-label,
@@ -497,18 +520,6 @@ noscript div {
 	font-family: Monaco,Menlo,Consolas,"Courier New",monospace;
 	list-style-type: none;
 	padding: 0;
-}
-
-.log pre {
-    background-color: transparent;
-    border: none;
-    color: inherit;
-    display: block;
-    font-size: inherit;
-    line-height: 1;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
 }
 
 .log li.log-INFO { }

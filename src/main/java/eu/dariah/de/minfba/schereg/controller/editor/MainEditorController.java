@@ -16,6 +16,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
+
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
-@SessionAttributes({"sample", "sampleResources", "log", "valueMap"})
+@SessionAttributes({"sample", "sampleResources", "log", "valueMap", "persistedSessionId", "valueMapIndex"})
 public class MainEditorController extends BaseTranslationController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
@@ -86,11 +88,9 @@ public class MainEditorController extends BaseTranslationController implements I
 	@RequestMapping(method=GET, value={"/", ""})
 	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale) {
 		model.addAttribute("schema", schemaService.findSchemaById(schemaId));
-		
-		if (!model.asMap().containsKey("sample")) {
-			model.addAttribute("sample", "<?xml version=\"1.0\" encoding=\"UTF-8\"?><?xml-stylesheet type=\"text/xsl\" href=\"oai2.xsl\"?><OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><responseDate>2015-08-26T15:28:08Z</responseDate><request verb=\"GetRecord\" metadataPrefix=\"oai_dc\" identifier=\"oai:pangaea.de:doi:10.1594/PANGAEA.678311\">http://ws.pangaea.de/oai/provider</request><GetRecord><record><header><identifier>oai:pangaea.de:doi:10.1594/PANGAEA.678311</identifier><datestamp>2015-05-06T15:34:51Z</datestamp></header><metadata><oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\"><dc:title>Physical properties measured on 21 sediment cores from METEOR cruise M23/1</dc:title><dc:creator>von Dobeneck, Tilo</dc:creator><dc:creator>Grigel, Jens</dc:creator><dc:creator>Richter, Monika</dc:creator><dc:creator>Schmidt, Andrea</dc:creator><dc:creator>Spieß, Volkhard</dc:creator><dc:publisher>PANGAEA</dc:publisher><dc:date>1994-01-18</dc:date><dc:type>Dataset</dc:type><dc:format>application/zip, 21 datasets</dc:format><dc:identifier>http://doi.pangaea.de/10.1594/PANGAEA.678311</dc:identifier><dc:identifier>doi:10.1594/PANGAEA.678311</dc:identifier><dc:language>en</dc:language><dc:rights>CC-BY: Creative Commons Attribution 3.0 Unported</dc:rights><dc:rights>Access constraints: unrestricted</dc:rights><dc:relation>Spieß, Volkhard; Abelmann, Andrea; Bickert, Torsten; Brehme, Isa; Cordes, Rainer; Dehning, Klaus; von Dobeneck, Tilo; Donner, Barbara; Ehrhardt, Isabel; Giese, Martina; Grigel, Jens; Haese, Ralf R; Hale, Walter; Hinrichs, Sigrid; Kasten, Sabine; Cavalcanti de C Laier, Ana P; Teixeira de Oliveira, Maria E; Petermann, Harald; Rapp, Robert; Richter, Martina; Rogers, John; Schmidt, Andrea; Scholz, Maike; Skowronek, Frank; Zabel, Matthias (1994): Bericht und erste Ergebnisse der Meteor-Fahrt M23/1 Kapstadt-Rio de Janeiro, 4.2.-25.2.1993. Berichte aus dem Fachbereich Geowissenschaften der Universität Bremen, 42, 139 pp, urn:nbn:de:gbv:46-ep000101819</dc:relation><dc:coverage>MEDIAN LATITUDE: -34.336190 * MEDIAN LONGITUDE: -4.195000 * SOUTH-BOUND LATITUDE: -36.833333 * WEST-BOUND LONGITUDE: -20.923333 * NORTH-BOUND LATITUDE: -30.870000 * EAST-BOUND LONGITUDE: 14.343333 * DATE/TIME START: 1993-02-05T00:00:00 * DATE/TIME END: 1993-02-19T00:00:00</dc:coverage><dc:subject>Angola Basin; automated full waveform logging system; Bartington MS2C coil sensor; Cape Basin; CTD, SEA-BIRD SBE 19 SEACAT; Density, wet bulk; Depth; DEPTH, sediment/rock; GeoB; GeoB2004-2; GeoB2011-2; GeoB2016-1; GeoB2018-3; GeoB2019-1; GeoB2021-5; GeoB2022-2; Geosciences, University of Bremen; Gravity corer (Kiel type); kappa; KOL; M23/1; Meteor (1986); Multi-Sensor Core Logger; Multi-Sensor Core Logger 14, GEOTEK; Piston corer (Kiel type); SL; South African margin; Southwest Walvis Ridge; Susceptibility, volume; Velocity, compressional wave; Vp; WBD</dc:subject></oai_dc:dc></metadata></record></GetRecord></OAI-PMH>");
-		}
-		
+		if (this.getPersistedSessionId(model)==null) {
+			this.createSession(schemaId, model, locale);
+		}		
 		return "schemaEditor";
 	}
 	
@@ -239,6 +239,41 @@ public class MainEditorController extends BaseTranslationController implements I
 		return new ModelActionPojo(true);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/createSession")
+	public @ResponseBody ModelActionPojo createSession(@PathVariable String schemaId, Model model, Locale locale) {
+		model.asMap().remove("sample");
+		model.asMap().remove("sampleResources");
+		model.asMap().remove("log");
+		model.asMap().remove("valueMap");
+		model.asMap().remove("valueMapIndex");
+		model.asMap().remove("persistedSessionId");
+		
+		String sessionId = UUID.randomUUID().toString();
+		model.addAttribute("persistedSessionId", sessionId);
+		
+		this.addLogEntry(model, schemaId, LogType.INFO, String.format("~ Schema editor session started [id: %s]", sessionId));
+		return new ModelActionPojo(true);
+	}
+	
+	private String getPersistedSessionId(Model model) {
+		if (model.asMap().containsKey("persistedSessionId")) {
+			return (String)model.asMap().get("persistedSessionId");
+		}
+		return null;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getSampleResource")
+	public @ResponseBody Resource getSampleResource(@PathVariable String schemaId, @RequestParam(defaultValue="0") int index, Model model, Locale locale) {
+		if (model.asMap().containsKey("sampleResources")) {
+			List<Resource> resources = (List<Resource>)model.asMap().get("sampleResources");
+			if (resources.size()>index) {
+				return resources.get(index);
+			} 
+		}
+		
+		return null;
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
 	public @ResponseBody ModelActionPojo executeSample(@PathVariable String schemaId, Model model, Locale locale) {
 		String sample = (String)model.asMap().get("sample");
@@ -263,14 +298,15 @@ public class MainEditorController extends BaseTranslationController implements I
 				this.fillValueMap(valueMap, consumptionService.getResources().get(0));
 				
 				model.addAttribute("valueMap", valueMap);
+				model.addAttribute("valueMapIndex", 0);
 				
-				for (Resource res : consumptionService.getResources()) {
-					this.addLogEntry(model, schemaId, LogType.SUCCESS, 
-							"~ Resource generated: \n" + objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(res));
+				if (consumptionService.getResources().size()==1) {
+					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed: 1 resource found and set as current sample", consumptionService.getResources().size()));
+				} else {
+					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed: %s resources found; the first has been set as current sample", consumptionService.getResources().size()));	
 				}
-				this.addLogEntry(model, schemaId, LogType.INFO, String.format("~ Sample input processed: %s resource(s) found; the first is used as session sample", consumptionService.getResources().size()));
 			} else {
-				this.addLogEntry(model, schemaId, LogType.INFO, "~ Sample input processed: No resources found");
+				this.addLogEntry(model, schemaId, LogType.WARNING, "~ Sample input processed: No resources found");
 			}
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);

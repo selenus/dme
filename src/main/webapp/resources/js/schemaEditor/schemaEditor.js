@@ -111,7 +111,8 @@ SchemaEditor.prototype.initLayout = function() {
 		east : {
 			size : "50%",
 			paneSelector : ".inner-east",
-			initClosed : initEastClosed
+			initClosed : initEastClosed,
+			onopen_start: function () { _this.sample_onPaneOpenStart(); }
 		},
 		center : {
 			size : "50%",

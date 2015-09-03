@@ -39,9 +39,8 @@
 								<ul id="schema-editor-log" class="log"></ul>
 							</div>
 							
-							<div class="outer-east">
-							
-								<div class="inner-center">
+							<div id="schema-editor-outer-east-container" class="outer-east">
+								<div id="schema-editor-detail-pane" class="inner-center">
 									<div id="schema-context-container">
 										<div class="ui-pane-title">
 											<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.schema_details" /></h4>
@@ -67,13 +66,39 @@
 										<div>...</div>
 									</div>
 								</div>
-								
-								<div class="inner-east">
+								<div id="schema-editor-sample-pane" class="inner-east">
 									<div class="ui-pane-title">
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample" /></h4>
 									</div>
-									<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample_data" />" rows="3">${sample}</textarea>
-									<button type="button" onclick="schemaEditor.sample_applyAndExecute(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
+									<div class="ui-pane-subcontainer">
+										<button type="button" onclick="schemaEditor.sample_resetSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
+										<button type="button" onclick="schemaEditor.sample_applyAndExecute(); return false;" class="btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
+									</div>
+									<div id="schema-editor-sample-container">
+										<ul class="nav nav-tabs" role="tablist">
+											<li role="presentation" class="active">
+												<a href="#schema-sample-input-container" aria-controls="schema-sample-input-container" role="tab" data-toggle="tab">~ Input</a>
+											</li>
+											<li role="presentation">
+												<a href="#schema-sample-output-container" aria-controls="schema-sample-output-container" role="tab" data-toggle="tab">~ Output</a>
+											</li>
+										</ul>
+										<div class="tab-content">
+											<div role="tabpanel" class="tab-pane active" id="schema-sample-input-container">
+												<c:choose>
+													<c:when test="${sample!=null && sample!=''}">
+														<textarea id="schema-sample-textarea" class="form-control" placeholder="~Sample saved on server" rows="3"></textarea>
+													</c:when>
+													<c:otherwise>
+														<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample_data" />" rows="3"></textarea>
+													</c:otherwise>
+												</c:choose>
+											</div>
+											<div role="tabpanel" class="tab-pane" id="schema-sample-output-container">
+												...
+											</div>
+										</div>
+									</div>									
 								</div>
 							</div>
 							<div class="outer-center">
