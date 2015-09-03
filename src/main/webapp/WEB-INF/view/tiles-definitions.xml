@@ -74,38 +74,40 @@
 			<add-attribute type="string" value="lib/blob.js" />
 			<add-attribute type="string" value="_common/svgviewer.js" />
 			<add-attribute type="string" value="logArea.js" />
-			<add-attribute type="string" value="schemaEditor.js" />
-			<add-attribute type="string" value="grammarEditor.js" />
-			<add-attribute type="string" value="functionEditor.js" />
 			
-			<add-attribute type="string" value="schemaEditor/Area.js" />
-			<add-attribute type="string" value="schemaEditor/Array.js" />
-			<add-attribute type="string" value="schemaEditor/CanvasRenderingContext2D.js" />
-			<add-attribute type="string" value="schemaEditor/Connection.js" />
-			<add-attribute type="string" value="schemaEditor/Connector.js" />
-			<add-attribute type="string" value="schemaEditor/ContainerUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/ContentChangedUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/Cursors.js" />
-			<add-attribute type="string" value="schemaEditor/DeleteConnectionUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/DeleteElementUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/Element.js" />
-			<add-attribute type="string" value="schemaEditor/ElementTemplate.js" />
-			<add-attribute type="string" value="schemaEditor/FunctionTemplate.js" />
-			<add-attribute type="string" value="schemaEditor/Function.js" />
-			<add-attribute type="string" value="schemaEditor/Graph.js" />
-			<add-attribute type="string" value="schemaEditor/InsertConnectionUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/InsertElementUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/Point.js" />
-			<add-attribute type="string" value="schemaEditor/Rectangle.js" />
-			<add-attribute type="string" value="schemaEditor/Selection.js" />
-			<add-attribute type="string" value="schemaEditor/SelectionUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/Tracker.js" />
-			<add-attribute type="string" value="schemaEditor/TransformUndoUnit.js" />
-			<add-attribute type="string" value="schemaEditor/UndoService.js" />
-			<add-attribute type="string" value="schemaEditor/HierarchyConnection.js" />
-			<add-attribute type="string" value="schemaEditor/MappingConnection.js" />
-			<add-attribute type="string" value="schemaEditor/Expander.js" />
-			<add-attribute type="string" value="schemaEditor/HNavBar.js" />
+			<add-attribute type="string" value="schemaEditor/schemaEditor.js" />
+			<add-attribute type="string" value="schemaEditor/schemaEditor.sample.js" />
+			<add-attribute type="string" value="schemaEditor/grammarEditor.js" />
+			<add-attribute type="string" value="schemaEditor/functionEditor.js" />
+			
+			<add-attribute type="string" value="modelingUI/Area.js" />
+			<add-attribute type="string" value="modelingUI/Array.js" />
+			<add-attribute type="string" value="modelingUI/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="modelingUI/Connection.js" />
+			<add-attribute type="string" value="modelingUI/Connector.js" />
+			<add-attribute type="string" value="modelingUI/ContainerUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/ContentChangedUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Cursors.js" />
+			<add-attribute type="string" value="modelingUI/DeleteConnectionUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/DeleteElementUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Element.js" />
+			<add-attribute type="string" value="modelingUI/ElementTemplate.js" />
+			<add-attribute type="string" value="modelingUI/FunctionTemplate.js" />
+			<add-attribute type="string" value="modelingUI/Function.js" />
+			<add-attribute type="string" value="modelingUI/Graph.js" />
+			<add-attribute type="string" value="modelingUI/InsertConnectionUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/InsertElementUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Point.js" />
+			<add-attribute type="string" value="modelingUI/Rectangle.js" />
+			<add-attribute type="string" value="modelingUI/Selection.js" />
+			<add-attribute type="string" value="modelingUI/SelectionUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Tracker.js" />
+			<add-attribute type="string" value="modelingUI/TransformUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/UndoService.js" />
+			<add-attribute type="string" value="modelingUI/HierarchyConnection.js" />
+			<add-attribute type="string" value="modelingUI/MappingConnection.js" />
+			<add-attribute type="string" value="modelingUI/Expander.js" />
+			<add-attribute type="string" value="modelingUI/HNavBar.js" />
 		</put-list-attribute>
 	</definition>
 	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
