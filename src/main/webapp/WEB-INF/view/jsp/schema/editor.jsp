@@ -73,7 +73,7 @@
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample" /></h4>
 									</div>
 									<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample_data" />" rows="3">${sample}</textarea>
-									<button type="button" onclick="schemaEditor.applyAndExecuteSample(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
+									<button type="button" onclick="schemaEditor.sample_applyAndExecute(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
 								</div>
 							</div>
 							<div class="outer-center">

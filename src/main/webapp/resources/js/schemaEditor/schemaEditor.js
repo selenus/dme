@@ -20,10 +20,7 @@ var SchemaEditor = function() {
 	this.innerLayout = null;
 	this.layoutContainer = $("#schema-editor-layout-container");
 	this.editorContainer = $("#schema-editor-container");
-	
-	this.sampleTextbox = $("#schema-sample-textarea");
-	this.sampleModified = true;
-	
+		
 	this.schemaContextContainer = $("#schema-context-container");
 	this.elementContextContainer = $("#schema-element-context-container");
 	
@@ -63,6 +60,8 @@ var SchemaEditor = function() {
 	this.logArea = new LogArea({
 		pathPrefix :  __util.getBaseUrl() + "schema/editor/" + this.schemaId
 	});
+	
+	this.sample_init();
 }
 
 SchemaEditor.prototype.initLayout = function() {
@@ -122,9 +121,7 @@ SchemaEditor.prototype.initLayout = function() {
 	
 	this.layoutContainer.removeClass("fade");
 	
-	$(this.sampleTextbox).on('change keyup paste', function() {
-		_this.sampleModified = true;
-	});
+
 };
 
 SchemaEditor.prototype.initGraph = function() {
@@ -161,8 +158,7 @@ SchemaEditor.prototype.resizeContent = function() {
 		}
 	}
 	
-	var sampleTextboxHeight = Math.floor($(".outer-east").innerHeight() - (this.sampleTextbox.offset().top - this.sampleTextbox.offsetParent().offset().top));
-	this.sampleTextbox.height(sampleTextboxHeight - 70);
+	this.sample_resize();
 };
 
 SchemaEditor.prototype.loadElementHierarchy = function() {
@@ -776,48 +772,4 @@ SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
 	}
 	select.removeProp("disabled");
 	$("#btn-submit-schema-elements").removeProp("disabled");
-};
-
-SchemaEditor.prototype.applyAndExecuteSample = function() {
-	if (this.sampleModified) {
-		this.applySample(function() {
-			this.executeSample();
-		})
-	} else {
-		this.executeSample();
-	}
-};
-
-SchemaEditor.prototype.applySample = function(callback) {
-	var _this = this;
-	$.ajax({
-	    url: _this.pathname + "/async/applySample",
-	    type: "POST",
-	    data: { sample : $("#schema-sample-textarea").val() },
-	    dataType: "json",
-	    success: function(data) {
-	    	if (data.success) { 
-	    		_this.logArea.refresh();
-	    		_this.sampleModified = false;
-	    		callback();
-	    	}
-	    }, 
-	    error: function(jqXHR, textStatus, errorThrown ) { }
-	});
-};
-
-SchemaEditor.prototype.executeSample = function() {
-	var _this = this;
-	$.ajax({
-	    url: _this.pathname + "/async/executeSample",
-	    type: "GET",
-	    //data: { sample : $("#schema-sample-textarea").val() },
-	    dataType: "json",
-	    success: function(data) {
-	    	if (data.success) { 
-	    		_this.logArea.refresh();
-	    	}
-	    }, 
-	    error: function(jqXHR, textStatus, errorThrown ) { }
-	});
 };
