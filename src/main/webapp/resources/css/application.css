@@ -403,11 +403,26 @@ noscript div {
 }
 
 #schema-sample-output-container {
+	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+	font-size: 90%;
 	border: 1px solid #DDD;
 	border-top: none;
-	
+	padding: 6px 12px;
+	overflow: auto;
 	background-color: #F8F8F8;
 }
+
+#schema-sample-output-container ul {
+	padding-left: 20px;
+	list-style-type: none;
+	text-indent: -1.5em;
+}
+
+.schema-sample-output-key {
+	font-style: italic;
+	font-weight: bold;
+}
+
 
 .schema-metadata-label,
 .schema-metadata-data {

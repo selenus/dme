@@ -87,9 +87,11 @@
 											<div role="tabpanel" class="tab-pane active" id="schema-sample-input-container">
 												<c:choose>
 													<c:when test="${sample!=null && sample!=''}">
+														<input type="hidden" id="sample-set" value="true">
 														<textarea id="schema-sample-textarea" class="form-control" placeholder="~Sample saved on server" rows="3"></textarea>
 													</c:when>
 													<c:otherwise>
+														<input type="hidden" id="sample-set" value="false">
 														<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.transformation_sample_data" />" rows="3"></textarea>
 													</c:otherwise>
 												</c:choose>

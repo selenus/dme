@@ -3,7 +3,7 @@ SchemaEditor.prototype.sample_init = function() {
 	
 	this.sampleTextbox = $("#schema-sample-textarea");  //schema-editor-outer-east-container, schema-editor-detail-pane
 	this.samplePane = $("#schema-editor-sample-pane");
-	this.sampleModified = true;
+	this.sampleModified = !$("#sample-set").val();
 	this.currentSampleIndex = 0;
 	
 	$(this.sampleTextbox).on('change keyup paste', function() {
@@ -26,7 +26,7 @@ SchemaEditor.prototype.sample_onPaneOpenStart = function() {
 	var containerWidth = $("#schema-editor-outer-east-container").width();
 	
 	if(containerInnerWidth < 500) {
-		this.outerLayout.sizePane("east", 500 + containerWidth - containerInnerWidth);
+		this.outerLayout.sizePane("east", Math.floor(500 + containerWidth - containerInnerWidth));
 		// Just to 'notify' the inner center to resize
 		this.innerLayout.sizePane("east", 250);
 	}
@@ -87,13 +87,47 @@ SchemaEditor.prototype.sample_getSampleResource = function() {
 	    type: "GET",
 	    data: { index : _this.currentSampleIndex },
 	    dataType: "json",
-	    success: _this.sample_showSampleResource, 
+	    success: function(data) {
+	    	var result = $("<ul>");
+	    	result.append(_this.sample_buildSampleResource(data));
+	    	$("#schema-sample-output-container").html(result);	    	
+	    },
 	    error: function(jqXHR, textStatus, errorThrown ) { }
 	});
 };
 
-SchemaEditor.prototype.sample_showSampleResource = function(resource) {
-	alert(resource);
+SchemaEditor.prototype.sample_buildSampleResource = function(resource) {
+	var key = Object.getOwnPropertyNames(resource)[0];
+	var value = resource[key];
+	
+	var item = $("<li>");
+	item.append("&#8594; <span class=\"schema-sample-output-key\">" + key + "</span>");
+	
+	var subItems = $("<ul>");
+	var subItemCount = 0;
+	
+	if (Array.isArray(value)) {
+		for (var j=0; j<value.length; j++) {
+			subItemCount += this.sample_buildSampleResourceValue(value[j], item, subItems);
+		}
+	} else {
+		subItemCount += this.sample_buildSampleResourceValue(value, item, subItems);
+	}
+	if (subItemCount>0) {
+		item.append(subItems);
+	}
+	return item;
+};
+
+SchemaEditor.prototype.sample_buildSampleResourceValue = function(resource, parentItem, subItems) {
+	var key = Object.getOwnPropertyNames(resource)[0];
+	if (key==="") {
+		parentItem.append(": <span class=\"schema-sample-output-value\">" + resource[key] + "</span>");
+		return 0;
+	} else {
+		subItems.append(this.sample_buildSampleResource(resource));
+		return 1;
+	}
 };
 
 
