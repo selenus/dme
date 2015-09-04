@@ -34,7 +34,9 @@ var Util = function() {
         __translator.addTranslations(["~eu.dariah.de.minfba.common.view.notifications.login_required.head",
                                       "~eu.dariah.de.minfba.common.view.notifications.login_required.body",
                                       "~eu.dariah.de.minfba.common.link.yes",
-                                      "~eu.dariah.de.minfba.common.link.no"])
+                                      "~eu.dariah.de.minfba.common.link.no",
+                                      "~eu.dariah.de.minfba.common.view.forms.servererror.head",
+                                      "~eu.dariah.de.minfba.common.view.forms.servererror.body"])
         // We depend on the view's main js for this call
     //__translator.getTranslations();
         this.entityMap = {
@@ -75,6 +77,17 @@ Util.prototype.showLoginNote = function() {
                         }
                 }
         });
+};
+
+Util.prototype.processServerError = function(jqXHR, textStatus, errorThrown) {
+	var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
+	var errorContainer = $("<div>").append(error);
+	
+	bootbox.alert({
+		  title: __translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"),
+		  size: "large",
+		  message: "<p>" + __translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body") + "</p>" + $(errorContainer).html()
+	});
 };
 
 Util.prototype.isLoggedIn = function() {

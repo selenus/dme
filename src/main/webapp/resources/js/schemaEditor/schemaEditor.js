@@ -89,7 +89,8 @@ SchemaEditor.prototype.initLayout = function() {
 		},
 		center : {
 			size : initEastClosed ? "60%" : "40%",
-			paneSelector : ".outer-center"
+			paneSelector : ".outer-center",
+			minHeight : 200
 		}, 
 		south : {
 			size : 100,

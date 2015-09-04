@@ -106,6 +106,16 @@
     width: 100%;
 }
 
+.server-error-container {
+	background-color: #f2dede;
+    border: 1px solid #ebccd1;
+    border-radius: 4px;
+    color: #a94442;
+    max-height: 500px;
+    overflow: auto;
+    padding: 10px;
+}
+
 /*!
  *	Content wrapping
  */
@@ -355,6 +365,13 @@ noscript div {
 	#schema-editor-context-form
 	#schema-editor-context-response
 */
+
+.button-bar {
+    border-bottom: 1px solid #ddd;
+    overflow: hidden;
+    padding: 10px 15px;
+}
+
 #schema-editor-container {
 	border-top: 1px solid #DDD;
 	margin-left: -15px;
@@ -363,6 +380,10 @@ noscript div {
 
 #schema-editor-outer-east-container {
 	padding: 0;
+}
+
+.schema-editor-buttons {
+	padding: 10px 0 5px 0;
 }
 
 .schema-editor-buttons .btn,
@@ -379,6 +400,15 @@ noscript div {
 
 #schema-editor-sample-container {
 	padding-top: 10px;
+}
+
+#schema-editor-sample-pane {
+	background: transparent url("../img/loader.gif") center center no-repeat;
+}
+
+#schema-editor-sample-pane .ui-pane-subcontainer,
+#schema-editor-sample-container {
+	background: #FFF;
 }
 
 #schema-sample-textarea {
@@ -402,17 +432,27 @@ noscript div {
 	box-shadow: none;
 }
 
+
 #schema-sample-output-container {
-	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
-	font-size: 90%;
 	border: 1px solid #DDD;
 	border-top: none;
-	padding: 6px 12px;
-	overflow: auto;
-	background-color: #F8F8F8;
 }
 
-#schema-sample-output-container ul {
+#schema-sample-output-container .button-bar {
+	text-align: right;
+	padding-top: 10px;
+}
+
+#schema-sample-output-resource {
+	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+	font-size: 90%;
+	overflow: auto;
+	background-color: #F8F8F8;
+	padding: 6px 12px;
+}
+
+
+#schema-sample-output-resource ul {
 	padding-left: 20px;
 	list-style-type: none;
 	text-indent: -1.5em;
@@ -437,6 +477,11 @@ noscript div {
 .schema-metadata-label {
 	font-weight: bold;
 	text-align: right;
+}
+
+.schema-sample-output-counter {
+    font-size: 95%;
+    padding: 10px;
 }
 
 /*!
@@ -555,28 +600,28 @@ noscript div {
 /*!
  *	Modals
  */
-body .wide-modal {
+body .modal.wide-modal {
 	width: 650px;
 	margin-left: -300px;
 }
 
-body .wider-modal {
+body .modal.wider-modal {
 	width: 800px;
 	margin-left: -400px;
 }
 
-body .max-modal {
+body .modal.max-modal {
 	min-width: 1000px;
 	width: 80%;
 	margin-left: -40%;
 }
 
-body .narrow-modal {
+body .modal.narrow-modal {
 	width: 350px;
 	margin-left: -170px;
 }
 
-body .modal450 {
+body .modal.modal450 {
 	width: 450px;
 	margin-left: -225px;
 }

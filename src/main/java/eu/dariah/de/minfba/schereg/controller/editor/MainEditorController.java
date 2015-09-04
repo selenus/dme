@@ -90,7 +90,7 @@ public class MainEditorController extends BaseTranslationController implements I
 		model.addAttribute("schema", schemaService.findSchemaById(schemaId));
 		if (this.getPersistedSessionId(model)==null) {
 			this.createSession(schemaId, model, locale);
-		}		
+		}
 		return "schemaEditor";
 	}
 	
@@ -267,16 +267,24 @@ public class MainEditorController extends BaseTranslationController implements I
 		if (model.asMap().containsKey("sampleResources")) {
 			List<Resource> resources = (List<Resource>)model.asMap().get("sampleResources");
 			if (resources.size()>index) {
+				Map<String, String> valueMap = new HashMap<String, String>();
+				this.fillValueMap(valueMap, resources.get(index));
+				
+				model.addAttribute("valueMap", valueMap);
+				model.addAttribute("valueMapIndex", index);
+				
+				
 				return resources.get(index);
 			} 
 		}
-		
 		return null;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
 	public @ResponseBody ModelActionPojo executeSample(@PathVariable String schemaId, Model model, Locale locale) {
 		String sample = (String)model.asMap().get("sample");
+		ModelActionPojo result = new ModelActionPojo(true);
+		result.setPojo(0);
 		
 		XmlSchema s = (XmlSchema)schemaService.findSchemaById(schemaId);
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(schemaId, true);
@@ -294,11 +302,7 @@ public class MainEditorController extends BaseTranslationController implements I
 			if (consumptionService.getResources()!=null && consumptionService.getResources().size()>0) {
 				model.addAttribute("sampleResources", consumptionService.getResources());
 				
-				Map<String, String> valueMap = new HashMap<String, String>();
-				this.fillValueMap(valueMap, consumptionService.getResources().get(0));
-				
-				model.addAttribute("valueMap", valueMap);
-				model.addAttribute("valueMapIndex", 0);
+				result.setPojo(consumptionService.getResources().size());
 				
 				if (consumptionService.getResources().size()==1) {
 					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed: 1 resource found and set as current sample", consumptionService.getResources().size()));
@@ -311,7 +315,8 @@ public class MainEditorController extends BaseTranslationController implements I
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);
 		}
-		return new ModelActionPojo(true);
+		
+		return result;
 	}
 	
 	private void fillValueMap(Map<String, String> valueMap, Resource r) {
