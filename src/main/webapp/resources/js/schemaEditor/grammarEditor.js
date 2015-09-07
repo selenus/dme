@@ -200,6 +200,7 @@ GrammarEditor.prototype.uploadGrammar = function() {
 	    	}
 	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	_this.setGrammarProcessingPanelStatus("grammar-uploading", "error");
 	    }
 	});
@@ -224,6 +225,7 @@ GrammarEditor.prototype.parseGrammar = function() {
 	    	}
 	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	_this.setGrammarProcessingPanelStatus("grammar-parsing", "error");
 	    }
 	});
@@ -248,6 +250,7 @@ GrammarEditor.prototype.compileGrammar = function() {
 	    	}	    
 	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	_this.setGrammarProcessingPanelStatus("grammar-compiling", "error");
 	    }
 	});
@@ -277,6 +280,7 @@ GrammarEditor.prototype.sandboxGrammar = function() {
 	    	}
 	    	$(window).trigger('resize');
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "error");
 	    }
 	});
@@ -365,7 +369,7 @@ GrammarEditor.prototype.parseSample = function() {
 	    		_this.showParseSampleResult(null, data.objectErrors, data.objectWarnings);
 	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	alert("Some error");
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }
 	});
 };

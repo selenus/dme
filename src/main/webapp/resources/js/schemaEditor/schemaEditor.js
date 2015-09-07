@@ -172,7 +172,8 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 	    success: function(data) {
 	    	_this.processElementHierarchy(data);
 	    	_this.graph.update();
-	    }
+	    },
+	    error: __util.processServerError
 	});
 };
 
@@ -225,7 +226,8 @@ SchemaEditor.prototype.reload = function() {
 	    		    	
 	    	_this.graph.update();
 	    },
-	    error: function() {
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	_this.initGraph();
 	    }
 	});	
@@ -426,7 +428,7 @@ SchemaEditor.prototype.getGrammar = function(id) {
         	
         	_this.elementContextDetail.append(details);  	
         },
-        error: function(textStatus) { /*alert("error");*/ }
+        error: __util.processServerError
  	});
 };
 
@@ -450,7 +452,7 @@ SchemaEditor.prototype.getFunction = function(id) {
         	
         	_this.elementContextDetail.append(details);  	
         },
-        error: function(textStatus) { /*alert("error");*/ }
+        error: __util.processServerError
  	});
 };
 
@@ -494,7 +496,7 @@ SchemaEditor.prototype.getElement = function(id) {
             	_this.elementContextDetail.append(details);
         	}
         },
-        error: function(textStatus) { /*alert("error");*/ }
+        error: __util.processServerError
  	});
 };
 
@@ -645,7 +647,8 @@ SchemaEditor.prototype.removeElement = function() {
 			    success: function(data) {
 			    	_this.graph.selectedItems[0].deselect();
 			    	_this.reload();
-			    }
+			    },
+			    error: __util.processServerError
 			});
 		}
 	});
@@ -714,7 +717,8 @@ SchemaEditor.prototype.updateTerminalList = function() {
 	    	}
 	    	
 	    	$(".form-btn-submit").removeProp("disabled");
-	    }
+	    },
+	    error: __util.processServerError
 	});
 };
 
@@ -728,7 +732,8 @@ SchemaEditor.prototype.exportSchema = function() {
 	    success: function(data) {
 	    	blob = new Blob([JSON.stringify(data.pojo)], {type: "application/json; charset=utf-8"});
 	    	saveAs(blob, "schema_" + _this.schemaId + ".json");
-	    }
+	    },
+	    error: __util.processServerError
 	});
 };
 

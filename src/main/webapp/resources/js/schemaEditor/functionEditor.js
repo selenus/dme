@@ -89,6 +89,7 @@ FunctionEditor.prototype.validateFunction = function(f, modal) {
 	    	_this.updateFunctionState();
 	    	 $(modal).modal("layout");
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	$(".function-loading").addClass("hide");
 	    	$(".function-error").removeClass("hide");
 	    }
@@ -140,7 +141,7 @@ FunctionEditor.prototype.performTransformation = function() {
 	    		alert("error1");
 	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	alert("error2");
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }
 	});
 };

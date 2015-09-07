@@ -86,7 +86,8 @@ SchemaEditor.prototype.sample_execute = function() {
 	    	_this.logArea.refresh();
 	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
 	    }, 
-	    error: function(jqXHR, textStatus, errorThrown ) { 
+	    error: function(jqXHR, textStatus, errorThrown ) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }
@@ -134,7 +135,7 @@ SchemaEditor.prototype.sample_getSampleResource = function() {
 	    	$("#schema-sample-output-resource").html(result);
 	    	_this.sample_setNavigationBar();
 	    },
-	    error: function(jqXHR, textStatus, errorThrown ) { }
+	    error: __util.processServerError
 	});
 };
 
@@ -216,6 +217,6 @@ SchemaEditor.prototype.sample_resetSession = function() {
 	    		_this.logArea.refresh();
 	    	}
 	    }, 
-	    error: function(jqXHR, textStatus, errorThrown ) { }
+	    error: __util.processServerError
 	});
 };
