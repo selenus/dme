@@ -111,17 +111,20 @@
 		</put-list-attribute>
 	</definition>
 	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
+	
 	<definition name="schemaEditor/form/element/edit_nonterminal" template="/WEB-INF/view/jsp/schema/editor/edit_nonterminal.jsp" />
 	<definition name="schemaEditor/form/element/edit_label" template="/WEB-INF/view/jsp/schema/editor/edit_label.jsp" />
 	<definition name="schemaEditor/form/element/edit_terminal" template="/WEB-INF/view/jsp/schema/editor/edit_terminal.jsp" />
+	
 	<definition name="schemaEditor/form/grammar/edit" template="/WEB-INF/view/jsp/schema/editor/edit_grammar.jsp" />
+	<definition name="schemaEditor/form/grammar/new" template="/WEB-INF/view/jsp/schema/editor/new_grammar.jsp" />
+	<definition name="schemaEditor/form/grammar/process" template="/WEB-INF/view/jsp/schema/editor/process_grammar.jsp" />
 
 	<definition name="schemaEditor/form/function/edit" template="/WEB-INF/view/jsp/schema/editor/edit_function.jsp" />
 	<definition name="schemaEditor/form/function/process" template="/WEB-INF/view/jsp/schema/editor/process_function.jsp" />
+	<definition name="schemaEditor/form/function/new" template="/WEB-INF/view/jsp/schema/editor/new_function.jsp" />
 	
-	<definition name="schemaEditor/form/grammar/process" template="/WEB-INF/view/jsp/schema/editor/process_grammar.jsp" />
-	
-	
+		
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 	<definition name="common/forms/maximizeSvg" template="/WEB-INF/view/jsp/common/forms/maximizeSvg.jsp" />
 

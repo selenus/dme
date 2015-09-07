@@ -80,8 +80,11 @@ Util.prototype.showLoginNote = function() {
 };
 
 Util.prototype.processServerError = function(jqXHR, textStatus, errorThrown) {
-	var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
-	var errorContainer = $("<div>").append(error);
+	var errorContainer = $("<div>");
+	if (jqXHR.reponseText!==null && jqXHR.reponseText!==undefined) {
+		var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
+		$(errorContainer).append(error);
+	}
 	
 	bootbox.alert({
 		  title: __translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"),

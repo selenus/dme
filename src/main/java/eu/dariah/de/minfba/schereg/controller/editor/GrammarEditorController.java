@@ -26,6 +26,7 @@ import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
+import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
@@ -53,9 +54,21 @@ public class GrammarEditorController extends BaseTranslationController {
 		return grammarService.deleteGrammarById(schemaId, grammarId);
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/create/function")
-	public @ResponseBody TransformationFunction createFunction(@PathVariable String schemaId, @PathVariable String grammarId, @RequestParam String label) {		
-		return functionService.createAndAppendFunction(schemaId, grammarId, label);
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/new_function")
+	public String getNewGrammarForm(@PathVariable String schemaId, @PathVariable String grammarId, Model model, Locale locale) {
+		model.addAttribute("function", new TransformationFunctionImpl());
+		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/saveNewFunction");
+		return "schemaEditor/form/function/new";
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewFunction")
+	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String grammarId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (result.isSuccess()) {
+			functionService.createAndAppendFunction(schemaId, grammarId, function.getName());
+		}
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")

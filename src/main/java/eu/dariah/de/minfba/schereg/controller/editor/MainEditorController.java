@@ -16,7 +16,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.InitializingBean;
@@ -26,6 +28,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +51,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.processing.exception.ProcessingConfigException;
@@ -104,6 +108,23 @@ public class MainEditorController extends BaseTranslationController implements I
 	@RequestMapping(method=GET, value={"/forms/fileupload"})
 	public String getImportForm(Model model, Locale locale) {
 		return "common/fileupload";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/createRoot")
+	public String getNewNonterminalForm(@PathVariable String schemaId, Model model, Locale locale) {
+		model.addAttribute("element", new Nonterminal());
+		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
+		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/async/saveNewRoot");
+		return "schemaEditor/form/element/edit_nonterminal";
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewRoot")
+	public @ResponseBody ModelActionPojo saveNonterminal(@PathVariable String schemaId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (result.isSuccess()) {
+			elementService.saveOrReplaceRoot(schemaId, element);
+		}		
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/upload", produces = "application/json; charset=utf-8")
@@ -217,8 +238,13 @@ public class MainEditorController extends BaseTranslationController implements I
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
-	public @ResponseBody Element getHierarchy(@PathVariable String schemaId, Model model, Locale locale) {
-		return elementService.findRootBySchemaId(schemaId, true);
+	public @ResponseBody Element getHierarchy(@PathVariable String schemaId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		Element result = elementService.findRootBySchemaId(schemaId, true);
+		if (result==null) {
+			response.getWriter().print("null");
+			response.setContentType("application/json");
+		}
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")
@@ -282,6 +308,7 @@ public class MainEditorController extends BaseTranslationController implements I
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
 	public @ResponseBody ModelActionPojo executeSample(@PathVariable String schemaId, Model model, Locale locale) {
+		Stopwatch sw = new Stopwatch();
 		String sample = (String)model.asMap().get("sample");
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(0);
@@ -297,6 +324,8 @@ public class MainEditorController extends BaseTranslationController implements I
 		processingSvc.addConsumptionService(consumptionService);
 		try {
 			processingSvc.init(r);
+			
+			sw.start();
 			processingSvc.run();
 			
 			if (consumptionService.getResources()!=null && consumptionService.getResources().size()>0) {
@@ -305,9 +334,9 @@ public class MainEditorController extends BaseTranslationController implements I
 				result.setPojo(consumptionService.getResources().size());
 				
 				if (consumptionService.getResources().size()==1) {
-					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed: 1 resource found and set as current sample", consumptionService.getResources().size()));
+					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed (total %sms): 1 resource found", sw.getElapsedTime(), consumptionService.getResources().size()));
 				} else {
-					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed: %s resources found; the first has been set as current sample", consumptionService.getResources().size()));	
+					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed (total %sms): %s resources found", sw.getElapsedTime(), consumptionService.getResources().size()));	
 				}
 			} else {
 				this.addLogEntry(model, schemaId, LogType.WARNING, "~ Sample input processed: No resources found");

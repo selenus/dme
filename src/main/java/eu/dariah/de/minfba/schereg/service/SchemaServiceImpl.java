@@ -1,6 +1,8 @@
 package eu.dariah.de.minfba.schereg.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
@@ -8,6 +10,8 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
@@ -57,5 +61,19 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 		newSchema.setDescription(original.getDescription());
 		newSchema.setRootNonterminalId(original.getRootNonterminalId());
 		return newSchema;
+	}
+	
+	@Override
+	public Map<String, String> getAvailableTerminals(String schemaId) {
+		Map<String,String> availableTerminals = new HashMap<String,String>();
+		Schema s = this.findSchemaById(schemaId);
+		if (s instanceof XmlSchema) {	
+			if (((XmlSchema)s).getTerminals()!=null) {
+				for (XmlTerminal t : ((XmlSchema)s).getTerminals()) {
+					availableTerminals.put(t.getId(), t.getName() + " (" + t.getNamespace() + ")");
+				}
+			}
+		}
+		return availableTerminals;
 	}
 }

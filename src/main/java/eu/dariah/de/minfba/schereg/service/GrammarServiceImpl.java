@@ -157,6 +157,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		grammar.setTransformationFunctions(null);
 		grammar.setLocked(true);
 		grammar.setTemporary(false);
+		grammar.setGrammarName(getNormalizedName(grammar.getGrammarName()));
 		grammarDao.save(grammar);
 		grammar.setTransformationFunctions(transformationFunctions);
 		

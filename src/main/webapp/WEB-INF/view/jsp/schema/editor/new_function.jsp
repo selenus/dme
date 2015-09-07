@@ -4,26 +4,19 @@
 
 <s:url value="${actionPath}" var="saveUrl" />
 
-<sf:form method="POST" action="${saveUrl}" modelAttribute="element" class="form-horizontal" >
+<sf:form method="POST" action="${saveUrl}" modelAttribute="function" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.edit" /></h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.new" /></h3>	
 		<sf:hidden path="id" />
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="element_name"><s:message code="~eu.dariah.de.minfba.schereg.model.element.name" />:</label>
+			<label class="col-sm-3 control-label" for="function_name"><s:message code="~eu.dariah.de.minfba.schereg.model.function.name" />:</label>
 			<div class="col-sm-8">
-				<sf:input path="name" class="form-control" id="label_name" />
+				<sf:input path="name" class="form-control" id="transformationFunctionImpl_name" />
 				<sf:errors path="name" cssClass="error" />
 			</div>
 		</div>		
-		<div class="form-group">
-			<div class="col-sm-8 col-sm-offset-3">
-				<div class="checkbox">
-					<label><sf:checkbox path="transient" /> <s:message code="~eu.dariah.de.minfba.schereg.model.element.transient" /></label>
-				</div>
-			</div>
-		</div>
 	</div>
 	<div class="form-footer">
 		<div class="controls">

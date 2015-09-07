@@ -127,6 +127,9 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 
 	@Override
 	public <S extends T> S save(S entity) {
+		if (entity.getId()!=null && entity.getId().isEmpty()) {
+			entity.setId(null);
+		}
 		mongoTemplate.save(entity, this.getCollectionName());
 		return entity;
 	}

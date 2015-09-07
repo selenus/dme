@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
+import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
@@ -25,5 +26,6 @@ public interface ElementService {
 	public Element removeElement(String schemaId, String elementId);
 	public Terminal removeTerminal(String schemaId, String terminalId);
 	public Element removeElementTree(String id);
+	public void saveOrReplaceRoot(String schemaId, Nonterminal element);
 	
 }

@@ -50,6 +50,7 @@
 										<div id="schema-context-buttons" class="ui-pane-subcontainer button-bar">
 											<button type="button" onclick="schemaEditor.exportSchema(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-download'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.export" /></button>
 											<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
+											<button type="button" onclick="schemaEditor.createRoot(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-add'></span> ~ Create root element</button>
 											<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
 										</div>
 										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>

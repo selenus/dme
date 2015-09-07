@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -40,23 +41,14 @@ public class ElementEditorController extends BaseTranslationController {
 	public ElementEditorController() {
 		super("schemaEditor");
 	}
-	
+		
 	@RequestMapping(method = RequestMethod.GET, value = "/form/element")
-	public String getElementForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
+	public String getEditElementForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
 		Element elem = elementService.findById(elementId);
 		model.addAttribute("element", elem);
 		
 		if (elem instanceof Nonterminal) {
-			Schema s = schemaService.findSchemaById(schemaId);
-			Map<String,String> availableTerminals = new HashMap<String,String>();
-			if (s instanceof XmlSchema) {	
-				if (((XmlSchema)s).getTerminals()!=null) {
-					for (XmlTerminal t : ((XmlSchema)s).getTerminals()) {
-						availableTerminals.put(t.getId(), t.getName() + " (" + t.getNamespace() + ")");
-					}
-				}
-			}
-			model.addAttribute("availableTerminals", availableTerminals);
+			model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
 			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");
 			return "schemaEditor/form/element/edit_nonterminal";
 		} else {
@@ -65,40 +57,79 @@ public class ElementEditorController extends BaseTranslationController {
 		}
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/create/element")
-	public @ResponseBody Element createSubelement(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam String label) {		
-		return elementService.createAndAppendElement(schemaId, elementId, label);
+	@RequestMapping(method = RequestMethod.GET, value = "/form/new_nonterminal")
+	public String getNewNonterminalForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
+		model.addAttribute("element", new Nonterminal());
+		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
+		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewNonterminal");
+		return "schemaEditor/form/element/edit_nonterminal";
 	}
 	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/create/grammar")
-	public @ResponseBody DescriptionGrammar createGrammar(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam String label) {		
-		return grammarService.createAndAppendGrammar(schemaId, elementId, label);
+	@RequestMapping(method = RequestMethod.GET, value = "/form/new_label")
+	public String getNewLabelForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
+		model.addAttribute("element", new Label());
+		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewLabel");
+		return "schemaEditor/form/element/edit_label";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/new_grammar")
+	public String getNewGrammarForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
+		model.addAttribute("grammar", new DescriptionGrammarImpl());
+		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewGrammar");
+		return "schemaEditor/form/grammar/new";
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveLabel")
+	public @ResponseBody ModelActionPojo saveLabel(@Valid Label element, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (result.isSuccess()) {
+			elementService.saveElement(element);
+		}		
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNonterminal")
+	public @ResponseBody ModelActionPojo saveNonterminal(@Valid Nonterminal element, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (result.isSuccess()) {
+			elementService.saveElement(element);
+		}		
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewLabel")
+	public @ResponseBody ModelActionPojo saveNewLabel(@PathVariable String schemaId, @PathVariable String elementId, @Valid Label element, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (result.isSuccess()) {
+			elementService.createAndAppendElement(schemaId, elementId, element.getName());
+		}
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewNonterminal")
+	public @ResponseBody ModelActionPojo saveNewNonterminal(@PathVariable String schemaId, @PathVariable String elementId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (result.isSuccess()) {
+			elementService.createAndAppendElement(schemaId, elementId, element.getName());
+		}
+		return result;
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewGrammar")
+	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String elementId, @Valid DescriptionGrammarImpl grammar, BindingResult bindingResult, Locale locale) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (result.isSuccess()) {
+			grammarService.createAndAppendGrammar(schemaId, elementId, grammar.getGrammarName());
+		}
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
 	public @ResponseBody Element getElement(@PathVariable String schemaId, @PathVariable String elementId) {
 		return elementService.findById(elementId);
 	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/saveLabel")
-	public @ResponseBody ModelActionPojo saveLabel(@Valid Label element, BindingResult bindingResult) {
-		return saveElement(element, bindingResult);
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNonterminal")
-	public @ResponseBody ModelActionPojo saveNonterminal(@Valid Nonterminal element, BindingResult bindingResult) {
-		return saveElement(element, bindingResult);
-	}
-	
-	private ModelActionPojo saveElement(Element element, BindingResult bindingResult) {
-		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
-		if (element.getId().isEmpty()) {
-			element.setId(null);
-		}
-		elementService.saveElement(element);
-		return result;
-	} 
-	
+		
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminal")
 	public @ResponseBody Terminal getTerminal(@PathVariable String schemaId, @PathVariable String elementId) throws Exception {
 		Element e = elementService.findById(elementId);
@@ -133,4 +164,6 @@ public class ElementEditorController extends BaseTranslationController {
 	public @ResponseBody Element removeElement(@PathVariable String schemaId, @PathVariable String elementId) {
 		return elementService.removeElement(schemaId, elementId);
 	}
+	
+
 }

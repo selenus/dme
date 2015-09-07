@@ -68,6 +68,17 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		return (Element)fillElement(findRootReferenceById(rootElementId), elementMap);
 	}
 	
+	@Override
+	public void saveOrReplaceRoot(String schemaId, Nonterminal element) {
+		this.removeElementTree(schemaId);
+		element.setId(null);
+		Reference r = this.saveElementHierarchy(element);
+				
+		Schema s = schemaDao.findById(schemaId);
+		s.setRootNonterminalId(r.getId());
+		schemaDao.save(s);
+	}
+	
 	public Identifiable fillElement(Reference r, Map<String, Identifiable> elementMap) {
 		Identifiable e = elementMap.get(r.getId());
 		
@@ -165,6 +176,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	public Element saveElement(Element e) {
 		if (e instanceof Nonterminal) {
 			Nonterminal n = ((Nonterminal)e);
+			n.setName(getNormalizedName(n.getName()));
 			List<Nonterminal> subelements = n.getChildNonterminals();
 			n.setChildNonterminals(null);
 			elementDao.save(e);
@@ -172,6 +184,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			n.setChildNonterminals(subelements);
 		} else {
 			Label l = ((Label)e);
+			l.setName(getNormalizedName(l.getName()));
 			List<Label> subelements = l.getSubLabels();
 			l.setSubLabels(null);
 			elementDao.save(e);
@@ -197,6 +210,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		
 		if (e instanceof Nonterminal) {
 			Nonterminal n = ((Nonterminal)e);
+			n.setName(getNormalizedName(n.getName()));
 			subelements = n.getChildNonterminals();
 			n.setChildNonterminals(null);
 			elementDao.save(e);
@@ -205,6 +219,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			subelementClass = Nonterminal.class;
 		} else {
 			Label l = ((Label)e);
+			l.setName(getNormalizedName(l.getName()));
 			subelements = l.getSubLabels();
 			l.setSubLabels(null);
 			elementDao.save(e);

@@ -364,8 +364,11 @@ Graph.prototype.handleElementDeselected = function() {
 
 Graph.prototype.handleElementSelected = function(element) {
 	var selectionEvent = document.createEvent("Event");
-	selectionEvent.initEvent("selectionEvent", true, true);
-	selectionEvent.elementType = element.typeInfo;				
+	selectionEvent.initEvent("selectionEvent", true, true);	
+	selectionEvent.elementType = element.typeInfo;			
+	if (element.subtypeInfo!==null && element.subtypeInfo!==undefined) {
+		selectionEvent.elementSubtype = element.subtypeInfo;	
+	}
 	selectionEvent.elementId = element.id;
 	document.dispatchEvent(selectionEvent);
 };

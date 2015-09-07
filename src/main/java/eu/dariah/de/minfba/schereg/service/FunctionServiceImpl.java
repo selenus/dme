@@ -73,6 +73,8 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 		List<Label> outputElements = function.getOutputElements();
 		function.setOutputElements(null);
 		
+		function.setName(getNormalizedName(function.getName()));
+		
 		functionDao.save(function);
 		function.setExternalInputElements(extElements);
 		function.setOutputElements(outputElements);

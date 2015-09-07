@@ -88,7 +88,9 @@ public abstract class BaseReferenceServiceImpl extends BaseService {
 	 */
 	protected void removeTree(String rootReferenceId) throws IllegalArgumentException, ClassNotFoundException {
 		Reference rootReference = referenceDao.findById(rootReferenceId);
-		Assert.notNull(rootReference);
+		if(rootReference==null) {
+			return;
+		}
 		
 		Map<String, Reference[]> subordinateReferenceMap = new HashMap<String, Reference[]>();
 		getAllSubordinateReferences(rootReference, subordinateReferenceMap);
