@@ -29,6 +29,7 @@ var SchemaEditor = function() {
 	this.elementContextButtons = $("#schema-element-context-buttons");
 	
 	this.warningIcon = __util.getBaseUrl() + "resources/img/warning.png";
+	this.errorIcon = __util.getBaseUrl() + "resources/img/error.png";
 		
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
@@ -305,13 +306,20 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (functions != null && functions instanceof Array) {
 		for (var i=0; i<functions.length; i++) {
-			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), parent, "grammar", functions[i].simpleType, null);
+			var icon = null;
+			if (functions[i].error==true) {
+				icon = this.errorIcon;
+			}
+			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), parent, "grammar", functions[i].simpleType, icon);
 			parent.addChild(fDesc);
 			if (functions[i].transformationFunctions != null && functions[i].transformationFunctions instanceof Array) {
 				for (var j=0; j<functions[i].transformationFunctions.length; j++) {
+					if (functions[i].transformationFunctions[j].error==true) {
+						icon = this.errorIcon;
+					}
 					var fOut = this.schema.addElement(functionTemplate, functions[i].transformationFunctions[j].id, 
 							this.formatLabel("f: " + functions[i].transformationFunctions[j].name), fDesc, 
-							"function", functions[i].transformationFunctions[j].simpleType, null);
+							"function", functions[i].transformationFunctions[j].simpleType, icon);
 					fDesc.addChild(fOut);
 					if (functions[i].transformationFunctions[j].outputElements != null && functions[i].transformationFunctions[j].outputElements instanceof Array) {
 						for (var k=0; k<functions[i].transformationFunctions[j].outputElements.length; k++) {

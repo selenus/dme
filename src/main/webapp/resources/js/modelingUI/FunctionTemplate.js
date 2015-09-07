@@ -56,6 +56,16 @@ FunctionTemplate.prototype.paint = function(element, context)
 	context.textBaseline = "bottom";
 	context.textAlign = "center";
 	context.fillText(element.getContent(), rectangle.x + (rectangle.width / 2), rectangle.y + 20);
+	
+	if (element.icon != null) {
+		var icon = new Image();
+		icon.src = element.icon;
+		if (this.isTarget) {
+			context.drawImage(icon, rectangle.x + 3, rectangle.y + 4); 
+		} else {
+			context.drawImage(icon, rectangle.x + rectangle.width - 23, rectangle.y + 4); 
+		}
+	}
 };
 
 FunctionTemplate.prototype.drawRoundRect = function(ctx, x, y, width, height, radius, fill, stroke) {
