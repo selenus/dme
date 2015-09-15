@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import de.dariah.aai.javasp.web.controller.BaseSecurityController;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
@@ -42,7 +43,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/function/{functionId}")
 @SessionAttributes({"valueMap"})
-public class FunctionEditorController extends BaseTranslationController {
+public class FunctionEditorController extends BaseSecurityController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
 	@Autowired private GrammarService grammarService;

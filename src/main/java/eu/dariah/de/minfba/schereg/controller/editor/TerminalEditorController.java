@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.dariah.aai.javasp.web.controller.BaseSecurityController;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
@@ -28,7 +29,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/terminal/{terminalId}")
-public class TerminalEditorController extends BaseTranslationController {
+public class TerminalEditorController extends BaseSecurityController {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaService schemaService;
 	

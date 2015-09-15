@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import de.dariah.aai.javasp.web.controller.BaseSecurityController;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
@@ -39,7 +40,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/grammar/{grammarId}")
 @SessionAttributes({"valueMap"})
-public class GrammarEditorController extends BaseTranslationController {
+public class GrammarEditorController extends BaseSecurityController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
