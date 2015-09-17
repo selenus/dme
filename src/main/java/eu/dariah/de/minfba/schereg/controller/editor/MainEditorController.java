@@ -45,7 +45,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.dariah.aai.javasp.web.controller.BaseSecurityController;
+import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -59,6 +59,7 @@ import eu.dariah.de.minfba.processing.exception.ProcessingConfigException;
 import eu.dariah.de.minfba.processing.model.base.Resource;
 import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
+import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
@@ -70,7 +71,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
 @SessionAttributes({"sample", "sampleResources", "log", "valueMap", "persistedSessionId", "valueMapIndex"})
-public class MainEditorController extends BaseSecurityController implements InitializingBean {
+public class MainEditorController extends BaseScheregController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
 	@Autowired private SchemaService schemaService;

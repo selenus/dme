@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import de.dariah.aai.javasp.web.controller.BaseSecurityController;
+import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
@@ -34,6 +34,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
@@ -43,7 +44,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/function/{functionId}")
 @SessionAttributes({"valueMap"})
-public class FunctionEditorController extends BaseSecurityController {
+public class FunctionEditorController extends BaseScheregController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
 	@Autowired private GrammarService grammarService;

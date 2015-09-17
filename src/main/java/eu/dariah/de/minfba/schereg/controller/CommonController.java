@@ -9,10 +9,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
+import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 
 @Controller
 @RequestMapping(value="/common")
-public class CommonController extends BaseTranslationController {
+public class CommonController extends BaseScheregController {
 	
 	public CommonController() {
 		super("common");

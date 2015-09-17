@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import de.dariah.aai.javasp.web.controller.BaseSecurityController;
+import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
@@ -33,6 +33,7 @@ import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunc
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.FieldErrorPojo;
+import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
@@ -40,7 +41,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/grammar/{grammarId}")
 @SessionAttributes({"valueMap"})
-public class GrammarEditorController extends BaseSecurityController {
+public class GrammarEditorController extends BaseScheregController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
