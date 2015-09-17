@@ -4,16 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
+import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
@@ -25,25 +28,39 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 
 	@Override
 	public List<Schema> findAllSchemas() {
-		return schemaDao.findAll();
+		return schemaDao.findAllSchemas();
 	}
 
 	@Override
-	public void saveSchema(Schema schema) {
+	public void saveSchema(RightsContainer<Schema> schema) {
 		schemaDao.save(schema);
+	}
+	
+	@Override
+	public void saveSchema(Schema schema, AuthPojo auth) {
+		RightsContainer<Schema> saveSchema = null;
+		if (schema.getId()!=null) {
+			saveSchema = schemaDao.findById(schema.getId());
+		}
+		if (saveSchema==null) {
+			saveSchema = new RightsContainer<Schema>();
+			saveSchema.setOwnerId(auth.getUserId());
+			schema.setId(new ObjectId().toString());
+		}
+		saveSchema.setElement(schema);
 	}
 
 	@Override
 	public Schema findSchemaById(String id) {
-		return schemaDao.findById(id);
+		return schemaDao.findSchemaById(id);
 	}
 
 	@Override
 	public void deleteSchemaById(String id) {
-		Schema s = findSchemaById(id);
+		RightsContainer<Schema> s = schemaDao.findById(id);
 		if (s != null) {
-			if (BaseDaoImpl.isValidObjectId(s.getRootNonterminalId())) {
-				elementService.removeElement(s.getId(), s.getRootNonterminalId());
+			if (BaseDaoImpl.isValidObjectId(s.getElement().getRootNonterminalId())) {
+				elementService.removeElement(s.getId(), s.getElement().getRootNonterminalId());
 			}
 			schemaDao.delete(s);
 		}

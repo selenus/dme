@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -203,11 +204,11 @@ public class MainEditorController extends BaseScheregController implements Initi
 	
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo importSchemaElements(@RequestParam String schemaId, @RequestParam(value="file.id") String fileId, 
-			@RequestParam(value="schema_root") Integer schemaRoot, Locale locale) {
+			@RequestParam(value="schema_root") Integer schemaRoot, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = new ModelActionPojo();
 		try {
 			if (temporaryFilesMap.containsKey(fileId)) {
-				importWorker.importSchema(temporaryFilesMap.remove(fileId), schemaId, schemaRoot);
+				importWorker.importSchema(temporaryFilesMap.remove(fileId), schemaId, schemaRoot, authInfoHelper.getAuth(request));
 				result.setSuccess(true);
 				return result;
 			}

@@ -31,10 +31,10 @@ SchemaEditor.prototype.createTable = function() {
 							"bSortable": false,
 							"bSearchable": false,
 							"sClass": "td-no-wrap",
-							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full.entity); }
+							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full.entity.element); }
 						 },
 		                 {	"aTargets": [1],
-		                 	"mData": "entity.label",
+		                 	"mData": "entity.element.label",
 		                 	"sWidth" : "100%"
 						 }/*,
 						 {	"aTargets": [2], 

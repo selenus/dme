@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
@@ -47,6 +48,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 	private String rootElementNs;
 	private String rootElementName; 
 	private String[] namespaces;
+	
+	private AuthPojo auth;
 	
 	private Nonterminal rootNonterminal;
 	
@@ -71,6 +74,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 	public SchemaImportListener getListener() { return listener; }
 	@Override public void setListener(SchemaImportListener listener) { this.listener = listener; }
 	
+	@Override public void setAuth(AuthPojo auth) { this.auth = auth; }
+	@Override public AuthPojo getAuth() { return this.auth; }
 	
 	@Override
 	public void run() {
@@ -82,7 +87,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 					schema.getNamespaces().add(new XmlNamespace("", ns));
 				}				
 				schema.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
-				this.getListener().registerImportFinished(schema, rootNonterminal);
+				this.getListener().registerImportFinished(schema, rootNonterminal, auth);
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing XML Schema", e);

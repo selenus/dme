@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.bson.types.ObjectId;
@@ -81,7 +82,7 @@ public class TerminalEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveTerminal")
-	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String schemaId, @Valid XmlTerminal element, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String schemaId, @Valid XmlTerminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {	
 			if (element.getId().isEmpty() || element.getId().trim().equals("-1")) {
@@ -116,7 +117,7 @@ public class TerminalEditorController extends BaseScheregController {
 				}
 			}
 			
-			schemaService.saveSchema(s);			
+			schemaService.saveSchema(s, authInfoHelper.getAuth(request));			
 		}
 		return result;
 	}

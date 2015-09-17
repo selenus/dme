@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -89,12 +90,13 @@ public class SchemaController extends BaseScheregController {
 	}
 		
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, BindingResult bindingResult) {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, BindingResult bindingResult, HttpServletRequest request) {
 		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
 		if (schema.getId().isEmpty()) {
 			schema.setId(null);
 		}
-		schemaService.saveSchema(schema);
+		
+		schemaService.saveSchema(schema, authInfoHelper.getAuth(request));
 		return result;
 	}
 		

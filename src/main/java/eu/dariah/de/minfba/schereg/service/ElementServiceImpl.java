@@ -23,6 +23,7 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
+import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -46,7 +47,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
-		Schema s = schemaDao.findById(schemaId);
+		Schema s = schemaDao.findSchemaById(schemaId);
 		if (s!=null && s.getRootNonterminalId()!=null) {
 			return this.findRootByElementId(s.getRootNonterminalId(), eagerLoadHierarchy);
 		}
@@ -74,9 +75,13 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		element.setId(null);
 		Reference r = this.saveElementHierarchy(element);
 				
-		Schema s = schemaDao.findById(schemaId);
+		Schema s = schemaDao.findSchemaById(schemaId);
 		s.setRootNonterminalId(r.getId());
-		schemaDao.save(s);
+		try {
+			schemaDao.updateContained(s);
+		} catch (GenericScheregException e) {
+			logger.error("Failed to save schema", e);
+		}
 	}
 	
 	public Identifiable fillElement(Reference r, Map<String, Identifiable> elementMap) {
@@ -246,7 +251,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label) {
-		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		Element eParent = elementDao.findById(parentElementId);
@@ -288,7 +293,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public Element removeElementTree(String schemaId) {
-		Schema s = schemaDao.findById(schemaId);
+		Schema s = schemaDao.findSchemaById(schemaId);
 		Element eRoot = findRootBySchemaId(schemaId);
 		if (eRoot!=null) {	
 			try {
@@ -296,7 +301,11 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 				elementDao.delete(eRoot);
 				
 				s.setRootNonterminalId(null);
-				schemaDao.save(s);
+				try {
+					schemaDao.updateContained(s);
+				} catch (GenericScheregException e) {
+					logger.error("Failed to save schema", e);
+				}
 			} catch (IllegalArgumentException | ClassNotFoundException e) {
 				logger.error("Failed to remove tree by schemaID", e);
 			}
@@ -306,7 +315,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Terminal removeTerminal(String schemaId, String terminalId) {
-		Schema s = schemaDao.findById(schemaId);
+		Schema s = schemaDao.findSchemaById(schemaId);
 		Terminal tRemove = null;
 		if (s.getTerminals()!=null) {
 			for (Terminal t : s.getTerminals()) {
@@ -318,7 +327,11 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		if (tRemove!=null) {
 			s.getTerminals().remove(tRemove);
-			schemaDao.save(s);
+			try {
+				schemaDao.updateContained(s);
+			} catch (GenericScheregException e) {
+				logger.error("Failed to save schema", e);
+			};
 						
 			elementDao.updateMulti(
 					Query.query(Criteria.where("schemaId").is(schemaId).and("terminalId").is(terminalId)), 

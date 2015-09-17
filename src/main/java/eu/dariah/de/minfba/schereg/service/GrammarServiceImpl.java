@@ -42,7 +42,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		
 	@Override
 	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label) {
-		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		
@@ -130,7 +130,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 
 	@Override
 	public DescriptionGrammar deleteGrammarById(String schemaId, String id) {
-		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		
 		DescriptionGrammar grammar = grammarDao.findById(id);
 		if (grammar != null) {

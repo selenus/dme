@@ -26,6 +26,7 @@
 	  <authentication-provider>
 	    <user-service>
 			<user name="tgradl" password="hairad" authorities="ROLE_ADMINISTRATOR, ROLE_CONTRIBUTOR" />
+			<user name="tgradl_user" password="hairad" authorities="" />
 			<user name="ahenrich" password="hairad" authorities="ROLE_CONTRIBUTOR" />
 	    </user-service>
 	  </authentication-provider>

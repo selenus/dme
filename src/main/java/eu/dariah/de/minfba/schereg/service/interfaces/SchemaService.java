@@ -7,13 +7,14 @@ import java.util.Map;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
+import eu.dariah.de.minfba.schereg.model.RightsContainer;
 
 public interface SchemaService {
 	public List<Schema> findAllSchemas();
-	public void saveSchema(Schema schema);
 	public Schema findSchemaById(String id);
 	public void deleteSchemaById(String id);
 	
@@ -21,4 +22,6 @@ public interface SchemaService {
 	public void upsertSchema(Query query, Update update);
 	
 	public Map<String, String> getAvailableTerminals(String schemaId);
+	public void saveSchema(RightsContainer<Schema> schema);
+	public void saveSchema(Schema schema, AuthPojo auth);
 }

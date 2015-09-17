@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.mongodb.DBObject;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -58,7 +59,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		return importer.getPossibleRootTerminals();
 	}
 	
-	public void importSchema(String filePath, String schemaId, Integer rootTerminalIndex) throws SchemaImportException {
+	public void importSchema(String filePath, String schemaId, Integer rootTerminalIndex, AuthPojo auth) throws SchemaImportException {
 		/*
 		 * Currently only XML Schemata are supported for import;
 		 * 	TODO: Extend for (configurable) support of CSV, JSON etc. schemata
@@ -95,19 +96,20 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		importer.setSchema(s);
 		importer.setSchemaFilePath(filePath);
 		importer.setRootElementNs(s.getRootElementNamespace());
-		importer.setRootElementName(s.getRootElementName());                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+		importer.setRootElementName(s.getRootElementName()); 
+		importer.setAuth(auth);
 		
 		this.executor.execute(importer);
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(Schema schema, Nonterminal root) {
+	public synchronized void registerImportFinished(Schema schema, Nonterminal root, AuthPojo auth) {
 		if (root!=null) {
 			elementService.removeElementTree(schema.getId());
 		}
 		elementService.saveElementHierarchy(root);
 		schema.setRootNonterminalId(root.getId());
-		schemaService.saveSchema(schema);
+		schemaService.saveSchema(schema, auth);
 	}
 
 	@Override 

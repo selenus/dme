@@ -24,7 +24,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	
 	@Override
 	public TransformationFunction createAndAppendFunction(String schemaId, String grammarId, String label) {
-		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, grammarId);
 		
@@ -44,7 +44,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 
 	@Override
 	public TransformationFunction deleteFunctionById(String schemaId, String id) {
-		String rootElementId = schemaDao.findById(schemaId).getRootNonterminalId();
+		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		
 		TransformationFunction function = functionDao.findById(id);
 		if (function != null) {

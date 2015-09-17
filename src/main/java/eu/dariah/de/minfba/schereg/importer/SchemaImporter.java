@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.importer;
 
 import java.util.List;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
@@ -18,4 +19,7 @@ public interface SchemaImporter<T extends Schema> extends Runnable {
 	public List<? extends Terminal> getPossibleRootTerminals();
 	public void setRootElementNs(String rootElementNs);
 	public void setRootElementName(String rootElementName);
+	
+	public void setAuth(AuthPojo auth);
+	public AuthPojo getAuth();
 }

@@ -27,8 +27,8 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	@Override public String getCollectionName() { return collectionName; }
 	
 	
-	public BaseDaoImpl(Class<T> clazz) {
-		this.clazz = clazz;
+	public BaseDaoImpl(Class<?> clazz) {
+		this.clazz = (Class<T>)clazz;
 		this.collectionName = clazz.getSimpleName().substring(0,1).toLowerCase() + clazz.getSimpleName().substring(1);
 	}
 
