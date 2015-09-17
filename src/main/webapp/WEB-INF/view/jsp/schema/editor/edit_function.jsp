@@ -22,6 +22,8 @@
 					<div>
 						<sf:input path="name" class="form-control" id="function_name" />
 						<sf:errors path="name" cssClass="error" />
+						
+						
 					</div>
 				</div>
 				<div class="col-sm-4">

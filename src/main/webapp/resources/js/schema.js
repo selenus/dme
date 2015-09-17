@@ -221,6 +221,11 @@ SchemaEditor.prototype.triggerAddSchema = function () {
 };
 
 SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	
 	var _this = this;
 	var form_identifier = "edit-schema-" + schemaId;
 	

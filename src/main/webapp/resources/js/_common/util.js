@@ -65,11 +65,11 @@ Util.prototype.showLoginNote = function() {
                 title : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.head"),
                 buttons : {
                         no : {
-                                label : __translator.translate("~eu.dariah.de.minfba.common.view.common.no"),
+                                label : __translator.translate("~eu.dariah.de.minfba.common.link.no"),
                                 className : "btn-default"
                         },
                         yes : {
-                                label : __translator.translate("~eu.dariah.de.minfba.common.view.common.yes"),
+                                label : __translator.translate("~eu.dariah.de.minfba.common.link.yes"),
                                 className : "btn-primary",
                                 callback : function() {
                                         window.location = $("#login a").prop("href");
