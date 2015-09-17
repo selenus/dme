@@ -39,7 +39,8 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 	@Override
 	public void saveSchema(Schema schema, AuthPojo auth) {
 		RightsContainer<Schema> saveSchema = null;
-		if (schema.getId()!=null) {
+		return;
+		/*if (schema.getId()!=null) {
 			saveSchema = schemaDao.findById(schema.getId());
 		}
 		if (saveSchema==null) {
@@ -47,7 +48,7 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 			saveSchema.setOwnerId(auth.getUserId());
 			schema.setId(new ObjectId().toString());
 		}
-		saveSchema.setElement(schema);
+		saveSchema.setElement(schema);*/
 	}
 
 	@Override
