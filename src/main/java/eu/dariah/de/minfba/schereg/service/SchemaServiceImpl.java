@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,17 +39,20 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 	
 	@Override
 	public void saveSchema(Schema schema, AuthPojo auth) {
-		RightsContainer<Schema> saveSchema = null;
-		return;
-		/*if (schema.getId()!=null) {
-			saveSchema = schemaDao.findById(schema.getId());
+		RightsContainer<Schema> container = null;
+		if (schema.getId()!=null) {
+			container = schemaDao.findById(schema.getId());
 		}
-		if (saveSchema==null) {
-			saveSchema = new RightsContainer<Schema>();
-			saveSchema.setOwnerId(auth.getUserId());
-			schema.setId(new ObjectId().toString());
+		if (container==null) {
+			container = new RightsContainer<Schema>();
+			container.setOwnerId(auth.getUserId());
+			container.setReadIds(new ArrayList<String>());
+			container.getReadIds().add(auth.getUserId());
+			container.setId(new ObjectId().toString());
+			container.setDraft(true);
 		}
-		saveSchema.setElement(schema);*/
+		container.setElement(schema);
+		schemaDao.save(container);
 	}
 
 	@Override
@@ -93,5 +97,10 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 			}
 		}
 		return availableTerminals;
+	}
+
+	@Override
+	public List<RightsContainer<Schema>> findAllByAuth(AuthPojo auth) {
+		return schemaDao.findAllReadAllowed(auth.getUserId());
 	}
 }

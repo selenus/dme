@@ -24,4 +24,5 @@ public interface SchemaService {
 	public Map<String, String> getAvailableTerminals(String schemaId);
 	public void saveSchema(RightsContainer<Schema> schema);
 	public void saveSchema(Schema schema, AuthPojo auth);
+	public List<RightsContainer<Schema>> findAllByAuth(AuthPojo auth);
 }

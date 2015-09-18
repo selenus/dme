@@ -28,6 +28,7 @@ import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
@@ -73,9 +74,9 @@ public class SchemaController extends BaseScheregController {
 		
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
-	public @ResponseBody DataTableList<Schema> getData(Model model, Locale locale) {
-		List<Schema> schemas = schemaService.findAllSchemas();		
-		return new DataTableList<Schema>(schemas);
+	public @ResponseBody DataTableList<RightsContainer<Schema>> getData(Model model, Locale locale, HttpServletRequest request) {
+		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));		
+		return new DataTableList<RightsContainer<Schema>>(schemas);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData/{id}")

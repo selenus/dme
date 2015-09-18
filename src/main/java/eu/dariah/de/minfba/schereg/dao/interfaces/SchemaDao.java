@@ -16,5 +16,6 @@ public interface SchemaDao extends BaseDao<RightsContainer<Schema>> {
 	public List<Schema> findAllSchemas();
 	public Schema findSchemaById(String id);
 	public void updateContained(Schema s) throws GenericScheregException;
+	public List<RightsContainer<Schema>> findAllReadAllowed(String userId);
 	
 }

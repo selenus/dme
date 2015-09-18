@@ -7,6 +7,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 public class RightsContainer<T extends Identifiable> implements Identifiable {
 	private static final long serialVersionUID = -1272567909444423065L;
 	
+	private String id;
 	private T element;
 	
 	private boolean draft;
@@ -17,11 +18,21 @@ public class RightsContainer<T extends Identifiable> implements Identifiable {
 	private List<String> shareIds;
 	
 	
-	@Override public String getId() { return this.element.getId(); }
-	@Override public void setId(String id) { this.element.setId(id); }
+	@Override public String getId() { return this.id; }
+	@Override public void setId(String id) { 
+		this.id = id;
+		if (this.element!=null) {
+			this.element.setId(id); 
+		}
+	}
 
 	public T getElement() { return element; }
-	public void setElement(T element) { this.element = element; }
+	public void setElement(T element) { 
+		this.element = element;
+		if (this.id!=null && element!=null) {
+			this.element.setId(this.id);
+		}
+	}
 	
 	public boolean isDraft() { return draft; }
 	public void setDraft(boolean draft) { this.draft = draft; }

@@ -37,6 +37,17 @@ public class SchemaDaoImpl extends BaseDaoImpl<RightsContainer<Schema>> implemen
 	}
 	
 	@Override
+	public List<RightsContainer<Schema>> findAllReadAllowed(String userId) {
+		Query q = new Query();
+		Criteria cOwner = Criteria.where("ownerId").is(userId);
+		Criteria cReadAllowed = Criteria.where("readIds").is(userId).and("draft").is(true);
+		
+		q.addCriteria(cReadAllowed.orOperator(cOwner));
+		return this.find(q);
+		
+	}
+	
+	@Override
 	public Schema findSchemaById(String id) {
 		RightsContainer<Schema> schema = this.findById(id);
 		if (schema!=null) {
