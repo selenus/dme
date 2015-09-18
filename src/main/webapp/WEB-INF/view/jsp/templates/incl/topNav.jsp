@@ -67,7 +67,7 @@
 						</li>
 
 						<li id="login"<c:if test="${_auth!=null && _auth.auth==true}"> style="display: none;"</c:if>><a href="<s:url value='${_loginUrl}' />" ><span class="glyphicon glyphicon-log-in"></span>&nbsp;<s:message code="~eu.dariah.de.minfba.common.link.login" /></a></li>
-						<li id="logout"<c:if test="${_auth==null || _auth.auth==false}"> style="display: none;"</c:if>><a href="<s:url value='${_logoutUrl}' />" ><span class="glyphicon glyphicon-log-out"></span>&nbsp;<s:message code="~eu.dariah.de.minfba.common.link.logout" /></a></li>		
+						<li id="logout"<c:if test="${_auth==null || _auth.auth==false}"> style="display: none;"</c:if>><a href="<s:url value='${_logoutUrl}' />" ><span class="glyphicon glyphicon-log-out"></span>&nbsp;<s:message code="~eu.dariah.de.minfba.common.link.logout" /><c:if test="${_auth!=null || _auth.auth==true}"> (${_auth.displayName})</c:if></a></li>		
 					</ul>
 		    	</nav>
 			</div>
