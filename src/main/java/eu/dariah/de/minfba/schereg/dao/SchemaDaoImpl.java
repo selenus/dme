@@ -37,14 +37,36 @@ public class SchemaDaoImpl extends BaseDaoImpl<RightsContainer<Schema>> implemen
 	}
 	
 	@Override
-	public List<RightsContainer<Schema>> findAllReadAllowed(String userId) {
+	public List<RightsContainer<Schema>> findAllByUserId(String userId) {
 		Query q = new Query();
-		Criteria cOwner = Criteria.where("ownerId").is(userId);
-		Criteria cReadAllowed = Criteria.where("readIds").is(userId).and("draft").is(true);
-		
-		q.addCriteria(cReadAllowed.orOperator(cOwner));
+		/* User can see	- all no-draft schemas
+		 * 				- all owned schemas
+		 * 				- all shared drafts
+		 */
+		Criteria cNoDraft = Criteria.where("draft").is(false);
+		if (userId==null) {
+			q.addCriteria(cNoDraft);
+		} else {
+			Criteria cOwner = Criteria.where("ownerId").is(userId);
+			Criteria sharedDraft = Criteria.where("readIds").is(userId);
+			q.addCriteria(new Criteria().orOperator(cOwner, cNoDraft, sharedDraft));
+		}
 		return this.find(q);
-		
+	}
+	
+	@Override
+	public RightsContainer<Schema> findByIdAndUserId(String schemaId, String userId) {
+		Query q = new Query();
+		Criteria cId = Criteria.where(ID_FIELD).is(schemaId);
+		Criteria cNoDraft = Criteria.where("draft").is(false);
+		if (userId==null) {
+			q.addCriteria(new Criteria().andOperator(cId, cNoDraft));
+		} else {
+			Criteria cOwner = Criteria.where("ownerId").is(userId);
+			Criteria sharedDraft = Criteria.where("readIds").is(userId);
+			q.addCriteria(new Criteria().andOperator(cId, new Criteria().orOperator(cOwner, cNoDraft, sharedDraft)));
+		}
+		return this.findOne(q);	
 	}
 	
 	@Override

@@ -17,6 +17,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
 
 public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
+	protected static final String ID_FIELD = "_id";
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected final Class<T> clazz;
 	protected final String collectionName;

@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,31 +22,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.BaseSchema;
 import eu.dariah.de.minfba.core.metamodel.BaseTerminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
-import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
-import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
+import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema")
 public class SchemaController extends BaseScheregController {
 	@Autowired private SchemaService schemaService;
-	@Autowired private ElementService elementService;
-	
 	
 	public SchemaController() {
 		super("schema");
 	}
-	
-	
-	
+
 	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
 	public String getList(Model model) {
 		return "schema/home";
@@ -57,7 +56,27 @@ public class SchemaController extends BaseScheregController {
 		return null;
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
+	public @ResponseBody DataTableList<AuthWrappedPojo<Schema>> getData(Model model, Locale locale, HttpServletRequest request) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
+		List<AuthWrappedPojo<Schema>> pojos = AuthWrappedPojoConverter.convert(schemas, auth.getUserId());	
+		return new DataTableList<AuthWrappedPojo<Schema>>(pojos);
+	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getData/{id}")
+	public @ResponseBody AuthWrappedPojo<Schema> getSchema(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		return AuthWrappedPojoConverter.convert(schemaService.findByIdAndAuth(id, auth), auth.getUserId());
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getElements/{id}")
+	public @ResponseBody Schema getElements(@PathVariable String id, Model model, Locale locale) {
+		return schemaService.findSchemaById(id);
+	}
+	
+	
+	@Secured("IS_AUTHENTICATED_FULLY")
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {
 		model.addAttribute("actionPath", "/schema/async/save");
@@ -65,31 +84,16 @@ public class SchemaController extends BaseScheregController {
 		return "schema/form/edit";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/edit/{id}"})
 	public String getEditForm(@PathVariable String id, Model model, Locale locale) {
 		model.addAttribute("actionPath", "/schema/async/save");
 		model.addAttribute("schema", schemaService.findSchemaById(id));
 		return "schema/form/edit";
 	}
-		
+
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
-	public @ResponseBody DataTableList<RightsContainer<Schema>> getData(Model model, Locale locale, HttpServletRequest request) {
-		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));		
-		return new DataTableList<RightsContainer<Schema>>(schemas);
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getData/{id}")
-	public @ResponseBody Schema getSchema(@PathVariable String id, Model model, Locale locale) {
-		return schemaService.findSchemaById(id);
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getElements/{id}")
-	public @ResponseBody Schema getElements(@PathVariable String id, Model model, Locale locale) {
-		// TODO: This is where we need the elements
-		return schemaService.findSchemaById(id);
-	}
-		
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, BindingResult bindingResult, HttpServletRequest request) {
 		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
@@ -100,7 +104,8 @@ public class SchemaController extends BaseScheregController {
 		schemaService.saveSchema(schema, authInfoHelper.getAuth(request));
 		return result;
 	}
-		
+	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/delete/{id}"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String id) {
 		ModelActionPojo result;

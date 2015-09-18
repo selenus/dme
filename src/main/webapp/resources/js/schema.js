@@ -14,6 +14,7 @@ var SchemaEditor = function() {
 	                          "~eu.dariah.de.minfba.schereg.dialog.confirm_detete",
 	                          "~eu.dariah.de.minfba.schereg.model.schema.description",
 	                          "~eu.dariah.de.minfba.schereg.model.schema.label",
+	                          "~eu.dariah.de.minfba.schereg.model.schema.draft",
 	                          "~eu.dariah.de.minfba.schereg.notification.deleted.head",
 	                          "~eu.dariah.de.minfba.schereg.notification.deleted.body"]);
 	this.createTable();
@@ -31,10 +32,10 @@ SchemaEditor.prototype.createTable = function() {
 							"bSortable": false,
 							"bSearchable": false,
 							"sClass": "td-no-wrap",
-							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full.entity.element); }
+							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full.entity.pojo); }
 						 },
 		                 {	"aTargets": [1],
-		                 	"mData": "entity.element.label",
+		                 	"mData": "entity.pojo.label",
 		                 	"sWidth" : "100%"
 						 }/*,
 						 {	"aTargets": [2], 
@@ -153,22 +154,38 @@ SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	
 	var buttonBarContainer = $("<div class=\"row\">");
 	var buttonBar = $("<div class=\"tab-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
-	buttonBar.append(
-		"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
-			__translator.translate("~eu.dariah.de.minfba.common.link.edit") + 
-		"</button> ");
-	buttonBar.append(
-		"<button onclick='editor.triggerDeleteSchema(\"" + id + "\");' class='btn btn-danger btn-sm' type='button'><span class='glyphicon glyphicon-trash'></span> " +
-			__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
-		"</button>");
+	
+	if (data.write) {
+		buttonBar.append(
+			"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
+				__translator.translate("~eu.dariah.de.minfba.common.link.edit") + 
+			"</button> ");
+		buttonBar.append(
+			"<button onclick='editor.triggerDeleteSchema(\"" + id + "\");' class='btn btn-danger btn-sm' type='button'><span class='glyphicon glyphicon-trash'></span> " +
+				__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
+			"</button>");
+	} else {
+		buttonBar.append(
+			"<button class='btn btn-default btn-sm disabled' type='button'><span class='glyphicon glyphicon-lock'></span> " + 
+				__translator.translate("~eu.dariah.de.minfba.common.link.edit") + 
+			"</button> ");
+		buttonBar.append(
+			"<button class='btn btn-danger btn-sm disabled' type='button'><span class='glyphicon glyphicon-lock'></span> " +
+				__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
+			"</button>");
+	}
+	
+	
+	
 	buttonBarContainer.append(buttonBar);
 	
 	$("#schema-metadata").append(buttonBarContainer);
 	
 	var details = $("<div class=\"clearfix\">");
-	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.label"), data.label));
-	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.description"), data.description));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.common.model.id"), data.pojo.id));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.label"), data.pojo.label));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.description"), data.pojo.description));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.draft"), data.draft));
 		
 	$("#schema-metadata").append(details);
 

@@ -46,8 +46,6 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 		if (container==null) {
 			container = new RightsContainer<Schema>();
 			container.setOwnerId(auth.getUserId());
-			container.setReadIds(new ArrayList<String>());
-			container.getReadIds().add(auth.getUserId());
 			container.setId(new ObjectId().toString());
 			container.setDraft(true);
 		}
@@ -101,6 +99,11 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 
 	@Override
 	public List<RightsContainer<Schema>> findAllByAuth(AuthPojo auth) {
-		return schemaDao.findAllReadAllowed(auth.getUserId());
+		return schemaDao.findAllByUserId(auth.getUserId());
+	}
+
+	@Override
+	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth) {
+		return schemaDao.findByIdAndUserId(schemaId, auth.getUserId());
 	}
 }
