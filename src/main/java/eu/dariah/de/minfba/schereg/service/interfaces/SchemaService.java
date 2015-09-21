@@ -8,7 +8,9 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
+import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 
 public interface SchemaService {
 	public List<Schema> findAllSchemas();
@@ -19,9 +21,11 @@ public interface SchemaService {
 	public void upsertSchema(Query query, Update update);
 	
 	public Map<String, String> getAvailableTerminals(String schemaId);
-	public void saveSchema(RightsContainer<Schema> schema);
 	public void saveSchema(Schema schema, AuthPojo auth);
+	public void saveSchema(AuthWrappedPojo<? extends Schema> schema, AuthPojo auth);
 	
 	public List<RightsContainer<Schema>> findAllByAuth(AuthPojo auth);
 	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth);
+	public boolean getHasWriteAccess(String id, String userId);
+	public boolean getHasShareAccess(String id, String userId);
 }

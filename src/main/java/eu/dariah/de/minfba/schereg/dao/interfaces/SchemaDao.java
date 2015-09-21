@@ -19,5 +19,6 @@ public interface SchemaDao extends BaseDao<RightsContainer<Schema>> {
 
 	public List<RightsContainer<Schema>> findAllByUserId(String userId);
 	public RightsContainer<Schema> findByIdAndUserId(String schemaId, String userId);
+	public RightsContainer<Schema> findByIdAndUserId(String schemaId, String userId, boolean excludePojo);
 	
 }

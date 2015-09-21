@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
@@ -78,30 +79,40 @@ public class SchemaController extends BaseScheregController {
 	
 	@Secured("IS_AUTHENTICATED_FULLY")
 	@RequestMapping(method=GET, value={"/forms/add"})
-	public String getAddForm(Model model, Locale locale) {
-		model.addAttribute("actionPath", "/schema/async/save");
+	public String getAddForm(Model model, Locale locale) {		
 		model.addAttribute("schema", new BaseSchema<BaseTerminal>());
+		model.addAttribute("draft", true);
+		model.addAttribute("actionPath", "/schema/async/save");
 		return "schema/form/edit";
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/edit/{id}"})
-	public String getEditForm(@PathVariable String id, Model model, Locale locale) {
+	public String getEditForm(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
+		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(id, authInfoHelper.getAuth(request));
+		
 		model.addAttribute("actionPath", "/schema/async/save");
-		model.addAttribute("schema", schemaService.findSchemaById(id));
+		model.addAttribute("draft", schema.isDraft());
+		model.addAttribute("schema", schema.getElement());
 		return "schema/form/edit";
 	}
 
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, BindingResult bindingResult, HttpServletRequest request) {
-		ModelActionPojo result = new ModelActionPojo(true); //this.getActionResult(bindingResult, locale);
+	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, @RequestParam(defaultValue="false") boolean draft, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getHasWriteAccess(schema.getId(), auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
+		
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (schema.getId().isEmpty()) {
 			schema.setId(null);
 		}
 		
-		schemaService.saveSchema(schema, authInfoHelper.getAuth(request));
+		schemaService.saveSchema(new AuthWrappedPojo<XmlSchema>(schema, true, false, false, draft), auth);
 		return result;
 	}
 	

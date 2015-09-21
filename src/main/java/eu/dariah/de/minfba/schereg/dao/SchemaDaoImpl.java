@@ -56,7 +56,15 @@ public class SchemaDaoImpl extends BaseDaoImpl<RightsContainer<Schema>> implemen
 	
 	@Override
 	public RightsContainer<Schema> findByIdAndUserId(String schemaId, String userId) {
+		return findByIdAndUserId(schemaId, userId, false);
+	}
+	
+	@Override
+	public RightsContainer<Schema> findByIdAndUserId(String schemaId, String userId, boolean excludePojo) {
 		Query q = new Query();
+		if (excludePojo) {
+			q.fields().exclude("element");
+		}
 		Criteria cId = Criteria.where(ID_FIELD).is(schemaId);
 		Criteria cNoDraft = Criteria.where("draft").is(false);
 		if (userId==null) {

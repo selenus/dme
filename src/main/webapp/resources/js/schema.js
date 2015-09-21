@@ -30,9 +30,9 @@ SchemaEditor.prototype.createTable = function() {
 		"aoColumnDefs": [{	"aTargets": [0], 
 							"mData": "entity.id",
 							"bSortable": false,
-							"bSearchable": false,
+							"bSearchable": true,
 							"sClass": "td-no-wrap",
-							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full.entity.pojo); }
+							"mRender": function (data, type, full) { return editor.renderBadgeColumn(data, type, full.entity); }
 						 },
 		                 {	"aTargets": [1],
 		                 	"mData": "entity.pojo.label",
@@ -155,7 +155,7 @@ SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	var buttonBarContainer = $("<div class=\"row\">");
 	var buttonBar = $("<div class=\"tab-buttons col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-4\">");
 	
-	if (data.write) {
+	if (true || data.write || data.own) {
 		buttonBar.append(
 			"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
 				__translator.translate("~eu.dariah.de.minfba.common.link.edit") + 
@@ -224,11 +224,20 @@ SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
 };
 
 SchemaEditor.prototype.renderBadgeColumn = function(data, type, full) {
-	var result = "";
+	var result = "";	
+	if (type=="display") {
+		if (full.pojo.type=="BaseSchema") {
+			result += '<span class="label label-warning">Stub</span> ';
+		}		
+		if (full.draft) {
+			result += '<span class="label label-info">Draft</span> ';
+		}
+	} else {
+		if (full.draft) {
+			result += 'draft ';
+		}
+	}
 	
-	if (full.type=="BaseSchema") {
-		result = '<span class="label label-warning">Stub</span> ';
-	}	
 	return result;
 };
 
@@ -249,7 +258,7 @@ SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: (schemaId!=undefined ? ("/forms/edit/" + schemaId) : "/forms/add"),
 		identifier: form_identifier,
-		//additionalModalClasses: "wider-modal",
+		additionalModalClasses: "wide-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
@@ -260,6 +269,10 @@ SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 };
 
 SchemaEditor.prototype.triggerDeleteSchema = function(schemaId) {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
 	var _this = this;
 	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_detete"), schemaId), function(result) {
 		if(result) {
@@ -280,5 +293,5 @@ SchemaEditor.prototype.triggerDeleteSchema = function(schemaId) {
 		        }
 			});
 		}
-	}); //
+	});
 };

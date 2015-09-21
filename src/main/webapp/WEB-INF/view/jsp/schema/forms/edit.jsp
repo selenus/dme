@@ -16,22 +16,29 @@
 		<sf:hidden path="id" />
 	</div>
 	<div class="form-content">
-		<div class="control-group">
-			<label class="control-label" for="schema_label"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" />:</label>
-			<div class="controls">
+		<div class="form-group">
+			<label class="control-label col-sm-3" for="schema_label"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" />:</label>
+			<div class="col-sm-9">
 				<sf:input path="label" class="form-control" id="schema_label" />
 				<sf:errors path="label" cssClass="error" />
 			</div>
 		</div>
-		<div class="control-group">
-			<label class="control-label" for="schema_description"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.description" />:</label>
-			<div class="controls">
+		<div class="form-group">
+			<label class="control-label col-sm-3" for="schema_description"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.description" />:</label>
+			<div class="col-sm-9">
 				<sf:textarea path="description" class="form-control" rows="4" id="schema_description" />
 			</div>
-		</div>		
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<label>
+					<input type="checkbox" name="draft" id="draft"<c:if test="${draft}"> checked="checked"</c:if>> ~Draft:
+				</label>
+			</div>
+		</div>	
 	</div>
-	<div class="form-footer control-group">
-		<div class="controls">
+	<div class="form-footer form-group">
+		<div class="col-sm-12">
 			<button class="btn btn-default cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
 			<button class="btn btn-primary start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
 		</div>

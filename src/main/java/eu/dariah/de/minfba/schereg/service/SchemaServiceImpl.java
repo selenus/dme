@@ -1,6 +1,5 @@
 package eu.dariah.de.minfba.schereg.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,7 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
+import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
@@ -33,8 +33,17 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 	}
 
 	@Override
-	public void saveSchema(RightsContainer<Schema> schema) {
-		schemaDao.save(schema);
+	public void saveSchema(AuthWrappedPojo<? extends Schema> schema, AuthPojo auth) {
+		RightsContainer<Schema> container = null;
+		if (schema.getId()!=null) {
+			container = schemaDao.findById(schema.getId());
+		}
+		if (container==null) {
+			container = createContainer(auth.getUserId());
+		}
+		container.setDraft(schema.isDraft());
+		container.setElement(schema.getPojo());
+		schemaDao.save(container);
 	}
 	
 	@Override
@@ -44,13 +53,18 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 			container = schemaDao.findById(schema.getId());
 		}
 		if (container==null) {
-			container = new RightsContainer<Schema>();
-			container.setOwnerId(auth.getUserId());
-			container.setId(new ObjectId().toString());
-			container.setDraft(true);
+			container = createContainer(auth.getUserId());
 		}
 		container.setElement(schema);
 		schemaDao.save(container);
+	}
+	
+	private RightsContainer<Schema> createContainer(String userId) {
+		RightsContainer<Schema> container = new RightsContainer<Schema>();
+		container.setOwnerId(userId);
+		container.setId(new ObjectId().toString());
+		container.setDraft(true);
+		return container;
 	}
 
 	@Override
@@ -105,5 +119,28 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 	@Override
 	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth) {
 		return schemaDao.findByIdAndUserId(schemaId, auth.getUserId());
+	}
+
+	@Override
+	public boolean getHasWriteAccess(String id, String userId) {
+		/* User is logged in (has an ID) and creates a new schema (no ID) */
+		if ( (id==null || id.isEmpty()) && (userId!=null && !userId.isEmpty()) ) {
+			return true;
+		}
+		
+		RightsContainer<Schema> s = schemaDao.findByIdAndUserId(id, userId, true);
+		if (s!=null && ( s.getOwnerId().equals(userId) || ( s.getWriteIds()!=null && s.getWriteIds().contains(userId)) ) ) {
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean getHasShareAccess(String id, String userId) {
+		RightsContainer<Schema> s = schemaDao.findByIdAndUserId(id, userId, true);
+		if (s!=null && ( s.getOwnerId().equals(userId) || ( s.getShareIds()!=null && s.getShareIds().contains(userId)) ) ) {
+			return true;
+		}
+		return false;
 	}
 }
