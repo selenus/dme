@@ -26,6 +26,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -47,6 +48,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -65,6 +67,7 @@ import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
+import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
@@ -93,36 +96,56 @@ public class MainEditorController extends BaseScheregController implements Initi
 	}
 	
 	@RequestMapping(method=GET, value={"/", ""})
-	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale) {
-		model.addAttribute("schema", schemaService.findSchemaById(schemaId));
+	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		model.addAttribute("schema", AuthWrappedPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));
 		if (this.getPersistedSessionId(model)==null) {
 			this.createSession(schemaId, model, locale);
 		}
 		return "schemaEditor";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/import"})
-	public String getImportForm(@PathVariable String schemaId, Model model, Locale locale) {
+	public String getImportForm(@PathVariable String schemaId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/async/import");
 		model.addAttribute("schema", schemaService.findSchemaById(schemaId));
 		return "schemaEditor/form/import";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/fileupload"})
 	public String getImportForm(Model model, Locale locale) {
 		return "common/fileupload";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/form/createRoot")
-	public String getNewNonterminalForm(@PathVariable String schemaId, Model model, Locale locale) {
+	public String getNewNonterminalForm(@PathVariable String schemaId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		model.addAttribute("element", new Nonterminal());
 		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/async/saveNewRoot");
 		return "schemaEditor/form/element/edit_nonterminal";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewRoot")
-	public @ResponseBody ModelActionPojo saveNonterminal(@PathVariable String schemaId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveNonterminal(@PathVariable String schemaId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
 			elementService.saveOrReplaceRoot(schemaId, element);
@@ -130,6 +153,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 		return result;
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/upload", produces = "application/json; charset=utf-8")
 	public @ResponseBody JsonNode prepareSchema(MultipartHttpServletRequest request, Model model, Locale locale) throws IOException {
 		
@@ -169,6 +193,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 		return result;
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/file/delete/{fileId}"})
 	public @ResponseBody ModelActionPojo deleteImportedFile(@PathVariable String fileId, Model model, Locale locale) {
 		if (temporaryFilesMap.containsKey(fileId)) {
@@ -177,6 +202,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 		return new ModelActionPojo(true);
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/file/validate/{fileId}"})
 	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String fileId, Model model, Locale locale) throws SchemaImportException {
 		ModelActionPojo result = new ModelActionPojo();
@@ -202,9 +228,15 @@ public class MainEditorController extends BaseScheregController implements Initi
 		return result;
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo importSchemaElements(@RequestParam String schemaId, @RequestParam(value="file.id") String fileId, 
-			@RequestParam(value="schema_root") Integer schemaRoot, Locale locale, HttpServletRequest request) {
+			@RequestParam(value="schema_root") Integer schemaRoot, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
 		ModelActionPojo result = new ModelActionPojo();
 		try {
 			if (temporaryFilesMap.containsKey(fileId)) {

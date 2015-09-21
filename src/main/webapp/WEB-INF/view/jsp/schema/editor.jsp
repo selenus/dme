@@ -31,7 +31,7 @@
 			<div id="main-content">
 				<div class="row">
 					<div class="col-xs-12">
-						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> <small>${schema.label}</small>&nbsp;</h2>		
+						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> <small>${schema.pojo.label}</small>&nbsp;</h2>		
 					</div>
 					<div class="col-xs-12">
 						<div id="schema-editor-layout-container" class="hide">
