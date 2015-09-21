@@ -28,10 +28,15 @@
 				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /></li>
 			</ul>
 			<input type="hidden" id="schema-id" value="${schema.id}" />
+			<input type="hidden" id="schema-write" value="${schema.write}" />
+			<input type="hidden" id="schema-own" value="${schema.own}" />
 			<div id="main-content">
 				<div class="row">
 					<div class="col-xs-12">
-						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> <small>${schema.pojo.label}</small>&nbsp;</h2>		
+						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> 
+						<small>${schema.pojo.label}
+							<c:if test="${!schema.own && !schema.write}"> <span class="glyphicon glyphicon-lock"></span></c:if>
+						</small>&nbsp;</h2>		
 					</div>
 					<div class="col-xs-12">
 						<div id="schema-editor-layout-container" class="hide">
@@ -46,13 +51,15 @@
 										<div class="ui-pane-title">
 											<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.schema_details" /></h4>
 										</div>
-										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
-										<div id="schema-context-buttons" class="ui-pane-subcontainer button-bar">
-											<button type="button" onclick="schemaEditor.exportSchema(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-download'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.export" /></button>
-											<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
-											<button type="button" onclick="schemaEditor.createRoot(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-add'></span> ~ Create root element</button>
-											<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
-										</div>
+										<c:if test="${schema.own || schema.write}">
+											<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
+											<div id="schema-context-buttons" class="ui-pane-subcontainer button-bar">
+												<button type="button" onclick="schemaEditor.exportSchema(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-download'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.export" /></button>
+												<button type="button" onclick="schemaEditor.triggerUploadFile('${schema.id}'); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-cloud-upload'></span> <s:message code="~eu.dariah.de.minfba.schereg.button.import" /></button>
+												<button type="button" onclick="schemaEditor.createRoot(); return false;" class="btn btn-default btn-sm"><span class='glyphicon glyphicon-add'></span> ~ Create root element</button>
+												<button type="button" onclick="return false;" class="btn btn-danger btn-sm"><span class='glyphicon glyphicon-trash'></span> </button>
+											</div>
+										</c:if>
 										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
 										<div class="ui-pane-subcontainer">...</div>
 									</div>
@@ -60,8 +67,10 @@
 										<div class="ui-pane-title">
 											<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.element_details" /></h4>
 										</div>
-										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
-										<div id="schema-element-context-buttons" class="ui-pane-subcontainer"></div>
+										<c:if test="${schema.own || schema.write}">
+											<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
+											<div id="schema-element-context-buttons" class="ui-pane-subcontainer"></div>
+										</c:if>
 										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.details" /></h5>
 										<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
 										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>

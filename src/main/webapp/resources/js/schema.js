@@ -194,8 +194,13 @@ SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 SchemaEditor.prototype.renderSchemaMetadataTabDetail = function(label, data) {
 	var detail = $("<div class=\"row\">");
 	detail.append("<div class=\"schema-metadata-label col-xs-3 col-md-4\">" + label + ":</div>");
-	detail.append("<div class=\"schema-metadata-data col-xs-9 col-md-8\">" + data + "</div>");
 	
+	if (data===true || data===false) {
+		detail.append("<div class=\"schema-metadata-data col-xs-9 col-md-8\"><span aria-hidden=\"true\" class=\"glyphicon glyphicon-" + 
+				(!data ? "unchecked" : "check") + "\"></span></div>");
+	} else {
+		detail.append("<div class=\"schema-metadata-data col-xs-9 col-md-8\">" + data + "</div>");
+	}
 	return detail;
 };
 

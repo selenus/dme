@@ -22,6 +22,11 @@
 	border:		1px solid #BBB;
 }
 
+div.outer-center,
+div.inner-east {
+	overflow: hidden;
+}
+
 .ui-pane-title {
 	background-color: #EEE;
 	padding: 10px 15px 0px 15px;
@@ -41,6 +46,8 @@
 	
 	border-bottom: 1px solid #DDD;
 }
+
+
 
 /*! ================================================================== */
 /*

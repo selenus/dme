@@ -21,7 +21,7 @@ SchemaEditor.prototype.sample_resize = function() {
 	var helperHeight = $(".schema-editor-buttons").offsetParent().innerHeight();
 	var helperTopOffset = $(".schema-editor-buttons").offset().top - $(".schema-editor-buttons").offsetParent().offset().top;
 	
-	var containerHeight = Math.floor(helperHeight - helperTopOffset - 120);
+	var containerHeight = Math.floor(helperHeight - helperTopOffset - 130);
 	
 	$("#schema-sample-output-resource").height(containerHeight - 51);
 	

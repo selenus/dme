@@ -112,7 +112,15 @@ public class SchemaController extends BaseScheregController {
 			schema.setId(null);
 		}
 		
-		schemaService.saveSchema(new AuthWrappedPojo<XmlSchema>(schema, true, false, false, draft), auth);
+		Schema saveSchema = schemaService.findSchemaById(schema.getId());
+		if (saveSchema==null) {
+			saveSchema = schema;
+		} else {
+			saveSchema.setLabel(schema.getLabel());
+			saveSchema.setDescription(schema.getDescription());
+		}
+		
+		schemaService.saveSchema(new AuthWrappedPojo<XmlSchema>((XmlSchema) saveSchema, true, false, false, draft), auth);
 		return result;
 	}
 	

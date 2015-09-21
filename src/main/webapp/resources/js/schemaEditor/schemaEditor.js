@@ -11,6 +11,9 @@ $(window).resize(function() {
 
 var SchemaEditor = function() {
 	this.schemaId = $("#schema-id").val();
+	this.schemaOwn = $("#schema-own").val()==="true";
+	this.schemaWrite = $("#schema-write").val()==="true";
+	
 	this.selectedElementId = -1;
 	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId;
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
@@ -377,26 +380,28 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	_this.elementContextButtons.text("");
 	
 	var actions = [];
-	if (e.elementType === "element") {
-		if (e.elementSubtype==="Nonterminal") {
-			actions[0] = ["addNonterminal", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
-		} else {
-			actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+	if (_this.schemaOwn || _this.schemaWrite) {
+		if (e.elementType === "element") {
+			if (e.elementSubtype==="Nonterminal") {
+				actions[0] = ["addNonterminal", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+			} else {
+				actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+			}
+			actions[1] = ["addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
+			actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+			actions[3] = ["removeElement", "trash", "danger", ""];
+			_this.getElement(e.elementId);	
+		} else if (e.elementType === "grammar") {
+			actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
+			actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+			actions[2] = ["removeElement", "trash", "danger", ""];
+			_this.getGrammar(e.elementId);
+		} else if (e.elementType === "function") {
+			actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
+			actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+			actions[2] = ["removeElement", "trash", "danger", ""];
+			_this.getFunction(e.elementId);
 		}
-		actions[1] = ["addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
-		actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[3] = ["removeElement", "trash", "danger", ""];
-		_this.getElement(e.elementId);	
-	} else if (e.elementType === "grammar") {
-		actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
-		actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[2] = ["removeElement", "trash", "danger", ""];
-		_this.getGrammar(e.elementId);
-	} else if (e.elementType === "function") {
-		actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
-		actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-		actions[2] = ["removeElement", "trash", "danger", ""];
-		_this.getFunction(e.elementId);
 	}
 	
 	var button;
