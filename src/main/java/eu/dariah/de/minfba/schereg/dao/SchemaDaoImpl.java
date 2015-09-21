@@ -16,12 +16,13 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
+import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 
 @Repository
-public class SchemaDaoImpl extends BaseDaoImpl<RightsContainer<Schema>> implements SchemaDao {
+public class SchemaDaoImpl extends TrackedEntityDaoImpl<RightsContainer<Schema>> implements SchemaDao {
 	public SchemaDaoImpl() {
 		super(new RightsContainer<Schema>().getClass());
 	}
@@ -125,7 +126,7 @@ public class SchemaDaoImpl extends BaseDaoImpl<RightsContainer<Schema>> implemen
 		return null;
 	}
 
-	@Override
+	/*@Override
 	public void updateNamespaceByPrefix(Schema s, String string, String string2) {
 		// the query object
         DBObject obj = new BasicDBObject();
@@ -136,13 +137,13 @@ public class SchemaDaoImpl extends BaseDaoImpl<RightsContainer<Schema>> implemen
         Criteria filterContainedNamespace = Criteria.where("namespaces").elemMatch(Criteria.where("prefix").is(string));
                 
         BasicQuery query = new BasicQuery(obj, filterContainedNamespace.getCriteriaObject());	    
-	    
-        
-        
+
         
 	    Update update = new Update(); 
 	    update.set("namespaces.$.url", string2);
-	    	    
+	    	   
+	    
+	    
 	    this.findAndModify(query, update);
-	}
+	}*/
 }

@@ -18,7 +18,7 @@ public interface SchemaService {
 	public void deleteSchemaById(String id);
 	
 	public <T extends Schema> T convertSchema(T newSchema, Schema original);
-	public void upsertSchema(Query query, Update update);
+	//public void upsertSchema(Query query, Update update);
 	
 	public Map<String, String> getAvailableTerminals(String schemaId);
 	public void saveSchema(Schema schema, AuthPojo auth);

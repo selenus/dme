@@ -22,7 +22,7 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	protected final Class<T> clazz;
 	protected final String collectionName;
 	
-	@Autowired private MongoTemplate mongoTemplate;
+	@Autowired protected MongoTemplate mongoTemplate;
 	
 	@Override public Class<?> getClazz() { return clazz; }
 	@Override public String getCollectionName() { return collectionName; }
@@ -73,7 +73,7 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 		return mongoTemplate.findOne(q, this.clazz, this.getCollectionName());
 	}
 	
-	@Override
+	/*@Override
 	public void findAndModify(Query query, Update update) {
 		mongoTemplate.findAndModify(query, update, this.clazz, this.getCollectionName());
 	}
@@ -86,7 +86,7 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 	@Override
 	public void upsert(Query query, Update update) {
 		mongoTemplate.upsert(query, update, this.clazz, this.getCollectionName());
-	}
+	}*/
 	
 	/*@Override
 	public long count() {
@@ -135,11 +135,11 @@ public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
 		return entity;
 	}
 
-	@Override
+	/*@Override
 	public <S extends T> List<S> save(Iterable<S> entites) {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}*/
 
 	protected MongoTemplate getMongoTemplate() {
 		return mongoTemplate;

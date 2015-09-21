@@ -17,13 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
-import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -76,7 +74,6 @@ public class TerminalEditorController extends BaseScheregController {
 			}
 		}
 		model.addAttribute("availableNamespaces", availableNamespaces);
-		
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/terminal/" + terminal.getId() + "/async/saveTerminal");
 		return "schemaEditor/form/element/edit_terminal";
 	}

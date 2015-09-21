@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 
 public class AuthWrappedPojoConverter {
 	
-	public static <T extends Identifiable> AuthWrappedPojo<T> convert(RightsContainer<T> element, String userId) {
+	public static <T extends TrackedEntity> AuthWrappedPojo<T> convert(RightsContainer<T> element, String userId) {
 		if (element==null || element.getElement()==null) {
 			return null;
 		}
@@ -24,7 +25,7 @@ public class AuthWrappedPojoConverter {
 		return result;
 	}
 	
-	public static <T extends Identifiable> List<AuthWrappedPojo<T>> convert(List<RightsContainer<T>> elements, String userId) {
+	public static <T extends TrackedEntity> List<AuthWrappedPojo<T>> convert(List<RightsContainer<T>> elements, String userId) {
 		if (elements==null) {
 			return null;
 		}

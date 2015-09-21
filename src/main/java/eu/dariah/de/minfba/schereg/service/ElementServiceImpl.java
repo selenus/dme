@@ -332,10 +332,18 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			} catch (GenericScheregException e) {
 				logger.error("Failed to save schema", e);
 			};
-						
-			elementDao.updateMulti(
+				
+			List<Element> elements = elementDao.find(Query.query(Criteria.where("schemaId").is(schemaId).and("terminalId").is(terminalId)));
+			if (elements!=null) {
+				for (Element e : elements) {
+					((Nonterminal)e).setTerminalId("");
+					elementDao.save(e);
+				}
+			}
+			
+			/*elementDao.updateMulti(
 					Query.query(Criteria.where("schemaId").is(schemaId).and("terminalId").is(terminalId)), 
-					Update.update("terminalId", ""));
+					Update.update("terminalId", ""));*/
 			
 			return tRemove;
 		} else {

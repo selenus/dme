@@ -41,9 +41,9 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 		if (container==null) {
 			container = createContainer(auth.getUserId());
 		}
-		container.setDraft(schema.isDraft());
 		container.setElement(schema.getPojo());
-		schemaDao.save(container);
+		container.setDraft(schema.isDraft());
+		schemaDao.save(container, auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
@@ -56,7 +56,7 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 			container = createContainer(auth.getUserId());
 		}
 		container.setElement(schema);
-		schemaDao.save(container);
+		schemaDao.save(container, auth.getUserId(), auth.getSessionId());
 	}
 	
 	private RightsContainer<Schema> createContainer(String userId) {
@@ -83,10 +83,10 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 		}
 	}
 	
-	@Override
+	/*@Override
 	public void upsertSchema(Query query, Update update) {
 		schemaDao.upsert(query, update);
-	}
+	}*/
 
 	@Override
 	public <T extends Schema> T convertSchema(T newSchema, Schema original) {
