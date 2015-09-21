@@ -108,4 +108,11 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 			element.pauseTracking();
 		}
 	}
+	@Override
+	public List<Change> getChanges() {
+		if (element!=null) {
+			return element.getChanges();
+		}
+		return null;
+	}
 }

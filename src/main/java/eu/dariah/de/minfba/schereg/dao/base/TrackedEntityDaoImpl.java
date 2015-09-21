@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
@@ -83,24 +84,21 @@ public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends Base
 		
 	@Override
 	public <S extends T> S save(S entity, String userId, String sessionId) {		
-		boolean isNew = false;
 		if (entity.getId()!=null && entity.getId().isEmpty()) {
 			entity.setId(null);
-			isNew = true;
+			entity.addChange(ChangeType.NEW_OBJECT, this.getCollectionName(), null, entity.getId());
 		} else if (!mongoTemplate.exists(Query.query(Criteria.where(ID_FIELD).is(entity.getId())), this.getCollectionName())) {
-			isNew = true;
-		}
-		mongoTemplate.save(entity, this.getCollectionName());
-		
-		if (isNew) {
 			entity.addChange(ChangeType.NEW_OBJECT, this.getCollectionName(), null, entity.getId());
 		}
-		if (entity.isChanged()) {
+		List<Change> changes = entity.flush();
+		mongoTemplate.save(entity, this.getCollectionName());
+		
+		if (changes!=null && changes.size()>0) {
 			ChangeSet c = new ChangeSet();
 			c.setUserId(userId);
 			c.setSessionId(sessionId);
 			c.setEntityId(entity.getId());
-			c.setChanges(entity.flush());
+			c.setChanges(changes);
 			
 			changeSetDao.save(c);
 		}
