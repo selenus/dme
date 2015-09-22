@@ -126,10 +126,10 @@ public class SchemaController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/delete/{id}"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String id) {
+	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String id, HttpServletRequest request) {
 		ModelActionPojo result;
 		if (id!=null && !id.isEmpty()) {
-			schemaService.deleteSchemaById(id);
+			schemaService.deleteSchemaById(id, authInfoHelper.getAuth(request));
 			result = new ModelActionPojo(true);
 		} else {
 			result = new ModelActionPojo(false);

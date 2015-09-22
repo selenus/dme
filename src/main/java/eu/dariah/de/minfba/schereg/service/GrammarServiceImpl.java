@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
@@ -129,13 +130,13 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public void deleteGrammarsBySchemaId(String schemaId) {}
 
 	@Override
-	public DescriptionGrammar deleteGrammarById(String schemaId, String id) {
+	public DescriptionGrammar deleteGrammarById(String schemaId, String id, AuthPojo auth) {
 		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		
 		DescriptionGrammar grammar = grammarDao.findById(id);
 		if (grammar != null) {
 			try {
-				this.removeReference(rootElementId, id);
+				this.removeReference(rootElementId, id, auth);
 				grammarDao.delete(grammar);
 				return grammar;
 			} catch (Exception e) {

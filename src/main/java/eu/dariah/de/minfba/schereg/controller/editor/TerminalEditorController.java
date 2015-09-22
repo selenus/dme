@@ -40,8 +40,8 @@ public class TerminalEditorController extends BaseScheregController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody Terminal removeElement(@PathVariable String schemaId, @PathVariable String terminalId) {
-		return elementService.removeTerminal(schemaId, terminalId);
+	public @ResponseBody Terminal removeElement(@PathVariable String schemaId, @PathVariable String terminalId, HttpServletRequest request) {
+		return elementService.removeTerminal(schemaId, terminalId, authInfoHelper.getAuth(request));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")

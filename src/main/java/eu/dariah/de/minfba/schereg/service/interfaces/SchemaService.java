@@ -15,7 +15,7 @@ import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 public interface SchemaService {
 	public List<Schema> findAllSchemas();
 	public Schema findSchemaById(String id);
-	public void deleteSchemaById(String id);
+	public void deleteSchemaById(String id, AuthPojo auth);
 	
 	public <T extends Schema> T convertSchema(T newSchema, Schema original);
 	//public void upsertSchema(Query query, Update update);
@@ -28,4 +28,7 @@ public interface SchemaService {
 	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth);
 	public boolean getHasWriteAccess(String id, String userId);
 	public boolean getHasShareAccess(String id, String userId);
+	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId);
+	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId);
+	
 }

@@ -9,6 +9,6 @@ public interface Dao {
 	
 	public List<?> findAll();
 	
-	public void delete(String id);
-	public int delete(Collection<String> id);
+	/*public void delete(String id);*/
+	/*public int delete(Collection<String> id);*/
 }

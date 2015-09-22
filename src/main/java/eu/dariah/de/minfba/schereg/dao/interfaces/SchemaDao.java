@@ -4,7 +4,6 @@ import java.util.List;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
@@ -16,7 +15,7 @@ public interface SchemaDao extends TrackedEntityDao<RightsContainer<Schema>> {
 	/* Direct access to Schema for convenience -> no editing, no drafts */
 	public List<Schema> findAllSchemas();
 	public Schema findSchemaById(String id);
-	public void updateContained(Schema s) throws GenericScheregException;
+	public void updateContained(Schema s, String userId, String sessionId) throws GenericScheregException;
 
 	public List<RightsContainer<Schema>> findAllByUserId(String userId);
 	public RightsContainer<Schema> findByIdAndUserId(String schemaId, String userId);

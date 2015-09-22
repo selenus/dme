@@ -1,6 +1,8 @@
 package eu.dariah.de.minfba.schereg.controller.editor;
 
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,37 +81,37 @@ public class ElementEditorController extends BaseScheregController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveLabel")
-	public @ResponseBody ModelActionPojo saveLabel(@Valid Label element, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveLabel(@Valid Label element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			elementService.saveElement(element);
+			elementService.saveElement(element, authInfoHelper.getAuth(request));
 		}		
 		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNonterminal")
-	public @ResponseBody ModelActionPojo saveNonterminal(@Valid Nonterminal element, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveNonterminal(@Valid Nonterminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			elementService.saveElement(element);
+			elementService.saveElement(element, authInfoHelper.getAuth(request));
 		}		
 		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewLabel")
-	public @ResponseBody ModelActionPojo saveNewLabel(@PathVariable String schemaId, @PathVariable String elementId, @Valid Label element, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveNewLabel(@PathVariable String schemaId, @PathVariable String elementId, @Valid Label element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			elementService.createAndAppendElement(schemaId, elementId, element.getName());
+			elementService.createAndAppendElement(schemaId, elementId, element.getName(), authInfoHelper.getAuth(request));
 		}
 		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewNonterminal")
-	public @ResponseBody ModelActionPojo saveNewNonterminal(@PathVariable String schemaId, @PathVariable String elementId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveNewNonterminal(@PathVariable String schemaId, @PathVariable String elementId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			elementService.createAndAppendElement(schemaId, elementId, element.getName());
+			elementService.createAndAppendElement(schemaId, elementId, element.getName(), authInfoHelper.getAuth(request));
 		}
 		return result;
 	}
@@ -159,8 +161,8 @@ public class ElementEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody Element removeElement(@PathVariable String schemaId, @PathVariable String elementId) {
-		return elementService.removeElement(schemaId, elementId);
+	public @ResponseBody Element removeElement(@PathVariable String schemaId, @PathVariable String elementId, HttpServletRequest request) {
+		return elementService.removeElement(schemaId, elementId, authInfoHelper.getAuth(request));
 	}
 	
 

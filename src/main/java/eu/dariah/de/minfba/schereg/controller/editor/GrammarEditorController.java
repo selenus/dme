@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.antlr.v4.tool.ANTLRMessage;
@@ -52,8 +53,8 @@ public class GrammarEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody DescriptionGrammar removeElement(@PathVariable String schemaId, @PathVariable String grammarId) {
-		return grammarService.deleteGrammarById(schemaId, grammarId);
+	public @ResponseBody DescriptionGrammar removeElement(@PathVariable String schemaId, @PathVariable String grammarId, HttpServletRequest request) {
+		return grammarService.deleteGrammarById(schemaId, grammarId, authInfoHelper.getAuth(request));
 	}
 	
 	

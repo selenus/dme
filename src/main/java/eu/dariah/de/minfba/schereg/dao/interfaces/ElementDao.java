@@ -3,8 +3,8 @@ package eu.dariah.de.minfba.schereg.dao.interfaces;
 import java.util.List;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
+import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
-public interface ElementDao extends BaseDao<Element> {
+public interface ElementDao extends TrackedEntityDao<Element> {
 	public List<Element> findBySchemaId(String schemaId);
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
@@ -57,8 +58,8 @@ public class FunctionEditorController extends BaseScheregController {
 	}	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody TransformationFunction removeElement(@PathVariable String schemaId, @PathVariable String functionId) {
-		return functionService.deleteFunctionById(schemaId, functionId);
+	public @ResponseBody TransformationFunction removeElement(@PathVariable String schemaId, @PathVariable String functionId, HttpServletRequest request) {
+		return functionService.deleteFunctionById(schemaId, functionId, authInfoHelper.getAuth(request));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")

@@ -15,7 +15,7 @@ public interface ReferenceDao extends BaseDao<Reference> {
 	 * @throws IllegalArgumentException Thrown if any of the specified references has an invalid ID
 	 * @throws ClassNotFoundException Thrown if a key specifies a class name that cannot be found by the current classloader 
 	 */
-	public void deleteAll(Map<String, Reference[]> referenceMap) throws IllegalArgumentException, ClassNotFoundException;
+	public void deleteAll(Map<String, Reference[]> referenceMap, String userId, String sessionId) throws IllegalArgumentException, ClassNotFoundException;
 
 	public Reference findParentByChildId(String rootId, String childId);
 	public Reference findParentByChildId(Reference reference, String childId);

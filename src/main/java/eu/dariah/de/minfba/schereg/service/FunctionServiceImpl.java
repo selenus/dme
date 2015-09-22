@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.BaseElement;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
@@ -43,13 +44,13 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	}
 
 	@Override
-	public TransformationFunction deleteFunctionById(String schemaId, String id) {
+	public TransformationFunction deleteFunctionById(String schemaId, String id, AuthPojo auth) {
 		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		
 		TransformationFunction function = functionDao.findById(id);
 		if (function != null) {
 			try {
-				this.removeReference(rootElementId, id);
+				this.removeReference(rootElementId, id, auth);
 				functionDao.delete(function);
 				return function;
 			} catch (Exception e) {

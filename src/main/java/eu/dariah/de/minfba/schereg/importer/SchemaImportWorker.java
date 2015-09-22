@@ -105,9 +105,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	@Override
 	public synchronized void registerImportFinished(Schema schema, Nonterminal root, AuthPojo auth) {
 		if (root!=null) {
-			elementService.removeElementTree(schema.getId());
+			elementService.removeElementTree(schema.getId(), auth);
 		}
-		elementService.saveElementHierarchy(root);
+		elementService.saveElementHierarchy(root, auth);
 		schema.setRootNonterminalId(root.getId());
 		schemaService.saveSchema(schema, auth);
 	}

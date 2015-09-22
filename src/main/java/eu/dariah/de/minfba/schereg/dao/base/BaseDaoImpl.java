@@ -16,21 +16,9 @@ import org.springframework.data.mongodb.core.query.Update;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
 
-public class BaseDaoImpl<T extends Identifiable> implements BaseDao<T> {
-	protected static final String ID_FIELD = "_id";
-	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-	protected final Class<T> clazz;
-	protected final String collectionName;
-	
-	@Autowired protected MongoTemplate mongoTemplate;
-	
-	@Override public Class<?> getClazz() { return clazz; }
-	@Override public String getCollectionName() { return collectionName; }
-	
-	
+public abstract class BaseDaoImpl<T extends Identifiable> extends DaoImpl<T> implements BaseDao<T> {	
 	public BaseDaoImpl(Class<?> clazz) {
-		this.clazz = (Class<T>)clazz;
-		this.collectionName = clazz.getSimpleName().substring(0,1).toLowerCase() + clazz.getSimpleName().substring(1);
+		super(clazz);
 	}
 
 	/*@Override

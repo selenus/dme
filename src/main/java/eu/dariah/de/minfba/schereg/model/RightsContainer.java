@@ -38,9 +38,7 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 	
 	public boolean isDraft() { return draft; }
 	public void setDraft(boolean draft) { 
-		if(this.isTracking()) {
-			this.addChange(ChangeType.EDIT_VALUE, "draft", this.draft, draft);
-		}
+		this.addChange(ChangeType.EDIT_VALUE, "draft", this.draft, draft);
 		this.draft = draft; 
 	}
 
@@ -91,27 +89,17 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 	}
 	
 	@Override
-	public boolean isTracking() {
-		return element==null ? false : element.isTracking();
-	}
-	
-	@Override
-	public void startTracking() {
-		if (element!=null) {
-			element.startTracking();
-		}
-	}
-	
-	@Override
-	public void pauseTracking() {
-		if (element!=null) {
-			element.pauseTracking();
-		}
-	}
-	@Override
 	public List<Change> getChanges() {
 		if (element!=null) {
 			return element.getChanges();
+		}
+		return null;
+	}
+	
+	@Override
+	public String getEntityId() {
+		if (this.element!=null) {
+			return this.element.getEntityId();
 		}
 		return null;
 	}

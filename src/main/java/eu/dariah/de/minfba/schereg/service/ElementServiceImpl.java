@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -70,15 +71,15 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 	
 	@Override
-	public void saveOrReplaceRoot(String schemaId, Nonterminal element) {
-		this.removeElementTree(schemaId);
+	public void saveOrReplaceRoot(String schemaId, Nonterminal element, AuthPojo auth) {
+		this.removeElementTree(schemaId, auth);
 		element.setId(null);
-		Reference r = this.saveElementHierarchy(element);
+		Reference r = this.saveElementHierarchy(element, auth);
 				
 		Schema s = schemaDao.findSchemaById(schemaId);
 		s.setRootNonterminalId(r.getId());
 		try {
-			schemaDao.updateContained(s);
+			schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
 		} catch (GenericScheregException e) {
 			logger.error("Failed to save schema", e);
 		}
@@ -171,20 +172,20 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 	
 	@Override
-	public Reference saveElementHierarchy(Element e) {
-		Reference rootReference = this.saveElementsInHierarchy(e);
+	public Reference saveElementHierarchy(Element e, AuthPojo auth) {
+		Reference rootReference = this.saveElementsInHierarchy(e, auth);
 		saveRootReference(rootReference);
 		return rootReference;
 	}
 	
 	@Override
-	public Element saveElement(Element e) {
+	public Element saveElement(Element e, AuthPojo auth) {
 		if (e instanceof Nonterminal) {
 			Nonterminal n = ((Nonterminal)e);
 			n.setName(getNormalizedName(n.getName()));
 			List<Nonterminal> subelements = n.getChildNonterminals();
 			n.setChildNonterminals(null);
-			elementDao.save(e);
+			elementDao.save(e, auth.getUserId(), auth.getSessionId());
 			
 			n.setChildNonterminals(subelements);
 		} else {
@@ -192,14 +193,14 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			l.setName(getNormalizedName(l.getName()));
 			List<Label> subelements = l.getSubLabels();
 			l.setSubLabels(null);
-			elementDao.save(e);
+			elementDao.save(e, auth.getUserId(), auth.getSessionId());
 			
 			l.setSubLabels(subelements);			
 		}
 		return e;
 	}
 	
-	private Reference saveElementsInHierarchy(Element e) {
+	private Reference saveElementsInHierarchy(Element e, AuthPojo auth) {
 		
 		/*
 		 *	TODO: What if the element e is not root but exists as node in another 
@@ -218,7 +219,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			n.setName(getNormalizedName(n.getName()));
 			subelements = n.getChildNonterminals();
 			n.setChildNonterminals(null);
-			elementDao.save(e);
+			elementDao.save(e, auth.getUserId(), auth.getSessionId());
 			
 			n.setChildNonterminals((List<Nonterminal>)subelements);
 			subelementClass = Nonterminal.class;
@@ -227,7 +228,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			l.setName(getNormalizedName(l.getName()));
 			subelements = l.getSubLabels();
 			l.setSubLabels(null);
-			elementDao.save(e);
+			elementDao.save(e, auth.getUserId(), auth.getSessionId());
 			
 			l.setSubLabels((List<Label>)subelements);			
 			subelementClass = Label.class;
@@ -238,7 +239,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			
 			Reference[] subreferences = new Reference[subelements.size()];
 			for (int i=0; i<subreferences.length; i++) {
-				subreferences[i] = saveElementsInHierarchy(subelements.get(i));
+				subreferences[i] = saveElementsInHierarchy(subelements.get(i), auth);
 			}
 			r.getChildReferences().put(subelementClass.getName(), subreferences);
 		}
@@ -250,7 +251,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 
 	@Override
-	public Element createAndAppendElement(String schemaId, String parentElementId, String label) {
+	public Element createAndAppendElement(String schemaId, String parentElementId, String label, AuthPojo auth) {
 		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
@@ -263,7 +264,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			} else {
 				element = new Label(schemaId, getNormalizedName(label));
 			}
-			elementDao.save(element);
+			elementDao.save(element, auth.getUserId(), auth.getSessionId());
 			
 			addChildReference(rParent, element);
 			saveRootReference(rRoot);
@@ -272,16 +273,16 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 			
 	@Override
-	public Element removeElement(String schemaId, String elementId) {
+	public Element removeElement(String schemaId, String elementId, AuthPojo auth) {
 		Element eRoot = findRootBySchemaId(schemaId);
 		if (eRoot.getId().equals(elementId)) {
-			return removeElementTree(schemaId);
+			return removeElementTree(schemaId, auth);
 		}
 		Element eRemove = elementDao.findById(elementId);
 		if (eRemove != null) {
 			try {
-				this.removeReference(eRoot.getId(), elementId);
-				elementDao.delete(elementId);
+				this.removeReference(eRoot.getId(), elementId, auth);
+				elementDao.delete(eRemove, auth.getUserId(), auth.getSessionId());
 				return eRemove;
 			} catch (Exception e) {
 				logger.warn("An error occurred while deleting an element or its references. "
@@ -292,17 +293,17 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 	
 	@Override
-	public Element removeElementTree(String schemaId) {
+	public Element removeElementTree(String schemaId, AuthPojo auth) {
 		Schema s = schemaDao.findSchemaById(schemaId);
 		Element eRoot = findRootBySchemaId(schemaId);
 		if (eRoot!=null) {	
 			try {
-				this.removeTree(eRoot.getId());
-				elementDao.delete(eRoot);
+				this.removeTree(eRoot.getId(), auth);
+				elementDao.delete(eRoot, auth.getUserId(), auth.getSessionId());
 				
 				s.setRootNonterminalId(null);
 				try {
-					schemaDao.updateContained(s);
+					schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
 				} catch (GenericScheregException e) {
 					logger.error("Failed to save schema", e);
 				}
@@ -314,7 +315,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 
 	@Override
-	public Terminal removeTerminal(String schemaId, String terminalId) {
+	public Terminal removeTerminal(String schemaId, String terminalId, AuthPojo auth) {
 		Schema s = schemaDao.findSchemaById(schemaId);
 		Terminal tRemove = null;
 		if (s.getTerminals()!=null) {
@@ -328,7 +329,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		if (tRemove!=null) {
 			s.getTerminals().remove(tRemove);
 			try {
-				schemaDao.updateContained(s);
+				schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
 			} catch (GenericScheregException e) {
 				logger.error("Failed to save schema", e);
 			};
@@ -337,7 +338,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			if (elements!=null) {
 				for (Element e : elements) {
 					((Nonterminal)e).setTerminalId("");
-					elementDao.save(e);
+					elementDao.save(e, auth.getUserId(), auth.getSessionId());
 				}
 			}
 			

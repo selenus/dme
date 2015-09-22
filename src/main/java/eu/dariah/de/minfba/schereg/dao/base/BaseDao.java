@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.dao.base;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,6 @@ public interface BaseDao<T extends Identifiable> extends Dao {
 	public void delete(String id);
 	public void delete(T entity);
 	public void delete(Iterable<? extends T> entities);
-
+	public int delete(Collection<String> id);
 	//public void upsert(Query query, Update update);
 }

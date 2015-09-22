@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.query.BasicQuery;
@@ -89,7 +90,7 @@ public class SchemaDaoImpl extends TrackedEntityDaoImpl<RightsContainer<Schema>>
 	
 	
 	@Override
-	public void updateContained(Schema s) throws GenericScheregException {
+	public void updateContained(Schema s, String userId, String sessionId) throws GenericScheregException {
 		if (s.getId()==null) {
 			throw new GenericScheregException("Contained update only allowed for existing schemata (no ID provided)");
 		}
@@ -98,7 +99,7 @@ public class SchemaDaoImpl extends TrackedEntityDaoImpl<RightsContainer<Schema>>
 			throw new GenericScheregException("Contained update only allowed for existing schemata (unknown ID provided)");
 		}
 		saveS.setElement(s);
-		this.save(saveS);
+		this.save(saveS, userId, sessionId);
 	}
 	
 	@Override

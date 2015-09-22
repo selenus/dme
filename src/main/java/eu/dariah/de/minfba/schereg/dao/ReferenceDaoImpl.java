@@ -10,8 +10,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.base.Dao;
+import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
@@ -55,7 +57,7 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 	}
 	
 	@Override
-	public void deleteAll(Map<String, Reference[]> idMap) throws IllegalArgumentException, ClassNotFoundException {
+	public void deleteAll(Map<String, Reference[]> idMap, String userId, String sessionId) throws IllegalArgumentException, ClassNotFoundException {
 		if (idMap==null) {
 			return;
 		}
@@ -77,7 +79,14 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 				matchingDao = getMatchingDao(clazz);
 				Assert.notNull(matchingDao);
 				
-				int result = matchingDao.delete(deleteIds);
+				int result = 0;
+				if (matchingDao instanceof TrackedEntityDao) {
+					result = ((TrackedEntityDao)matchingDao).delete(deleteIds, userId, sessionId);
+				} else {
+					result = ((BaseDao)matchingDao).delete(deleteIds);
+				}
+				
+				
 				
 				logger.info("Removed {} {} entities in consequence of a delete cascade", result, clazz.getSimpleName());
 			}

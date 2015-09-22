@@ -73,13 +73,15 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 	}
 
 	@Override
-	public void deleteSchemaById(String id) {
+	public void deleteSchemaById(String id, AuthPojo auth) {
 		RightsContainer<Schema> s = schemaDao.findById(id);
 		if (s != null) {
-			if (BaseDaoImpl.isValidObjectId(s.getElement().getRootNonterminalId())) {
-				elementService.removeElement(s.getId(), s.getElement().getRootNonterminalId());
+			if (this.getHasWriteAccess(s, auth.getUserId())) {
+				if (BaseDaoImpl.isValidObjectId(s.getElement().getRootNonterminalId())) {
+					elementService.removeElement(s.getId(), s.getElement().getRootNonterminalId(), auth);
+				}
+				schemaDao.delete(s, auth.getUserId(), auth.getSessionId());
 			}
-			schemaDao.delete(s);
 		}
 	}
 	
@@ -127,17 +129,26 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 		if ( (id==null || id.isEmpty()) && (userId!=null && !userId.isEmpty()) ) {
 			return true;
 		}
-		
 		RightsContainer<Schema> s = schemaDao.findByIdAndUserId(id, userId, true);
+		return this.getHasWriteAccess(s, userId);
+	}
+	
+	@Override
+	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId) {
 		if (s!=null && ( s.getOwnerId().equals(userId) || ( s.getWriteIds()!=null && s.getWriteIds().contains(userId)) ) ) {
 			return true;
 		}
 		return false;
 	}
-	
+		
 	@Override
 	public boolean getHasShareAccess(String id, String userId) {
 		RightsContainer<Schema> s = schemaDao.findByIdAndUserId(id, userId, true);
+		return this.getHasShareAccess(s, userId);
+	}
+	
+	@Override
+	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId) {
 		if (s!=null && ( s.getOwnerId().equals(userId) || ( s.getShareIds()!=null && s.getShareIds().contains(userId)) ) ) {
 			return true;
 		}
