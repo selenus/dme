@@ -24,13 +24,13 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	@Autowired private FunctionDao functionDao;
 	
 	@Override
-	public TransformationFunction createAndAppendFunction(String schemaId, String grammarId, String label) {
+	public TransformationFunction createAndAppendFunction(String schemaId, String grammarId, String label, AuthPojo auth) {
 		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, grammarId);
 		
 		TransformationFunction grammar = new TransformationFunctionImpl(schemaId, getNormalizedName(label));
-		functionDao.save(grammar);
+		functionDao.save(grammar, auth.getUserId(), auth.getSessionId());
 		
 		addChildReference(rParent, grammar);
 		saveRootReference(rRoot);
@@ -51,7 +51,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 		if (function != null) {
 			try {
 				this.removeReference(rootElementId, id, auth);
-				functionDao.delete(function);
+				functionDao.delete(function, auth.getUserId(), auth.getSessionId());
 				return function;
 			} catch (Exception e) {
 				logger.warn("An error occurred while deleting an element or its references. "
@@ -67,7 +67,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	}
 
 	@Override
-	public void saveFunction(TransformationFunctionImpl function) {
+	public void saveFunction(TransformationFunctionImpl function, AuthPojo auth) {
 		List<BaseElement> extElements = function.getExternalInputElements();
 		function.setExternalInputElements(null);
 		
@@ -76,7 +76,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 		
 		function.setName(getNormalizedName(function.getName()));
 		
-		functionDao.save(function);
+		functionDao.save(function, auth.getUserId(), auth.getSessionId());
 		function.setExternalInputElements(extElements);
 		function.setOutputElements(outputElements);
 	}

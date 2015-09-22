@@ -117,10 +117,10 @@ public class ElementEditorController extends BaseScheregController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewGrammar")
-	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String elementId, @Valid DescriptionGrammarImpl grammar, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String elementId, @Valid DescriptionGrammarImpl grammar, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			grammarService.createAndAppendGrammar(schemaId, elementId, grammar.getGrammarName());
+			grammarService.createAndAppendGrammar(schemaId, elementId, grammar.getGrammarName(), authInfoHelper.getAuth(request));
 		}
 		return result;
 	}

@@ -3,8 +3,8 @@ package eu.dariah.de.minfba.schereg.dao.interfaces;
 import java.util.List;
 
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
+import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
-public interface GrammarDao extends BaseDao<DescriptionGrammar> {
+public interface GrammarDao extends TrackedEntityDao<DescriptionGrammar> {
 	public List<DescriptionGrammar> findBySchemaId(String schemaId);
 }

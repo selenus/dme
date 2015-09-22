@@ -7,11 +7,11 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
+import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 
 @Repository
-public class GrammarDaoImpl extends BaseDaoImpl<DescriptionGrammar> implements GrammarDao {
+public class GrammarDaoImpl extends TrackedEntityDaoImpl<DescriptionGrammar> implements GrammarDao {
 	public GrammarDaoImpl() {
 		super(DescriptionGrammar.class);
 	}

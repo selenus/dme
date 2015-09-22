@@ -1,6 +1,5 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -11,14 +10,14 @@ import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 
 public interface GrammarService {
-	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label);
+	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label, AuthPojo auth);
 	
-	public void deleteGrammarsBySchemaId(String schemaId);
+	public void deleteGrammarsBySchemaId(String schemaId, AuthPojo auth);
 	public DescriptionGrammar deleteGrammarById(String schemaId, String id, AuthPojo auth);
 
 	public DescriptionGrammar findById(String grammarId);
 
-	public void saveGrammar(DescriptionGrammarImpl grammar);
+	public void saveGrammar(DescriptionGrammarImpl grammar, AuthPojo auth);
 
 	public Collection<String> saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException;
 	public Collection<String> parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException;

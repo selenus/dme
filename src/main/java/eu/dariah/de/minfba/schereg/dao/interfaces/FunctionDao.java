@@ -3,8 +3,8 @@ package eu.dariah.de.minfba.schereg.dao.interfaces;
 import java.util.List;
 
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
+import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
-public interface FunctionDao extends BaseDao<TransformationFunction> {
+public interface FunctionDao extends TrackedEntityDao<TransformationFunction> {
 	public List<TransformationFunction> findBySchemaId(String schemaId);
 }

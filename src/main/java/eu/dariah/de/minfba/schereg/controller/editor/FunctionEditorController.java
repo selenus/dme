@@ -109,7 +109,7 @@ public class FunctionEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String schemaId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String schemaId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (function.getId().isEmpty()) {
 			function.setId(null);
@@ -124,7 +124,7 @@ public class FunctionEditorController extends BaseScheregController {
 			}		
 		}
 		
-		functionService.saveFunction(function);
+		functionService.saveFunction(function, authInfoHelper.getAuth(request));
 		return result;
 	}
 	

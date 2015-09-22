@@ -66,10 +66,10 @@ public class GrammarEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewFunction")
-	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String grammarId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale) {
+	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String grammarId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			functionService.createAndAppendFunction(schemaId, grammarId, function.getName());
+			functionService.createAndAppendFunction(schemaId, grammarId, function.getName(), authInfoHelper.getAuth(request));
 		}
 		return result;
 	}
@@ -102,7 +102,7 @@ public class GrammarEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
 	public @ResponseBody ModelActionPojo saveGrammar(@Valid DescriptionGrammarImpl grammar, 
-			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult, Locale locale) {
+			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (grammar.getId().isEmpty()) {
 			grammar.setId(null);
@@ -112,7 +112,7 @@ public class GrammarEditorController extends BaseScheregController {
 		grammarService.clearGrammar(gTmp);
 		
 		grammarService.clearGrammar(grammar);
-		grammarService.saveGrammar(grammar);
+		grammarService.saveGrammar(grammar, authInfoHelper.getAuth(request));
 		return result;
 	}
 	

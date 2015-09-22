@@ -1,15 +1,12 @@
 package eu.dariah.de.minfba.schereg.service;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -42,14 +39,14 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	
 		
 	@Override
-	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label) {
+	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label, AuthPojo auth) {
 		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		
 		DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(schemaId, getNormalizedName(label));
 		grammar.setPassthrough(true);
-		grammarDao.save(grammar);
+		grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 		
 		addChildReference(rParent, grammar);
 		saveRootReference(rRoot);
@@ -127,7 +124,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 	
 	@Override
-	public void deleteGrammarsBySchemaId(String schemaId) {}
+	public void deleteGrammarsBySchemaId(String schemaId, AuthPojo auth) {}
 
 	@Override
 	public DescriptionGrammar deleteGrammarById(String schemaId, String id, AuthPojo auth) {
@@ -137,7 +134,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		if (grammar != null) {
 			try {
 				this.removeReference(rootElementId, id, auth);
-				grammarDao.delete(grammar);
+				grammarDao.delete(grammar, auth.getUserId(), auth.getSessionId());
 				return grammar;
 			} catch (Exception e) {
 				logger.warn("An error occurred while deleting an element or its references. "
@@ -153,13 +150,13 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 
 	@Override
-	public void saveGrammar(DescriptionGrammarImpl grammar) {
+	public void saveGrammar(DescriptionGrammarImpl grammar, AuthPojo auth) {
 		List<TransformationFunctionImpl> transformationFunctions = grammar.getTransformationFunctions();
 		grammar.setTransformationFunctions(null);
 		grammar.setLocked(true);
 		grammar.setTemporary(false);
 		grammar.setGrammarName(getNormalizedName(grammar.getGrammarName()));
-		grammarDao.save(grammar);
+		grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 		grammar.setTransformationFunctions(transformationFunctions);
 		
 		if (grammar.isPassthrough()) {
@@ -189,7 +186,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		}
 		
 		grammar.setLocked(false);
-		grammarDao.save(grammar);
+		grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 	}
 
 
