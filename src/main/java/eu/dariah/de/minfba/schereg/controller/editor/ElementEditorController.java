@@ -27,6 +27,7 @@ import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.CommonController;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
@@ -84,6 +85,10 @@ public class ElementEditorController extends BaseScheregController {
 	public @ResponseBody ModelActionPojo saveLabel(@Valid Label element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
+			Label l = (Label)elementService.findById(element.getId());
+			l.setTransient(element.isTransient());
+			l.setName(ElementServiceImpl.getNormalizedName(element.getName()));
+			
 			elementService.saveElement(element, authInfoHelper.getAuth(request));
 		}		
 		return result;
@@ -93,7 +98,12 @@ public class ElementEditorController extends BaseScheregController {
 	public @ResponseBody ModelActionPojo saveNonterminal(@Valid Nonterminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			elementService.saveElement(element, authInfoHelper.getAuth(request));
+			Nonterminal n = (Nonterminal)elementService.findById(element.getId());
+			n.setTerminalId(element.getTerminalId());
+			n.setTransient(element.isTransient());
+			n.setName(ElementServiceImpl.getNormalizedName(element.getName()));
+			
+			elementService.saveElement(n, authInfoHelper.getAuth(request));
 		}		
 		return result;
 	}

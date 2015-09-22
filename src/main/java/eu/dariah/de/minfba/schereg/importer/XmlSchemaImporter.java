@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
@@ -84,7 +85,10 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 			if (this.getListener()!=null) {
 				schema.setNamespaces(new ArrayList<XmlNamespace>());
 				for (String ns : namespaces) {
-					schema.getNamespaces().add(new XmlNamespace("", ns));
+					XmlNamespace namespace = new XmlNamespace("", ns);
+					namespace.setId(new ObjectId().toString());
+					namespace.addChange(ChangeType.NEW_OBJECT, "namespace", null, namespace.getId());
+					schema.getNamespaces().add(namespace);
 				}				
 				schema.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
 				this.getListener().registerImportFinished(schema, rootNonterminal, auth);

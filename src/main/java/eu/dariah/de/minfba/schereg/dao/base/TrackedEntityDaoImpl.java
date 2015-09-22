@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -120,16 +121,17 @@ public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> im
 		mongoTemplate.save(element, this.getCollectionName());
 		
 		if (isNew) {
-			// There are no changes to a new entity other than it is new
-			changes = new ArrayList<Change>();
-			changes.add(new ChangeImpl<String>(ChangeType.NEW_OBJECT, this.getCollectionName(), null, element.getId()));
+			if (changes==null) {
+				changes = new ArrayList<Change>();
+			}
+			changes.add(new ChangeImpl<String>(ChangeType.NEW_OBJECT, this.getCollectionName(), null, element.getId(), DateTime.now()));
 		}
 		
 		this.createAndSaveChangeSet(changes, element.getId(), element.getEntityId(), userId, sessionId);
 		return element;
 	}
 	
-	private void createAndSaveChangeSet(List<Change> changes, String elementId, String parentEntityId, String userId, String sessionId) {
+	protected void createAndSaveChangeSet(List<Change> changes, String elementId, String parentEntityId, String userId, String sessionId) {
 		if (changes!=null && changes.size()>0) {
 			ChangeSet c = new ChangeSet();
 			c.setUserId(userId);

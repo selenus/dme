@@ -89,14 +89,6 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 	}
 	
 	@Override
-	public List<Change> getChanges() {
-		if (element!=null) {
-			return element.getChanges();
-		}
-		return null;
-	}
-	
-	@Override
 	public String getEntityId() {
 		if (this.element!=null) {
 			return this.element.getEntityId();

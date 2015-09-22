@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseService {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
-	protected static String getNormalizedName(String label) {
+	public static String getNormalizedName(String label) {
 		return label.substring(0,1).toUpperCase() + label.substring(1);
 	}
 }

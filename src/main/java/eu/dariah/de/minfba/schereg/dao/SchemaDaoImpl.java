@@ -14,8 +14,10 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
@@ -125,6 +127,33 @@ public class SchemaDaoImpl extends TrackedEntityDaoImpl<RightsContainer<Schema>>
 			return result.getNamespaces().get(0);
 		}
 		return null;
+	}
+	
+	@Override
+	public <S extends RightsContainer<Schema>> S save(S element, String userId, String sessionId) {
+		/* XmlTerminal and XmlNamespace objects are saved with the schema */
+		if (element.getElement() instanceof XmlSchema) {
+			List<Change> changes;
+			XmlSchema s = (XmlSchema)element.getElement();
+			if (s.getTerminals()!=null) {
+				for (XmlTerminal xmlT : s.getTerminals()) {
+					changes = xmlT.flush();
+					if (changes!=null) {
+						this.createAndSaveChangeSet(changes, xmlT.getId(), s.getId(), userId, sessionId);
+					}
+				}
+			}
+			if (s.getNamespaces()!=null) {
+				for (XmlNamespace xmlNs : s.getNamespaces()) {
+					changes = xmlNs.flush();
+					if (changes!=null) {
+						this.createAndSaveChangeSet(changes, xmlNs.getId(), s.getId(), userId, sessionId);
+					}
+				}
+			}
+		}
+		
+		return super.save(element, userId, sessionId);
 	}
 
 	/*@Override

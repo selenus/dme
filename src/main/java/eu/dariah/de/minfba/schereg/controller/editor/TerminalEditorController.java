@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
@@ -104,6 +105,7 @@ public class TerminalEditorController extends BaseScheregController {
 			}
 			if (element.getId()==null) {
 				element.setId(new ObjectId().toString());
+				element.addChange(ChangeType.NEW_OBJECT, "terminal", null, element.getId());
 				s.getTerminals().add(element);
 			} else {
 				for (int i=0; i<s.getTerminals().size(); i++) {
