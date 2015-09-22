@@ -26,6 +26,7 @@ import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
+import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
@@ -35,6 +36,7 @@ import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.FieldErrorPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
@@ -104,15 +106,34 @@ public class GrammarEditorController extends BaseScheregController {
 	public @ResponseBody ModelActionPojo saveGrammar(@Valid DescriptionGrammarImpl grammar, 
 			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (!result.isSuccess()) {
+			return result;
+		}
 		if (grammar.getId().isEmpty()) {
 			grammar.setId(null);
 		}
 		
-		DescriptionGrammar gTmp = this.getTemporaryGrammar(grammar.getId());
+		DescriptionGrammar gSave = null;
+		if (grammar.getId()!=null) {
+			gSave = grammarService.findById(grammar.getId());
+			if (gSave!=null) {
+				gSave.setBaseMethod(grammar.getBaseMethod());
+				gSave.setError(grammar.isError());
+				gSave.setGrammarName(grammar.getGrammarName());
+				gSave.setPassthrough(grammar.isPassthrough());
+				gSave.setSchemaId(grammar.getSchemaId());
+				gSave.setTemporary(grammar.isTemporary());
+			}
+		}
+		if (gSave==null) {
+			gSave = grammar;
+		}
+		
+		DescriptionGrammar gTmp = this.getTemporaryGrammar(gSave.getId());
 		grammarService.clearGrammar(gTmp);
 		
-		grammarService.clearGrammar(grammar);
-		grammarService.saveGrammar(grammar, authInfoHelper.getAuth(request));
+		grammarService.clearGrammar(gSave);
+		grammarService.saveGrammar((DescriptionGrammarImpl)gSave, authInfoHelper.getAuth(request));
 		return result;
 	}
 	

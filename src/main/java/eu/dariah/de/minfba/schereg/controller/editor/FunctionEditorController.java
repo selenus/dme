@@ -111,20 +111,38 @@ public class FunctionEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
 	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String schemaId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
+		if (!result.isSuccess()) {
+			return result;
+		}
 		if (function.getId().isEmpty()) {
 			function.setId(null);
 		}
 		
-		if (!function.getFunction().trim().isEmpty()) {
-			ModelActionPojo validationResult = this.validateFunction(schemaId, functionId, function.getFunction());
+		TransformationFunction fSave = null;
+		if (function.getId()!=null) {
+			fSave = functionService.findById(function.getId());
+			if (fSave!=null) {
+				fSave.setError(function.isError());
+				fSave.setFunction(function.getFunction());
+				fSave.setName(function.getName());
+				fSave.setSchemaId(function.getSchemaId());
+			}
+		}
+		if (fSave==null) {
+			fSave = function;
+		}
+		
+		
+		if (!fSave.getFunction().trim().isEmpty()) {
+			ModelActionPojo validationResult = this.validateFunction(schemaId, functionId, fSave.getFunction());
 			if (validationResult.isSuccess() && !validationResult.hasErrors()) {
-				function.setError(false);
+				fSave.setError(false);
 			} else {
-				function.setError(true);
+				fSave.setError(true);
 			}		
 		}
 		
-		functionService.saveFunction(function, authInfoHelper.getAuth(request));
+		functionService.saveFunction((TransformationFunctionImpl)fSave, authInfoHelper.getAuth(request));
 		return result;
 	}
 	
