@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.dao.base;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import eu.dariah.de.minfba.core.metamodel.tracking.Change;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeImpl;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
@@ -107,14 +109,21 @@ public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> im
 			
 	@Override
 	public <S extends T> S save(S element, String userId, String sessionId) {		
+		boolean isNew = false;
 		if (element.getId()!=null && element.getId().isEmpty()) {
 			element.setId(null);
-			element.addChange(ChangeType.NEW_OBJECT, this.getCollectionName(), null, element.getId());
+			isNew = true;
 		} else if (!mongoTemplate.exists(Query.query(Criteria.where(ID_FIELD).is(element.getId())), this.getCollectionName())) {
-			element.addChange(ChangeType.NEW_OBJECT, this.getCollectionName(), null, element.getId());
+			isNew = true;
 		}
 		List<Change> changes = element.flush();
 		mongoTemplate.save(element, this.getCollectionName());
+		
+		if (isNew) {
+			// There are no changes to a new entity other than it is new
+			changes = new ArrayList<Change>();
+			changes.add(new ChangeImpl<String>(ChangeType.NEW_OBJECT, this.getCollectionName(), null, element.getId()));
+		}
 		
 		this.createAndSaveChangeSet(changes, element.getId(), element.getEntityId(), userId, sessionId);
 		return element;
