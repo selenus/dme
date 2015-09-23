@@ -17,6 +17,7 @@ var SchemaEditor = function() {
 	                          "~eu.dariah.de.minfba.schereg.model.schema.draft",
 	                          "~eu.dariah.de.minfba.schereg.notification.deleted.head",
 	                          "~eu.dariah.de.minfba.schereg.notification.deleted.body"]);
+	this.loadChanges();
 	this.createTable();
 	this.assignTableEvents();
 };
@@ -111,6 +112,8 @@ SchemaEditor.prototype.handleSelection = function(id) {
 		$("#tab-schema-elements").addClass("hide");
 		$("#schema-metadata").html("");
 		$("#schema-elements").html("");
+		$("#schema-activity").html("");
+		_this.loadChanges();
 	} else {
 		$("#tab-schema-metadata").removeClass("hide");
 		$("#tab-schema-elements").removeClass("hide");
@@ -145,8 +148,32 @@ SchemaEditor.prototype.handleSelection = function(id) {
 	        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
 	        }
 		});
+		
+		_this.loadChanges(id);
 	}
 };
+
+SchemaEditor.prototype.loadChanges = function(id) {
+	var url;
+	if (id==null || id==undefined) {
+		url = "/async/getChanges";
+	} else {
+		url = "/async/getChangesForEntity/" + id;
+	}
+	
+	
+	$.ajax({
+        url: window.location.pathname + url,
+        type: "GET",
+        dataType: "json",
+        success: function(data) { __util.renderActivities("#schema-activity", id, data); },
+        error: function(textStatus) {
+        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
+        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+        }
+	});
+}
 
 SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	$("#schema-metadata").html("");

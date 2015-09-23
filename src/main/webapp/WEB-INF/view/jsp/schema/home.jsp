@@ -70,9 +70,9 @@
 							<li role="presentation" id="tab-schema-elements" class="hide"><a href="#schema-elements" aria-controls="schema-elements" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.elements" /></a></li>
 						</ul>
 						<div class="tab-content">
-							<div role="tabpanel" class="tab-pane active" id="schema-activity">...</div>
-							<div role="tabpanel" class="tab-pane" id="schema-metadata">...</div>
-							<div role="tabpanel" class="tab-pane" id="schema-elements">...</div>
+							<div role="tabpanel" class="tab-pane active" id="schema-activity"></div>
+							<div role="tabpanel" class="tab-pane" id="schema-metadata"></div>
+							<div role="tabpanel" class="tab-pane" id="schema-elements"></div>
 						</div>
 					</div>
 				</div>

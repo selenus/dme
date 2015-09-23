@@ -8,11 +8,13 @@ import org.springframework.data.mongodb.core.query.Update;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
+import eu.dariah.de.minfba.schereg.service.base.BaseService;
 
-public interface SchemaService {
+public interface SchemaService extends BaseService {
 	public List<Schema> findAllSchemas();
 	public Schema findSchemaById(String id);
 	public void deleteSchemaById(String id, AuthPojo auth);
@@ -30,5 +32,6 @@ public interface SchemaService {
 	public boolean getHasShareAccess(String id, String userId);
 	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId);
 	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId);
+	public List<ChangeSet> getChangeSetForAllSchemas();
 	
 }

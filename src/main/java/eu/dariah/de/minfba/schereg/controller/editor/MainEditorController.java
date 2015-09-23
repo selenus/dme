@@ -81,6 +81,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 	@Autowired private SchemaService schemaService;
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaImportWorker importWorker;
+	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	private String tmpUploadDirPath;
@@ -98,7 +99,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 	@RequestMapping(method=GET, value={"/", ""})
 	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		model.addAttribute("schema", AuthWrappedPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));
+		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));
 		if (this.getPersistedSessionId(model)==null) {
 			this.createSession(schemaId, model, locale);
 		}
@@ -382,6 +383,8 @@ public class MainEditorController extends BaseScheregController implements Initi
 		
 		return result;
 	}
+	
+	
 	
 	private void fillValueMap(Map<String, String> valueMap, Resource r) {
 		if (!valueMap.containsKey(r.getElementId())) {

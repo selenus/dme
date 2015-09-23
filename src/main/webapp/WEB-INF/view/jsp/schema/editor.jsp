@@ -61,7 +61,7 @@
 											</div>
 										</c:if>
 										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
-										<div class="ui-pane-subcontainer">...</div>
+										<div class="ui-pane-subcontainer" id="schema-context-activities"></div>
 									</div>
 									<div id="schema-element-context-container" class="hide">
 										<div class="ui-pane-title">
@@ -74,7 +74,7 @@
 										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.details" /></h5>
 										<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
 										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
-										<div>...</div>
+										<div id="schema-element-context-activities">...</div>
 									</div>
 								</div>
 								<div id="schema-editor-sample-pane" class="inner-east">

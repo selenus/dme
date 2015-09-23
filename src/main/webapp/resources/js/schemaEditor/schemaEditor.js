@@ -66,6 +66,7 @@ var SchemaEditor = function() {
 	});
 	
 	this.sample_init();
+	this.activities_init();
 }
 
 SchemaEditor.prototype.initLayout = function() {
@@ -135,9 +136,10 @@ SchemaEditor.prototype.initGraph = function() {
 	this.schema = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
  	this.graph.addArea(this.schema);
  	
- 	schemaEditor.loadElementHierarchy();
-	schemaEditor.resizeLayout();
-	schemaEditor.resizeContent();
+ 	this.loadElementHierarchy();
+ 	this.resizeLayout();
+ 	this.resizeContent();
+	this.activities_loadForSchema();
 };
 
 SchemaEditor.prototype.resizeLayout = function() {
@@ -370,6 +372,7 @@ SchemaEditor.prototype.deselectionHandler = function() {
 	
 	_this.elementContextContainer.addClass("hide");
 	_this.schemaContextContainer.removeClass("hide");
+	_this.activities_loadForSchema();
 };
 
 SchemaEditor.prototype.selectionHandler = function(e) {
@@ -413,6 +416,7 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 				 "</button> ";
 		_this.elementContextButtons.append(button);
 	}
+	_this.activities_loadForElement(_this.selectedElementId);
 	
 	_this.elementContextContainer.removeClass("hide");
 	_this.schemaContextContainer.addClass("hide");

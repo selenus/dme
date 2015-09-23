@@ -8,8 +8,9 @@ import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
+import eu.dariah.de.minfba.schereg.service.base.BaseService;
 
-public interface GrammarService {
+public interface GrammarService extends BaseService {
 	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label, AuthPojo auth);
 	
 	public void deleteGrammarsBySchemaId(String schemaId, AuthPojo auth);

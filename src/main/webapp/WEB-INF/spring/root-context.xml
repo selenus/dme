@@ -38,4 +38,5 @@
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.service"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.util"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.importer"/>
+	<context:component-scan base-package="eu.dariah.de.minfba.schereg.pojo.converter"/>
 </beans>

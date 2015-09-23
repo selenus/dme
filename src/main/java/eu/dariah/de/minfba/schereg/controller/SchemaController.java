@@ -4,6 +4,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,19 +28,23 @@ import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.BaseSchema;
 import eu.dariah.de.minfba.core.metamodel.BaseTerminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
+import eu.dariah.de.minfba.schereg.pojo.ChangeSetPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
+import eu.dariah.de.minfba.schereg.pojo.converter.ChangeSetPojoConverter;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema")
 public class SchemaController extends BaseScheregController {
 	@Autowired private SchemaService schemaService;
+	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	
 	public SchemaController() {
 		super("schema");
@@ -61,21 +66,20 @@ public class SchemaController extends BaseScheregController {
 	public @ResponseBody DataTableList<AuthWrappedPojo<Schema>> getData(Model model, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
-		List<AuthWrappedPojo<Schema>> pojos = AuthWrappedPojoConverter.convert(schemas, auth.getUserId());	
+		List<AuthWrappedPojo<Schema>> pojos = authPojoConverter.convert(schemas, auth.getUserId());	
 		return new DataTableList<AuthWrappedPojo<Schema>>(pojos);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData/{id}")
 	public @ResponseBody AuthWrappedPojo<Schema> getSchema(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		return AuthWrappedPojoConverter.convert(schemaService.findByIdAndAuth(id, auth), auth.getUserId());
+		return authPojoConverter.convert(schemaService.findByIdAndAuth(id, auth), auth.getUserId());
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getElements/{id}")
 	public @ResponseBody Schema getElements(@PathVariable String id, Model model, Locale locale) {
 		return schemaService.findSchemaById(id);
 	}
-	
 	
 	@Secured("IS_AUTHENTICATED_FULLY")
 	@RequestMapping(method=GET, value={"/forms/add"})

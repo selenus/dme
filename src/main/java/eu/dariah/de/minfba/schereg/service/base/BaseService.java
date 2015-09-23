@@ -1,12 +1,12 @@
 package eu.dariah.de.minfba.schereg.service.base;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
 
-public abstract class BaseService {
-	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-	public static String getNormalizedName(String label) {
-		return label.substring(0,1).toUpperCase() + label.substring(1);
-	}
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
+
+public interface BaseService {
+	public List<ChangeSet> getChangeSetForEntity(String entityId);
+	public List<ChangeSet> getChangeSetForElement(String elementId);
+	public List<ChangeSet> getChangeSetForEntities(List<String> entityIds);
+	public List<ChangeSet> getChangeSetForElements(List<String> elementIds);
 }

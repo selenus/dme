@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,23 +8,23 @@ import java.util.Map;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
-import eu.dariah.de.minfba.schereg.service.base.BaseService;
+import eu.dariah.de.minfba.schereg.service.base.BaseServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Service
-public class SchemaServiceImpl extends BaseService implements SchemaService {
+public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaDao schemaDao;
 
@@ -153,5 +154,20 @@ public class SchemaServiceImpl extends BaseService implements SchemaService {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<ChangeSet> getChangeSetForAllSchemas() {
+		Query q = new Query();
+		q.fields().include("_id");
+		List<RightsContainer<Schema>> schemas = schemaDao.find(q);
+		List<String> ids = new ArrayList<String>();
+		if (schemas!=null) {
+			for (RightsContainer<Schema> s : schemas) {
+				ids.add(s.getId());
+			}
+		}
+	
+		return super.getChangeSetForElements(ids);
 	}
 }
