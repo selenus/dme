@@ -113,9 +113,9 @@ public class GrammarEditorController extends BaseScheregController {
 			grammar.setId(null);
 		}
 		
-		DescriptionGrammar gSave = null;
+		DescriptionGrammarImpl gSave = null;
 		if (grammar.getId()!=null) {
-			gSave = grammarService.findById(grammar.getId());
+			gSave = (DescriptionGrammarImpl)grammarService.findById(grammar.getId());
 			if (gSave!=null) {
 				gSave.setBaseMethod(grammar.getBaseMethod());
 				gSave.setError(grammar.isError());
@@ -123,6 +123,7 @@ public class GrammarEditorController extends BaseScheregController {
 				gSave.setPassthrough(grammar.isPassthrough());
 				gSave.setSchemaId(grammar.getSchemaId());
 				gSave.setTemporary(grammar.isTemporary());
+				gSave.setGrammarContainer(grammar.getGrammarContainer());
 			}
 		}
 		if (gSave==null) {
