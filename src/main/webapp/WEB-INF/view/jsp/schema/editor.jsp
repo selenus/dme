@@ -78,9 +78,9 @@
 									</div>
 								</div>
 								<div id="schema-editor-sample-pane" class="inner-east">
-									<c:set var="currentSampleCount" value="${sampleResources==null ? 0 : fn:length(sampleResources)}"/>
+									<c:set var="currentSampleCount" value="${session.sampleOutput==null ? 0 : fn:length(session.sampleOutput)}"/>
 									<input type="hidden" id="currentSampleCount" value="${currentSampleCount}">
-									<input type="hidden" id="currentSampleIndex" value="${valueMapIndex==null ? 0 : valueMapIndex}">
+									<input type="hidden" id="currentSampleIndex" value="${session.selectedOutputIndex==null ? 0 : session.selectedOutputIndex}">
 									
 									<div class="ui-pane-title">
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.title" /></h4>
@@ -106,7 +106,7 @@
 										<div class="tab-content">
 											<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount==0}"> active</c:if>" id="schema-sample-input-container">
 												<c:choose>
-													<c:when test="${sample!=null && sample!=''}">
+													<c:when test="${session.sampleInput!=null && session.sampleInput!=''}">
 														<input type="hidden" id="sample-set" value="true">
 														<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" />" rows="3"></textarea>
 													</c:when>
@@ -118,7 +118,7 @@
 											</div>
 											<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="schema-sample-output-container">
 												<div class="button-bar">
-													<span class="schema-sample-output-counter"><c:if test="${currentSampleCount>0}">${valueMapIndex} / ${currentSampleCount}</c:if></span>
+													<span class="schema-sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
 													<button id="btn-sample-prev-resource" type="button" onclick="schemaEditor.sample_getPrevResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 													<button id="btn-sample-next-resource" type="button" onclick="schemaEditor.sample_getNextResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 												</div>

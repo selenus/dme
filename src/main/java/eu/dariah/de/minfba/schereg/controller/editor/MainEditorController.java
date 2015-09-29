@@ -8,8 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,14 +16,11 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,17 +32,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
@@ -56,25 +48,25 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.util.Stopwatch;
-import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.processing.exception.ProcessingConfigException;
 import eu.dariah.de.minfba.processing.model.base.Resource;
 import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
+import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}")
-@SessionAttributes({"sample", "sampleResources", "log", "valueMap", "persistedSessionId", "valueMapIndex"})
 public class MainEditorController extends BaseScheregController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
@@ -82,6 +74,8 @@ public class MainEditorController extends BaseScheregController implements Initi
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
+	
+	@Autowired private PersistedSessionService sessionService;
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	private String tmpUploadDirPath;
@@ -100,9 +94,12 @@ public class MainEditorController extends BaseScheregController implements Initi
 	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));
-		if (this.getPersistedSessionId(model)==null) {
-			this.createSession(schemaId, model, locale);
-		}
+		try {
+			PersistedSession s = sessionService.accessOrCreate(schemaId, request.getSession().getId(), auth.getUserId());
+			model.addAttribute("session", s);
+		} catch (GenericScheregException e) {
+			logger.error("Failed to load/initialize persisted session", e);
+		} 
 		return "schemaEditor";
 	}
 	
@@ -123,6 +120,12 @@ public class MainEditorController extends BaseScheregController implements Initi
 	@RequestMapping(method=GET, value={"/forms/fileupload"})
 	public String getImportForm(Model model, Locale locale) {
 		return "common/fileupload";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/createSession")
+	public @ResponseBody ModelActionPojo createSession(@PathVariable String schemaId, HttpServletRequest request, Locale locale) {
+		sessionService.deleteSession(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		return new ModelActionPojo(true);
 	}
 	
 	@PreAuthorize("isAuthenticated()")
@@ -293,69 +296,51 @@ public class MainEditorController extends BaseScheregController implements Initi
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/applySample")
-	public @ResponseBody ModelActionPojo applySample(@PathVariable String schemaId, @RequestParam String sample, Model model, Locale locale) {
-		// TODO: Persist this in db for the session or user and store only an id in the session
-		model.addAttribute("sample", sample);
-		this.addLogEntry(model, schemaId, LogType.INFO, "~ Sample set for your current session");
+	public @ResponseBody ModelActionPojo applySample(@PathVariable String schemaId, @RequestParam String sample, HttpServletRequest request, Locale locale) {
+		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		s.setSampleInput(sample);
+		s.addLogEntry(LogType.INFO, "~ Sample set for your current session");
+		sessionService.saveSession(s);
 		
 		return new ModelActionPojo(true);
 	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/createSession")
-	public @ResponseBody ModelActionPojo createSession(@PathVariable String schemaId, Model model, Locale locale) {
-		model.asMap().remove("sample");
-		model.asMap().remove("sampleResources");
-		model.asMap().remove("log");
-		model.asMap().remove("valueMap");
-		model.asMap().remove("valueMapIndex");
-		model.asMap().remove("persistedSessionId");
 		
-		String sessionId = UUID.randomUUID().toString();
-		model.addAttribute("persistedSessionId", sessionId);
-		
-		this.addLogEntry(model, schemaId, LogType.INFO, String.format("~ Schema editor session started [id: %s]", sessionId));
-		return new ModelActionPojo(true);
-	}
-	
-	private String getPersistedSessionId(Model model) {
-		if (model.asMap().containsKey("persistedSessionId")) {
-			return (String)model.asMap().get("persistedSessionId");
-		}
-		return null;
-	}
-	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getSampleResource")
-	public @ResponseBody Resource getSampleResource(@PathVariable String schemaId, @RequestParam(defaultValue="0") int index, Model model, Locale locale) {
-		if (model.asMap().containsKey("sampleResources")) {
-			List<Resource> resources = (List<Resource>)model.asMap().get("sampleResources");
-			if (resources.size()>index) {
+	public @ResponseBody Resource getSampleResource(@PathVariable String schemaId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, Locale locale) {
+		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		
+		if (s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
+			
+			if (s.getSampleOutput().size()>index) {
 				Map<String, String> valueMap = new HashMap<String, String>();
-				this.fillValueMap(valueMap, resources.get(index));
+				this.fillValueMap(valueMap, s.getSampleOutput().get(index));
 				
-				model.addAttribute("valueMap", valueMap);
-				model.addAttribute("valueMapIndex", index);
+				s.setSelectedValueMap(valueMap);
+				s.setSelectedOutputIndex(index);
 				
+				sessionService.saveSession(s);
 				
-				return resources.get(index);
+				return s.getSampleOutput().get(index);
 			} 
 		}
 		return null;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
-	public @ResponseBody ModelActionPojo executeSample(@PathVariable String schemaId, Model model, Locale locale) {
+	public @ResponseBody ModelActionPojo executeSample(@PathVariable String schemaId, HttpServletRequest request, Locale locale) {
 		Stopwatch sw = new Stopwatch();
-		String sample = (String)model.asMap().get("sample");
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(0);
 		
+		PersistedSession session = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+				
 		XmlSchema s = (XmlSchema)schemaService.findSchemaById(schemaId);
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(schemaId, true);
 		
 		XmlStringProcessingService processingSvc = appContext.getBean(XmlStringProcessingService.class);
 		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
 		
-		processingSvc.setXmlString(sample);
+		processingSvc.setXmlString(session.getSampleInput());
 		processingSvc.setSchema(s);
 		processingSvc.addConsumptionService(consumptionService);
 		try {
@@ -364,19 +349,22 @@ public class MainEditorController extends BaseScheregController implements Initi
 			sw.start();
 			processingSvc.run();
 			
-			if (consumptionService.getResources()!=null && consumptionService.getResources().size()>0) {
-				model.addAttribute("sampleResources", consumptionService.getResources());
+			session.setSampleOutput(consumptionService.getResources());
+			session.setSelectedOutputIndex(0);
+			
+			if (session.getSampleOutput()!=null && session.getSampleOutput().size()>0) {
+				result.setPojo(session.getSampleOutput().size());
 				
-				result.setPojo(consumptionService.getResources().size());
-				
-				if (consumptionService.getResources().size()==1) {
-					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed (total %sms): 1 resource found", sw.getElapsedTime(), consumptionService.getResources().size()));
+				if (session.getSampleOutput().size()==1) {
+					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample input processed (total %sms): 1 resource found", sw.getElapsedTime(), consumptionService.getResources().size()));
 				} else {
-					this.addLogEntry(model, schemaId, LogType.SUCCESS, String.format("~ Sample input processed (total %sms): %s resources found", sw.getElapsedTime(), consumptionService.getResources().size()));	
+					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample input processed (total %sms): %s resources found", sw.getElapsedTime(), consumptionService.getResources().size()));	
 				}
 			} else {
-				this.addLogEntry(model, schemaId, LogType.WARNING, "~ Sample input processed: No resources found");
+				session.addLogEntry(LogType.WARNING, "~ Sample input processed: No resources found");
 			}
+			
+			sessionService.saveSession(session);
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);
 		}
@@ -398,42 +386,15 @@ public class MainEditorController extends BaseScheregController implements Initi
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getLog")
-	public @ResponseBody Collection<LogEntryPojo> getLog(@PathVariable String schemaId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, Model model) {
-		List<LogEntryPojo> log = getLog(model, schemaId);
+	public @ResponseBody Collection<LogEntryPojo> getLog(@PathVariable String schemaId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, HttpServletRequest request) {
+		PersistedSession session = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		List<LogEntryPojo> log = session.getSortedSessionLog();
 		if (tsMin!=null && log.size()>0 && log.get(0).getNumericTimestamp()<=tsMin) {
 			return new ArrayList<LogEntryPojo>();
 		}
 		
 		if (log.size() > maxEntries) {
 			return log.subList(0, maxEntries);
-		}
-		return log;
-	}
-	
-	private List<LogEntryPojo> getLog(Model model, String schemaId) {
-		List<LogEntryPojo> result = this.checkLog(model, schemaId).get(schemaId);
-		Collections.sort(result);
-		Collections.reverse(result);
-		return result;
-	}
-	
-	private void addLogEntry(Model model, String schemaId, LogType type, String message) {
-		LogEntryPojo entry = new LogEntryPojo();
-		entry.setTimestamp(DateTime.now());
-		entry.setLogType(type);
-		entry.setMessage(message);
-		
-		this.checkLog(model, schemaId).get(schemaId).add(entry);
-	}
-	
-	private Map<String, List<LogEntryPojo>> checkLog(Model model, String schemaId) {
-		if (model.asMap().get("log")==null) {
-			model.addAttribute("log", new HashMap<String, List<LogEntryPojo>>());
-		}
-		
-		Map<String, List<LogEntryPojo>> log = (Map<String, List<LogEntryPojo>>)model.asMap().get("log");
-		if (!log.containsKey(schemaId)) {
-			log.put(schemaId, new ArrayList<LogEntryPojo>());
 		}
 		return log;
 	}

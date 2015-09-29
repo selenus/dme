@@ -36,15 +36,16 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
+import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/function/{functionId}")
-@SessionAttributes({"valueMap"})
 public class FunctionEditorController extends BaseScheregController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
@@ -52,6 +53,7 @@ public class FunctionEditorController extends BaseScheregController {
 	@Autowired private ElementService elementService;
 	
 	@Autowired private TransformationEngine engine;
+	@Autowired private PersistedSessionService sessionService;
 	
 	public FunctionEditorController() {
 		super("schemaEditor");
@@ -68,15 +70,14 @@ public class FunctionEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String schemaId, @PathVariable String functionId, Model model, Locale locale) {
+	public String getEditForm(@PathVariable String schemaId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
 		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
 		
-		if (model.asMap().containsKey("valueMap")) {	
-			Map<String, String> valueMap = (Map<String, String>)model.asMap().get("valueMap");
+		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s.getSelectedValueMap()!=null) {
 			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
-			
-			if (valueMap.containsKey(elementId)) {
-				model.addAttribute("elementSample", valueMap.get(elementId));
+			if (s.getSelectedValueMap().containsKey(elementId)) {
+				model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
 			}
 		}
 		

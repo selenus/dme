@@ -36,19 +36,22 @@ import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.FieldErrorPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
+import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/grammar/{grammarId}")
-@SessionAttributes({"valueMap"})
 public class GrammarEditorController extends BaseScheregController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
 	@Autowired protected TransformationEngine engine;
+	
+	@Autowired private PersistedSessionService sessionService;
 		
 	public GrammarEditorController() {
 		super("schemaEditor");
@@ -82,18 +85,17 @@ public class GrammarEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String schemaId, @PathVariable String grammarId, Model model, Locale locale) {
+	public String getEditForm(@PathVariable String schemaId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
 		DescriptionGrammarImpl g = (DescriptionGrammarImpl)grammarService.findById(grammarId);
 		if (g.getGrammarContainer()==null) {
 			g.setGrammarContainer(new GrammarContainer());
 		}
-		
-		if (model.asMap().containsKey("valueMap")) {	
-			Map<String, String> valueMap = (Map<String, String>)model.asMap().get("valueMap");
+
+		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s.getSelectedValueMap()!=null) {
 			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
-			
-			if (valueMap.containsKey(elementId)) {
-				model.addAttribute("elementSample", valueMap.get(elementId));
+			if (s.getSelectedValueMap().containsKey(elementId)) {
+				model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
 			}
 		}
 		
