@@ -95,7 +95,11 @@ public class MainEditorController extends BaseScheregController implements Initi
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));
 		try {
+			List<PersistedSession> previousSessions = sessionService.findAllByUser(schemaId, auth.getUserId());
 			PersistedSession s = sessionService.accessOrCreate(schemaId, request.getSession().getId(), auth.getUserId());
+			
+			model.addAttribute("locale", locale);
+			model.addAttribute("prevSessions", previousSessions);
 			model.addAttribute("session", s);
 		} catch (GenericScheregException e) {
 			logger.error("Failed to load/initialize persisted session", e);

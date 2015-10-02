@@ -146,7 +146,100 @@ public class FunctionEditorController extends BaseScheregController {
 		functionService.saveFunction((TransformationFunctionImpl)fSave, authInfoHelper.getAuth(request));
 		return result;
 	}
-	
+	// TODO: Revert this
+	result.addFieldError(e.getGrammarType().name(), String.format("~%s:%s => %s", m.line, m.charPosition, m.toString() /*m.getMessageTemplate(true).render()*/));
+}
+} catch (Exception e) {
+result.addObjectError("Unspecified error while parsing grammar: " + e.getClass().getName());
+}
+return result;
+}
+
+@RequestMapping(method = RequestMethod.GET, value = "/async/compile")
+public @ResponseBody ModelActionPojo validateGrammar(@PathVariable String grammarId, HttpServletRequest request) {
+ModelActionPojo result = new ModelActionPojo(false);
+try {
+DescriptionGrammar g = getTemporaryGrammar(grammarId, authInfoHelper.getUserId(request));
+result.setPojo(grammarService.compileTemporaryGrammar(g));
+result.setSuccess(true);
+} catch (Exception e) {
+result.addObjectError("Unspecified error while compiling grammar: " + e.getClass().getName());
+}
+return result;
+}
+
+@RequestMapping(method = RequestMethod.GET, value = "/async/sandbox")
+public @ResponseBody ModelActionPojo sandboxGrammar(@PathVariable String grammarId, @RequestParam String baseMethod, HttpServletRequest request) {
+ModelActionPojo result = new ModelActionPojo(false);
+try {
+if (baseMethod==null || baseMethod.trim().isEmpty()) {
+	result.setSuccess(true);				
+} else {
+	DescriptionGrammar g = getTemporaryGrammar(grammarId, authInfoHelper.getUserId(request));
+	List<String> parserRules = grammarService.getParserRules(g);
+	if (parserRules.contains(baseMethod.trim())) {
+		result.setSuccess(true);
+	} else {
+		result.addFieldError("base_method", "~Specified base method was not found in grammar");
+	}
+}
+
+
+} catch (Exception e) {
+result.addObjectError("Unspecified error while compiling grammar: " + e.getClass().getName());
+}
+return result;
+}
+
+
+
+
+@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
+public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample, @RequestParam(defaultValue="true") Boolean temporary, HttpServletRequest request) {
+ModelActionPojo result = new ModelActionPojo(false);
+try {
+DescriptionGrammar g;
+
+if (temporary) {
+	g = getTemporaryGrammar(grammarId, authInfoHelper.getUserId(request));
+} else {
+	g = grammarService.findById(grammarId);
+}
+List<String> parserRules = grammarService.getParserRules(g);
+
+if (initRule==null || initRule.trim().isEmpty()) {
+	g.setBaseMethod(parserRules.get(0));
+} else {
+	g.setBaseMethod(initRule);
+	if (!parserRules.contains(initRule.trim())) {
+		result.addObjectError("~Specified base method was not found in grammar");
+		return result;
+	}
+}
+if (engine.checkGrammar(g)!=null) {
+	result.setSuccess(true);
+	result.setPojo(engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>())));
+} else {
+	// Grammar not on server yet (new or error)
+	result.addObjectWarning("~ No grammar available on server, validate first");
+}
+
+} catch (Exception e) {
+logger.error("Transformation error", e);
+}
+return result;
+}
+
+private DescriptionGrammar getTemporaryGrammar(String id, String userId) {
+SerializableDescriptionGrammar g = new DescriptionGrammarImpl();
+g.setTemporary(true);
+g.setId(id);
+g.setUserId(userId);
+g.setGrammarName(g.getIdentifier());
+return g;
+}
+}
+
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
 	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample) {
 		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
