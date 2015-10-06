@@ -204,19 +204,9 @@ SchemaEditor.prototype.sample_buildSampleResourceValue = function(resource, pare
 	}
 };
 
-
 SchemaEditor.prototype.sample_resetSession = function() {
 	var _this = this;
-	$.ajax({
-	    url: _this.pathname + "/async/createSession",
-	    type: "GET",
-	    //data: { sample : $("#schema-sample-textarea").val() },
-	    //dataType: "json",
-	    success: function(data) {
-	    	if (data.success) { 
-	    		_this.logArea.refresh();
-	    	}
-	    }, 
-	    error: __util.processServerError
+	sessions.resetSession(_this.schemaId, function() {
+		window.location.reload();
 	});
 };

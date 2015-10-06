@@ -95,11 +95,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));
 		try {
-			List<PersistedSession> previousSessions = sessionService.findAllByUser(schemaId, auth.getUserId());
 			PersistedSession s = sessionService.accessOrCreate(schemaId, request.getSession().getId(), auth.getUserId());
-			
-			model.addAttribute("locale", locale);
-			model.addAttribute("prevSessions", previousSessions);
 			model.addAttribute("session", s);
 		} catch (GenericScheregException e) {
 			logger.error("Failed to load/initialize persisted session", e);
@@ -124,12 +120,6 @@ public class MainEditorController extends BaseScheregController implements Initi
 	@RequestMapping(method=GET, value={"/forms/fileupload"})
 	public String getImportForm(Model model, Locale locale) {
 		return "common/fileupload";
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/createSession")
-	public @ResponseBody ModelActionPojo createSession(@PathVariable String schemaId, HttpServletRequest request, Locale locale) {
-		sessionService.deleteSession(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		return new ModelActionPojo(true);
 	}
 	
 	@PreAuthorize("isAuthenticated()")
@@ -388,21 +378,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 			}
 		}
 	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getLog")
-	public @ResponseBody Collection<LogEntryPojo> getLog(@PathVariable String schemaId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, HttpServletRequest request) {
-		PersistedSession session = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		List<LogEntryPojo> log = session.getSortedSessionLog();
-		if (tsMin!=null && log.size()>0 && log.get(0).getNumericTimestamp()<=tsMin) {
-			return new ArrayList<LogEntryPojo>();
-		}
-		
-		if (log.size() > maxEntries) {
-			return log.subList(0, maxEntries);
-		}
-		return log;
-	}
-		
+			
 	public static String humanReadableByteCount(long bytes, boolean si) {
 	    int unit = si ? 1000 : 1024;
 	    if (bytes < unit) return bytes + " B";

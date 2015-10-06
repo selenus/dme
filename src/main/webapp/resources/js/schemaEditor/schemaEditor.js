@@ -10,6 +10,8 @@ $(window).resize(function() {
 });
 
 var SchemaEditor = function() {
+	var _this = this;
+	
 	this.schemaId = $("#schema-id").val();
 	this.schemaOwn = $("#schema-own").val()==="true";
 	this.schemaWrite = $("#schema-write").val()==="true";
@@ -62,7 +64,8 @@ var SchemaEditor = function() {
 	__translator.getTranslations();
 	
 	this.logArea = new LogArea({
-		pathPrefix :  __util.getBaseUrl() + "schema/editor/" + this.schemaId
+		pathPrefix :  __util.getBaseUrl() + "sessions/",
+		entityId : _this.schemaId
 	});
 	
 	this.sample_init();

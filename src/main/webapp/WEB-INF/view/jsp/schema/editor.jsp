@@ -33,23 +33,12 @@
 			<input type="hidden" id="schema-own" value="${schema.own}" />
 			<div id="main-content">
 				<div class="row">
-					<div class="col-md-6">
+					<div class="col-xs-12">
 						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> 
 						<small>${schema.pojo.label}
 							<c:if test="${!schema.own && !schema.write}"> <span class="glyphicon glyphicon-lock"></span></c:if>
 						</small>&nbsp;</h2>		
 					</div>
-					<div class="col-md-6">
-						<div class="pull-right">
-							<select id="select-previous-session" class="form-control">
-								<c:forEach items="${prevSessions}" var="prevSession">
-									<option value="${prevSession.id}"><joda:format value="${prevSession.lastAccessed}" locale="${locale}" style="LM" /></option>
-								</c:forEach>
-							</select>
-						</div>
-					</div>
-				</div>
-				<div class="row">
 					<div class="col-xs-12">
 						<div id="schema-editor-layout-container" class="hide">
 						
@@ -97,11 +86,15 @@
 									<div class="ui-pane-title">
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.title" /></h4>
 									</div>
+									<h5>~Sessions</h5>									
 									<div class="ui-pane-subcontainer button-bar">
-										<button type="button" onclick="schemaEditor.sample_resetSession(); location.reload(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
-										<button type="button" onclick="schemaEditor.sample_applyAndExecute(); return false;" class="btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
+										<button type="button" onclick="" class="btn btn-default btn-sm">~ Save session</button>
+										<button type="button" onclick="sessions.loadSession(schemaEditor.schemaId);" class="btn btn-default btn-sm">~ Load session</button>
+										<button type="button" onclick="schemaEditor.sample_resetSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
 									</div>
 									<div id="schema-editor-sample-container">
+										<h5>~Sample</h5>
+										<button type="button" onclick="schemaEditor.sample_applyAndExecute(); return false;" class="pull-right btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
 										<ul class="nav nav-tabs" role="tablist">
 											<li role="presentation"<c:if test="${currentSampleCount==0}"> class="active"</c:if>>
 												<a href="#schema-sample-input-container" aria-controls="schema-sample-input-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /></a>

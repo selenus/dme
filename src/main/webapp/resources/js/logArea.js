@@ -1,5 +1,6 @@
 var LogArea = function(config) {
 	this.options = {
+			entityId: "",
 			maxLogEntries: 50,
 			autoRefresh: 0,				// in ms; 0 to disable auto-refresh
 			logList: $("ul#schema-editor-log"),
@@ -32,7 +33,8 @@ LogArea.prototype.refresh = function() {
 	    type: "GET",
 	    data: { 
 	    	maxEntries : _this.options.maxLogEntries,
-	    	tsMin: _this.tsMax
+	    	tsMin: _this.tsMax,
+	    	entityId: _this.options.entityId
 	    },
 	    dataType: "json",
 	    success: function(data) {

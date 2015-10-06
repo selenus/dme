@@ -50,16 +50,29 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 		session.setUserId(userId);
 		session.setEntityId(entityId);
 		session.addLogEntry(LogType.INFO, String.format("~ Schema editor session started [id: %s]", session.getId()));
-		
+		session.setCreated(DateTime.now());
 		return this.saveSession(session);
 	}
 
 	@Override
 	public PersistedSession reassignPersistedSession(String httpSessionId, String userId, String persistedSessionId) {
 		PersistedSession s = sessionDao.findById(persistedSessionId);
-		s.setUserId(userId);
-		s.setHttpSessionId(httpSessionId);
-		return this.saveSession(s);
+		if (s!=null) {
+			PersistedSession sCurrent = this.find(s.getEntityId(), httpSessionId, userId);
+			if (sCurrent!=null) {
+				// Loading 'current' session -> nothing to do really
+				if (sCurrent.getId().equals(persistedSessionId)) {
+					return sCurrent;
+				}
+				// Switching HTTP Session ID to remain consistent
+				sCurrent.setHttpSessionId(s.getHttpSessionId());
+				sessionDao.save(sCurrent);
+			}
+			s.setUserId(userId);
+			s.setHttpSessionId(httpSessionId);
+			return sessionDao.save(s);
+		}
+		return null;
 	}
 
 	@Override

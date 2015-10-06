@@ -74,6 +74,7 @@
 			<add-attribute type="string" value="lib/blob.js" />
 			<add-attribute type="string" value="_common/svgviewer.js" />
 			<add-attribute type="string" value="logArea.js" />
+			<add-attribute type="string" value="sessions.js" />
 			
 			<add-attribute type="string" value="schemaEditor/schemaEditor.js" />
 			<add-attribute type="string" value="schemaEditor/schemaEditor.sample.js" />
@@ -128,6 +129,10 @@
 		
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 	<definition name="common/forms/maximizeSvg" template="/WEB-INF/view/jsp/common/forms/maximizeSvg.jsp" />
+
+	<!-- Sessions -->
+	<definition name="session/forms/load" template="/WEB-INF/view/jsp/session/forms/load.jsp" />
+	<definition name="session/forms/save" template="/WEB-INF/view/jsp/session/forms/save.jsp" />
 
 	<!-- Help views -->
 	<definition name="schemaEditor/help/grammar/editGrammar" template="/WEB-INF/view/jsp/help/help_edit_grammar.jsp" />	

@@ -19,7 +19,7 @@ import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
  * 
  * @author tobias
  */
-public class PersistedSession extends BaseIdentifiable {
+public class PersistedSession extends BaseIdentifiable implements Comparable<PersistedSession> {
 	private static final long serialVersionUID = 6949914982830008951L;
 
 	private String httpSessionId;
@@ -27,6 +27,7 @@ public class PersistedSession extends BaseIdentifiable {
 	private String userId;
 	private String label;
 	private DateTime lastAccessed;
+	private DateTime created;
 	private boolean notExpiring;
 	
 	private String sampleInput;
@@ -51,6 +52,9 @@ public class PersistedSession extends BaseIdentifiable {
 	
 	public DateTime getLastAccessed() { return lastAccessed; }
 	public void setLastAccessed(DateTime lastAccessed) { this.lastAccessed = lastAccessed; }
+	
+	public DateTime getCreated() { return created; }
+	public void setCreated(DateTime created) { this.created = created; }
 	
 	public boolean isNotExpiring() { return notExpiring; }
 	public void setNotExpiring(boolean notExpiring) { this.notExpiring = notExpiring; }
@@ -89,5 +93,10 @@ public class PersistedSession extends BaseIdentifiable {
 			this.setSessionLog(new ArrayList<LogEntryPojo>());
 		}
 		this.getSessionLog().add(entry);
+	}
+	
+	@Override
+	public int compareTo(PersistedSession arg0) {
+		return this.lastAccessed.compareTo(arg0.getLastAccessed());
 	}
 }
