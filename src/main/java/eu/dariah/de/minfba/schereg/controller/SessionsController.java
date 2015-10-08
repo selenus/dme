@@ -49,12 +49,28 @@ public class SessionsController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/loadSession")
 	public String getFormLoadSession(@RequestParam String entityId, Model model, HttpServletRequest request, Locale locale) {
-		List<PersistedSession> allUserSessions = sessionService.findAllByUser(entityId, authInfoHelper.getUserId(request));		
-		Collections.sort(allUserSessions);
-		Collections.reverse(allUserSessions);
+		PersistedSession sCurrent = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		List<PersistedSession> userSessions = sessionService.findAllByUser(entityId, authInfoHelper.getUserId(request));
+		List<PersistedSession> savedSessions = new ArrayList<PersistedSession>();
+		List<PersistedSession> transientSessions = new ArrayList<PersistedSession>();
+		
+		for (PersistedSession s : userSessions) {
+			if (s.isNotExpiring()) {
+				savedSessions.add(s);
+			} else {
+				transientSessions.add(s);
+			}
+		}
+		Collections.sort(savedSessions);
+		Collections.reverse(savedSessions);
+		
+		Collections.sort(transientSessions);
+		Collections.reverse(transientSessions);
 		
 		model.addAttribute("locale", locale);
-		model.addAttribute("prevSessions", allUserSessions);
+		model.addAttribute("savedSessions", savedSessions);
+		model.addAttribute("transientSessions", transientSessions);
+		model.addAttribute("currentSessionId", sCurrent.getId());
 		model.addAttribute("actionPath", "/sessions/async/loadSession");
 		return "session/forms/load";
 	}
@@ -69,8 +85,15 @@ public class SessionsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveSession")
-	public @ResponseBody ModelActionPojo saveSession(@RequestBody PersistedSession session, HttpServletRequest request, Locale locale) {
-		return null;
+	public @ResponseBody ModelActionPojo saveSession(@Valid PersistedSession session, HttpServletRequest request, Locale locale) {
+		PersistedSession saveSession = sessionService.access(session.getEntityId(), request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (saveSession!=null) {
+			saveSession.setLabel(session.getLabel());
+			saveSession.setNotExpiring(true);
+			sessionService.saveSession(saveSession);
+			return new ModelActionPojo(true);
+		}
+		return new ModelActionPojo(false);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/loadSession")

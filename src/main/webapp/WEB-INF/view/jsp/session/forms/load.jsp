@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="joda" uri="http://www.joda.org/joda/time/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <s:url value="${actionPath}" var="saveUrl" />
 
@@ -13,12 +14,25 @@
 			<label class="col-sm-4 control-label" for="sessionId">Previous sessions</label>
 			<div class="col-sm-8">
 				<select id="sessionId" name="sessionId" class="form-control">
-					<c:forEach items="${prevSessions}" var="prevSession">					
-						<option value="${prevSession.id}">
-							<c:if test="${prevSession.label!=null && prevSession.label!=''}">${prevSession.label} - </c:if>
-							<joda:format value="${prevSession.created}" locale="${locale}" style="LM" />
-						</option>
-					</c:forEach>
+					<c:if test="${fn:length(savedSessions)>0}">
+						<optgroup label="~ persisted sessions">
+							<c:forEach items="${savedSessions}" var="s">					
+								<option value="${s.id}"<c:if test="${s.id==currentSessionId}"> selected="selected"</c:if>>
+									<c:if test="${s.label!=null && s.label!=''}">${s.label} - </c:if>
+									<joda:format value="${s.created}" locale="${locale}" style="LM" />
+								</option>
+							</c:forEach>
+						</optgroup>
+					</c:if>
+					<c:if test="${fn:length(transientSessions)>0}">
+						<optgroup label="~ transient sessions">
+							<c:forEach items="${transientSessions}" var="s">					
+								<option value="${s.id}"<c:if test="${s.id==currentSessionId}"> selected="selected"</c:if>>
+									<joda:format value="${s.created}" locale="${locale}" style="LM" />
+								</option>
+							</c:forEach>
+						</optgroup>
+					</c:if>
 				</select>
 			</div>
 		</div>

@@ -4,16 +4,16 @@
 
 <s:url value="${actionPath}" var="saveUrl" />
 
-<sf:form method="GET" action="${saveUrl}" model-attribute="session" class="form-horizontal" >
+<sf:form method="POST" action="${saveUrl}" modelAttribute="session" class="form-horizontal" >
 	<div class="form-header">
 		<h3 id="form-header-title">~Save session</h3>
-		<sf:hidden path="id"/>	
+		<sf:hidden path="entityId" />	
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-4 control-label" for="sessionId">~Label</label>
+			<label class="col-sm-4 control-label">~Label</label>
 			<div class="col-sm-8">
-				<sf:input path="label"/>
+				<sf:input class="form-control" path="label" />
 			</div>
 		</div>
 	</div>

@@ -88,7 +88,7 @@
 									</div>
 									<h5>~Sessions</h5>									
 									<div class="ui-pane-subcontainer button-bar">
-										<button type="button" onclick="" class="btn btn-default btn-sm">~ Save session</button>
+										<button type="button" onclick="sessions.saveSession(schemaEditor.schemaId);" class="btn btn-default btn-sm">~ Save session</button>
 										<button type="button" onclick="sessions.loadSession(schemaEditor.schemaId);" class="btn btn-default btn-sm">~ Load session</button>
 										<button type="button" onclick="schemaEditor.sample_resetSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
 									</div>
