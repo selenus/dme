@@ -25,6 +25,11 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 	}
 	
 	@Override
+	public List<PersistedSession> findExpiredSessions(DateTime cutoffTimestamp) {
+		return sessionDao.find(Query.query(Criteria.where("notExpiring").is(false).and("lastAccessed").lte(cutoffTimestamp)));
+	}
+	
+	@Override
 	public PersistedSession access(String entityId, String httpSessionId, String userId) {
 		PersistedSession s = sessionDao.findOne(Query.query(Criteria.where("httpSessionId").is(httpSessionId).and("entityId").is(entityId)));
 		return this.saveSession(s);
@@ -91,6 +96,11 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 		if (session!=null) {
 			sessionDao.delete(session);
 		}
+	}
+	
+	@Override
+	public void deleteSessions(List<PersistedSession> sessions) {
+		sessionDao.delete(sessions);
 	}
 	
 	private PersistedSession find(String entityId, String httpSessionId, String userId) {

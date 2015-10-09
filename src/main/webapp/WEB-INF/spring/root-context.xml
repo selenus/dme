@@ -34,6 +34,11 @@
 		<constructor-arg name="validator" ref="validator" />
 	</bean>
 	
+	<bean class="eu.dariah.de.minfba.schereg.sessions.SessionCleanerService">
+		<property name="defaultExpirationMins" value="4320" />
+		<property name="intervalMins" value="720" />
+	</bean>
+	
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.dao"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.service"/>
 	<context:component-scan base-package="eu.dariah.de.minfba.schereg.util"/>

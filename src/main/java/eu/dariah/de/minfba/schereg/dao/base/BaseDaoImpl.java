@@ -99,7 +99,9 @@ public abstract class BaseDaoImpl<T extends Identifiable> extends DaoImpl<T> imp
 
 	@Override
 	public void delete(Iterable<? extends T> entities) {
-		mongoTemplate.remove(entities);
+		for (T e : entities) {
+			mongoTemplate.remove(e);
+		}		
 	}
 
 	/*@Override
