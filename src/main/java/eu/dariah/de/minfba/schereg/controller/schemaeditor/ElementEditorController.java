@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller.editor;
+package eu.dariah.de.minfba.schereg.controller.schemaeditor;
 
 import java.util.Locale;
 

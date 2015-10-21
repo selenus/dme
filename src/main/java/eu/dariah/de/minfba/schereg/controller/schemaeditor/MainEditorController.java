@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller.editor;
+package eu.dariah.de.minfba.schereg.controller.schemaeditor;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;

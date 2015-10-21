@@ -48,6 +48,16 @@
         </put-list-attribute>
     </definition>
 	
+	<!-- Mapping -->
+	<definition name="mapping/home" extends="template_editors">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/home.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="mapping.js" />
+		</put-list-attribute>
+	</definition>
+	<definition name="mapping/form/edit" template="/WEB-INF/view/jsp/mapping/forms/edit.jsp" />
+		
+	
 	<!-- Schema -->
 	<definition name="schema/home" extends="template_editors">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/home.jsp" />
