@@ -125,7 +125,7 @@ public class GrammarEditorController extends BaseScheregController {
 				gSave.setError(grammar.isError());
 				gSave.setGrammarName(grammar.getGrammarName());
 				gSave.setPassthrough(grammar.isPassthrough());
-				gSave.setSchemaId(grammar.getSchemaId());
+				gSave.setEntityId(grammar.getEntityId());
 				gSave.setTemporary(grammar.isTemporary());
 				gSave.setGrammarContainer(grammar.getGrammarContainer());
 			}

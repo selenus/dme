@@ -6,5 +6,5 @@ import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunc
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
 public interface FunctionDao extends TrackedEntityDao<TransformationFunction> {
-	public List<TransformationFunction> findBySchemaId(String schemaId);
+	public List<TransformationFunction> findByEntityId(String entityId);
 }

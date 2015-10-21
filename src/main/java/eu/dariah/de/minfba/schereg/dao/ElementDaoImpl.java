@@ -17,7 +17,8 @@ public class ElementDaoImpl extends TrackedEntityDaoImpl<Element> implements Ele
 	}
 
 	@Override
-	public List<Element> findBySchemaId(String schemaId) {		
-		return this.find(Query.query(Criteria.where("schemaId").is(schemaId)));
+	public List<Element> findByEntityId(String entityId) {		
+		Query q = Query.query(Criteria.where("entityId").is(entityId));
+		return this.find(q);
 	}
 }

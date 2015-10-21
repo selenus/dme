@@ -6,5 +6,5 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
 public interface ElementDao extends TrackedEntityDao<Element> {
-	public List<Element> findBySchemaId(String schemaId);
+	public List<Element> findByEntityId(String entityId);
 }

@@ -17,7 +17,8 @@ public class FunctionDaoImpl extends TrackedEntityDaoImpl<TransformationFunction
 	}
 	
 	@Override
-	public List<TransformationFunction> findBySchemaId(String schemaId) {		
-		return this.find(Query.query(Criteria.where("schemaId").is(schemaId)));
+	public List<TransformationFunction> findByEntityId(String entityId) {		
+		Query q = Query.query(Criteria.where("entityId").is(entityId));
+		return this.find(q);
 	}
 }

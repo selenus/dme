@@ -21,8 +21,8 @@ public class GrammarDaoImpl extends TrackedEntityDaoImpl<DescriptionGrammar> imp
 	}
 	
 	@Override
-	public List<DescriptionGrammar> findBySchemaId(String schemaId) {		
-		Query q = Query.query(Criteria.where("schemaId").is(schemaId));
+	public List<DescriptionGrammar> findByEntityId(String entityId) {		
+		Query q = Query.query(Criteria.where("entityId").is(entityId));
 		
 		// Exclude the verbous grammars when loading whole schema
 		q.fields().exclude("grammarContainer");
@@ -37,7 +37,7 @@ public class GrammarDaoImpl extends TrackedEntityDaoImpl<DescriptionGrammar> imp
 		if (g.getGrammarContainer()!=null) {
 			changes = g.getGrammarContainer().flush();
 			if (changes!=null) {
-				this.createAndSaveChangeSet(changes, g.getId(), g.getSchemaId(), userId, sessionId);
+				this.createAndSaveChangeSet(changes, g.getId(), g.getEntityId(), userId, sessionId);
 			}
 		}
 		return super.save(element, userId, sessionId);

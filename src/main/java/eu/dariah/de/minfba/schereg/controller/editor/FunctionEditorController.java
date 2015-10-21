@@ -126,7 +126,7 @@ public class FunctionEditorController extends BaseScheregController {
 				fSave.setError(function.isError());
 				fSave.setFunction(function.getFunction());
 				fSave.setName(function.getName());
-				fSave.setSchemaId(function.getSchemaId());
+				fSave.setEntityId(function.getEntityId());
 			}
 		}
 		if (fSave==null) {

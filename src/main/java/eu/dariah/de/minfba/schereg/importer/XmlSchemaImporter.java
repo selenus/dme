@@ -252,7 +252,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 		n.setId(new ObjectId().toString());
 		n.setName(this.createNonterminalName(terminalName));
 		n.setTerminalId(terminalId);
-		n.setSchemaId(this.schema.getId());
+		n.setEntityId(this.schema.getId());
 		return n;
 	}
 	

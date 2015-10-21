@@ -95,4 +95,6 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 		}
 		return null;
 	}
+	
+	@Override public void setEntityId(String entityId) {}
 }

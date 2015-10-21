@@ -9,6 +9,8 @@
 <div class="jumbotron jumbotron-small">
 	 <div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 		<div class="row">
+			<!-- Notifications -->
+			<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 			<div class="xs-hidden sm-visible col-sm-3 col-lg-2 col-sm-offset-1">
 				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title" /></div>
 			</div>
@@ -20,8 +22,6 @@
 </div>
 <div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 	<div class="row">
-		<!-- Notifications -->
-		<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
 				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
