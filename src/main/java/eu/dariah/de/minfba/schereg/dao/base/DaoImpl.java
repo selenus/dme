@@ -23,4 +23,9 @@ public abstract class DaoImpl<T extends Identifiable> implements Dao {
 		this.clazz = (Class<T>)clazz;
 		this.collectionName = clazz.getSimpleName().substring(0,1).toLowerCase() + clazz.getSimpleName().substring(1);
 	}
+	
+	public DaoImpl(Class<?> clazz, String collectionName) {
+		this.clazz = (Class<T>)clazz;
+		this.collectionName = collectionName;
+	}
 }

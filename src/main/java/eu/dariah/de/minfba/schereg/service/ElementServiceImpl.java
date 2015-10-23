@@ -48,7 +48,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
-		Schema s = schemaDao.findSchemaById(schemaId);
+		Schema s = schemaDao.findEnclosedById(schemaId);
 		if (s!=null && s.getRootNonterminalId()!=null) {
 			return this.findRootByElementId(s.getRootNonterminalId(), eagerLoadHierarchy);
 		}
@@ -76,7 +76,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		element.setId(null);
 		Reference r = this.saveElementHierarchy(element, auth);
 				
-		Schema s = schemaDao.findSchemaById(schemaId);
+		Schema s = schemaDao.findEnclosedById(schemaId);
 		s.setRootNonterminalId(r.getId());
 		try {
 			schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
@@ -252,7 +252,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label, AuthPojo auth) {
-		String rootElementId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
+		String rootElementId = schemaDao.findEnclosedById(schemaId).getRootNonterminalId();
 		Reference rRoot = this.findRootReferenceById(rootElementId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		Element eParent = elementDao.findById(parentElementId);
@@ -294,7 +294,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public Element removeElementTree(String schemaId, AuthPojo auth) {
-		Schema s = schemaDao.findSchemaById(schemaId);
+		Schema s = schemaDao.findEnclosedById(schemaId);
 		Element eRoot = findRootBySchemaId(schemaId);
 		if (eRoot!=null) {	
 			try {
@@ -316,7 +316,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Terminal removeTerminal(String schemaId, String terminalId, AuthPojo auth) {
-		Schema s = schemaDao.findSchemaById(schemaId);
+		Schema s = schemaDao.findEnclosedById(schemaId);
 		Terminal tRemove = null;
 		if (s.getTerminals()!=null) {
 			for (Terminal t : s.getTerminals()) {

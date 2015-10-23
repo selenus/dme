@@ -30,7 +30,7 @@ public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService 
 
 	@Override
 	public List<Schema> findAllSchemas() {
-		return schemaDao.findAllSchemas();
+		return schemaDao.findAllEnclosed();
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService 
 
 	@Override
 	public Schema findSchemaById(String id) {
-		return schemaDao.findSchemaById(id);
+		return schemaDao.findEnclosedById(id);
 	}
 
 	@Override

@@ -20,6 +20,10 @@ public abstract class BaseDaoImpl<T extends Identifiable> extends DaoImpl<T> imp
 	public BaseDaoImpl(Class<?> clazz) {
 		super(clazz);
 	}
+	
+	public BaseDaoImpl(Class<?> clazz, String collectionName) {
+		super(clazz, collectionName);
+	}
 
 	/*@Override
 	public Page<T> findAll(Pageable arg0) {

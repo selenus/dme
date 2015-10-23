@@ -25,7 +25,7 @@ public class ReferenceServiceImpl implements ReferenceService {
 
 	@Override
 	public Reference findReferenceBySchemaAndChildId(String schemaId, String childId) {
-		String rootId = schemaDao.findSchemaById(schemaId).getRootNonterminalId();
+		String rootId = schemaDao.findEnclosedById(schemaId).getRootNonterminalId();
 		if (rootId!=null) {
 			return this.findReferenceByChildId(rootId, childId);
 		}

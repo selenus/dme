@@ -24,6 +24,10 @@ public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> im
 	public TrackedEntityDaoImpl(Class<?> clazz) {
 		super(clazz);
 	}
+	
+	public TrackedEntityDaoImpl(Class<?> clazz, String collectionName) {
+		super(clazz, collectionName);
+	}
 
 	@Override
 	public List<T> find(Query q) {

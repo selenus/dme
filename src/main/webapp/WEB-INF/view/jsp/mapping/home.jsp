@@ -43,11 +43,11 @@
 									  <option><s:message code="~eu.dariah.de.minfba.common.link.all"/></option>
 									</select>
 								</div>
-								<button id="btn-add-schema" class="btn btn-default btn-sm">
+								<button id="btn-add-mapping" class="btn btn-default btn-sm">
 									<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.mapreg.button.add" />
 								</button> 								
 							</div>
-							<table id="schema-table" class="table table-striped table-bordered table-condensed">
+							<table id="mapping-table" class="table table-striped table-bordered table-condensed">
 								<thead>
 									<tr>
 										<th></th> <!-- Status -->
