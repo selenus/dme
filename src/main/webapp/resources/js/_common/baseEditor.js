@@ -9,29 +9,33 @@
  * 		- Tooltips in the data are identified by the class 'hint-tooltip' and
  * 		  loaded after every refresh of the editor
  */
-function BaseEditor() {
+function BaseEditor(url) {
 	// Explicit accessor for base properties in the editors 
 	this._base = this;
 	this.table = null;
 	this.error = false;
+	this.containerSelector = null;
+	
+	this.baseTranslations = ["~eu.dariah.de.minfba.common.view.notifications.async_general_error",
+	                         "~eu.dariah.de.minfba.common.view.notifications.async_timeout",
+	                         "~eu.dariah.de.minfba.common.view.notifications.session_expired_reload"];
 	
 	this.options = {
 			refreshInterval: __properties.refreshIntervalMs,
 			cyclicRefresh: __properties.refreshViews
 	};
 	
-	this.baseTranslations = ["~eu.dariah.de.minfba.common.view.notifications.async_general_error",
-	                         "~eu.dariah.de.minfba.common.view.notifications.async_timeout",
-	                         "~eu.dariah.de.minfba.common.view.notifications.session_expired_reload"];
-		
 	var _this = this;
 	// Setting some defaults for the datatables as used in the project
-	$.extend(true, $.fn.dataTable.defaults, {
+	this.baseSettings = $.extend(true, {}, $.fn.dataTable.defaults, {
 		"bProcessing": true,
-		"sAjaxSource": window.location.pathname + "async/getData",
+		"sAjaxSource": url!=null && url !=undefined ? url : window.location.pathname + "async/getData",
 		"bAutoWidth": false,
 		"fnDrawCallback": function (oSettings) {
 			_this.handleRefresh(oSettings);
+	    },
+	    "fnPreDrawCallback": function (oSettings) {
+	    	_this.cleanupBeforeRefresh(oSettings);
 	    },
 	    "fnServerData": function ( sSource, aoData, fnCallback ) {
 	        $.ajax( {
@@ -42,13 +46,44 @@ function BaseEditor() {
 	            "success": fnCallback,
 	            "timeout": 15000,
 	            "error": function(xhr, textStatus, error) {_this.handleAjaxError(xhr, textStatus, error); }
-	            });
+	        });
 	    }
 	});
-	$(".editor-option").change(function() { _this.refresh(); });
 	
+	$(".editor-option").change(function() { _this.refresh(); });
 	this.cycleRefresh();
 }
+
+BaseEditor.prototype.assignTableEvents = function() {
+	if (this.containerSelector==null) {
+		return;
+	}
+	var _this = this;
+    $(this.containerSelector).find('.data-table-filter input').on('keyup click', function () {
+    	_this.table.DataTable().search($(this).val(), false, false).draw();
+    });
+    $(this.containerSelector).find(".data-table-filter input").trigger("keyup");
+    
+    $(this.containerSelector).find('.data-table-count select').on('change', function () {
+    	var len = parseInt($(this).val());
+    	if (isNaN(len)) {
+    		len = -1; // Show all
+    	}    	
+    	_this.table.page.len(len).draw();
+    });
+    $(this.containerSelector)(".data-table-count select").trigger("change");
+    		
+    this.table.$("tbody").on("click", "tr", function () {
+        if ($(this).hasClass("selected")) {
+            $(this).removeClass("selected");
+            //_this.handleSelection(null);
+        } else {
+        	_this._base.table.$("tr.selected").removeClass("selected");
+            $(this).addClass("selected");
+            //_this.handleSelection($(this).prop("id"));
+        }
+    });
+};
 
 BaseEditor.prototype.handleAjaxError = function(xhr, textStatus, error) {
     // Reload because the session has expired
@@ -78,6 +113,12 @@ BaseEditor.prototype.refresh = function() {
 	}
 };
 
+BaseEditor.prototype.cleanupBeforeRefresh = function(oSettings) {
+	if (this.table!=null) {
+		this.table.$(".hint-tooltip").tooltip("destroy");
+	}
+};
+
 BaseEditor.prototype.handleRefresh = function(oSettings) {
 	// This is the case for the pre-load callback
 	if (oSettings.aoData===null || oSettings.aoData===undefined || 
@@ -86,9 +127,11 @@ BaseEditor.prototype.handleRefresh = function(oSettings) {
 	}
 
 	// We arrive here after data has been loaded into the table
-	$(this.table).find(".hint-tooltip").tooltip({
-	     'delay': { show: 1000, hide: 0 }
-	});
+	if (this.table!=null) {
+		this.table.$(".hint-tooltip").tooltip({
+		     'delay': { show: 500, hide: 0 }
+		});
+	}
 };
 
 BaseEditor.prototype.prepareTranslations = function(translations) {

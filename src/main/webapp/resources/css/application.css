@@ -10,11 +10,11 @@
 .data-table-filter, 
 .data-table-count {
 	float: left;
-	margin-right: 2px;
 }
 
 .data-table-filter {
-	width: 75px;
+	width: 90px;
+	margin-right: 2px;
 }
 
 .data-table-count {
@@ -301,7 +301,7 @@ noscript div {
     font-size: 125%;
     /*font-weight: bold;*/
     left: 0;
-    padding: 6px 0;
+    padding: 6px 0left;
     position: fixed;
     text-align: center;
     top: 0;

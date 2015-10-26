@@ -71,6 +71,11 @@
 					</property>
 				</bean>
 				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
+					<property name="id" value="registry" />
+					<property name="displayCode" value="~eu.dariah.de.minfba.schereg.title" />
+					<property name="linkUrl" value="/registry/" />
+				</bean>
+				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 					<property name="id" value="schema" />
 					<property name="displayCode" value="~eu.dariah.de.minfba.schereg.title" />
 					<property name="linkUrl" value="/schema/" />

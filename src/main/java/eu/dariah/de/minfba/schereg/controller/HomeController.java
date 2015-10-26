@@ -7,24 +7,26 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
+import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 
 @Controller
-@RequestMapping(value="/")
+@RequestMapping(value="")
 public class HomeController {
 	@Autowired protected AuthInfoHelper authInfoHelper;
 	
+	/* For now...redirect; in the future a dash-board is intended */
 	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
 	public String getHome(HttpServletResponse response) throws IOException  {
-		/* TODO: For now...redirect; in the future a ScheReg dashboard is intended */
-		response.sendRedirect("schema/");
+		response.sendRedirect("registry/");
 		return null;
 	}
-	
+		
 	@RequestMapping(method = RequestMethod.GET, value = "/async/isAuthenticated")
 	public @ResponseBody boolean getIsLoggedIn(HttpServletRequest request) {
 		return authInfoHelper.getAuth(request).isAuth();

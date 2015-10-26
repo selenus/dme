@@ -48,6 +48,15 @@
         </put-list-attribute>
     </definition>
 	
+	<!-- Registry -->
+	<definition name="registry/home" extends="template_editors">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/registry/home.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="registry/schema.js" />
+			<add-attribute type="string" value="registry/mapping.js" />
+		</put-list-attribute>
+	</definition>
+		
 	<!-- Mapping -->
 	<definition name="mapping/home" extends="template_editors">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/home.jsp" />
