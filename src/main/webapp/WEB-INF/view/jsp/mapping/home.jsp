@@ -52,12 +52,12 @@
 									<tr>
 										<th></th> <!-- Status -->
 										<th><s:message code="~eu.dariah.de.minfba.mapreg.model.mapping.label" /></th>
-										<!-- <th><s:message code="~eu.dariah.de.minfba.schereg.model.schema.type" /></th> -->
+										<th></th> <!-- Quick-actions -->
 									</tr>
 								</thead>
 								<tbody>
 								<tr>
-									<td colspan="2" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
+									<td colspan="3" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
 								</tr>
 								</tbody>
 							</table>
@@ -66,11 +66,13 @@
 					<div class="col-md-5 details-container" role="tabpanel">
 						<ul class="nav nav-tabs" role="tablist">
 							<li role="presentation" id="tab-mapping-activity" class="active"><a href="#mapping-activity" aria-controls="mapping-activity" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.common.link.activity" /></a></li>
+							<li role="presentation" id="tab-mapping-metadata" class="hide"><a href="#mapping-metadata" aria-controls="mapping-metadata" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.mapreg.model.mapping.metadata" /></a></li>
 							<li role="presentation" id="tab-mapping-schemas" class="hide"><a href="#mapping-schemas" aria-controls="mapping-schemas" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.mapreg.model.mapping.schemas" /></a></li>
 							<li role="presentation" id="tab-mapping-elements" class="hide"><a href="#mapping-elements" aria-controls="mapping-elements" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.mapreg.model.mapping.elements" /></a></li>
 						</ul>
 						<div class="tab-content">
 							<div role="tabpanel" class="tab-pane active" id="mapping-activity"></div>
+							<div role="tabpanel" class="tab-pane" id="mapping-metadata"></div>
 							<div role="tabpanel" class="tab-pane" id="mapping-schemas"></div>
 							<div role="tabpanel" class="tab-pane" id="mapping-elements"></div>
 						</div>

@@ -28,7 +28,7 @@ function BaseEditor() {
 	// Setting some defaults for the datatables as used in the project
 	$.extend(true, $.fn.dataTable.defaults, {
 		"bProcessing": true,
-		"sAjaxSource": window.location.pathname + "/async/getData",
+		"sAjaxSource": window.location.pathname + "async/getData",
 		"bAutoWidth": false,
 		"fnDrawCallback": function (oSettings) {
 			_this.handleRefresh(oSettings);

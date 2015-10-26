@@ -63,6 +63,12 @@ public class MappingController extends BaseScheregController {
 		return new DataTableList<AuthWrappedPojo<Mapping>>(pojos);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getData/{id}")
+	public @ResponseBody AuthWrappedPojo<Mapping> getMapping(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		return authPojoConverter.convert(mappingService.findByIdAndAuth(id, auth), auth.getUserId());
+	}
+	
 	@Secured("IS_AUTHENTICATED_FULLY")
 	@RequestMapping(method=GET, value="forms/add")
 	public String getAddForm(Model model, Locale locale, HttpServletRequest request) {
