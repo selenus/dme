@@ -43,7 +43,6 @@ public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService 
 			container = createContainer(auth.getUserId());
 		}
 		container.setElement(schema.getPojo());
-		container.setDraft(schema.isDraft());
 		schemaDao.save(container, auth.getUserId(), auth.getSessionId());
 	}
 	

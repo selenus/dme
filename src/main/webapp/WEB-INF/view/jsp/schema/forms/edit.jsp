@@ -29,13 +29,6 @@
 				<sf:textarea path="description" class="form-control" rows="4" id="schema_description" />
 			</div>
 		</div>
-		<div class="form-group">
-			<div class="col-sm-offset-3 col-sm-9">
-				<label>
-					<input type="checkbox" name="draft" id="draft"<c:if test="${draft}"> checked="checked"</c:if>> ~Draft:
-				</label>
-			</div>
-		</div>	
 	</div>
 	<div class="form-footer form-group">
 		<div class="col-sm-12">

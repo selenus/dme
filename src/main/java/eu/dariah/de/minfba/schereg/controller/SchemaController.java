@@ -85,7 +85,6 @@ public class SchemaController extends BaseScheregController {
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {		
 		model.addAttribute("schema", new BaseSchema<BaseTerminal>());
-		model.addAttribute("draft", true);
 		model.addAttribute("actionPath", "/schema/async/save");
 		return "schema/form/edit";
 	}
@@ -94,9 +93,7 @@ public class SchemaController extends BaseScheregController {
 	@RequestMapping(method=GET, value={"/forms/edit/{id}"})
 	public String getEditForm(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
 		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(id, authInfoHelper.getAuth(request));
-		
 		model.addAttribute("actionPath", "/schema/async/save");
-		model.addAttribute("draft", schema.isDraft());
 		model.addAttribute("schema", schema.getElement());
 		return "schema/form/edit";
 	}
@@ -104,7 +101,7 @@ public class SchemaController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, @RequestParam(defaultValue="false") boolean draft, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getHasWriteAccess(schema.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -116,7 +113,11 @@ public class SchemaController extends BaseScheregController {
 			schema.setId(null);
 		}
 		
-		Schema saveSchema = schemaService.findSchemaById(schema.getId());
+		
+		RightsContainer<Schema> existSchema = schemaService.findByIdAndAuth(schema.getId(), auth); 
+		Schema saveSchema = existSchema==null ? null : existSchema.getElement();
+		boolean draft = existSchema==null ? true : existSchema.isDraft();
+		
 		if (saveSchema==null) {
 			saveSchema = schema;
 		} else {
