@@ -37,11 +37,10 @@
 	<definition name="template_editors" extends="template_simple">
 		<put-attribute name="fluidLayout" cascade="true" value="true" />
 		<put-list-attribute name="styles" inherit="true">
-			<add-attribute type="string" value="dataTables/dataTables.bootstrap.css" />
+			<add-attribute type="string" value="dataTables/datatables.css" />
         </put-list-attribute>
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="dataTables/dataTables.js" />
-			<add-attribute type="string" value="dataTables/dataTables.bootstrap.js" />
 			<add-attribute type="string" value="dataTables/dataTables.fnReloadAjax.js" />
 			<add-attribute type="string" value="dataTables/dataTables.i18n.js" />
 			<add-attribute type="string" value="_common/baseEditor.js" />
