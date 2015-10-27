@@ -18,7 +18,7 @@ import eu.dariah.de.minfba.schereg.model.RightsContainer;
 @Repository
 public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<Schema> implements SchemaDao {
 	public SchemaDaoImpl() {
-		super(new RightsContainer<Schema>().getClass()/*, "schema"*/);
+		super(new RightsContainer<Schema>().getClass(), "schema");
 	}
 
 	@Override
