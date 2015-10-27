@@ -27,7 +27,9 @@ function BaseEditor(url) {
 	
 	var _this = this;
 	// Setting some defaults for the datatables as used in the project
-	this.baseSettings = $.extend(true, {}, $.fn.dataTable.defaults, {
+	this.baseSettings = {
+		"dom":	"<'row'<'col-sm-12 data-tables-table'tr>>" +
+				"<'row'<'col-sm-5'i><'col-sm-7'p>>",
 		"bProcessing": true,
 		"sAjaxSource": url!=null && url !=undefined ? url : window.location.pathname + "async/getData",
 		"bAutoWidth": false,
@@ -48,7 +50,7 @@ function BaseEditor(url) {
 	            "error": function(xhr, textStatus, error) {_this.handleAjaxError(xhr, textStatus, error); }
 	        });
 	    }
-	});
+	};
 	
 	$(".editor-option").change(function() { _this.refresh(); });
 	this.cycleRefresh();
