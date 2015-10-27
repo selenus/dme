@@ -58,7 +58,7 @@ public class MappingController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
 	public @ResponseBody DataTableList<AuthWrappedPojo<Mapping>> getData(Model model, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		List<RightsContainer<Mapping>> mappings = mappingService.findAllByAuth(authInfoHelper.getAuth(request));
+		List<RightsContainer<Mapping>> mappings = mappingService.findAllByAuth(authInfoHelper.getAuth(request), true);
 		List<AuthWrappedPojo<Mapping>> pojos = authPojoConverter.convert(mappings, auth.getUserId());	
 		return new DataTableList<AuthWrappedPojo<Mapping>>(pojos);
 	}
@@ -75,7 +75,7 @@ public class MappingController extends BaseScheregController {
 		model.addAttribute("mapping", new MappingImpl());
 		model.addAttribute("schemas", schemaService.findAllByAuth(authInfoHelper.getAuth(request)));
 		model.addAttribute("draft", true);
-		model.addAttribute("actionPath", "async/save");
+		model.addAttribute("actionPath", "/mapping/async/save");
 		return "mapping/form/edit";
 	}
 	
@@ -91,7 +91,7 @@ public class MappingController extends BaseScheregController {
 		
 		model.addAttribute("schemas", schemas);
 		
-		model.addAttribute("actionPath", "async/save");
+		model.addAttribute("actionPath", "/mapping/async/save");
 		model.addAttribute("draft", mapping.isDraft());
 		model.addAttribute("mapping", mapping.getElement());
 		return "mapping/form/edit";
@@ -99,7 +99,7 @@ public class MappingController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value="async/save")
-	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, @RequestParam(defaultValue="false") boolean draft, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!mappingService.getHasWriteAccess(mapping.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -110,14 +110,49 @@ public class MappingController extends BaseScheregController {
 		if (mapping.getId().isEmpty()) {
 			mapping.setId(null);
 		}
-		Mapping saveMapping = mappingService.findMappingById(mapping.getId());
+		
+		RightsContainer<Mapping> existMapping = mappingService.findByIdAndAuth(mapping.getId(), auth); 
+		Mapping saveMapping = existMapping==null ? null : existMapping.getElement();
+		boolean draft = existMapping==null ? true : existMapping.isDraft();
+		
 		if (saveMapping==null) {
 			saveMapping = mapping;
 		} else {
-			saveMapping.setLabel(mapping.getLabel());
 			saveMapping.setDescription(mapping.getDescription());
+			saveMapping.setSourceId(mapping.getSourceId());
+			saveMapping.setTargetId(mapping.getTargetId());
 		}
 		mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft), auth);
+		return result;
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/async/delete/{id}"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo deleteMapping(@PathVariable String id, HttpServletRequest request) {
+		ModelActionPojo result;
+		if (id!=null && !id.isEmpty()) {
+			mappingService.deleteMappingById(id, authInfoHelper.getAuth(request));
+			result = new ModelActionPojo(true);
+		} else {
+			result = new ModelActionPojo(false);
+		}		
+		return result;
+	}
+	
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/async/publish/{id}"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo publishMapping(@PathVariable String id, HttpServletRequest request) {
+		ModelActionPojo result = new ModelActionPojo(false);
+		if (id!=null && !id.isEmpty()) {
+			AuthPojo auth = authInfoHelper.getAuth(request);			
+			RightsContainer<Mapping> existMapping = mappingService.findByIdAndAuth(id, auth);
+			if (existMapping!=null) {
+				existMapping.setDraft(false);
+				mappingService.saveMapping(authPojoConverter.convert(existMapping, auth.getUserId()), auth);
+				result.setSuccess(true);
+			}
+		} 
 		return result;
 	}
 }

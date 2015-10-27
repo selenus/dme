@@ -17,13 +17,6 @@
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="control-label col-sm-3" for="mapping_label"><s:message code="~eu.dariah.de.minfba.mapreg.model.mapping.label" />:</label>
-			<div class="col-sm-9">
-				<sf:input path="label" class="form-control" id="mapping_label" />
-				<sf:errors path="label" cssClass="error" />
-			</div>
-		</div>
-		<div class="form-group">
 			<label class="control-label col-sm-3" for="mapping_source">~ Source:</label>
 			<div class="col-sm-9">
 				<sf:select path="sourceId" cssClass="form-control" items="${schemas}" itemLabel="element.label" itemValue="id" />
@@ -31,17 +24,10 @@
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="control-label col-sm-3" for="mapping_source">~ Source:</label>
+			<label class="control-label col-sm-3" for="mapping_source">~ Target:</label>
 			<div class="col-sm-9">
 				<sf:select path="targetId" cssClass="form-control" items="${schemas}" itemLabel="element.label" itemValue="id" />
 				<sf:errors path="targetId" cssClass="error" />
-			</div>
-		</div>
-		<div class="form-group">
-			<div class="col-sm-offset-3 col-sm-9">
-				<label>
-					<input type="checkbox" name="draft" id="draft"<c:if test="${draft}"> checked="checked"</c:if>> ~Draft:
-				</label>
 			</div>
 		</div>
 		<div class="form-group">

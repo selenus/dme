@@ -113,7 +113,6 @@ public class SchemaController extends BaseScheregController {
 			schema.setId(null);
 		}
 		
-		
 		RightsContainer<Schema> existSchema = schemaService.findByIdAndAuth(schema.getId(), auth); 
 		Schema saveSchema = existSchema==null ? null : existSchema.getElement();
 		boolean draft = existSchema==null ? true : existSchema.isDraft();
