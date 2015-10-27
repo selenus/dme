@@ -66,7 +66,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value="/schema/editor/{schemaId}")
+@RequestMapping(value="/schema/editor/{schemaId}/")
 public class MainEditorController extends BaseScheregController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
@@ -90,7 +90,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 		Files.createDirectories(Paths.get(tmpUploadDirPath));
 	}
 	
-	@RequestMapping(method=GET, value={"/", ""})
+	@RequestMapping(method=GET, value="")
 	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));

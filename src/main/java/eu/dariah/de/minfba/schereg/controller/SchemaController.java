@@ -141,4 +141,20 @@ public class SchemaController extends BaseScheregController {
 		}		
 		return result;
 	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/async/publish/{id}"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo publishSchema(@PathVariable String id, HttpServletRequest request) {
+		ModelActionPojo result = new ModelActionPojo(false);
+		if (id!=null && !id.isEmpty()) {
+			AuthPojo auth = authInfoHelper.getAuth(request);			
+			RightsContainer<Schema> existSchema = schemaService.findByIdAndAuth(id, auth);
+			if (existSchema!=null) {
+				existSchema.setDraft(false);
+				schemaService.saveSchema(authPojoConverter.convert(existSchema, auth.getUserId()), auth);
+				result.setSuccess(true);
+			}
+		} 
+		return result;
+	}
 }
