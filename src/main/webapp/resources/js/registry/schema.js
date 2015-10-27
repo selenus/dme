@@ -1,13 +1,13 @@
-var schemaEditor;
+var schemaTable;
 $(document).ready(function() {
-	schemaEditor = new SchemaEditor();
+	schemaTable = new SchemaTable();
 	
 	$("#btn-add-schema").click(function() { 
-		schemaEditor.triggerAdd(); 
+		schemaTable.triggerAdd(); 
 	});
 });
 
-var SchemaEditor = function() {
+var SchemaTable = function() {
 	this.prepareTranslations(["~eu.dariah.de.minfba.common.link.delete",
 	                          "~eu.dariah.de.minfba.common.link.edit",
 	                          "~eu.dariah.de.minfba.common.model.id",
@@ -17,16 +17,16 @@ var SchemaEditor = function() {
 	this.createTable();
 };
 
-SchemaEditor.prototype = new BaseTable(__util.getBaseUrl() + "schema/async/getData", "#schema-table-container");
+SchemaTable.prototype = new BaseTable(__util.getBaseUrl() + "schema/async/getData", "#schema-table-container");
 
-SchemaEditor.prototype.createTable = function() {
+SchemaTable.prototype.createTable = function() {
 	this._base.table = $('#schema-table').DataTable($.extend(true, {
 		"order": [[1, "asc"]],
 		"columnDefs": [
 	       {
 	           "targets": [0],
 	           "class" : "td-no-wrap",
-	           "data": function (row, type, val, meta) { return schemaEditor.renderBadgeColumn(row, type, val, meta); }
+	           "data": function (row, type, val, meta) { return schemaTable.renderBadgeColumn(row, type, val, meta); }
 	       }, {
 	    	   "targets": [1],
 	    	   "data" : "entity.pojo.label",
@@ -36,18 +36,18 @@ SchemaEditor.prototype.createTable = function() {
 	           "searchable": false,
 	           "sortable" : false,
 	           "class" : "td-no-wrap",
-	           "data": function (row, type, val, meta) { return schemaEditor.renderActionColumn(row, type, val, meta); }
+	           "data": function (row, type, val, meta) { return schemaTable.renderActionColumn(row, type, val, meta); }
 	       }
 	   ]
 	}, this.baseSettings));
 };
 
 /* Overrides the base abstract method */
-SchemaEditor.prototype.handleSelection = function(id) {
+SchemaTable.prototype.handleSelection = function(id) {
 	console.log("schema handle " + id);
 };
 
-SchemaEditor.prototype.renderBadgeColumn = function(row, type, val, meta) {
+SchemaTable.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	var result = "";	
 	if (type==="display") {
 		if (row.entity.pojo.type=="BaseSchema") {
@@ -64,7 +64,7 @@ SchemaEditor.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	return result;
 };
 
-SchemaEditor.prototype.renderActionColumn = function(row, type, val, meta) {
+SchemaTable.prototype.renderActionColumn = function(row, type, val, meta) {
 	var result = "";	
 	
 	if (type==="display") {

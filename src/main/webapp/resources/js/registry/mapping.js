@@ -1,13 +1,13 @@
-var mappingEditor;
+var mappingTable;
 $(document).ready(function() {
-	mappingEditor = new MappingEditor();
+	mappingTable = new MappingTable();
 	
 	$("#btn-add-mapping").click(function() { 
-		mappingEditor.triggerAdd(); 
+		mappingTable.triggerAdd(); 
 	});
 });
 
-var MappingEditor = function() {
+var MappingTable = function() {
 	this.prepareTranslations(["~eu.dariah.de.minfba.common.link.delete",
 	                          "~eu.dariah.de.minfba.common.link.edit",
 	                          "~eu.dariah.de.minfba.common.model.id",
@@ -17,16 +17,16 @@ var MappingEditor = function() {
 	this.createTable();
 };
 
-MappingEditor.prototype = new BaseTable(__util.getBaseUrl() + "mapping/async/getData", "#mapping-table-container");
+MappingTable.prototype = new BaseTable(__util.getBaseUrl() + "mapping/async/getData", "#mapping-table-container");
 
-MappingEditor.prototype.createTable = function() {
+MappingTable.prototype.createTable = function() {
 	this._base.table = $('#mapping-table').DataTable($.extend(true, {
 		"order": [[1, "asc"]],
 		"columnDefs": [
 	       {
 	           "targets": [0],
 	           "class" : "td-no-wrap",
-	           "data": function (row, type, val, meta) { return mappingEditor.renderBadgeColumn(row, type, val, meta); }
+	           "data": function (row, type, val, meta) { return mappingTable.renderBadgeColumn(row, type, val, meta); }
 	       }, {	
 	    	   "targets": [1],
 	    	   "data": "entity.pojo.sourceId",
@@ -40,18 +40,18 @@ MappingEditor.prototype.createTable = function() {
 	           "searchable": false,
 	           "sortable" : false,
 	           "class" : "td-no-wrap",
-	           "data": function (row, type, val, meta) { return mappingEditor.renderActionColumn(row, type, val, meta); }
+	           "data": function (row, type, val, meta) { return mappingTable.renderActionColumn(row, type, val, meta); }
 	       }
 	   ]
 	}, this.baseSettings));
 };
 
 /* Overrides the base abstract method */
-MappingEditor.prototype.handleSelection = function(id) {
+MappingTable.prototype.handleSelection = function(id) {
 	console.log("mapping handle " + id);
 };
 
-MappingEditor.prototype.renderBadgeColumn = function(row, type, val, meta) {
+MappingTable.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	var result = "";	
 	if (type=="display") {
 		if (row.entity.draft) {
@@ -63,7 +63,7 @@ MappingEditor.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	return result;
 };
 
-MappingEditor.prototype.renderActionColumn = function(row, type, val, meta) {
+MappingTable.prototype.renderActionColumn = function(row, type, val, meta) {
 	var result = "";	
 	if (type=="display") {
 		result += '<button class="btn btn-xs btn-default"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> ';
