@@ -34,7 +34,7 @@
 		<put-attribute name="sideNav" cascade="true" value="true" />
 		<put-attribute name="fluidLayout" cascade="true" value="true" />
 	</definition>
-	<definition name="template_editors" extends="template_simple">
+	<definition name="template_tables" extends="template_simple">
 		<put-attribute name="fluidLayout" cascade="true" value="true" />
 		<put-list-attribute name="styles" inherit="true">
 			<add-attribute type="string" value="dataTables/datatables.css" />
@@ -43,12 +43,12 @@
 			<add-attribute type="string" value="dataTables/dataTables.js" />
 			<add-attribute type="string" value="dataTables/dataTables.fnReloadAjax.js" />
 			<add-attribute type="string" value="dataTables/dataTables.i18n.js" />
-			<add-attribute type="string" value="_common/baseEditor.js" />
+			<add-attribute type="string" value="_common/baseTable.js" />
         </put-list-attribute>
     </definition>
 	
 	<!-- Registry -->
-	<definition name="registry/home" extends="template_editors">
+	<definition name="registry/home" extends="template_tables">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/registry/home.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="registry/schema.js" />
@@ -57,7 +57,7 @@
 	</definition>
 		
 	<!-- Mapping -->
-	<definition name="mapping/home" extends="template_editors">
+	<definition name="mapping/home" extends="template_tables">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/home.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="mapping.js" />
@@ -67,7 +67,7 @@
 		
 	
 	<!-- Schema -->
-	<definition name="schema/home" extends="template_editors">
+	<definition name="schema/home" extends="template_tables">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/home.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="schema.js" />
@@ -76,7 +76,7 @@
 	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
 	
 	<!-- Schema Editor -->
-	<definition name="schemaEditor" extends="template_editors">
+	<definition name="schemaEditor" extends="template_tables">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/editor.jsp" />
 		<put-list-attribute name="styles" inherit="true">
 			<add-attribute type="string" value="jquery/jquery.ui.layout.css" />

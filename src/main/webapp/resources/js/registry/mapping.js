@@ -21,7 +21,7 @@ var MappingEditor = function() {
 };
 
 
-MappingEditor.prototype = new BaseEditor(__util.getBaseUrl() + "mapping/async/getData");
+MappingEditor.prototype = new BaseTable(__util.getBaseUrl() + "mapping/async/getData", "#mapping-table-container");
 
 MappingEditor.prototype.createTable = function() {
 	this._base.table = $('#mapping-table').DataTable($.extend(true, {}, this.baseSettings, {

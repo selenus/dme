@@ -1,5 +1,5 @@
 /**
- * 	BaseEditor: superclass for all editors handling dataTables
+ * 	BaseTable: superclass for all editors handling dataTables
  * ==========================================================================================
  * 	Notes:
  * 		- All filter options that are indended to trigger a reload of the table
@@ -9,7 +9,7 @@
  * 		- Tooltips in the data are identified by the class 'hint-tooltip' and
  * 		  loaded after every refresh of the editor
  */
-function BaseEditor(url, containerSelector) {
+function BaseTable(url, containerSelector) {
 	// Explicit accessor for base properties in the editors 
 	this._base = this;
 	this.table = null;
@@ -47,11 +47,11 @@ function BaseEditor(url, containerSelector) {
 	this.cycleRefresh();
 }
 
-BaseEditor.prototype.handleInitComplete = function(settings, json) {
+BaseTable.prototype.handleInitComplete = function(settings, json) {
 	this.assignTableEvents();
 };
 
-BaseEditor.prototype.assignTableEvents = function() {
+BaseTable.prototype.assignTableEvents = function() {
 	if (this.containerSelector==null) {
 		return;
 	}
@@ -85,9 +85,9 @@ BaseEditor.prototype.assignTableEvents = function() {
 };
 
 /* Just an 'abstract' method that is intended to be overridden */
-BaseEditor.prototype.handleSelection = function(id) { };
+BaseTable.prototype.handleSelection = function(id) { };
 
-BaseEditor.prototype.handleAjaxError = function(xhr, textStatus, error) {
+BaseTable.prototype.handleAjaxError = function(xhr, textStatus, error) {
     // Reload because the session has expired
 	if (xhr.status===403) {
     	bootbox.alert(__translator.translate("~eu.dariah.de.minfba.common.view.notifications.session_expired_reload"), function(result) {
@@ -102,20 +102,20 @@ BaseEditor.prototype.handleAjaxError = function(xhr, textStatus, error) {
     this.table.fnProcessingIndicator(false);
 };
 
-BaseEditor.prototype.cycleRefresh = function() {
+BaseTable.prototype.cycleRefresh = function() {
 	var _this = this;
 	if (this.options.cyclicRefresh) {
 		setTimeout(function() { _this.refresh(); _this.cycleRefresh(); }, _this.options.refreshInterval);
 	};
 };
 
-BaseEditor.prototype.refresh = function() {
+BaseTable.prototype.refresh = function() {
 	if (!this.error && this.table!=null) {
 		this.table.ajax.reload();
 	}
 };
 
-BaseEditor.prototype.handleRefresh = function(oSettings) {
+BaseTable.prototype.handleRefresh = function(oSettings) {
 	// This is the case for the pre-load callback
 	if (oSettings.aoData===null || oSettings.aoData===undefined || 
 			(oSettings.aoData instanceof Array && oSettings.aoData.length==0)) {
@@ -130,7 +130,7 @@ BaseEditor.prototype.handleRefresh = function(oSettings) {
 	}
 };
 
-BaseEditor.prototype.prepareTranslations = function(translations) {
+BaseTable.prototype.prepareTranslations = function(translations) {
 	if (translations!=null || (translations instanceof Array && translations.length>0)) {
 		__translator.addTranslations(translations);
 		__translator.addTranslations(this.baseTranslations);

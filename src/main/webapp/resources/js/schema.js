@@ -23,7 +23,7 @@ var SchemaEditor = function() {
 };
 
 
-SchemaEditor.prototype = new BaseEditor();
+SchemaEditor.prototype = new BaseTable();
 
 SchemaEditor.prototype.createTable = function() {
 	this._base.table = $('#schema-table').DataTable({

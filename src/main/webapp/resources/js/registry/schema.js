@@ -29,7 +29,7 @@ var SchemaEditor = function() {
 };
 
 
-SchemaEditor.prototype = new BaseEditor(__util.getBaseUrl() + "schema/async/getData", "#schema-table-container");
+SchemaEditor.prototype = new BaseTable(__util.getBaseUrl() + "schema/async/getData", "#schema-table-container");
 
 SchemaEditor.prototype.handleSelection = function(id) {
 	console.log("schema handle " + id);

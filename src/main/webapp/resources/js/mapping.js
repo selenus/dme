@@ -23,7 +23,7 @@ var MappingEditor = function() {
 };
 
 
-MappingEditor.prototype = new BaseEditor();
+MappingEditor.prototype = new BaseTable();
 
 MappingEditor.prototype.createTable = function() {
 	this._base.table = $('#mapping-table').DataTable({
