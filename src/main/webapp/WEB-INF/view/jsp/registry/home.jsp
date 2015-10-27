@@ -29,10 +29,10 @@
 				<div class="row">
 					<div id="schema-table-container" class="col-lg-5">
 						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.title" />&nbsp;</h2>
-						<button id="btn-add-schema" class="btn btn-default btn-sm">
-							<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_schema" />
-						</button>
 						<div class="pull-right">
+							<button id="btn-add-schema" class="btn btn-default btn-sm pull-left">
+								<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_schema" />
+							</button>
 							<div class="data-table-filter">
 								<input type="text" class="form-control input-sm" placeholder='<s:message code="~eu.dariah.de.minfba.common.link.filter"/>'>
 							</div>
@@ -46,7 +46,6 @@
 								</select>
 							</div>					
 						</div>
-
 						<div class="clearfix">
 							<table id="schema-table" class="table table-striped table-bordered table-condensed">
 								<thead>
@@ -66,10 +65,10 @@
 					</div>
 					<div id="mapping-table-container" class="col-lg-7">
 						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.title" />&nbsp;</h2>
-						<button id="btn-add-mapping" class="btn btn-default btn-sm">
-							<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_mapping" />
-						</button>
 						<div class="pull-right">
+							<button id="btn-add-mapping" class="btn btn-default btn-sm pull-left">
+								<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_mapping" />
+							</button>
 							<div class="data-table-filter">
 								<input type="text" class="form-control input-sm" placeholder='<s:message code="~eu.dariah.de.minfba.common.link.filter"/>'>
 							</div>

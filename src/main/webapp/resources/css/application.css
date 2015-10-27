@@ -1,42 +1,22 @@
 /*!
  *	Data Tables
  */
-#data-details-container .form-control {
-	padding: 5px;
-	height: 30px;
-	font-size: 12px;
-}
-
 .data-table-filter, 
 .data-table-count {
 	float: left;
+	margin-left: 2px;
 }
 
 .data-table-filter {
-	width: 90px;
-	margin-right: 2px;
+	width: 120px;
 }
 
 .data-table-count {
 	width: 60px;
 }
- 
-.dataTables_wrapper {
-	/*padding: 7px; 
-	border: 1px solid #CCC; */
-}
 
 .dataTables_wrapper .label {
 	padding: 1px 3px;
-}
-.dataTables_wrapper .btn-link {
-	border: none;
-	padding: 0 2px;
-	color: #000;
-}
-
-.dataTables_wrapper table.dataTable {
-	margin-top: 0px !important;
 }
 
 .dataTables_wrapper table.dataTable tbody tr.selected {

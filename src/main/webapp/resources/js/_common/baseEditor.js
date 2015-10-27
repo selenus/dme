@@ -9,12 +9,12 @@
  * 		- Tooltips in the data are identified by the class 'hint-tooltip' and
  * 		  loaded after every refresh of the editor
  */
-function BaseEditor(url) {
+function BaseEditor(url, containerSelector) {
 	// Explicit accessor for base properties in the editors 
 	this._base = this;
 	this.table = null;
 	this.error = false;
-	this.containerSelector = null;
+	this.containerSelector = containerSelector==undefined ? null : containerSelector;
 	
 	this.baseTranslations = ["~eu.dariah.de.minfba.common.view.notifications.async_general_error",
 	                         "~eu.dariah.de.minfba.common.view.notifications.async_timeout",
@@ -28,33 +28,28 @@ function BaseEditor(url) {
 	var _this = this;
 	// Setting some defaults for the datatables as used in the project
 	this.baseSettings = {
-		"dom":	"<'row'<'col-sm-12 data-tables-table'tr>>" +
-				"<'row'<'col-sm-5'i><'col-sm-7'p>>",
-		"bProcessing": true,
-		"sAjaxSource": url!=null && url !=undefined ? url : window.location.pathname + "async/getData",
-		"bAutoWidth": false,
-		"fnDrawCallback": function (oSettings) {
-			_this.handleRefresh(oSettings);
-	    },
-	    "fnPreDrawCallback": function (oSettings) {
-	    	_this.cleanupBeforeRefresh(oSettings);
-	    },
-	    "fnServerData": function ( sSource, aoData, fnCallback ) {
-	        $.ajax( {
-	            "dataType": 'json',
-	            "type": "GET",
-	            "url": sSource,
-	            "data": aoData,
-	            "success": fnCallback,
-	            "timeout": 15000,
-	            "error": function(xhr, textStatus, error) {_this.handleAjaxError(xhr, textStatus, error); }
-	        });
-	    }
-	};
+			"dom":	"<'row'<'col-sm-12 data-tables-table'tr>>" +
+					"<'row'<'col-sm-5'i><'col-sm-7'p>>",
+			"autoWidth": false,
+			"processing": true,
+			"ajax": {
+				"url" : url!=null && url !=undefined ? url : window.location.pathname + "async/getData",
+				"error": function(xhr, textStatus, error) {_this.handleAjaxError(xhr, textStatus, error); }
+			},
+			"drawCallback": function (oSettings) {
+				_this.handleRefresh(oSettings);
+		    },
+		    "initComplete" : function(settings, json) { _this.handleInitComplete(settings, json); }
+		};
 	
-	$(".editor-option").change(function() { _this.refresh(); });
+	// TODO What was that?
+	//$(".editor-option").change(function() { _this.refresh(); });
 	this.cycleRefresh();
 }
+
+BaseEditor.prototype.handleInitComplete = function(settings, json) {
+	this.assignTableEvents();
+};
 
 BaseEditor.prototype.assignTableEvents = function() {
 	if (this.containerSelector==null) {
@@ -62,8 +57,9 @@ BaseEditor.prototype.assignTableEvents = function() {
 	}
 	var _this = this;
     $(this.containerSelector).find('.data-table-filter input').on('keyup click', function () {
-    	_this.table.DataTable().search($(this).val(), false, false).draw();
+    	_this.table.search($(this).val(), false, false, true).draw();
     });
+    // After a reload, some filter might still be applicable
     $(this.containerSelector).find(".data-table-filter input").trigger("keyup");
     
     $(this.containerSelector).find('.data-table-count select').on('change', function () {
@@ -73,19 +69,23 @@ BaseEditor.prototype.assignTableEvents = function() {
     	}    	
     	_this.table.page.len(len).draw();
     });
-    $(this.containerSelector)(".data-table-count select").trigger("change");
+    // After a reload, some selection might still be applicable
+    $(this.containerSelector).find(".data-table-count select").trigger("change");
     		
-    this.table.$("tbody").on("click", "tr", function () {
+    $(this.containerSelector).find("tbody").on("click", "tr", function () {
         if ($(this).hasClass("selected")) {
             $(this).removeClass("selected");
-            //_this.handleSelection(null);
+            _this.handleSelection(null);
         } else {
         	_this._base.table.$("tr.selected").removeClass("selected");
             $(this).addClass("selected");
-            //_this.handleSelection($(this).prop("id"));
+            _this.handleSelection($(this).prop("id"));
         }
     });
 };
+
+/* Just an 'abstract' method that is intended to be overridden */
+BaseEditor.prototype.handleSelection = function(id) { };
 
 BaseEditor.prototype.handleAjaxError = function(xhr, textStatus, error) {
     // Reload because the session has expired
@@ -115,12 +115,6 @@ BaseEditor.prototype.refresh = function() {
 	}
 };
 
-BaseEditor.prototype.cleanupBeforeRefresh = function(oSettings) {
-	if (this.table!=null) {
-		this.table.$(".hint-tooltip").tooltip("destroy");
-	}
-};
-
 BaseEditor.prototype.handleRefresh = function(oSettings) {
 	// This is the case for the pre-load callback
 	if (oSettings.aoData===null || oSettings.aoData===undefined || 
@@ -142,11 +136,4 @@ BaseEditor.prototype.prepareTranslations = function(translations) {
 		__translator.addTranslations(this.baseTranslations);
 		__translator.getTranslations();
 	}
-};
-
-jQuery.fn.dataTableExt.oApi.fnProcessingIndicator = function ( oSettings, onoff ) {
-    if ( typeof( onoff ) == 'undefined' ) {
-        onoff = true;
-    }
-    this.oApi._fnProcessingDisplay( oSettings, onoff );
 };
