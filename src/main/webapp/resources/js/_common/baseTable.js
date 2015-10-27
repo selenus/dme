@@ -110,8 +110,29 @@ BaseTable.prototype.cycleRefresh = function() {
 };
 
 BaseTable.prototype.refresh = function() {
+	var _this = this;
 	if (!this.error && this.table!=null) {
-		this.table.ajax.reload();
+		var selected = [];
+		this.table.$("tr.selected").each(function() {
+			selected.push($(this).prop("id"));
+		});
+				
+		this.table.ajax.reload(function() {
+			var hasSelected = false;
+			if (selected.length>0) {
+				for (var i=0; i<selected.length; i++) {
+					$("#"+selected[i]).each(function() {
+						$(this).addClass("selected");
+						// Only executed if the row (id) still exists
+						_this.handleSelection(selected[i]);
+						hasSelected = true;
+					});
+				}
+			} 
+			if (!hasSelected) {
+				_this.handleSelection(null);
+			}
+		});
 	}
 };
 
