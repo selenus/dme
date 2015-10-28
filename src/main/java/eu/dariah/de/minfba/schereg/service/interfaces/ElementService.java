@@ -5,6 +5,7 @@ import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
+import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
 
@@ -29,5 +30,6 @@ public interface ElementService extends BaseService {
 	public Terminal removeTerminal(String schemaId, String terminalId, AuthPojo auth);
 	public Element removeElementTree(String id, AuthPojo auth);
 	public void saveOrReplaceRoot(String schemaId, Nonterminal element, AuthPojo auth);
+
 	
 }

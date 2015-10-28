@@ -346,16 +346,18 @@ noscript div {
 	#schema-editor-context-response
 */
 
+.editor-layout-container {
+	border:		1px solid #BBB;
+}
+
+.ui-pane-subcontainer.editor-container {
+	border: none;
+}
+
 .button-bar {
     border-bottom: 1px solid #ddd;
     overflow: hidden;
     padding: 10px 15px;
-}
-
-#schema-editor-container {
-	border-top: 1px solid #DDD;
-	margin-left: -15px;
-	margin-right: -15px;
 }
 
 #schema-editor-outer-east-container {

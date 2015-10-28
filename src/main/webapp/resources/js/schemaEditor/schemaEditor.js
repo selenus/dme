@@ -49,7 +49,7 @@ var SchemaEditor = function() {
 	                              "~eu.dariah.de.minfba.schereg.button.add_label", 
 	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
 	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_detete",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
 	                              "~eu.dariah.de.minfba.schereg.dialog.element_label",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.head",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.body",
@@ -690,7 +690,7 @@ SchemaEditor.prototype.createRoot = function() {
 SchemaEditor.prototype.removeElement = function() { 
 	var _this = this;
 	
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_detete"), this.graph.selectedItems[0].id), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), this.graph.selectedItems[0].id), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.pathname + "/" + _this.graph.selectedItems[0].typeInfo + "/" 
@@ -738,7 +738,7 @@ SchemaEditor.prototype.removeTerminal = function() {
 	var terminalId = $("#terminalId").val();
 	
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_detete"), terminalId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), terminalId), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.pathname + "/terminal/" + terminalId + "/async/remove",

@@ -75,6 +75,56 @@
 	</definition>
 	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
 	
+	<!-- Mapping Editor -->
+	<definition name="mappingEditor" extends="template_tables">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/editor.jsp" />
+		<put-list-attribute name="styles" inherit="true">
+			<add-attribute type="string" value="jquery/jquery.ui.layout.css" />
+        </put-list-attribute>
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="jquery/jquery.ui.js" />
+			<add-attribute type="string" value="jquery/jquery.ui.layout.js" />
+			<add-attribute type="string" value="jquery/jquery.ui.widget.js" />
+			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
+			<add-attribute type="string" value="lib/svg-pan-zoom.js" />
+			<add-attribute type="string" value="_common/svgviewer.js" />
+			<add-attribute type="string" value="logArea.js" />
+			<add-attribute type="string" value="sessions.js" />
+						
+			<add-attribute type="string" value="modelingUI/Area.js" />
+			<add-attribute type="string" value="modelingUI/Array.js" />
+			<add-attribute type="string" value="modelingUI/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="modelingUI/Connection.js" />
+			<add-attribute type="string" value="modelingUI/Connector.js" />
+			<add-attribute type="string" value="modelingUI/ContainerUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/ContentChangedUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Cursors.js" />
+			<add-attribute type="string" value="modelingUI/DeleteConnectionUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/DeleteElementUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Element.js" />
+			<add-attribute type="string" value="modelingUI/ElementTemplate.js" />
+			<add-attribute type="string" value="modelingUI/FunctionTemplate.js" />
+			<add-attribute type="string" value="modelingUI/Function.js" />
+			<add-attribute type="string" value="modelingUI/Graph.js" />
+			<add-attribute type="string" value="modelingUI/InsertConnectionUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/InsertElementUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Point.js" />
+			<add-attribute type="string" value="modelingUI/Rectangle.js" />
+			<add-attribute type="string" value="modelingUI/Selection.js" />
+			<add-attribute type="string" value="modelingUI/SelectionUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/Tracker.js" />
+			<add-attribute type="string" value="modelingUI/TransformUndoUnit.js" />
+			<add-attribute type="string" value="modelingUI/UndoService.js" />
+			<add-attribute type="string" value="modelingUI/HierarchyConnection.js" />
+			<add-attribute type="string" value="modelingUI/MappingConnection.js" />
+			<add-attribute type="string" value="modelingUI/Expander.js" />
+			<add-attribute type="string" value="modelingUI/HNavBar.js" />
+			
+			<add-attribute type="string" value="mappingEditor/mappingEditor.js" />
+		</put-list-attribute>
+	</definition>
+	
+	
 	<!-- Schema Editor -->
 	<definition name="schemaEditor" extends="template_tables">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/editor.jsp" />

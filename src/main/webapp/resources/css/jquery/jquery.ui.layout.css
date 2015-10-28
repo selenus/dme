@@ -18,10 +18,6 @@
 /*!
  *	TGR: Customization for DARIAH-DE Schema Registry
  */
-#schema-editor-layout-container {
-	border:		1px solid #BBB;
-}
-
 div.outer-center,
 div.inner-east {
 	overflow: hidden;

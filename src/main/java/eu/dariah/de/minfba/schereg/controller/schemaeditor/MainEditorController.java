@@ -56,11 +56,13 @@ import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
+import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
+import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
@@ -273,6 +275,17 @@ public class MainEditorController extends BaseScheregController implements Initi
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
 	public @ResponseBody Element getHierarchy(@PathVariable String schemaId, Model model, Locale locale, HttpServletResponse response) throws IOException {
 		Element result = elementService.findRootBySchemaId(schemaId, true);
+		if (result==null) {
+			response.getWriter().print("null");
+			response.setContentType("application/json");
+		}
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getRendered")
+	public @ResponseBody MappableElement getRenderedHierarchy(@PathVariable String schemaId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		Element e = elementService.findRootBySchemaId(schemaId, true);
+		MappableElement result =  ElementServiceImpl.convertElement(e, true);
 		if (result==null) {
 			response.getWriter().print("null");
 			response.setContentType("application/json");

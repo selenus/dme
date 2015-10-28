@@ -40,7 +40,7 @@
 						</small>&nbsp;</h2>		
 					</div>
 					<div class="col-xs-12">
-						<div id="schema-editor-layout-container" class="hide">
+						<div id="schema-editor-layout-container" class="hide editor-layout-container">
 						
 							<div class="outer-south">
 								<ul id="schema-editor-log" class="log"></ul>
@@ -144,7 +144,7 @@
 					      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
 					      			<button type="button" onclick="schemaEditor.schema.performAction('resetView'); schemaEditor.reload(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-refresh"></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></button>		
 								</div>
-								<div id="schema-editor-container">
+								<div id="schema-editor-container" class="editor-container">
 									<canvas id="schema-editor-canvas"></canvas>
 								</div>
 							</div>
