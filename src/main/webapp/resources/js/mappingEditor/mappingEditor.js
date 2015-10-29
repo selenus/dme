@@ -29,6 +29,8 @@ var MappingEditor = function() {
 	
 	this.footerOffset = 70;
 	
+	this.oneDone = false;
+	
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
@@ -111,6 +113,39 @@ MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	    	}
 	    	_this.processElementHierarchy(area, data);
 	    	_this.graph.update();
+	    	
+	    	if (_this.oneDone) {
+	    		_this.getMappings();
+	    	} else {
+	    		_this.oneDone = true;
+	    	}
+	    }/*,
+	    error: __util.processServerError*/
+	});
+};
+
+MappingEditor.prototype.getMappings = function() {
+	var _this = this;
+	$.ajax({
+	    url: _this.mappingPath + "async/getConcepts",
+	    type: "GET",
+	    success: function(data) {
+	    	if (data===null || data===undefined || data.length==0) {
+	    		return;
+	    	}
+	    	
+	    	for (var i=0; i<data.length; i++) {
+	    		var lhs = _this.source.getElement(data[i].sourceElementId);
+	    		for (var j=0; j<data.length; j++) {
+	    			var rhs = _this.target.getElement(data[i].targetElementIds[j]);
+	    			
+	    			if (lhs != null && rhs != null) {			
+		    			_this.graph.addMapping(lhs.getConnector("mappings"), rhs.getConnector("mappings"), data[i].id, 1);
+		    		}	
+	    		}
+	    	}
+	    	
+	    	_this.graph.update();
 	    }/*,
 	    error: __util.processServerError*/
 	});
@@ -191,9 +226,9 @@ MappingEditor.prototype.newMappingCellHandler = function(e) {
 	
 	var _this = mappingEditor;
 	$.ajax({
-		url: _this.mappingPath + 'saveConcept',
+		url: _this.mappingPath + 'async/saveConcept',
         type: "POST",
-        data: { conceptId: 0, sourceElementId: e.input, targetElementId: e.output},
+        data: { conceptId: null, sourceElementId: e.input, targetElementId: e.output},
         dataType: "json",
         //success: function(data) { $("#save-notice-area").text(data);},
         //error: function(textStatus) { modalMessage.showMessage("warning", "Error updating mapping!", "Please refresh."); }

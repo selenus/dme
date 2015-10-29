@@ -1,20 +1,35 @@
 package eu.dariah.de.minfba.schereg.controller.mappingeditor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
+import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
+import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
@@ -24,6 +39,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 public class MappingEditorController extends BaseScheregController {
 	@Autowired private SchemaService schemaService;
 	@Autowired private MappingService mappingService;
+	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private PersistedSessionService sessionService;
 	
@@ -50,5 +66,34 @@ public class MappingEditorController extends BaseScheregController {
 			logger.error("Failed to load/initialize persisted session", e);
 		} 
 		return "mappingEditor";
+	}
+	
+	@RequestMapping(value="/async/getConcepts", method=RequestMethod.GET)
+	public @ResponseBody List<MappedConcept> getMappedConcepts(@PathVariable String mappingId, Model model) {
+		return mappedConceptService.findAll(mappingId);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.POST, value = "/async/saveConcept")
+	public @ResponseBody ModelActionPojo saveConcept(@PathVariable String mappingId, @RequestParam String conceptId, @RequestParam String sourceElementId, @RequestParam String targetElementId,  HttpServletRequest request) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		
+		MappedConcept c = null;
+		if (!conceptId.equals("")) {
+			c = mappedConceptService.findById(conceptId);
+		}
+		if (c==null) {
+			c = new MappedConceptImpl();
+			c.setTargetElementIds(new ArrayList<String>(1));
+		}
+		c.setEntityId(mappingId);
+		c.setSourceElementId(sourceElementId);
+		if (!c.getTargetElementIds().contains(targetElementId)) {
+			c.getTargetElementIds().add(targetElementId);
+		}
+		
+		mappedConceptService.saveMappedConcept(c, auth);
+		
+		return new ModelActionPojo(true);
 	}
 }
