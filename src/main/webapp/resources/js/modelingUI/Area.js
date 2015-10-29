@@ -235,7 +235,7 @@ Area.prototype.addRoot = function(template, point, id, label, typeInfo, subtypeI
 	
 	this.root.invalidate();
 	
-	this.resetPoint = point;
+	//this.resetPoint = point;
 		
 	return this.root;
 };
@@ -270,7 +270,6 @@ Area.prototype.getVisibleElements = function() {
 	
 	this.minY = this.root.getRectangle().y;
 	this.maxY = this.buildVisibleArea(this.root, visibleElements, this.root.getRectangle().x, this.root.getRectangle().y) + 25;
-	
 	return visibleElements;
 };
 
@@ -285,7 +284,11 @@ Area.prototype.buildVisibleArea = function(element, elementList, x, y) {
 		
 		if (element.isExpanded && element.children.length > 0) {
 			for (var i=0; i<element.children.length; i++) {
-				y = this.buildVisibleArea(element.children[i], elementList, this.isLeft ?  x + 20 : x - 20, y + 40);
+				var deltaX = x + 20;
+				if (!this.isLeft) {
+					deltaX = element.rectangle.x + element.rectangle.width - 20 - element.children[i].rectangle.width;
+				}
+				y = this.buildVisibleArea(element.children[i], elementList, deltaX, y + 40);
 			}
 		}
 	}
@@ -304,9 +307,16 @@ Area.prototype.addParents = function(element, elementList) {
 };
 
 Area.prototype.paint = function(context, pointerPosition) {
-	/*context.strokeStyle = "#A0A0A0";
-	context.lineWidth = 1;
-	context.strokeRect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);*/
 	
-	this.hNavBar.paint(context, this.minY, this.maxY);
+	if (this.isLeft) {
+		context.strokeStyle = "#A0A0A0"
+		context.lineWidth = 1;
+		context.beginPath();
+		context.moveTo(this.rectangle.width, this.rectangle.y);
+		context.lineTo(this.rectangle.width, this.rectangle.height);
+		context.stroke();
+	}
+	
+	
+	this.hNavBar.paint(context, this.minY, this.maxY, this.isLeft);
 };

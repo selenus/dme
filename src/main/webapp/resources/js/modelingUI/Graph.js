@@ -944,7 +944,6 @@ Graph.prototype.update = function()
 		}
 	}
 	
-	
 	/**
 	 * Besser: Frage an die beiden Areas, welche Attribute sichtbar sind,
 	 * 	anzeigen der connections, die zumindest in einem der beiden sichtbar sind.

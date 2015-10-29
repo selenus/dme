@@ -170,7 +170,14 @@ Element.prototype.paint = function(context)
 };
 
 Element.prototype.getExpanderPosition = function() {
-	return new Point(this.rectangle.x + this.template.expanderPosition.x, this.rectangle.y + this.template.expanderPosition.y);
+	// Expander for showing/hiding child elements
+	if (this.template.isTarget) {
+		this.expanderPosition = { x: this.rectangle.width-10, y: Math.floor(this.rectangle.height / 2) };
+	} else {
+		this.expanderPosition = { x: 10, y: Math.floor(this.rectangle.height / 2) };
+	}
+	
+	return new Point(this.rectangle.x + this.expanderPosition.x, this.rectangle.y + this.expanderPosition.y);
 };
 
 Element.prototype.invalidate = function() {

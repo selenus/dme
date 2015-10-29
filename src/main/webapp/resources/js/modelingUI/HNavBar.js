@@ -72,7 +72,7 @@ HNavBar.prototype.calculateInnerBar = function(minY, maxY) {
 										innerBarHeight);
 };
 
-HNavBar.prototype.paint = function(context, minY, maxY) {
+HNavBar.prototype.paint = function(context, minY, maxY, isLeft) {
 	if (minY != this.displayedMinY || maxY != this.displayedMaxY) {
 		this.calculateInnerBar(minY, maxY);
 	}
@@ -81,8 +81,13 @@ HNavBar.prototype.paint = function(context, minY, maxY) {
 	context.strokeStyle = this.style.strokeColor;
 	context.lineWidth = 2;
 	context.beginPath();
-	context.moveTo(this.rectangle.width, this.rectangle.y);
-	context.lineTo(this.rectangle.width, this.rectangle.height);
+	if (isLeft) {
+		context.moveTo(this.rectangle.width, this.rectangle.y);
+		context.lineTo(this.rectangle.width, this.rectangle.height);
+	} else {
+		context.moveTo(this.rectangle.x, this.rectangle.y);
+		context.lineTo(this.rectangle.x, this.rectangle.height);
+	}
 	context.stroke();
 	
 	

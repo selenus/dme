@@ -69,14 +69,6 @@ function ElementTemplate(isTarget, isRoot, isAlone)
 				isMappable: true });
 		}
 	}
-	
-	
-	// Expander for showing/hiding child elements
-	if (isTarget) {
-		this.expanderPosition = { x: this.defaultWidth-10, y: Math.floor(this.defaultHeight / 2) };
-	} else {
-		this.expanderPosition = { x: 10, y: Math.floor(this.defaultHeight / 2) };
-	}
 }
 
 
@@ -114,7 +106,12 @@ ElementTemplate.prototype.paint = function(element, context)
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "bottom";
 	context.textAlign = "left";
-	context.fillText(element.getContent(), rectangle.x + 25, rectangle.y + 19);
+	
+	if (!this.isTarget) {
+		context.fillText(element.getContent(), rectangle.x + 25, rectangle.y + 19);
+	} else { // Based on measured + 45 in element
+		context.fillText(element.getContent(), rectangle.x + 20, rectangle.y + 19);		
+	}
 	
 	if (element.icon != null) {
 		var icon = new Image();

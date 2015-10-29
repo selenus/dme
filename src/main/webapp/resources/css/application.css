@@ -352,6 +352,7 @@ noscript div {
 
 .ui-pane-subcontainer.editor-container {
 	border: none;
+	padding: 0;
 }
 
 .button-bar {

@@ -83,28 +83,75 @@ MappingEditor.prototype.initLayout = function() {
 };
 
 MappingEditor.prototype.initGraphs = function() {
-	
+	this.graph = new Graph(this.context.canvas);
+	this.source = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
+	this.target = new Area(this.graph, new Rectangle(0, 0, 0, 0), false);
+ 	this.graph.addArea(this.source);
+ 	this.graph.addArea(this.target);
+
+ 	this.getElementHierarchy(this.sourcePath, this.source);
+ 	this.getElementHierarchy(this.targetPath, this.target);
+
+ 	this.resizeLayout();
+ 	this.resizeContent();
+};
+
+MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	var _this = this;
 	$.ajax({
 	    url: this.sourcePath + "async/getRendered",
 	    type: "GET",
-	    //dataType: "json",
 	    success: function(data) {
 	    	if (data===null || data===undefined || data.length==0) {
 	    		return;
 	    	}
-	    	
-	    	//_this.processElementHierarchy(data);
-	    	//_this.graph.update();
+	    	_this.processElementHierarchy(area, data);
+	    	_this.graph.update();
 	    }/*,
 	    error: __util.processServerError*/
 	});
-	
-	
-	this.resizeLayout();
- 	this.resizeContent();
 };
- 	
+
+
+MappingEditor.prototype.processElementHierarchy = function(schema, data) {
+	var deltaX = schema===this.source ? 50 : this.context.canvas.width-50;	
+	var rootTemplate = schema===this.source ? sourceRootTemplate : targetRootTemplate;
+	var _Template = schema===this.source ? sourceTemplate : targetTemplate;
+	
+	var parent = schema.addRoot(rootTemplate, { x: deltaX, y: 25 }, data.id, this.formatLabel(data.label), "element", data.type, null);
+	
+	if (schema!==this.source) {
+		parent.setRectangle(new Rectangle(parent.rectangle.x - parent.rectangle.width, parent.rectangle.y, parent.rectangle.width, parent.rectangle.height));
+	}
+	
+	this.generateTree(schema, parent, data.children, schema===this.source, _Template);
+	
+	schema.root.setExpanded(true);
+};
+
+MappingEditor.prototype.generateTree = function(area, parent, children, isSource, template) {
+
+	if (children!=null && children instanceof Array) {
+		for (var i=0; i<children.length; i++) {
+			var icon = null;
+			
+			var e = area.addElement(template, children[i].id, this.formatLabel(children[i].label), parent, "element", children[i].type, icon);
+			if (parent != null) {
+				parent.addChild(e);
+			}
+			this.generateTree(area, e, children[i].children, isSource, template);
+		}
+	}
+};
+
+MappingEditor.prototype.formatLabel = function(label) {
+	if (label.length > 25) {
+		return label.substring(0,25) + "...";
+	} else {
+		return label;
+	}	
+};
+
 MappingEditor.prototype.resizeLayout = function() {
 	var height = Math.floor($(window).height() - this.layoutContainer.offset().top - this.footerOffset);
 	
@@ -112,4 +159,22 @@ MappingEditor.prototype.resizeLayout = function() {
 	this.layout.resizeAll();
 }
 
-MappingEditor.prototype.resizeContent = function() {};
+MappingEditor.prototype.resizeContent = function() {
+	var editorHeight = Math.floor(this.editorContainer.offsetParent().innerHeight() - (this.editorContainer.offset().top - this.editorContainer.offsetParent().offset().top));
+	this.editorContainer.css("height", editorHeight + "px");
+	
+	if (this.context.canvas) {
+		this.context.canvas.width = this.editorContainer.width(); // border-bottom
+		this.context.canvas.height = editorHeight; // border-top
+		window.scroll(0, 0);			
+		if (this.graph !== null) {
+			if (this.source != null) {
+				this.source.setSize(new Rectangle(0, 0, Math.floor(this.context.canvas.width / 2), this.context.canvas.height));
+			}
+			if (this.target != null) {
+				this.target.setSize(new Rectangle(Math.floor(this.context.canvas.width / 2), 0, this.context.canvas.width - Math.floor(this.context.canvas.width / 2), this.context.canvas.height));
+			}
+			this.graph.update();
+		}
+	} 
+};
