@@ -8,6 +8,7 @@
 	<div class="form-header">
 		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.new" /></h3>	
 		<sf:hidden path="id" />
+		<sf:hidden path="entityId" />
 	</div>
 	<div class="form-content">
 		<div class="form-group">

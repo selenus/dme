@@ -10,6 +10,7 @@
 		<sf:hidden path="id" />
 		<sf:hidden path="passthrough" />
 		<sf:hidden path="error" />
+		<sf:hidden path="entityId" />
 	</div>
 	<div class="form-content row" style="padding-bottom: 0px;">
 		<div class="col-md-7" style="border-right: 1px solid #E5E5E5;">

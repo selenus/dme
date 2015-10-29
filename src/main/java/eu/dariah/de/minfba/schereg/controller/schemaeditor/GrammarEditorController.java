@@ -67,7 +67,7 @@ public class GrammarEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/new_function")
 	public String getNewGrammarForm(@PathVariable String schemaId, @PathVariable String grammarId, Model model, Locale locale) {
-		model.addAttribute("function", new TransformationFunctionImpl());
+		model.addAttribute("function", new TransformationFunctionImpl(schemaId, null));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/saveNewFunction");
 		return "schemaEditor/form/function/new";
 	}

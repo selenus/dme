@@ -9,6 +9,7 @@
 		<h3 id="form-header-title">~Function editor <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="functionEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
 		<sf:hidden path="id" />
 		<sf:hidden path="error" />
+		<sf:hidden path="entityId" />
 		<input type="hidden" id="grammar_id" name="grammar_id" value="${grammar.id}" />
 		<input type="hidden" id="grammar_name" name="grammar_name" value="${grammar.grammarName}" />
 		<input type="hidden" id="grammar_error" name="grammar_error" value="${grammar.error}" />

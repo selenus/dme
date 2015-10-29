@@ -28,6 +28,10 @@ var MappingEditor = function() {
 	this.layout = null;
 	
 	this.footerOffset = 70;
+	
+	document.addEventListener("selectionEvent", this.selectionHandler, false);
+	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
+	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
 };
 
 MappingEditor.prototype.initLayout = function() {
@@ -99,7 +103,7 @@ MappingEditor.prototype.initGraphs = function() {
 MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	var _this = this;
 	$.ajax({
-	    url: this.sourcePath + "async/getRendered",
+	    url: path + "async/getRendered",
 	    type: "GET",
 	    success: function(data) {
 	    	if (data===null || data===undefined || data.length==0) {
@@ -178,3 +182,34 @@ MappingEditor.prototype.resizeContent = function() {
 		}
 	} 
 };
+
+MappingEditor.prototype.deselectionHandler = function() {};
+
+MappingEditor.prototype.selectionHandler = function(e) {};
+
+MappingEditor.prototype.newMappingCellHandler = function(e) {
+	
+	var _this = mappingEditor;
+	$.ajax({
+		url: _this.mappingPath + 'saveConcept',
+        type: "POST",
+        data: { conceptId: 0, sourceElementId: e.input, targetElementId: e.output},
+        dataType: "json",
+        //success: function(data) { $("#save-notice-area").text(data);},
+        //error: function(textStatus) { modalMessage.showMessage("warning", "Error updating mapping!", "Please refresh."); }
+ 	});
+	
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
