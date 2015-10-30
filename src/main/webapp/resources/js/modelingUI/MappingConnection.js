@@ -1,4 +1,5 @@
-var MappingConnection = function(from, to, id, score, isVerified) {
+var MappingConnection = function(owner, from, to, id, score, isVerified) {
+	this.graph = owner;
 	this.id = id;
 	if (score < 0) {
 		score = 0;
@@ -21,6 +22,24 @@ var MappingConnection = function(from, to, id, score, isVerified) {
 	
 	this.selected = false;
 	this.isDeselected = false;
+	
+	this.conceptConnector = new Connector(this, { 	
+	  		name: "mappings",
+   			type: "Mapping [out] [array]",
+   			description: "Mappings out",
+   			position: function(from, to) {
+   				var startElement = from.owner.findVisible();
+   				var endElement = (to !== null) ? to.owner.findVisible() : null;
+   				
+   				var start = startElement.getConnectorPosition(from);
+   				var end = endElement.getConnectorPosition(to);
+   				   				
+   				return { 
+   					x: start.x + (end.x - start.x)/2, 
+   					y: start.y + (end.y - start.y)/2 }; 
+   			},
+   			isInteractive: true,
+			isMappable: true });
 };
 
 MappingConnection.prototype = new Connection;
@@ -32,6 +51,31 @@ MappingConnection.prototype.hitTest = function(rectangle) {
 		//return this.base.hitTest(rectangle);
 		return Connection.prototype.hitTest.call(this, rectangle);
 	}
+};
+
+MappingConnection.prototype.findVisible = function() {
+	return this;
+};
+
+MappingConnection.prototype.getMappingConnector = function() {
+	return this.conceptConnector;
+};
+
+
+MappingConnection.prototype.getConnectorPosition = function(connector) {
+	var startElement = this.from.owner.findVisible();
+	var endElement = (this.to !== null) ? this.to.owner.findVisible() : null;
+	
+	var start = startElement.getConnectorPosition(this.from);
+	var end = (endElement !== null) ? endElement.getConnectorPosition(this.to) : this.toPoint;
+	
+	var x = start.x + (end.x - start.x)/2;
+	var y = start.y + (end.y - start.y)/2;
+	
+	var point = {};
+	point.x = x;
+	point.y = y;
+	return point;
 };
 
 MappingConnection.prototype.paint = function(context, pointerPosition)
@@ -59,6 +103,7 @@ MappingConnection.prototype.paint = function(context, pointerPosition)
 	}
 	
 	this.paintLine(context, this.isInherited || this.isDeselected);
+	//this.paintBox(context, this.isInherited || this.isDeselected);
 	
 	if (this.hover)
 	{
@@ -79,6 +124,25 @@ MappingConnection.prototype.paint = function(context, pointerPosition)
 		context.fillStyle = "#000";
 		context.fillText(text, b.x, b.y + 13);
 	}
+	if (!this.isInherited && !this.isDeselected) {
+		this.conceptConnector.paint(context, null);
+	}
+};
+
+MappingConnection.prototype.paintBox = function(context, dashed) {
+	var startElement = this.from.owner.findVisible();
+	var endElement = (this.to !== null) ? this.to.owner.findVisible() : null;
+	
+	var start = startElement.getConnectorPosition(this.from);
+	var end = (endElement !== null) ? endElement.getConnectorPosition(this.to) : this.toPoint;
+	
+	var x = start.x + (end.x - start.x)/2;
+	var y = start.y + (end.y - start.y)/2;
+	
+	context.strokeRect(x-8, y-8, 16, 16);
+	
+	context.fillStyle = "#FFF";
+	context.fillRect(x-7, y-7, 14, 14);
 };
 
 MappingConnection.prototype.paintLine = function(context, dashed)

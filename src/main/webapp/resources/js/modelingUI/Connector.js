@@ -68,12 +68,12 @@ Connector.prototype.paint = function(context, other)
 	}
 	
 	var rectangle = this.getRectangle();
-	var strokeStyle = this.owner.owner.theme.connectorBorder; 
-	var fillStyle = this.owner.owner.theme.connector;
+	var strokeStyle = this.owner.graph.theme.connectorBorder; 
+	var fillStyle = this.owner.graph.theme.connector;
 	if (this.hover)
 	{
-		strokeStyle = this.owner.owner.theme.connectorHoverBorder; 
-		fillStyle = this.owner.owner.theme.connectorHover;
+		strokeStyle = this.owner.graph.theme.connectorHoverBorder; 
+		fillStyle = this.owner.graph.theme.connectorHover;
 		if (!this.isValid(other))
 		{
 			fillStyle = "#f00";			

@@ -135,13 +135,14 @@ MappingEditor.prototype.getMappings = function() {
 	    	}
 	    	
 	    	for (var i=0; i<data.length; i++) {
-	    		var lhs = _this.source.getElement(data[i].sourceElementId);
+	    		var lhs = _this.source.getElement(data[i].sourceElementId).getConnector("mappings");
+	    		var rhs = [];
+	    		
 	    		for (var j=0; j<data.length; j++) {
-	    			var rhs = _this.target.getElement(data[i].targetElementIds[j]);
-	    			
-	    			if (lhs != null && rhs != null) {			
-		    			_this.graph.addMapping(lhs.getConnector("mappings"), rhs.getConnector("mappings"), data[i].id, 1);
-		    		}	
+	    			rhs.push(_this.target.getElement(data[i].targetElementIds[j]).getConnector("mappings"));	
+	    		}
+	    		if (lhs != null && rhs != null) {			
+	    			_this.graph.addMapping(lhs, rhs, data[i].id, 1);
 	    		}
 	    	}
 	    	
@@ -228,7 +229,7 @@ MappingEditor.prototype.newMappingCellHandler = function(e) {
 	$.ajax({
 		url: _this.mappingPath + 'async/saveConcept',
         type: "POST",
-        data: { conceptId: null, sourceElementId: e.input, targetElementId: e.output},
+        data: { conceptId: e.mappingId, sourceElementId: e.input, targetElementId: e.output},
         dataType: "json",
         //success: function(data) { $("#save-notice-area").text(data);},
         //error: function(textStatus) { modalMessage.showMessage("warning", "Error updating mapping!", "Please refresh."); }

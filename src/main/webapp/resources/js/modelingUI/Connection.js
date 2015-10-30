@@ -124,7 +124,7 @@ Connection.prototype.paint = function(context, pointerPosition)
 
 Connection.prototype.paintTrack = function(context)
 {
-	context.strokeStyle = this.from.owner.owner.theme.connection;
+	//context.strokeStyle = this.from.owner.owner.theme.connection;
 	context.lineWidth = 1;
 	this.paintLine(context, true);
 };

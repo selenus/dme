@@ -4,6 +4,7 @@ var Element = function(owner, template, point, id, parent, label, icon)
 	this.template = template;
 	this.content = label;
 	this.owner = owner;
+	this.graph = this.owner.owner;
 	this.hover = false;
 	this.selected = false;
 	this.tracker = null;

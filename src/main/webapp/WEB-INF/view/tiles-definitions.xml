@@ -94,6 +94,7 @@
 			<add-attribute type="string" value="modelingUI/Area.js" />
 			<add-attribute type="string" value="modelingUI/Array.js" />
 			<add-attribute type="string" value="modelingUI/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="modelingUI/ConceptConnection.js" />
 			<add-attribute type="string" value="modelingUI/Connection.js" />
 			<add-attribute type="string" value="modelingUI/Connector.js" />
 			<add-attribute type="string" value="modelingUI/ContainerUndoUnit.js" />

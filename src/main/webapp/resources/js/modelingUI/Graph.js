@@ -300,7 +300,7 @@ Graph.prototype.pointerDown = function()
 			{
 				if (this.activeObject.isValid(null))
 				{
-					this.newConnection = new MappingConnection(this.activeObject, null, -1, 1, true);
+					this.newConnection = new MappingConnection(this, this.activeObject, null, -1, 1, true);
 					this.newConnection.toPoint = point;
 					this.activeObject.invalidate();
 				}
@@ -395,7 +395,15 @@ Graph.prototype.pointerUp = function()
 				
 				var newConnectionEvent = document.createEvent("Event");
 				newConnectionEvent.initEvent("newMappingCellEvent", true, true);
-				newConnectionEvent.input = this.newConnection.from.owner.id;
+				
+				if (this.newConnection.from.owner instanceof Connection) {
+					newConnectionEvent.input = this.newConnection.from.owner.from.owner.id;
+					newConnectionEvent.mappingId = this.newConnection.from.owner.id;
+				} else {
+					newConnectionEvent.input = this.newConnection.from.owner.id;
+					newConnectionEvent.mappingId = null;
+				}
+				
 				newConnectionEvent.output = this.newConnection.to.owner.id;
 				document.dispatchEvent(newConnectionEvent);
 			}
@@ -807,6 +815,10 @@ Graph.prototype.hitTest = function(point)
 			for (k = 0; k < connector.connections.length; k++)
 			{
 				connection = connector.connections[k];
+				if (connection.conceptConnector!==undefined && connection.conceptConnector!==null && connection.conceptConnector.hitTest(rectangle)) {
+					return connection.conceptConnector;
+				}
+				
 				if (connection.hitTest(rectangle))
 				{
 					return connection;
@@ -900,18 +912,21 @@ Graph.prototype.addConnection = function(connector1, connector2, color, isHierar
 
 Graph.prototype.addMapping = function(connector1, connector2, id, score)
 {
-	var connection = new MappingConnection(connector1, connector2, id, score);
+	var connection = new MappingConnection(this, connector1, connector2, id, score);
 	
 	if (score == 1) {
 		connection.isVerified = true;
 	}
 	
 	connector1.connections.push(connection);
-	connector2.connections.push(connection);
 	connector1.owner.addScore(score);
-	connector2.owner.addScore(score);
 	connector1.invalidate();
-	connector2.invalidate();
+	
+	for (var i=0; i<connector2.length; i++) {
+		connector2[i].connections.push(connection);
+		connector2[i].owner.addScore(score);
+		connector2[i].invalidate();
+	}
 	connection.invalidate();
 	return connection;
 };
@@ -1000,6 +1015,7 @@ Graph.prototype.update = function()
 			deselectedConnections[i].isDeselected = false;
 		}
 		deselectedConnections[i].paint(this.context, this.pointerPosition);
+		
 	}
 	
 	for (i = 0; i < selectedConnections.length; i++)

@@ -46,7 +46,7 @@ Area.prototype.setSize = function(rectangle) {
 		
 		this.resetPoint.x = this.resetPoint.x + deltaX;
 		
-		this.root.rectangle.x = this.resetPoint.x;
+		this.root.rectangle.x = this.resetPoint.x;re
 	}
 	
 	
@@ -235,7 +235,7 @@ Area.prototype.addRoot = function(template, point, id, label, typeInfo, subtypeI
 	
 	this.root.invalidate();
 	
-	//this.resetPoint = point;
+	this.resetPoint = point;
 		
 	return this.root;
 };
