@@ -135,9 +135,9 @@ SchemaEditor.prototype.initLayout = function() {
 };
 
 SchemaEditor.prototype.initGraph = function() {
-	this.graph = new Graph(this.context.canvas);
-	this.schema = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
- 	this.graph.addArea(this.schema);
+	this.graph = new Model(this.context.canvas);
+	this.schema = this.graph.addArea();
+ 	
  	
  	this.loadElementHierarchy();
  	this.resizeLayout();
@@ -290,12 +290,29 @@ SchemaEditor.prototype.expandChildren = function(children, ids) {
 	}
 };
 
+
+/* v2 */
+SchemaEditor.prototype.processElementHierarchy = function(data) {
+	
+
+	//var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, this.formatLabel(data.name), "element", data.simpleType, null);
+	
+	var parent = this.schema.addElement("nonterminal", null, data.id, this.formatLabel(data.name), null);
+	
+	this.generateTree(this.schema, parent, data.childNonterminals, null, data.functions, true);
+	
+	this.schema.elements[0].setExpanded(true);
+	
+	this.graph.update();
+};
+
+/* v1
 SchemaEditor.prototype.processElementHierarchy = function(data) {
 	var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, this.formatLabel(data.name), "element", data.simpleType, null);
 	this.generateTree(this.schema, parent, data.childNonterminals, null, data.functions, true);
 	
 	this.schema.root.setExpanded(true);
-};
+}; */
 
 SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, functions,  isSource) {
 
@@ -305,7 +322,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
 				icon = this.warningIcon;
 			}
-			var e = this.schema.addElement(editorTemplate, nonterminals[i].id, this.formatLabel(nonterminals[i].name), parent, "element", nonterminals[i].simpleType, icon);
+			var e = this.schema.addElement("nonterminal", parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
 			if (parent != null) {
 				parent.addChild(e);
 			}
@@ -318,23 +335,22 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			if (functions[i].error==true) {
 				icon = this.errorIcon;
 			}
-			var fDesc = this.schema.addElement(functionTemplate, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), parent, "grammar", functions[i].simpleType, icon);
+			var fDesc = this.schema.addElement("grammar", parent, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), icon);
 			parent.addChild(fDesc);
 			if (functions[i].transformationFunctions != null && functions[i].transformationFunctions instanceof Array) {
 				for (var j=0; j<functions[i].transformationFunctions.length; j++) {
 					if (functions[i].transformationFunctions[j].error==true) {
 						icon = this.errorIcon;
 					}
-					var fOut = this.schema.addElement(functionTemplate, functions[i].transformationFunctions[j].id, 
-							this.formatLabel("f: " + functions[i].transformationFunctions[j].name), fDesc, 
-							"function", functions[i].transformationFunctions[j].simpleType, icon);
+					var fOut = this.schema.addElement("function", fDesc, functions[i].transformationFunctions[j].id, 
+							this.formatLabel("f: " + functions[i].transformationFunctions[j].name), icon);
 					fDesc.addChild(fOut);
 					if (functions[i].transformationFunctions[j].outputElements != null && functions[i].transformationFunctions[j].outputElements instanceof Array) {
 						for (var k=0; k<functions[i].transformationFunctions[j].outputElements.length; k++) {
-							var e = this.schema.addElement(editorTemplate, 
-									functions[i].transformationFunctions[j].outputElements[k].id, 
-									this.formatLabel(functions[i].transformationFunctions[j].outputElements[k].name), 
-									fOut, "element", functions[i].transformationFunctions[j].outputElements[k].simpleType, null);
+							
+							var e = this.schema.addElement("label", fOut, functions[i].transformationFunctions[j].outputElements[k].id, 
+									this.formatLabel(functions[i].transformationFunctions[j].outputElements[k].name), null);
+							
 							fOut.addChild(e);
 							this.generateTree(area, e, 
 									functions[i].transformationFunctions[j].outputElements[k].childNonterminals,
@@ -348,8 +364,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (subelements!=null && subelements instanceof Array) {
 		for (var i=0; i<subelements.length; i++) {
-			var e = this.schema.addElement(editorTemplate, subelements[i].id, this.formatLabel(subelements[i].name), parent, 
-					"element", subelements[i].simpleType, null);
+			var e = this.schema.addElement("element", parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
 			if (parent != null) {
 				parent.addChild(e);
 			}

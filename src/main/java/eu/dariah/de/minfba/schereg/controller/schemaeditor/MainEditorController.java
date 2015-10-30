@@ -102,7 +102,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 		} catch (GenericScheregException e) {
 			logger.error("Failed to load/initialize persisted session", e);
 		} 
-		return "schemaEditor";
+		return "schemaEditor2";
 	}
 	
 	@PreAuthorize("isAuthenticated()")
