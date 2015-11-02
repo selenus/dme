@@ -9,6 +9,8 @@ var Model = function(canvas, theme) {
 	}
 	
 	this.areas = [];
+	
+	// Only options defined here, actual element templates are with the areas
 	this.elementTemplateOptions = [{
 		key: "nonterminal"
 	}, {
@@ -18,6 +20,9 @@ var Model = function(canvas, theme) {
 	}, {
 		key: "grammar"
 	}];
+	
+	this.mappingConnection = new ConnectionTemplate(this);
+	this.hierarchicalConnection = new ConnectionTemplate(this);
 }
 
 Model.prototype.addArea = function() {

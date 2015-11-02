@@ -1,11 +1,13 @@
 var ModelingTheme = {
 	background : "#FAFAFA",
-	connection : "#000",
+	hierarchyConnection : "#000",
 	selection : "#fff",
+	
 	connector : "#FFF",
 	connectorBorder : "#000",
 	connectorHoverBorder : "#fff",
 	connectorHover : "#0c0",
+	
 	expander : "#DEDEDE",
 	expanderBorder : "#000",
 	expanderHover : "#B9A667",

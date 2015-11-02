@@ -8,7 +8,27 @@ var ElementTemplate = function(area, options) {
 		primaryColor: "#e6f1ff",
 		secondaryColor: "#0049a6"
 	}, options);
+	
+	this.connectorTemplates = [];
+	
+	this.renderConnectorTemplates();
 }
+
+ElementTemplate.prototype.renderConnectorTemplates = function() {
+	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
+		name: "parent", type: "Element [in]", description: "Father", isInteractive: false, isMappable: false,
+		position: function(element) {
+			return { x: 0, y: Math.floor(element.rectangle.height / 2) };
+		}
+	}));
+	
+	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
+		name: "children", type: "Element [out] [array]", description: "Child", isInteractive: false, isMappable: false,
+		position: function(element) {
+			return { x: 10, y: element.rectangle.height };
+		}
+	}));
+};
 
 ElementTemplate.prototype.paint = function(element, context) {
 	var rectangle = element.rectangle;
@@ -34,13 +54,6 @@ ElementTemplate.prototype.paint = function(element, context) {
 			} else {
 				context.drawImage(icon, rectangle.x + rectangle.width - 23, rectangle.y + 4); 
 			}
-		}
-	}
-	
-	// Draw children if visible
-	if (element.children.length > 0) {
-		for (var i=0; i<element.children.length; i++) {
-			element.children[i].template.paint(element.children[i], context);
 		}
 	}
 };

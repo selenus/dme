@@ -46,7 +46,7 @@ CanvasRenderingContext2D.prototype.roundedRect = function(x, y, width, height, r
 
 CanvasRenderingContext2D.prototype.simpleLine = function(x1, y1, x2, y2) {
 	this.beginPath();
-	this.moveTo(x1, y1);
-	this.lineTo(x2, y2);
+	this.moveTo(x1+0.5, y1+0.5);
+	this.lineTo(x2+0.5, y2+0.5);
 	this.stroke();
 };

@@ -8,12 +8,12 @@ var Element = function(template, parent, id, label, icons) {
 	this.expanded = true;
 	this.selected = false;
 	
-	this.connectors = {
-		child: null,
-		parent: null,
-		mappingIn: null,
-		mappingOut: null,
-	};
+	this.connectors = [];
+	if (this.template.connectorTemplates!=null) {
+		for (var i=0; i<this.template.connectorTemplates.length; i++) {
+			this.connectors.push(new Connector(this, this.template.connectorTemplates[i]));
+		}
+	}
 	
 	if (icons!=undefined && icons!=null) {
 		if (icons instanceof Array) {
@@ -26,6 +26,22 @@ var Element = function(template, parent, id, label, icons) {
 	this.rectangle = new Rectangle(0, 0, this.calculateWidth(), this.template.options.height);
 };
 
+Element.prototype.getHierarchyConnections = function() {
+	var result = this.getConnections(this.getConnector("parent"));
+	var result2 = this.getConnections(this.getConnector("children"));
+	return result.concat(result2);
+};
+
+Element.prototype.getConnections = function(connector) {
+	var result = [];
+	if (connector!==undefined && connector!==null) {
+		for (var i=0; i<connector.connections.length; i++) {
+			result.push(connector.connections[i]);
+		}
+	}
+	return result;
+};
+
 Element.prototype.addChild = function(child) {
 	this.children.push(child);
 };
@@ -34,8 +50,29 @@ Element.prototype.setExpanded = function(expand) {
 	this.expanded = expand;
 };
 
+Element.prototype.getConnector = function(type) {
+	if (this.connectors!=null) {
+		for (var i=0; i<this.connectors.length; i++) {
+			if (this.connectors[i].template.options.name==type) {
+				return this.connectors[i];
+			}
+		}
+	}
+	return null;
+};
+
 Element.prototype.setRectangle = function(rect) {
 	this.rectangle = rect;
+};
+
+Element.prototype.paint = function(context) {
+	this.template.paint(this, context);
+	
+	if (this.connectors!=null) {
+		for (var i=0; i<this.connectors.length; i++) {
+			this.connectors[i].paint(context);
+		}
+	}
 };
 
 Element.prototype.calculateWidth = function() {
