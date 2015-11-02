@@ -19,4 +19,5 @@ var ModelingTheme = {
 	rootElementPosition : { y: 40, x: 40 },
 	elementPositioningDelta : { y: 40, x: 20 },
 	
+	protectedPaddingArea : 25,
 };

@@ -1,5 +1,6 @@
 var Area = function(model) {
 	this.model = model;
+	this.theme = this.model.theme;
 	this.rectangle = null;
 	this.elements = [];
 	this.root = null;
@@ -7,17 +8,122 @@ var Area = function(model) {
 	this.isTarget = false;
 	this.recalculationRequired = true;
 
+	this.moveableX = true;
+	this.moveableY = true;
+	this.minX = null;
+	this.maxX = null;
+	this.minY = null;
+	this.maxY = null;
+	
+	this.isLeft = true;
+	
 	this.elementTemplates = [];
 	for (var i=0; i<this.model.elementTemplateOptions.length; i++) {
 		this.elementTemplates.push(new ElementTemplate(this, this.model.elementTemplateOptions[i]));
 	}
+	
+	this.moveHandle = null;
+	
+	this.cursor = Cursors.arrow;
+};
+
+Area.prototype.getCursor = function() {
+	return Cursors.move;
+};
+
+Area.prototype.startDrag = function(point) {
+	this.moveHandle = point;
+};
+
+Area.prototype.drag = function(point) {
+	if (this.moveHandle==null) {
+		return;
+	}
+	
+	var deltaX = point.x - this.moveHandle.x;
+	var deltaY = point.y - this.moveHandle.y;
+	
+	var tmpRect = this.rectangle.clone().inflate(-this.theme.protectedPaddingArea, -this.theme.protectedPaddingArea);
+	
+	/*// Make sure that the elements cannot completely leave the canvas
+	if (this.isLeft) {
+		// Right: No move over the middle line
+		if (deltaX + this.maxX + this.innerPadding > this.rectangle.x + this.rectangle.width) {
+			deltaX = this.rectangle.x + this.rectangle.width - this.maxX - this.innerPadding;
+		}
+		// Left: No move out of the canvas
+		if ((deltaX + this.minX < this.rectangle.x) && 
+				(this.maxX + deltaX < this.rectangle.x + this.innerPadding)) {
+			deltaX = (this.rectangle.x + this.innerPadding) - this.maxX;
+		}
+	} else {
+		// Left: No move over the middle line
+		if (deltaX + this.minX < this.rectangle.x + this.innerPadding) {
+			deltaX = this.rectangle.x - this.minX + this.innerPadding;
+		}
+		// Right: No move out of the canvas
+		if ((deltaX + this.maxX > this.rectangle.x + this.rectangle.width) && 
+				(this.minX + deltaX + this.innerPadding > this.rectangle.x + this.rectangle.width)) {
+			deltaX = this.rectangle.x + this.rectangle.width - this.innerPadding - this.minX;
+		}
+	}
+
+	// Bottom
+	if ((deltaY + this.maxY > this.rectangle.y + this.rectangle.height) && 
+			(this.minY + deltaY + this.innerPadding > this.rectangle.y + this.rectangle.height)) {
+		deltaY = this.rectangle.y + this.rectangle.height - this.innerPadding - this.minY;
+	}
+	// Top
+	if ((deltaY + this.minY < this.rectangle.y) && 
+			(this.maxY + deltaY < this.rectangle.y + this.innerPadding)) {
+		deltaY = (this.rectangle.y + this.innerPadding) - this.maxY;
+	}*/
+	
+		
+	this.minX = null;
+	this.maxX = null;
+	
+	var rect = this.root.rectangle;
+	rect.x += deltaX;
+	rect.y += deltaY;
+	
+	this.root.rectangle = rect;
+	
+	this.invalidate();
+	
+	/*// Actually moving the elements with (adapted) deltas
+	for (var i = 0; i< this.elements.length; i++) {
+		var elem = this.elements[i];
+		
+		/*if (!elem.isVisible) {
+			continue;
+		}
+		
+		var rect = elem.rectangle;
+		if (this.moveableX) rect.x += deltaX;
+		if (this.moveableY) rect.y += deltaY;
+
+		//this.setMinMaxX(rect.x, rect.width);
+		elem.rectangle = rect;
+	}*/
+	
+	this.moveHandle = point;
+	this.model.update();
+};
+
+Area.prototype.stopDrag = function() {
+	this.moveHandle = null;
 };
 
 Area.prototype.invalidate = function() {
 	this.recalculationRequired = true;
 };
 
-Area.prototype.setActive = function(active) {};
+Area.prototype.setActive = function(active) {
+	if (active==false) {
+		this.stopDrag();
+	}
+};
 
 Area.prototype.setRectangle = function(rectangle) {
 	this.rectangle = rectangle;
@@ -49,6 +155,11 @@ Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
 };
 
 Area.prototype.recalculateElementPositions = function(element, elementList, x, y) {
+	if (x<this.minX) { this.minX = x; }
+	if (x>this.maxX) { this.maxX = x; }
+	if (y<this.minY) { this.minY = y; }
+	if (y>this.maxY) { this.maxY = y; }
+	
 	element.setRectangle(new Rectangle(x, y, element.rectangle.width, element.rectangle.height));
 	if (element.expanded && element.children.length > 0) {
 		for (var i=0; i<element.children.length; i++) {

@@ -27,6 +27,10 @@ var Element = function(template, parent, id, label, icons) {
 	this.rectangle = new Rectangle(0, 0, this.calculateWidth(), this.template.options.height);
 };
 
+Element.prototype.getCursor = function() {
+	return Cursors.arrow;
+};
+
 Element.prototype.setActive = function(active) {
 	this.active = active;
 };

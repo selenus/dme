@@ -30,12 +30,28 @@ Model.prototype.updateMousePosition = function(e) {
 Model.prototype.mouseDown = function(e) {
 	e.preventDefault();
 	this.canvas.focus();
-	//this.updateMousePosition(e);
+	
+	if (this.activeObject==undefined || this.activeObject==null) {
+		return;
+	}
+
+	// left-click
+	if (e.button === 0) {
+		if (this.activeObject instanceof Area) {
+			this.activeObject.startDrag(this.mousePosition);
+		}
+	}
 };
 
 Model.prototype.mouseUp = function(e) {
 	e.preventDefault();
-	//this.updateMousePosition(e);	
+	
+	// left-click
+	if (e.button === 0) {
+		if (this.activeObject instanceof Area) {
+			this.activeObject.stopDrag();
+		}
+	}
 };
 
 Model.prototype.mouseMove = function(e) {
@@ -43,11 +59,22 @@ Model.prototype.mouseMove = function(e) {
 	this.updateMousePosition(e);
 	
 	this.updateActiveObject();
+	
+	// left-click
+	if (e.button === 0) {
+		if (this.activeObject instanceof Area) {
+			this.activeObject.drag(this.mousePosition);
+		}
+	}
 };
 
 Model.prototype.mouseLeave = function(e) {
 	e.preventDefault(); 
 	this.updateMousePosition(e);
+	
+	if (this.activeObject instanceof Area) {
+		this.activeObject.stopDrag();
+	}
 };
 
 Model.prototype.updateActiveObject = function() {
@@ -65,5 +92,11 @@ Model.prototype.updateActiveObject = function() {
 		}
 		this.activeObject = object;
 		this.paint();
+	}
+	
+	if (this.activeObject !== null) {
+		this.canvas.style.cursor = this.activeObject.getCursor(this.mousePosition);
+	} else {
+		this.canvas.style.cursor = Cursors.arrow;
 	}
 };

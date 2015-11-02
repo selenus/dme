@@ -6,6 +6,10 @@ var Connector = function(element, template) {
 	this.connections = [];
 };
 
+Connector.prototype.getCursor = function() {
+	return Cursors.cross;
+};
+
 Connector.prototype.setActive = function(active) {
 	this.active = active;
 };
