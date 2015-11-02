@@ -1,8 +1,13 @@
 var Connector = function(element, template) {
 	this.element = element;
 	this.template = template;
+	this.active = false;
 	
 	this.connections = [];
+};
+
+Connector.prototype.setActive = function(active) {
+	this.active = active;
 };
 
 Connector.prototype.paint = function(context) {
@@ -13,6 +18,12 @@ Connector.prototype.getPosition = function() {
 	return this.template.getPosition(this);
 };
 
+Connector.prototype.hitTest = function(position) {
+	if (this.template.options.isInteractive && this.template.getRectangle(this).clone().inflate(2, 2).contains(position)) {
+		return this;
+	}
+	return null;
+};
 
 Connector.prototype.registerConnection = function(toConnector, template) {
 	// This is only ok for our hierarchical connections now...

@@ -7,6 +7,7 @@ var Element = function(template, parent, id, label, icons) {
 	this.children = [];
 	this.expanded = true;
 	this.selected = false;
+	this.active = false;
 	
 	this.connectors = [];
 	if (this.template.connectorTemplates!=null) {
@@ -24,6 +25,10 @@ var Element = function(template, parent, id, label, icons) {
 	}
 
 	this.rectangle = new Rectangle(0, 0, this.calculateWidth(), this.template.options.height);
+};
+
+Element.prototype.setActive = function(active) {
+	this.active = active;
 };
 
 Element.prototype.getHierarchyConnections = function() {
@@ -83,4 +88,20 @@ Element.prototype.calculateWidth = function() {
 		width += this.icons.length * 20;
 	}
 	return width;
+};
+
+Element.prototype.hitTest = function(position) {
+	if (!this.rectangle.clone().inflate(5, 5).contains(position)) {
+		return null;
+	}
+	if (this.connectors!=null) {
+		var hitConnector=null;
+		for (var i=0; i<this.connectors.length; i++) {
+			hitConnector = this.connectors[i].hitTest(position);
+			if (hitConnector!=null) {
+				return hitConnector;
+			}
+		}
+	}
+	return this;
 };

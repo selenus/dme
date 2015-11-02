@@ -14,6 +14,11 @@ Rectangle.prototype.inflate = function(dx, dy) {
 	this.y -= dy;
 	this.width += dx + dx + 1;
 	this.height += dy + dy + 1;
+	return this;
+};
+
+Rectangle.prototype.clone = function() {
+	return new Rectangle(this.x, this.y, this.width, this.height);
 };
 
 Rectangle.prototype.overlaps = function(rectangle) {

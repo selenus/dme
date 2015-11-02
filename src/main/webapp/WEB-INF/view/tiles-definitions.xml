@@ -159,7 +159,9 @@
 
 			<add-attribute type="string" value="modelingUI_2/connections/connection.js" />
 			<add-attribute type="string" value="modelingUI_2/connections/connectionTemplate.js" />
-			<add-attribute type="string" value="modelingUI_2/connections/connector.js" />
+			
+			<add-attribute type="string" value="modelingUI_2/connectors/connector.js" />
+			<add-attribute type="string" value="modelingUI_2/connectors/connectorTemplate.js" />
 			
 			<add-attribute type="string" value="modelingUI_2/elements/element.js" />
 			<add-attribute type="string" value="modelingUI_2/elements/elementTemplate.js" />

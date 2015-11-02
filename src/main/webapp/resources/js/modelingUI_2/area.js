@@ -6,7 +6,7 @@ var Area = function(model) {
 	this.isSource = false;
 	this.isTarget = false;
 	this.recalculationRequired = true;
-	
+
 	this.elementTemplates = [];
 	for (var i=0; i<this.model.elementTemplateOptions.length; i++) {
 		this.elementTemplates.push(new ElementTemplate(this, this.model.elementTemplateOptions[i]));
@@ -16,6 +16,8 @@ var Area = function(model) {
 Area.prototype.invalidate = function() {
 	this.recalculationRequired = true;
 };
+
+Area.prototype.setActive = function(active) {};
 
 Area.prototype.setRectangle = function(rectangle) {
 	this.rectangle = rectangle;
@@ -111,4 +113,20 @@ Area.prototype.getVisibleElements = function(element) {
 		}
 	}
 	return result;
+};
+
+Area.prototype.hitTest = function(position) {
+	if (!this.rectangle.contains(position)) {
+		return null;
+	}
+	
+	var hitObject=null;
+	var visibleElements = this.getVisibleElements(this.root);
+	for (var i=0; i<visibleElements.length; i++) {
+		hitObject = visibleElements[i].hitTest(position);
+		if (hitObject!=null) {
+			return hitObject;
+		}
+	}
+	return this;
 };

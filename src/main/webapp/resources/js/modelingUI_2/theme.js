@@ -5,8 +5,8 @@ var ModelingTheme = {
 	
 	connector : "#FFF",
 	connectorBorder : "#000",
-	connectorHoverBorder : "#fff",
 	connectorHover : "#0c0",
+	connectorHoverBorder : "#0c0",
 	
 	expander : "#DEDEDE",
 	expanderBorder : "#000",

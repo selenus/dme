@@ -3,6 +3,9 @@ var Model = function(canvas, theme) {
 	this.canvas.focus();
 	this.context = this.canvas.getContext("2d");
 	
+	this.mousePosition = new Point(-1, -1);
+	this.activeObject = null;
+	
 	this.theme = ModelingTheme;
 	if (theme!=undefined && theme!=null) {
 		this.theme = $.extend({}, ModelingTheme, theme);
@@ -23,7 +26,16 @@ var Model = function(canvas, theme) {
 	
 	this.mappingConnection = new ConnectionTemplate(this);
 	this.hierarchicalConnection = new ConnectionTemplate(this);
+	this.initEvents();
 }
+
+Model.prototype.dispose = function() {
+	if (this.canvas !== null) {
+		this.removeEvents();
+		this.canvas = null;
+		this.context = null;
+	}
+};
 
 Model.prototype.addArea = function() {
 	var area = new Area(this);
@@ -37,13 +49,16 @@ Model.prototype.addArea = function() {
 
 Model.prototype.update = function() {
 	this.canvas.style.background = this.theme.background;
-	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-	
 	this.context.strokeStyle = this.theme.areaBorderColor;
 	this.context.lineWidth = this.theme.areaBorderWidth;
 	this.context.strokeRect(0, 0, this.canvas.width, this.canvas.height);
 	
 	this.resizeAreas();
+	this.paint();
+};
+
+Model.prototype.paint = function() {
+	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	for (var i=0; i<this.areas.length; i++) {
 		this.areas[i].paint(this.context, this.theme);
 	}

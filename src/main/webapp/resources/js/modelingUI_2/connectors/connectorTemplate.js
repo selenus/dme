@@ -12,14 +12,21 @@ function ConnectorTemplate(area, options) {
 };
 
 ConnectorTemplate.prototype.paint = function(connector, context) {
-	if (!this.options.isInteractive) {
+	if (!this.options.isInteractive || (!connector.element.active && !connector.active) ){
 		return;
 	}
 	
 	var rectangle = this.getRectangle(connector);
 	
-	var strokeStyle = this.area.model.theme.connectorBorder; 
-	var fillStyle = this.area.model.theme.connector;
+	var strokeStyle; 
+	var fillStyle;
+	if (connector.active) {
+		strokeStyle = this.area.model.theme.connectorHoverBorder; 
+		fillStyle = this.area.model.theme.connectorHover;
+	} else {
+		strokeStyle = this.area.model.theme.connectorBorder; 
+		fillStyle = this.area.model.theme.connector;
+	}
 	
 	context.lineWidth = 1;
 	context.strokeStyle = strokeStyle;
