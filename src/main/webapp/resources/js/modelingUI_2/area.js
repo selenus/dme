@@ -18,8 +18,8 @@ var Area = function(model) {
 		this.elementTemplates.push(new ElementTemplate(this, this.model.elementTemplateOptions[i]));
 	}
 	
-	this.moveHandle = null;
-	this.startMoveHandle = null;
+	this.moveHandle = null;			// To determinate moving deltas
+	this.startMoveHandle = null;	// Being used to determine if we have a click or drag of the area
 };
 
 Area.prototype.getCursor = function() {
@@ -49,69 +49,35 @@ Area.prototype.drag = function(point) {
 	var deltaX = point.x - this.moveHandle.x;
 	var deltaY = point.y - this.moveHandle.y;
 	
-	var tmpRect = this.rectangle.clone().inflate(-this.theme.protectedPaddingArea, -this.theme.protectedPaddingArea);
-	
-	/*// Make sure that the elements cannot completely leave the canvas
-	if (this.isLeft) {
-		// Right: No move over the middle line
-		if (deltaX + this.maxX + this.innerPadding > this.rectangle.x + this.rectangle.width) {
-			deltaX = this.rectangle.x + this.rectangle.width - this.maxX - this.innerPadding;
-		}
-		// Left: No move out of the canvas
-		if ((deltaX + this.minX < this.rectangle.x) && 
-				(this.maxX + deltaX < this.rectangle.x + this.innerPadding)) {
-			deltaX = (this.rectangle.x + this.innerPadding) - this.maxX;
-		}
-	} else {
-		// Left: No move over the middle line
-		if (deltaX + this.minX < this.rectangle.x + this.innerPadding) {
-			deltaX = this.rectangle.x - this.minX + this.innerPadding;
-		}
-		// Right: No move out of the canvas
-		if ((deltaX + this.maxX > this.rectangle.x + this.rectangle.width) && 
-				(this.minX + deltaX + this.innerPadding > this.rectangle.x + this.rectangle.width)) {
-			deltaX = this.rectangle.x + this.rectangle.width - this.innerPadding - this.minX;
-		}
+	// Left
+	if ((deltaX + this.minX < this.rectangle.x) && 
+			(this.maxX + deltaX < this.rectangle.x + this.theme.protectedPaddingArea)) {
+		deltaX = (this.rectangle.x + this.theme.protectedPaddingArea) - this.maxX;
 	}
-
+	// Right
+	if ((deltaX + this.maxX > this.rectangle.x + this.rectangle.width) && 
+			(this.minX + deltaX + this.theme.protectedPaddingArea > this.rectangle.x + this.rectangle.width)) {
+		deltaX = this.rectangle.x + this.rectangle.width - this.theme.protectedPaddingArea - this.minX;
+	}
 	// Bottom
 	if ((deltaY + this.maxY > this.rectangle.y + this.rectangle.height) && 
-			(this.minY + deltaY + this.innerPadding > this.rectangle.y + this.rectangle.height)) {
-		deltaY = this.rectangle.y + this.rectangle.height - this.innerPadding - this.minY;
+			(this.minY + deltaY + this.theme.protectedPaddingArea > this.rectangle.y + this.rectangle.height)) {
+		deltaY = this.rectangle.y + this.rectangle.height - this.theme.protectedPaddingArea - this.minY;
 	}
 	// Top
 	if ((deltaY + this.minY < this.rectangle.y) && 
-			(this.maxY + deltaY < this.rectangle.y + this.innerPadding)) {
-		deltaY = (this.rectangle.y + this.innerPadding) - this.maxY;
-	}*/
-	
+			(this.maxY + deltaY < this.rectangle.y + this.theme.protectedPaddingArea)) {
+		deltaY = (this.rectangle.y + this.theme.protectedPaddingArea) - this.maxY;
+	}
 		
-	this.minX = null;
-	this.maxX = null;
-	
+	// Repositioning the root element is enough
 	var rect = this.root.rectangle;
 	rect.x += deltaX;
 	rect.y += deltaY;
-	
 	this.root.rectangle = rect;
 	
-	this.invalidate();
-	
-	/*// Actually moving the elements with (adapted) deltas
-	for (var i = 0; i< this.elements.length; i++) {
-		var elem = this.elements[i];
-		
-		/*if (!elem.isVisible) {
-			continue;
-		}
-		
-		var rect = elem.rectangle;
-		if (this.moveableX) rect.x += deltaX;
-		if (this.moveableY) rect.y += deltaY;
-
-		//this.setMinMaxX(rect.x, rect.width);
-		elem.rectangle = rect;
-	}*/
+	// Force repositioning of the elements (except root)
+	this.invalidate();	
 	
 	this.moveHandle = point;
 	this.model.update();
@@ -162,10 +128,7 @@ Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
 };
 
 Area.prototype.recalculateElementPositions = function(element, elementList, x, y) {
-	if (x<this.minX) { this.minX = x; }
-	if (x>this.maxX) { this.maxX = x; }
-	if (y<this.minY) { this.minY = y; }
-	if (y>this.maxY) { this.maxY = y; }
+	this.recalculateMinMaxBoundaries(x, y, element.rectangle.width, element.rectangle.height);
 	
 	element.setRectangle(new Rectangle(x, y, element.rectangle.width, element.rectangle.height));
 	if (element.expanded && element.children.length > 0) {
@@ -181,6 +144,21 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 	return y;
 };
 
+Area.prototype.recalculateMinMaxBoundaries = function(x, y, width, height) {
+	if (this.minX == null || x < this.minX) { 
+		this.minX = x; 
+	}
+	if (this.maxX == null || x+height > this.maxX) { 
+		this.maxX = x+width; 
+	}
+	if (this.minY == null || y < this.minY) { 
+		this.minY = y; 
+	}
+	if (this.maxY == null || y+height > this.maxY) { 
+		this.maxY = y+height; 
+	}	
+}
+
 Area.prototype.paint = function(context, theme) {
 		
 	context.strokeStyle = theme.areaBorderColor;
@@ -192,6 +170,10 @@ Area.prototype.paint = function(context, theme) {
 	}
 	
 	if (this.recalculationRequired) {
+		this.minX = null;
+		this.maxX = null;
+		this.minY = null;
+		this.maxY = null;
 		this.recalculateElementPositions(this.root, this.elements, this.root.rectangle.x, this.root.rectangle.y);
 	}
 

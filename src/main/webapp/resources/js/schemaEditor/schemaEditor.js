@@ -364,7 +364,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 	}
 	if (subelements!=null && subelements instanceof Array) {
 		for (var i=0; i<subelements.length; i++) {
-			var e = this.schema.addElement("element", parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
+			var e = this.schema.addElement("nonterminal", parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
 			if (parent != null) {
 				parent.addChild(e);
 			}

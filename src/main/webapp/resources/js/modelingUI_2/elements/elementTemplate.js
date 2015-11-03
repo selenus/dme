@@ -16,6 +16,10 @@ var ElementTemplate = function(area, options) {
 	this.renderConnectorTemplates();
 }
 
+ElementTemplate.prototype.getExpanderPosition = function(element) {
+	return new Point(element.rectangle.x + 10, element.rectangle.y + element.rectangle.height/2);
+};
+
 ElementTemplate.prototype.renderConnectorTemplates = function() {
 	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
 		name: "parent", type: "Element [in]", description: "Father", isInteractive: false, isMappable: false,

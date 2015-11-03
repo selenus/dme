@@ -9,6 +9,8 @@ var Element = function(template, parent, id, label, icons) {
 	this.selected = false;
 	this.active = false;
 	
+	this.expander = null;
+	
 	this.connectors = [];
 	if (this.template.connectorTemplates!=null) {
 		for (var i=0; i<this.template.connectorTemplates.length; i++) {
@@ -57,6 +59,9 @@ Element.prototype.getConnections = function(connector) {
 
 Element.prototype.addChild = function(child) {
 	this.children.push(child);
+	if (this.expander==null) {
+		this.expander = new Expander(this);
+	}
 };
 
 Element.prototype.setExpanded = function(expand) {
@@ -85,6 +90,9 @@ Element.prototype.paint = function(context) {
 		for (var i=0; i<this.connectors.length; i++) {
 			this.connectors[i].paint(context);
 		}
+	}
+	if (this.expander!=null) {
+		this.expander.paint(context);
 	}
 };
 
