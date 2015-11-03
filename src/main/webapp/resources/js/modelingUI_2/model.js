@@ -62,9 +62,6 @@ Model.prototype.update = function() {
 Model.prototype.paint = function() {
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.canvas.style.background = this.theme.background;
-	this.context.strokeStyle = this.theme.areaBorderColor;
-	this.context.lineWidth = this.theme.areaBorderWidth;
-	this.context.strokeRect(0, 0, this.canvas.width, this.canvas.height);
 	
 	for (var i=0; i<this.areas.length; i++) {
 		this.areas[i].paint(this.context, this.theme);

@@ -16,8 +16,22 @@ var ModelingTheme = {
 	areaBorderColor : "#CCC",
 	areaBorderWidth : 1,
 
-	rootElementPosition : { y: 40, x: 40 },
+	rootElementPosition : { y: 20, x: 20 },
 	elementPositioningDelta : { y: 40, x: 20 },
 	
-	protectedPaddingArea : 27,
+	paddingArea : {
+		x: 27, 
+		y: 27 
+	},
+	
+	verticalScroll : {
+		width: 18,
+		fillColor : "#FFFFFF",
+		strokeColor : "#DDD",
+		innerFillColor : "#AAA",
+		innerStrokeColor : "#AAA",
+		hPadding : 5,
+		vPadding : 5,
+		radius : 5
+	},
 };

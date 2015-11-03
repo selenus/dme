@@ -13,6 +13,8 @@ var Area = function(model) {
 	this.minY = null;
 	this.maxY = null;
 	
+	this.verticalScroll = new VerticalScroll(this);
+	
 	this.elementTemplates = [];
 	for (var i=0; i<this.model.elementTemplateOptions.length; i++) {
 		this.elementTemplates.push(new ElementTemplate(this, this.model.elementTemplateOptions[i]));
@@ -20,6 +22,16 @@ var Area = function(model) {
 	
 	this.moveHandle = null;			// To determinate moving deltas
 	this.startMoveHandle = null;	// Being used to determine if we have a click or drag of the area
+};
+
+Area.prototype.setRectangle = function(rectangle) {
+	var xScroll = this.isTarget ? (rectangle.width-this.theme.verticalScroll.width-0.5) : rectangle.x;
+	var xArea = this.isTarget ? rectangle.x : this.theme.verticalScroll.width;
+	
+	this.verticalScroll.setRectangle(new Rectangle(xScroll, rectangle.y, this.theme.verticalScroll.width+0.5, rectangle.height));
+
+	// TODO Also Check if we need to move on resize to pertain protected element area
+	this.rectangle = new Rectangle(xArea, rectangle.y, rectangle.width-this.theme.verticalScroll.width-0.5, rectangle.height);
 };
 
 Area.prototype.getCursor = function() {
@@ -61,18 +73,18 @@ Area.prototype.resetView = function() {
 	this.collapseAll(this.root, false);
 	this.root.setExpanded(true);
 	
-	this.root.rectangle.x = this.theme.rootElementPosition.x;
-	this.root.rectangle.y = this.theme.rootElementPosition.y;
+	this.root.rectangle.x = this.theme.rootElementPosition.x + this.rectangle.x;
+	this.root.rectangle.y = this.theme.rootElementPosition.y + this.rectangle.y;
 	this.invalidate();
 	this.model.update();
 };
 
-Area.prototype.startDrag = function(point) {
+Area.prototype.startMove = function(point) {
 	this.moveHandle = point;
 	this.startMoveHandle = point;
 };
 
-Area.prototype.drag = function(point) {
+Area.prototype.move = function(point) {
 	if (this.moveHandle==null) {
 		return;
 	}
@@ -89,23 +101,23 @@ Area.prototype.drag = function(point) {
 	
 	// Left
 	if ((deltaX + this.minX < this.rectangle.x) && 
-			(this.maxX + deltaX < this.rectangle.x + this.theme.protectedPaddingArea)) {
-		deltaX = (this.rectangle.x + this.theme.protectedPaddingArea) - this.maxX;
+			(this.maxX + deltaX < this.rectangle.x + this.theme.paddingArea.x)) {
+		deltaX = (this.rectangle.x + this.theme.paddingArea.x) - this.maxX;
 	}
 	// Right
 	if ((deltaX + this.maxX > this.rectangle.x + this.rectangle.width) && 
-			(this.minX + deltaX + this.theme.protectedPaddingArea > this.rectangle.x + this.rectangle.width)) {
-		deltaX = this.rectangle.x + this.rectangle.width - this.theme.protectedPaddingArea - this.minX;
+			(this.minX + deltaX + this.theme.paddingArea.x > this.rectangle.x + this.rectangle.width)) {
+		deltaX = this.rectangle.x + this.rectangle.width - this.theme.paddingArea.x - this.minX;
 	}
 	// Bottom
 	if ((deltaY + this.maxY > this.rectangle.y + this.rectangle.height) && 
-			(this.minY + deltaY + this.theme.protectedPaddingArea > this.rectangle.y + this.rectangle.height)) {
-		deltaY = this.rectangle.y + this.rectangle.height - this.theme.protectedPaddingArea - this.minY;
+			(this.minY + deltaY + this.theme.paddingArea.y > this.rectangle.y + this.rectangle.height)) {
+		deltaY = this.rectangle.y + this.rectangle.height - this.theme.paddingArea.y - this.minY;
 	}
 	// Top
 	if ((deltaY + this.minY < this.rectangle.y) && 
-			(this.maxY + deltaY < this.rectangle.y + this.theme.protectedPaddingArea)) {
-		deltaY = (this.rectangle.y + this.theme.protectedPaddingArea) - this.maxY;
+			(this.maxY + deltaY < this.rectangle.y + this.theme.paddingArea.y)) {
+		deltaY = (this.rectangle.y + this.theme.paddingArea.y) - this.maxY;
 	}
 		
 	// Repositioning the root element is enough
@@ -121,7 +133,7 @@ Area.prototype.drag = function(point) {
 	this.model.update();
 };
 
-Area.prototype.stopDrag = function() {
+Area.prototype.stopMove = function() {
 	this.moveHandle = null;
 	this.startMoveHandle = null;
 };
@@ -132,12 +144,8 @@ Area.prototype.invalidate = function() {
 
 Area.prototype.setActive = function(active) {
 	if (active==false) {
-		this.stopDrag();
+		this.stopMove();
 	}
-};
-
-Area.prototype.setRectangle = function(rectangle) {
-	this.rectangle = rectangle;
 };
 
 Area.prototype.setSize = function() {}; // Dummy placeholder...remove
@@ -154,7 +162,7 @@ Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
 	this.elements.push(e);
 	if (parent==null) {
 		this.root = e;
-		this.root.rectangle = new Rectangle(this.model.theme.rootElementPosition.x, this.model.theme.rootElementPosition.x, 
+		this.root.rectangle = new Rectangle(this.model.theme.rootElementPosition.x + this.rectangle.x, this.model.theme.rootElementPosition.y + this.rectangle.y, 
 				this.root.rectangle.width, this.root.rectangle.height);
 	} else {
 		var cParent = parent.getConnector("children");
@@ -184,24 +192,26 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 
 Area.prototype.recalculateMinMaxBoundaries = function(x, y, width, height) {
 	if (this.minX == null || x < this.minX) { 
-		this.minX = x; 
+		this.minX = x;
 	}
 	if (this.maxX == null || x+height > this.maxX) { 
 		this.maxX = x+width; 
 	}
 	if (this.minY == null || y < this.minY) { 
-		this.minY = y; 
+		this.minY = y;
+		this.verticalScroll.displayedMinY = this.minY;
 	}
 	if (this.maxY == null || y+height > this.maxY) { 
-		this.maxY = y+height; 
+		this.maxY = y+height;
+		this.verticalScroll.displayedMaxY = this.maxY;
 	}	
 }
 
 Area.prototype.paint = function(context, theme) {
-		
 	context.strokeStyle = this.theme.areaBorderColor;
 	context.lineWidth = this.theme.areaBorderWidth;
-	context.simpleLine(this.rectangle.x + this.rectangle.width, this.rectangle.y, this.rectangle.x + this.rectangle.width, this.rectangle.height);
+	context.strokeRect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
+	
 	
 	if (this.root===null) {
 		return;
@@ -236,6 +246,8 @@ Area.prototype.paint = function(context, theme) {
 		}*/
 		this.root.paint(context);
 	}
+	
+	this.verticalScroll.paint(context);
 };
 
 Area.prototype.deselectAll = function() {
@@ -273,8 +285,8 @@ Area.prototype.getElements = function(element, visibleOnly) {
 
 Area.prototype.hitTest = function(position) {
 	if (!this.rectangle.contains(position)) {
-		return null;
-	}
+		return this.verticalScroll.hitTest(position);
+	}	
 	
 	var hitObject=null;
 	var visibleElements = this.getElements(this.root, true);

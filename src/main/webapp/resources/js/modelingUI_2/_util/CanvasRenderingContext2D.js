@@ -50,3 +50,45 @@ CanvasRenderingContext2D.prototype.simpleLine = function(x1, y1, x2, y2) {
 	this.lineTo(x2+0.5, y2+0.5);
 	this.stroke();
 };
+
+CanvasRenderingContext2D.prototype.drawRect = function(x, y, width, height, fill, stroke) {
+	this.beginPath();
+	this.moveTo(x, y);
+	this.lineTo(x + width, y);
+	this.lineTo(x + width, y + height);
+	this.lineTo(x, y + height);
+	this.lineTo(x, y);
+	this.closePath();
+	if (stroke) {
+		this.stroke();
+	}
+	if (fill) {
+		this.fill();
+	}
+};
+
+CanvasRenderingContext2D.prototype.drawRoundRect = function(x, y, width, height, radius, fill, stroke) {
+	if (typeof stroke == "undefined" ) {
+	    stroke = true;
+	  }
+	  if (typeof radius === "undefined") {
+	    radius = 5;
+	  }
+	  this.beginPath();
+	  this.moveTo(x + radius, y);
+	  this.lineTo(x + width - radius, y);
+	  this.quadraticCurveTo(x + width, y, x + width, y + radius);
+	  this.lineTo(x + width, y + height - radius);
+	  this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	  this.lineTo(x + radius, y + height);
+	  this.quadraticCurveTo(x, y + height, x, y + height - radius);
+	  this.lineTo(x, y + radius);
+	  this.quadraticCurveTo(x, y, x + radius, y);
+	  this.closePath();
+	  if (stroke) {
+	    this.stroke();
+	  }
+	  if (fill) {
+	    this.fill();
+	  }
+};

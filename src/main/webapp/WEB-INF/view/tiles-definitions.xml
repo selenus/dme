@@ -168,6 +168,7 @@
 			<add-attribute type="string" value="modelingUI_2/elements/expander.js" />
 			
 			<add-attribute type="string" value="modelingUI_2/area.js" />
+			<add-attribute type="string" value="modelingUI_2/verticalScroll.js" />
 			<add-attribute type="string" value="modelingUI_2/model.js" />
 			<add-attribute type="string" value="modelingUI_2/model.events.js" />
 			<add-attribute type="string" value="modelingUI_2/theme.js" />

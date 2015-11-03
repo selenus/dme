@@ -37,8 +37,8 @@ Model.prototype.mouseDown = function(e) {
 
 	// left-click
 	if (e.button === 0) {
-		if (this.activeObject instanceof Area) {
-			this.activeObject.startDrag(this.mousePosition);
+		if (this.activeObject instanceof Area || this.activeObject instanceof VerticalScroll) {
+			this.activeObject.startMove(this.mousePosition);
 		} else if (this.activeObject instanceof Expander) {
 			this.activeObject.mouseDown();
 			this.activeObject.element.template.area.invalidate();
@@ -75,7 +75,9 @@ Model.prototype.mouseUp = function(e) {
 			if (this.activeObject.startMoveHandle!=null) {
 				this.deselectAll();
 			}
-			this.activeObject.stopDrag();
+			this.activeObject.stopMove();
+		} else if (this.activeObject instanceof VerticalScroll) {
+			this.activeObject.stopMove(this.mousePosition);
 		}
 		this.paint();
 	}
@@ -89,8 +91,8 @@ Model.prototype.mouseMove = function(e) {
 	
 	// left-click
 	if (e.button === 0) {
-		if (this.activeObject instanceof Area) {
-			this.activeObject.drag(this.mousePosition);
+		if (this.activeObject instanceof Area || this.activeObject instanceof VerticalScroll) {
+			this.activeObject.move(this.mousePosition);
 		}
 	}
 };
@@ -98,10 +100,7 @@ Model.prototype.mouseMove = function(e) {
 Model.prototype.mouseLeave = function(e) {
 	e.preventDefault(); 
 	this.updateMousePosition(e);
-	
-	if (this.activeObject instanceof Area) {
-		this.activeObject.stopDrag();
-	}
+	this.mouseUp(e);
 };
 
 Model.prototype.updateActiveObject = function() {
@@ -109,7 +108,7 @@ Model.prototype.updateActiveObject = function() {
 	for (var i=0; i<this.areas.length; i++) {
 		object = this.areas[i].hitTest(this.mousePosition);
 	}
-	
+
 	if (object!==this.activeObject) {
 		if(this.activeObject!=null) {
 			this.activeObject.setActive(false);
