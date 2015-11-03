@@ -39,18 +39,24 @@ Model.prototype.mouseDown = function(e) {
 	if (e.button === 0) {
 		if (this.activeObject instanceof Area) {
 			this.activeObject.startDrag(this.mousePosition);
+		} else if (this.activeObject instanceof Expander) {
+			this.activeObject.mouseDown();
+			this.activeObject.element.template.area.invalidate();
 		} else if (this.activeObject.selected!==undefined) {
-			var select = !this.activeObject.selected;
-			this.deselectAll();
-			if (select) {
-				this.activeObject.selected=true;
-				if (!this.selectedItems.contains(this.activeObject)) {
-					this.selectedItems.push(this.activeObject)
-				}
-				this.handleElementSelected(this.activeObject);
-			}
+			this.select(this.activeObject);
 		}
 		this.paint();
+	}
+};
+
+Model.prototype.select = function(object) {
+	if (object!=null && !object.selected) {
+		this.deselectAll();
+		object.selected=true;
+		if (!this.selectedItems.contains(object)) {
+			this.selectedItems.push(object)
+		}
+		this.handleElementSelected(object);
 	}
 };
 

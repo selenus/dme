@@ -1,14 +1,23 @@
 var Expander = function(element) {
 	this.element = element;
 	this.active = false;
+	this.expanded = false;
 }
+
+Expander.prototype.setActive = function(active) {
+	this.active = active;
+};
+
+Expander.prototype.mouseDown = function() {
+	this.expanded = !this.expanded;
+};
 
 Expander.prototype.getCursor = function(point) {
 	return Cursors.grip;
 };
 
-Expander.prototype.hitTest = function(rectangle) {
-	return false;
+Expander.prototype.hitTest = function(point) {
+	return this.getRectangle().contains(point);
 };
 
 Expander.prototype.getRectangle = function() {
@@ -18,35 +27,21 @@ Expander.prototype.getRectangle = function() {
 	return rectangle;
 };
 
-Expander.prototype.paint = function(context)
-{
-	var rectangle = this.getRectangle();
-	var strokeStyle = this.element.template.area.theme.expanderBorder; 
-	var fillStyle = this.element.template.area.theme.expander;
-	
-	/*if (this.owner.maxChildScore == 1) {		
-		fillStyle = "rgb(70, 155, 231)";
-	} else if (this.owner.maxChildScore > 0) {		
-		var red = 255 - Math.round(this.owner.maxChildScore * 255);
-		fillStyle = "Rgb(" + red + ", 230, 0)";
-	}*/
-	
-	context.lineWidth = 1;
-	
-	if (this.active)
-	{
+Expander.prototype.paint = function(context) {
+	if (this.active) {
 		context.lineWidth = 2;
-		strokeStyle = this.element.template.area.theme.expanderHoverBorder; 
-	} 
-
-	context.strokeStyle = strokeStyle;
-	context.lineCap = "butt";
-	context.fillStyle = fillStyle;
+		context.strokeStyle = this.element.template.area.theme.expanderHoverBorder;
+	} else {
+		context.lineWidth = 1;
+		context.strokeStyle = this.element.template.area.theme.expanderBorder;
+	}
+	var rectangle = this.getRectangle();
+	context.fillStyle = this.element.template.area.theme.expander;
 	context.fillRect(rectangle.x - 0.5, rectangle.y - 0.5, rectangle.width, rectangle.height);
 	context.strokeRect(rectangle.x - 0.5, rectangle.y - 0.5, rectangle.width, rectangle.height);
-	context.font = "bold 10px Verdana";
+	context.font = "bold 11px Verdana";
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "bottom";
 	context.textAlign = "center";
-	context.fillText(this.element.expanded ? "-" : "+", rectangle.x + (rectangle.width / 2), rectangle.y + 10);
+	context.fillText(this.expanded ? "-" : "+", rectangle.x + (rectangle.width / 2), rectangle.y + 11);
 };

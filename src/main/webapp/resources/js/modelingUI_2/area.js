@@ -29,6 +29,44 @@ Area.prototype.getCursor = function() {
 	return Cursors.arrow;
 };
 
+Area.prototype.expandAll = function() {
+	this.expand(this.root);
+	this.invalidate();
+	this.model.update();
+}
+
+Area.prototype.expand = function(element) {
+	element.setExpanded(true);
+	
+	for (var i=0; i<element.children.length; i++) {
+		this.expand(element.children[i], true);
+	}
+};
+
+Area.prototype.collapseAll = function() {
+	this.collapse(this.root);
+	this.invalidate();
+	this.model.update();
+}
+
+Area.prototype.collapse = function(element) {
+	element.setExpanded(false);
+	
+	for (var i=0; i<element.children.length; i++) {
+		this.collapse(element.children[i], false);
+	}
+};
+
+Area.prototype.resetView = function() {
+	this.collapseAll(this.root, false);
+	this.root.setExpanded(true);
+	
+	this.root.rectangle.x = this.theme.rootElementPosition.x;
+	this.root.rectangle.y = this.theme.rootElementPosition.y;
+	this.invalidate();
+	this.model.update();
+};
+
 Area.prototype.startDrag = function(point) {
 	this.moveHandle = point;
 	this.startMoveHandle = point;
@@ -131,7 +169,7 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 	this.recalculateMinMaxBoundaries(x, y, element.rectangle.width, element.rectangle.height);
 	
 	element.setRectangle(new Rectangle(x, y, element.rectangle.width, element.rectangle.height));
-	if (element.expanded && element.children.length > 0) {
+	if (element.getExpanded() && element.children.length > 0) {
 		for (var i=0; i<element.children.length; i++) {
 			var deltaX = x + this.model.theme.elementPositioningDelta.x;
 			/*if (!this.isLeft) {
@@ -161,8 +199,8 @@ Area.prototype.recalculateMinMaxBoundaries = function(x, y, width, height) {
 
 Area.prototype.paint = function(context, theme) {
 		
-	context.strokeStyle = theme.areaBorderColor;
-	context.lineWidth = theme.areaBorderWidth;
+	context.strokeStyle = this.theme.areaBorderColor;
+	context.lineWidth = this.theme.areaBorderWidth;
 	context.simpleLine(this.rectangle.x + this.rectangle.width, this.rectangle.y, this.rectangle.x + this.rectangle.width, this.rectangle.height);
 	
 	if (this.root===null) {
@@ -177,7 +215,7 @@ Area.prototype.paint = function(context, theme) {
 		this.recalculateElementPositions(this.root, this.elements, this.root.rectangle.x, this.root.rectangle.y);
 	}
 
-	var visibleElements = this.getVisibleElements(this.root);
+	var visibleElements = this.getElements(this.root, true);
 	var hierarchyConnections = [];
 	
 	if (visibleElements.length > 0) {
@@ -193,14 +231,15 @@ Area.prototype.paint = function(context, theme) {
 		}
 		
 		// Paint the elements now
-		for (var i=0; i<visibleElements.length; i++) {
+		/*for (var i=0; i<visibleElements.length; i++) {
 			visibleElements[i].paint(context);
-		}
+		}*/
+		this.root.paint(context);
 	}
 };
 
 Area.prototype.deselectAll = function() {
-	var elements = this.getVisibleElements(this.root);
+	var elements = this.getElements(this.root);
 
 	/* Do not worry about connections here, 
 	 * hierarchy connections are not selectable anyway */
@@ -216,14 +255,13 @@ Area.prototype.deselectAll = function() {
 };
 
 
-
-Area.prototype.getVisibleElements = function(element) {
+Area.prototype.getElements = function(element, visibleOnly) {
 	var result = []
-	if (element!=null) {
+	if (element!=null && (visibleOnly===undefined || visibleOnly===false || element.visible)) {
 		result.push(element);
-		if (element.children.length > 0) {
+		if (element.children.length > 0 && (visibleOnly===undefined || visibleOnly===false || element.getExpanded())) {
 			for (var i=0; i<element.children.length; i++) {
-				var subResult = this.getVisibleElements(element.children[i]);
+				var subResult = this.getElements(element.children[i]);
 				for (var j=0; j<subResult.length; j++) {
 					result.push(subResult[j]);
 				}
@@ -239,7 +277,7 @@ Area.prototype.hitTest = function(position) {
 	}
 	
 	var hitObject=null;
-	var visibleElements = this.getVisibleElements(this.root);
+	var visibleElements = this.getElements(this.root, true);
 	for (var i=0; i<visibleElements.length; i++) {
 		hitObject = visibleElements[i].hitTest(position);
 		if (hitObject!=null) {

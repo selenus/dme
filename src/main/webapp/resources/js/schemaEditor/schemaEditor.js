@@ -196,20 +196,15 @@ SchemaEditor.prototype.reload = function() {
 		return;
 	}
 	
-	var rootX = schemaEditor.schema.root.getRectangle().x;
-	var rootY = schemaEditor.schema.root.getRectangle().y;
+	var rootX = schemaEditor.schema.root.rectangle.x;
+	var rootY = schemaEditor.schema.root.rectangle.y;
 	
 	var expandedItemIds = this.getExpanded(this.schema.root);
 	
 	var selectedItemIds = [];
 	for (var i=0; i<this.graph.selectedItems.length; i++) {
 		selectedItemIds.push(this.graph.selectedItems[i].id);
-		this.graph.deselectAll(new SelectionUndoUnit());
-		this.graph.selectedItems = [];
-		
-		var deselectionEvent = document.createEvent("Event");
-		deselectionEvent.initEvent("deselectionEvent", true, true);
-		document.dispatchEvent(deselectionEvent);
+		this.schema.deselectAll();
 	}
 	
 	var _this = this;
@@ -223,14 +218,14 @@ SchemaEditor.prototype.reload = function() {
 	    	}
 	    	
 	    	_this.processElementHierarchy(data);	    	
-	    	_this.schema.root.setRectangle(new Rectangle(
+	    	_this.schema.root.rectangle = new Rectangle(
 	    			rootX, rootY,
-	    			_this.schema.root.getRectangle().width,
-	    			_this.schema.root.getRectangle().height
-	    	));
+	    			_this.schema.root.rectangle.width,
+	    			_this.schema.root.rectangle.height
+	    	);
 	    	
 	    	if (selectedItemIds.contains(schemaEditor.schema.root.id)) {
-	    		_this.graph.selectElement(schemaEditor.schema.root);
+	    		_this.graph.select(schemaEditor.schema.root);
 	    	}	    		
 	    	_this.selectChildren(schemaEditor.schema.root.children, selectedItemIds);
 	    	
@@ -239,6 +234,7 @@ SchemaEditor.prototype.reload = function() {
 	    	}	    		
 	    	_this.expandChildren(schemaEditor.schema.root.children, expandedItemIds);
 	    		    	
+	    	_this.schema.invalidate();
 	    	_this.graph.update();
 	    },
 	    error: function(jqXHR, textStatus, errorThrown) {
@@ -250,7 +246,7 @@ SchemaEditor.prototype.reload = function() {
 
 SchemaEditor.prototype.getExpanded = function(parent) {
 	var expandedIds = [];
-	if (parent.isExpanded) {
+	if (parent.getExpanded()) {
 		expandedIds.push(parent.id);
 		if (parent.children!=null) {
 			for (var i=0; i<parent.children.length; i++) {
@@ -271,7 +267,7 @@ SchemaEditor.prototype.selectChildren = function(children, ids) {
 	if (children!=null) {
 		for (var i=0; i<children.length; i++) {
 			if (ids.contains(children[i].id)) {
-	    		_this.graph.selectElement(children[i]);
+	    		_this.graph.select(children[i]);
 	    	}	    		
 	    	_this.selectChildren(children[i].children, ids);
 		}

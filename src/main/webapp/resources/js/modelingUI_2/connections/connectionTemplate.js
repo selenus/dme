@@ -3,6 +3,16 @@ var ConnectionTemplate = function(model) {
 }
 
 ConnectionTemplate.prototype.paint = function(connection, context) {
+	// Parent not visible...sub-hierarchy not visible either
+	if (!connection.from.element.visible) {
+		return;
+	}
+	
+	// Parent collapsed...
+	if (!connection.from.element.getExpanded()) {
+		return;
+	}
+	
 	var fromPosition = connection.from.getPosition();
 	var toPosition;
 	var height = fromPosition.y;

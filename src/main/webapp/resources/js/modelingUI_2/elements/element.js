@@ -5,9 +5,9 @@ var Element = function(template, parent, id, label, icons) {
 	this.label = label;
 	this.icons = [];
 	this.children = [];
-	this.expanded = true;
 	this.selected = false;
 	this.active = false;
+	this.visible = true;
 	
 	this.expander = null;
 	
@@ -31,6 +31,30 @@ var Element = function(template, parent, id, label, icons) {
 
 Element.prototype.getCursor = function() {
 	return Cursors.select;
+};
+
+Element.prototype.setExpanded = function(expanded) {
+	if (this.expander!=null) {
+		this.expander.expanded = expanded;
+		this.setChildrenVisible(expanded);
+	}
+};
+
+Element.prototype.setChildrenVisible = function(visible) {
+	if (this.expander!=null && this.children!=null) {
+		for (var i=0; i<this.children.length; i++) {
+			this.children[i].visible = visible
+			this.children[i].setChildrenVisible(visible && this.expander.expanded);
+		}
+	}
+};
+
+Element.prototype.getExpanded = function() {
+	if (this.expander!=null) {
+		return this.expander.expanded;
+	} else {
+		return false;
+	}
 };
 
 Element.prototype.getType = function() {
@@ -64,10 +88,6 @@ Element.prototype.addChild = function(child) {
 	}
 };
 
-Element.prototype.setExpanded = function(expand) {
-	this.expanded = expand;
-};
-
 Element.prototype.getConnector = function(type) {
 	if (this.connectors!=null) {
 		for (var i=0; i<this.connectors.length; i++) {
@@ -94,6 +114,12 @@ Element.prototype.paint = function(context) {
 	if (this.expander!=null) {
 		this.expander.paint(context);
 	}
+	
+	if (this.expander!=null && this.expander.expanded && this.children!=null) {
+		for (var i=0; i<this.children.length; i++) {
+			this.children[i].paint(context);
+		}
+	}
 };
 
 Element.prototype.calculateWidth = function() {
@@ -118,6 +144,9 @@ Element.prototype.hitTest = function(position) {
 				return hitConnector;
 			}
 		}
+	}
+	if (this.expander!=null && this.expander.hitTest(position)) {
+		return this.expander;
 	}
 	return this;
 };
