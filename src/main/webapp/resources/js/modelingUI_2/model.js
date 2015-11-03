@@ -5,6 +5,7 @@ var Model = function(canvas, theme) {
 	
 	this.mousePosition = new Point(-1, -1);
 	this.activeObject = null;
+	this.selectedItems = [];
 	
 	this.theme = ModelingTheme;
 	if (theme!=undefined && theme!=null) {
@@ -15,13 +16,19 @@ var Model = function(canvas, theme) {
 	
 	// Only options defined here, actual element templates are with the areas
 	this.elementTemplateOptions = [{
-		key: "nonterminal"
+		key: "nonterminal",
+		primaryColor: "#e6f1ff", secondaryColor: "#0049a6"
 	}, {
-		key: "label"
+		key: "label",
+		primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
 	}, {
-		key: "function"
+		key: "function",
+		primaryColor: "#FFE173", secondaryColor: "#6d5603",
+		radius: 5
 	}, {
-		key: "grammar"
+		key: "grammar",
+		primaryColor: "#FFE173", secondaryColor: "#6d5603",
+		radius: 5
 	}];
 	
 	this.mappingConnection = new ConnectionTemplate(this);
@@ -61,6 +68,11 @@ Model.prototype.paint = function() {
 	
 	for (var i=0; i<this.areas.length; i++) {
 		this.areas[i].paint(this.context, this.theme);
+	}
+	if (this.activeObject !== null) {
+		this.canvas.style.cursor = this.activeObject.getCursor(this.mousePosition);
+	} else {
+		this.canvas.style.cursor = Cursors.arrow;
 	}
 };
 

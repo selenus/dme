@@ -395,15 +395,15 @@ SchemaEditor.prototype.deselectionHandler = function() {
 
 SchemaEditor.prototype.selectionHandler = function(e) {
 	var _this = schemaEditor;
-	_this.selectedElementId = e.elementId;
+	_this.selectedElementId = e.element.id;
 	
 	_this.elementContextDetail.text("");
 	_this.elementContextButtons.text("");
 	
 	var actions = [];
 	if (_this.schemaOwn || _this.schemaWrite) {
-		if (e.elementType === "element") {
-			if (e.elementSubtype==="Nonterminal") {
+		if (e.element.getType() === "nonterminal" || e.element.getType() === "label") {
+			if (e.element.getType()==="nonterminal") {
 				actions[0] = ["addNonterminal", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
 			} else {
 				actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
@@ -411,17 +411,17 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 			actions[1] = ["addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
 			actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 			actions[3] = ["removeElement", "trash", "danger", ""];
-			_this.getElement(e.elementId);	
-		} else if (e.elementType === "grammar") {
+			_this.getElement(e.element.id);	
+		} else if (e.element.getType() === "grammar") {
 			actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
 			actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 			actions[2] = ["removeElement", "trash", "danger", ""];
-			_this.getGrammar(e.elementId);
-		} else if (e.elementType === "function") {
+			_this.getGrammar(e.element.id);
+		} else if (e.element.getType() === "function") {
 			actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
 			actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 			actions[2] = ["removeElement", "trash", "danger", ""];
-			_this.getFunction(e.elementId);
+			_this.getFunction(e.element.id);
 		}
 	}
 	

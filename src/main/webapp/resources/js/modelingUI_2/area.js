@@ -8,14 +8,10 @@ var Area = function(model) {
 	this.isTarget = false;
 	this.recalculationRequired = true;
 
-	this.moveableX = true;
-	this.moveableY = true;
 	this.minX = null;
 	this.maxX = null;
 	this.minY = null;
 	this.maxY = null;
-	
-	this.isLeft = true;
 	
 	this.elementTemplates = [];
 	for (var i=0; i<this.model.elementTemplateOptions.length; i++) {
@@ -23,21 +19,31 @@ var Area = function(model) {
 	}
 	
 	this.moveHandle = null;
-	
-	this.cursor = Cursors.arrow;
+	this.startMoveHandle = null;
 };
 
 Area.prototype.getCursor = function() {
-	return Cursors.move;
+	if (this.startMoveHandle==null && this.moveHandle!=null) {
+		return Cursors.move;
+	}
+	return Cursors.arrow;
 };
 
 Area.prototype.startDrag = function(point) {
 	this.moveHandle = point;
+	this.startMoveHandle = point;
 };
 
 Area.prototype.drag = function(point) {
 	if (this.moveHandle==null) {
 		return;
+	}
+	
+	if (this.startMoveHandle!=null) {
+		var overall = new Rectangle(this.startMoveHandle.x-3, this.startMoveHandle.y-3, 6, 6); 
+		if (!overall.contains(point)) {
+			this.startMoveHandle = null;
+		}
 	}
 	
 	var deltaX = point.x - this.moveHandle.x;
@@ -113,6 +119,7 @@ Area.prototype.drag = function(point) {
 
 Area.prototype.stopDrag = function() {
 	this.moveHandle = null;
+	this.startMoveHandle = null;
 };
 
 Area.prototype.invalidate = function() {
@@ -209,6 +216,24 @@ Area.prototype.paint = function(context, theme) {
 		}
 	}
 };
+
+Area.prototype.deselectAll = function() {
+	var elements = this.getVisibleElements(this.root);
+
+	/* Do not worry about connections here, 
+	 * hierarchy connections are not selectable anyway */
+	for (var i=0; i<elements.length; i++) {
+		if (elements[i].selected) {
+			elements[i].selected = false;
+			if (this.model.selectedItems.contains(elements[i])) {
+				this.model.selectedItems.remove(elements[i])
+			}
+			this.model.handleElementDeselected(elements[i]);
+		}
+	}
+};
+
+
 
 Area.prototype.getVisibleElements = function(element) {
 	var result = []

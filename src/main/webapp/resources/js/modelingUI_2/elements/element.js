@@ -28,7 +28,11 @@ var Element = function(template, parent, id, label, icons) {
 };
 
 Element.prototype.getCursor = function() {
-	return Cursors.arrow;
+	return Cursors.select;
+};
+
+Element.prototype.getType = function() {
+	return this.template.options.key;
 };
 
 Element.prototype.setActive = function(active) {

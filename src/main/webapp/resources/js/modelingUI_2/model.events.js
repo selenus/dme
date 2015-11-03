@@ -39,7 +39,24 @@ Model.prototype.mouseDown = function(e) {
 	if (e.button === 0) {
 		if (this.activeObject instanceof Area) {
 			this.activeObject.startDrag(this.mousePosition);
+		} else if (this.activeObject.selected!==undefined) {
+			var select = !this.activeObject.selected;
+			this.deselectAll();
+			if (select) {
+				this.activeObject.selected=true;
+				if (!this.selectedItems.contains(this.activeObject)) {
+					this.selectedItems.push(this.activeObject)
+				}
+				this.handleElementSelected(this.activeObject);
+			}
 		}
+		this.paint();
+	}
+};
+
+Model.prototype.deselectAll = function() {
+	for (var i=0; i<this.areas.length;i++) {
+		this.areas[i].deselectAll();
 	}
 };
 
@@ -49,8 +66,12 @@ Model.prototype.mouseUp = function(e) {
 	// left-click
 	if (e.button === 0) {
 		if (this.activeObject instanceof Area) {
+			if (this.activeObject.startMoveHandle!=null) {
+				this.deselectAll();
+			}
 			this.activeObject.stopDrag();
 		}
+		this.paint();
 	}
 };
 
@@ -93,10 +114,18 @@ Model.prototype.updateActiveObject = function() {
 		this.activeObject = object;
 		this.paint();
 	}
-	
-	if (this.activeObject !== null) {
-		this.canvas.style.cursor = this.activeObject.getCursor(this.mousePosition);
-	} else {
-		this.canvas.style.cursor = Cursors.arrow;
-	}
+};
+
+Model.prototype.handleElementDeselected = function(element) {
+	var deselectionEvent = document.createEvent("Event");
+	deselectionEvent.initEvent("deselectionEvent", true, true);
+	deselectionEvent.element = element;
+	document.dispatchEvent(deselectionEvent);
+};
+
+Model.prototype.handleElementSelected = function(element) {
+	var selectionEvent = document.createEvent("Event");
+	selectionEvent.initEvent("selectionEvent", true, true);	
+	selectionEvent.element = element;
+	document.dispatchEvent(selectionEvent);
 };

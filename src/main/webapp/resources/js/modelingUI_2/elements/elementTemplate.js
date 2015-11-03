@@ -1,10 +1,12 @@
 var ElementTemplate = function(area, options) {
 	this.area = area;
 	this.options = $.extend(true, {
+		key: "",
 		height: 25,
 		font: "bold 10px Verdana",
 		levelIndent: 25,
 		lineWidth: 2,
+		radius: 0,
 		primaryColor: "#e6f1ff",
 		secondaryColor: "#0049a6"
 	}, options);
@@ -37,7 +39,11 @@ ElementTemplate.prototype.paint = function(element, context) {
 	context.fillStyle = element.selected ? this.options.secondaryColor : this.options.primaryColor;
 	context.strokeStyle = element.selected ? this.options.primaryColor : this.options.secondaryColor;
 	
-	this.drawRect(context, rectangle.x, rectangle.y, rectangle.width, rectangle.height, true, true)
+	if (this.options.radius==0) {
+		this.drawRect(context, rectangle.x, rectangle.y, rectangle.width, rectangle.height, true, true)
+	} else {
+		this.drawRoundRect(context, rectangle.x, rectangle.y, rectangle.width, rectangle.height, this.options.radius, true, true)
+	}
 	
 	context.font = this.options.font;
 	context.fillStyle = context.strokeStyle;
@@ -72,4 +78,30 @@ ElementTemplate.prototype.drawRect = function(context, x, y, width, height, fill
 	if (fill) {
 		context.fill();
 	}
+};
+
+ElementTemplate.prototype.drawRoundRect = function(ctx, x, y, width, height, radius, fill, stroke) {
+	if (typeof stroke == "undefined" ) {
+	    stroke = true;
+	  }
+	  if (typeof radius === "undefined") {
+	    radius = 5;
+	  }
+	  ctx.beginPath();
+	  ctx.moveTo(x + radius, y);
+	  ctx.lineTo(x + width - radius, y);
+	  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+	  ctx.lineTo(x + width, y + height - radius);
+	  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+	  ctx.lineTo(x + radius, y + height);
+	  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+	  ctx.lineTo(x, y + radius);
+	  ctx.quadraticCurveTo(x, y, x + radius, y);
+	  ctx.closePath();
+	  if (stroke) {
+	    ctx.stroke();
+	  }
+	  if (fill) {
+	    ctx.fill();
+	  }
 };
