@@ -3,11 +3,13 @@ Model.prototype.initEvents = function() {
 	this.mouseUpHandler = this.mouseUp.bind(this);
 	this.mouseMoveHandler = this.mouseMove.bind(this);
 	this.mouseLeaveHandler = this.mouseLeave.bind(this);
+	this.handleContextmenu = this.handleContextmenu.bind(this);
 	
 	this.canvas.addEventListener("mousedown", this.mouseDownHandler, false);
 	this.canvas.addEventListener("mouseup", this.mouseUpHandler, false);
 	this.canvas.addEventListener("mouseleave", this.mouseLeaveHandler, false);
 	this.canvas.addEventListener("mousemove", this.mouseMoveHandler, false);	
+	this.canvas.addEventListener("contextmenu", this.handleContextmenu, false);  
 };
 
 Model.prototype.removeEvents = function() {
@@ -15,6 +17,7 @@ Model.prototype.removeEvents = function() {
 	this.canvas.removeEventListener("mouseup", this.mouseUpHandler);
 	this.canvas.removeEventListener("mouseleave", this.mouseLeaveHandler);
 	this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
+	this.canvas.removeEventListener("contextmenu", this.handleContextmenu, false);
 };
 
 Model.prototype.updateMousePosition = function(e) {
@@ -25,6 +28,39 @@ Model.prototype.updateMousePosition = function(e) {
 		this.mousePosition.y -= node.offsetTop;
 		node = node.offsetParent;
 	}
+};
+
+Model.prototype.handleContextmenu = function(e) {
+	var ctx = this.context;
+	var rects=[];
+
+    rects.push({x:50,y:50,width:50,height:50,color:"red"});
+    rects.push({x:150,y:100,width:75,height:75,color:"blue"});
+    
+    for(var i=0;i<rects.length;i++){
+        var rect=rects[i];
+        ctx.beginPath();
+        ctx.fillStyle=rect.color;
+        ctx.rect(rect.x,rect.y,rect.width,rect.height);
+        ctx.fill();
+    }
+    
+    // check each rect for hits
+    for(var i=0;i<rects.length;i++){
+        var rect=rects[i];
+        var rectRight=rect.x+rect.width;
+        var rectBottom=rect.y+rect.height;
+
+        // if this rect is hit, display an alert
+        if(this.mousePosition.x >= rect.x && this.mousePosition.x <= rectRight 
+        		&& this.mousePosition.y >= rect.y && this.mousePosition.y <= rectBottom){
+            alert("Context menu request on the "+rect.color+" rectangle.");
+        }
+    }
+
+    // prevents the usual context from popping up
+    e.preventDefault()
+    return(false); 
 };
 
 Model.prototype.mouseDown = function(e) {

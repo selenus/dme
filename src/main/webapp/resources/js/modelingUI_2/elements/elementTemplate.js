@@ -58,7 +58,7 @@ ElementTemplate.prototype.paint = function(element, context) {
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "middle";
 	context.textAlign = "left";
-	context.fillText(element.label, rectangle.x + 25, rectangle.y + rectangle.height/2 + 2);
+	context.fillText(element.label, rectangle.x + 22, rectangle.y + rectangle.height/2 + 2);
 	
 	if (element.icons != null) {
 		for (var i=0; i<element.icons.length; i++) {

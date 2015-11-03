@@ -125,7 +125,7 @@ Element.prototype.paint = function(context) {
 Element.prototype.calculateWidth = function() {
 	var context = this.template.area.model.context;
 	context.font = this.template.font;	
-	var width = context.measureText(this.label).width + 45
+	var width = context.measureText(this.label).width + 40
 	if (this.icons != null) {
 		width += this.icons.length * 20;
 	}

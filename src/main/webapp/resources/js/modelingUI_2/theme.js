@@ -8,10 +8,10 @@ var ModelingTheme = {
 	connectorHover : "#0c0",
 	connectorHoverBorder : "#0c0",
 	
-	expander : "#DEDEDE",
-	expanderBorder : "#000",
-	expanderHover : "#B9A667",
-	expanderHoverBorder : "#000",
+	expander : "#F7F7F7",
+	expanderBorder : "#444",
+	expanderHover : "#FFF",
+	expanderHoverBorder : "#222",
 
 	areaBorderColor : "#CCC",
 	areaBorderWidth : 1,
