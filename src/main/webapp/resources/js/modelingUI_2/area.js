@@ -13,25 +13,27 @@ var Area = function(model) {
 	this.minY = null;
 	this.maxY = null;
 	
+	this.moveHandle = null;			// To determinate moving deltas
+	this.startMoveHandle = null;	// Being used to determine if we have a click or drag of the area
+};
+
+Area.prototype.init = function() {
 	this.verticalScroll = new VerticalScroll(this);
 	
 	this.elementTemplates = [];
 	for (var i=0; i<this.model.elementTemplateOptions.length; i++) {
 		this.elementTemplates.push(new ElementTemplate(this, this.model.elementTemplateOptions[i]));
 	}
-	
-	this.moveHandle = null;			// To determinate moving deltas
-	this.startMoveHandle = null;	// Being used to determine if we have a click or drag of the area
 };
 
 Area.prototype.setRectangle = function(rectangle) {
-	var xScroll = this.isTarget ? (rectangle.width-this.theme.verticalScroll.width-0.5) : rectangle.x;
-	var xArea = this.isTarget ? rectangle.x : this.theme.verticalScroll.width;
+	var xScroll = this.isTarget ? (rectangle.width-this.theme.verticalScroll.width)+rectangle.x : rectangle.x;
+	var xArea = this.isTarget ? rectangle.x : this.theme.verticalScroll.width+rectangle.x;
 	
-	this.verticalScroll.setRectangle(new Rectangle(xScroll, rectangle.y, this.theme.verticalScroll.width+0.5, rectangle.height));
+	this.verticalScroll.setRectangle(new Rectangle(xScroll, rectangle.y, this.theme.verticalScroll.width, rectangle.height));
 
 	// TODO Also Check if we need to move on resize to pertain protected element area
-	this.rectangle = new Rectangle(xArea, rectangle.y, rectangle.width-this.theme.verticalScroll.width-0.5, rectangle.height);
+	this.rectangle = new Rectangle(xArea, rectangle.y, rectangle.width-this.theme.verticalScroll.width, rectangle.height);
 };
 
 Area.prototype.getCursor = function() {
@@ -162,27 +164,50 @@ Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
 	this.elements.push(e);
 	if (parent==null) {
 		this.root = e;
-		this.root.rectangle = new Rectangle(this.model.theme.rootElementPosition.x + this.rectangle.x, this.model.theme.rootElementPosition.y + this.rectangle.y, 
+		this.root.rectangle = this.calculateAbsoluteRectangle(this.model.theme.rootElementPosition.x, this.model.theme.rootElementPosition.y,
 				this.root.rectangle.width, this.root.rectangle.height);
 	} else {
 		var cParent = parent.getConnector("children");
 		var cChild = e.getConnector("parent");
 		
 		cParent.registerConnection(cChild, this.model.hierarchicalConnection);
+		
+		parent.addChild(e);
 	}
 	return e;
 };
 
+Area.prototype.calculateAbsoluteRectangle = function(x, y, width, height) {
+	var point = this.calculateAbsolutePoint(x, y);
+	if (!this.isTarget) {
+		return new Rectangle(point.x, point.y, width, height);
+	} else {
+		return new Rectangle(point.x-width, point.y, width, height);
+	}
+};
+
+Area.prototype.calculateAbsolutePoint = function(x, y) {
+	var absY = y+this.rectangle.y;
+	if (!this.isTarget) {
+		return new Point(x+this.rectangle.x, absY);
+	} else {
+		return new Point(this.rectangle.x+this.rectangle.width-x, absY);
+	}
+};
+
 Area.prototype.recalculateElementPositions = function(element, elementList, x, y) {
-	this.recalculateMinMaxBoundaries(x, y, element.rectangle.width, element.rectangle.height);
+	var rectangle = new Rectangle(x, y, element.rectangle.width, element.rectangle.height);
 	
-	element.setRectangle(new Rectangle(x, y, element.rectangle.width, element.rectangle.height));
+	this.recalculateMinMaxBoundaries(rectangle);
+	element.setRectangle(rectangle);
 	if (element.getExpanded() && element.children.length > 0) {
-		for (var i=0; i<element.children.length; i++) {
-			var deltaX = x + this.model.theme.elementPositioningDelta.x;
-			/*if (!this.isLeft) {
-				deltaX = element.rectangle.x + element.rectangle.width - 20 - element.children[i].rectangle.width;
-			}*/
+		for (var i=0; i<element.children.length; i++) {			
+			var deltaX;
+			if (!this.isTarget) {
+				deltaX = x + this.model.theme.elementPositioningDelta.x;
+			} else {
+				deltaX = x - element.children[i].rectangle.width + element.rectangle.width - this.model.theme.elementPositioningDelta.x;
+			}
 			y = this.recalculateElementPositions(element.children[i], elementList, deltaX, y + this.model.theme.elementPositioningDelta.y);
 		}
 	}
@@ -190,19 +215,19 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 	return y;
 };
 
-Area.prototype.recalculateMinMaxBoundaries = function(x, y, width, height) {
-	if (this.minX == null || x < this.minX) { 
-		this.minX = x;
+Area.prototype.recalculateMinMaxBoundaries = function(rectangle) {
+	if (this.minX == null || rectangle.x < this.minX) { 
+		this.minX = rectangle.x;
 	}
-	if (this.maxX == null || x+height > this.maxX) { 
-		this.maxX = x+width; 
+	if (this.maxX == null || rectangle.x+rectangle.width > this.maxX) { 
+		this.maxX = rectangle.x+rectangle.width; 
 	}
-	if (this.minY == null || y < this.minY) { 
-		this.minY = y;
+	if (this.minY == null || rectangle.y < this.minY) { 
+		this.minY = rectangle.y;
 		this.verticalScroll.displayedMinY = this.minY;
 	}
-	if (this.maxY == null || y+height > this.maxY) { 
-		this.maxY = y+height;
+	if (this.maxY == null || rectangle.y+rectangle.height > this.maxY) { 
+		this.maxY = rectangle.y+rectangle.height;
 		this.verticalScroll.displayedMaxY = this.maxY;
 	}	
 }
@@ -294,7 +319,8 @@ Area.prototype.hitTest = function(position) {
 		hitObject = visibleElements[i].hitTest(position);
 		if (hitObject!=null) {
 			return hitObject;
+			
 		}
-	}
+	}	
 	return this;
 };

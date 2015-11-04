@@ -89,12 +89,11 @@ MappingEditor.prototype.initLayout = function() {
 };
 
 MappingEditor.prototype.initGraphs = function() {
-	this.graph = new Graph(this.context.canvas);
-	this.source = new Area(this.graph, new Rectangle(0, 0, 0, 0), true);
-	this.target = new Area(this.graph, new Rectangle(0, 0, 0, 0), false);
- 	this.graph.addArea(this.source);
- 	this.graph.addArea(this.target);
-
+	this.graph = new Model(this.context.canvas);
+	this.source = this.graph.addArea();
+	this.target = this.graph.addArea();
+	this.graph.init();
+	
  	this.getElementHierarchy(this.sourcePath, this.source);
  	this.getElementHierarchy(this.targetPath, this.target);
 
@@ -115,7 +114,7 @@ MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	    	_this.graph.update();
 	    	
 	    	if (_this.oneDone) {
-	    		_this.getMappings();
+	    		//_this.getMappings();
 	    	} else {
 	    		_this.oneDone = true;
 	    	}
@@ -154,32 +153,24 @@ MappingEditor.prototype.getMappings = function() {
 
 
 MappingEditor.prototype.processElementHierarchy = function(schema, data) {
-	var deltaX = schema===this.source ? 50 : this.context.canvas.width-50;	
-	var rootTemplate = schema===this.source ? sourceRootTemplate : targetRootTemplate;
-	var _Template = schema===this.source ? sourceTemplate : targetTemplate;
+	var parent = schema.addElement(data.type, null, data.id, this.formatLabel(data.label), null);
 	
-	var parent = schema.addRoot(rootTemplate, { x: deltaX, y: 25 }, data.id, this.formatLabel(data.label), "element", data.type, null);
+	this.generateTree(schema, parent, data.children);
 	
-	if (schema!==this.source) {
-		parent.setRectangle(new Rectangle(parent.rectangle.x - parent.rectangle.width, parent.rectangle.y, parent.rectangle.width, parent.rectangle.height));
-	}
+	schema.elements[0].setExpanded(true);
 	
-	this.generateTree(schema, parent, data.children, schema===this.source, _Template);
-	
-	schema.root.setExpanded(true);
+	this.graph.update();
+
 };
 
-MappingEditor.prototype.generateTree = function(area, parent, children, isSource, template) {
+MappingEditor.prototype.generateTree = function(area, parent, children) {
 
 	if (children!=null && children instanceof Array) {
 		for (var i=0; i<children.length; i++) {
 			var icon = null;
 			
-			var e = area.addElement(template, children[i].id, this.formatLabel(children[i].label), parent, "element", children[i].type, icon);
-			if (parent != null) {
-				parent.addChild(e);
-			}
-			this.generateTree(area, e, children[i].children, isSource, template);
+			var e = area.addElement(children[i].type, parent, children[i].id, this.formatLabel(children[i].label), icon);
+			this.generateTree(area, e, children[i].children);
 		}
 	}
 };

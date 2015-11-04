@@ -3,13 +3,13 @@ Model.prototype.initEvents = function() {
 	this.mouseUpHandler = this.mouseUp.bind(this);
 	this.mouseMoveHandler = this.mouseMove.bind(this);
 	this.mouseLeaveHandler = this.mouseLeave.bind(this);
-	this.handleContextmenu = this.handleContextmenu.bind(this);
+	//this.handleContextmenu = this.handleContextmenu.bind(this);
 	
 	this.canvas.addEventListener("mousedown", this.mouseDownHandler, false);
 	this.canvas.addEventListener("mouseup", this.mouseUpHandler, false);
 	this.canvas.addEventListener("mouseleave", this.mouseLeaveHandler, false);
 	this.canvas.addEventListener("mousemove", this.mouseMoveHandler, false);	
-	this.canvas.addEventListener("contextmenu", this.handleContextmenu, false);  
+	//this.canvas.addEventListener("contextmenu", this.handleContextmenu, false);  
 };
 
 Model.prototype.removeEvents = function() {
@@ -17,7 +17,7 @@ Model.prototype.removeEvents = function() {
 	this.canvas.removeEventListener("mouseup", this.mouseUpHandler);
 	this.canvas.removeEventListener("mouseleave", this.mouseLeaveHandler);
 	this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
-	this.canvas.removeEventListener("contextmenu", this.handleContextmenu, false);
+	//this.canvas.removeEventListener("contextmenu", this.handleContextmenu, false);
 };
 
 Model.prototype.updateMousePosition = function(e) {
@@ -31,33 +31,32 @@ Model.prototype.updateMousePosition = function(e) {
 };
 
 Model.prototype.handleContextmenu = function(e) {
-	var ctx = this.context;
-	var rects=[];
-
-    rects.push({x:50,y:50,width:50,height:50,color:"red"});
-    rects.push({x:150,y:100,width:75,height:75,color:"blue"});
-    
-    for(var i=0;i<rects.length;i++){
-        var rect=rects[i];
-        ctx.beginPath();
-        ctx.fillStyle=rect.color;
-        ctx.rect(rect.x,rect.y,rect.width,rect.height);
-        ctx.fill();
-    }
-    
-    // check each rect for hits
-    for(var i=0;i<rects.length;i++){
-        var rect=rects[i];
-        var rectRight=rect.x+rect.width;
-        var rectBottom=rect.y+rect.height;
-
-        // if this rect is hit, display an alert
-        if(this.mousePosition.x >= rect.x && this.mousePosition.x <= rectRight 
-        		&& this.mousePosition.y >= rect.y && this.mousePosition.y <= rectBottom){
-            alert("Context menu request on the "+rect.color+" rectangle.");
+	alert ("No context menu");
+	
+	$.contextMenu({
+       /* selector: '.context-menu-one',*/ 
+        build: function($trigger, e) {
+            // this callback is executed every time the menu is to be shown
+            // its results are destroyed every time the menu is hidden
+            // e is the original contextmenu event, containing e.pageX and e.pageY (amongst other data)
+            return {
+                callback: function(key, options) {
+                    var m = "clicked: " + key;
+                    window.console && console.log(m) || alert(m); 
+                },
+                items: {
+                    "edit": {name: "Edit", icon: "edit"},
+                    "cut": {name: "Cut", icon: "cut"},
+                    "copy": {name: "Copy", icon: "copy"},
+                    "paste": {name: "Paste", icon: "paste"},
+                    "delete": {name: "Delete", icon: "delete"},
+                    "sep1": "---------",
+                    "quit": {name: "Quit", icon: function($element, key, item){ return 'context-menu-icon context-menu-icon-quit'; }}
+                }
+            };
         }
-    }
-
+    });
+	
     // prevents the usual context from popping up
     e.preventDefault()
     return(false); 
@@ -143,6 +142,9 @@ Model.prototype.updateActiveObject = function() {
 	var object = null;
 	for (var i=0; i<this.areas.length; i++) {
 		object = this.areas[i].hitTest(this.mousePosition);
+		if (object!=null) {
+			break;
+		}
 	}
 
 	if (object!==this.activeObject) {

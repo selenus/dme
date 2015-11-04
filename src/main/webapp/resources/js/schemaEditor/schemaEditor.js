@@ -137,7 +137,7 @@ SchemaEditor.prototype.initLayout = function() {
 SchemaEditor.prototype.initGraph = function() {
 	this.graph = new Model(this.context.canvas);
 	this.schema = this.graph.addArea();
- 	
+	this.graph.init();
  	
  	this.loadElementHierarchy();
  	this.resizeLayout();
@@ -319,9 +319,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 				icon = this.warningIcon;
 			}
 			var e = this.schema.addElement("nonterminal", parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
-			if (parent != null) {
-				parent.addChild(e);
-			}
+			
 			this.generateTree(area, e, nonterminals[i].childNonterminals, null, nonterminals[i].functions, isSource);
 		}
 	}
@@ -332,7 +330,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 				icon = this.errorIcon;
 			}
 			var fDesc = this.schema.addElement("grammar", parent, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), icon);
-			parent.addChild(fDesc);
+			
 			if (functions[i].transformationFunctions != null && functions[i].transformationFunctions instanceof Array) {
 				for (var j=0; j<functions[i].transformationFunctions.length; j++) {
 					if (functions[i].transformationFunctions[j].error==true) {
@@ -340,14 +338,14 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 					}
 					var fOut = this.schema.addElement("function", fDesc, functions[i].transformationFunctions[j].id, 
 							this.formatLabel("f: " + functions[i].transformationFunctions[j].name), icon);
-					fDesc.addChild(fOut);
+					
 					if (functions[i].transformationFunctions[j].outputElements != null && functions[i].transformationFunctions[j].outputElements instanceof Array) {
 						for (var k=0; k<functions[i].transformationFunctions[j].outputElements.length; k++) {
 							
 							var e = this.schema.addElement("label", fOut, functions[i].transformationFunctions[j].outputElements[k].id, 
 									this.formatLabel(functions[i].transformationFunctions[j].outputElements[k].name), null);
 							
-							fOut.addChild(e);
+							
 							this.generateTree(area, e, 
 									functions[i].transformationFunctions[j].outputElements[k].childNonterminals,
 									functions[i].transformationFunctions[j].outputElements[k].subLabels,

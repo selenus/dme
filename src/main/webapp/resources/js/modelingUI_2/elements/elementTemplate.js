@@ -12,28 +12,57 @@ var ElementTemplate = function(area, options) {
 	}, options);
 	
 	this.connectorTemplates = [];
-	
 	this.renderConnectorTemplates();
 }
 
 ElementTemplate.prototype.getExpanderPosition = function(element) {
-	return new Point(element.rectangle.x + 10, element.rectangle.y + element.rectangle.height/2);
+	if (!this.area.isTarget) {
+		return new Point(element.rectangle.x + 10, element.rectangle.y + element.rectangle.height/2);
+	} else {
+		return new Point(element.rectangle.x + element.rectangle.width - 10, element.rectangle.y + element.rectangle.height/2);
+	}
 };
 
 ElementTemplate.prototype.renderConnectorTemplates = function() {
+	var _area = this.area;
 	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
 		name: "parent", type: "Element [in]", description: "Father", isInteractive: false, isMappable: false,
 		position: function(element) {
-			return { x: 0, y: Math.floor(element.rectangle.height / 2) };
+			if (!_area.isTarget) {
+				return { x: 0, y: Math.floor(element.rectangle.height / 2) };
+			} else {
+				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
+			}
 		}
 	}));
 	
 	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
 		name: "children", type: "Element [out] [array]", description: "Child", isInteractive: false, isMappable: false,
 		position: function(element) {
-			return { x: 10, y: element.rectangle.height };
+			if (!_area.isTarget) {
+				return { x: 10, y: element.rectangle.height };
+			} else {
+				return { x: element.rectangle.width-10, y: element.rectangle.height };
+			}
 		}
 	}));
+	
+	if (this.area.isSource) {
+		this.connectorTemplates.push(new ConnectorTemplate(this.area, {
+			name: "mappings", type: "Mapping [out] [array]", description: "Mappings out", isInteractive: true, isMappable: true,
+			position: function(element) {
+				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
+			}
+		}));
+	}
+	if (this.area.isTarget) {
+		this.connectorTemplates.push(new ConnectorTemplate(this.area, {
+			name: "mappings", type: "Mapping [in] [array]", description: "Mappings in", isInteractive: true, isMappable: true,
+			position: function(element) {
+				return { x: 0, y: Math.floor(element.rectangle.height / 2) };
+			}
+		}));
+	}
 };
 
 ElementTemplate.prototype.paint = function(element, context) {
@@ -41,7 +70,7 @@ ElementTemplate.prototype.paint = function(element, context) {
 	
 	if (!this.area.rectangle.contains(new Point(rectangle.x, rectangle.y)) && 
 			!this.area.rectangle.contains(new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height))) {
-		return;
+		return false;
 	}
 	
 	context.lineWidth = this.options.lineWidth;
@@ -54,11 +83,18 @@ ElementTemplate.prototype.paint = function(element, context) {
 		context.drawRoundRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height, this.options.radius, true, true)
 	}
 	
+	var textAnchorX;
+	if (!this.area.isTarget) {
+		context.textAlign = "left";
+		textAnchorX = rectangle.x + 22
+	} else {
+		context.textAlign = "right";
+		textAnchorX = rectangle.x + rectangle.width - 22;
+	}
 	context.font = this.options.font;
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "middle";
-	context.textAlign = "left";
-	context.fillText(element.label, rectangle.x + 22, rectangle.y + rectangle.height/2 + 2);
+	context.fillText(element.label, textAnchorX, rectangle.y + rectangle.height/2 + 2);
 	
 	if (element.icons != null) {
 		for (var i=0; i<element.icons.length; i++) {
@@ -71,4 +107,5 @@ ElementTemplate.prototype.paint = function(element, context) {
 			}
 		}
 	}
+	return true;
 };

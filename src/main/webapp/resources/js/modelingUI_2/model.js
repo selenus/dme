@@ -16,17 +16,17 @@ var Model = function(canvas, theme) {
 	
 	// Only options defined here, actual element templates are with the areas
 	this.elementTemplateOptions = [{
-		key: "nonterminal",
+		key: "Nonterminal",
 		primaryColor: "#e6f1ff", secondaryColor: "#0049a6"
 	}, {
-		key: "label",
+		key: "Label",
 		primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
 	}, {
-		key: "function",
+		key: "Function",
 		primaryColor: "#FFE173", secondaryColor: "#6d5603",
 		radius: 5
 	}, {
-		key: "grammar",
+		key: "Grammar",
 		primaryColor: "#FFE173", secondaryColor: "#6d5603",
 		radius: 5
 	}];
@@ -54,7 +54,13 @@ Model.prototype.addArea = function() {
 	return area;
 };
 
-Model.prototype.update = function() {	
+Model.prototype.init = function() {
+	for (var i=0; i<this.areas.length; i++) {
+		this.areas[i].init();
+	}
+};
+
+Model.prototype.update = function() {
 	this.resizeAreas();
 	this.paint();
 };

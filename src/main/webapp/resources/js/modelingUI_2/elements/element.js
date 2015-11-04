@@ -104,7 +104,15 @@ Element.prototype.setRectangle = function(rect) {
 };
 
 Element.prototype.paint = function(context) {
-	this.template.paint(this, context);
+	if (this.expander!=null && this.expander.expanded && this.children!=null) {
+		for (var i=0; i<this.children.length; i++) {
+			this.children[i].paint(context);
+		}
+	}
+	
+	if (!this.template.paint(this, context)) {
+		return false;
+	}
 	
 	if (this.connectors!=null) {
 		for (var i=0; i<this.connectors.length; i++) {
@@ -115,17 +123,14 @@ Element.prototype.paint = function(context) {
 		this.expander.paint(context);
 	}
 	
-	if (this.expander!=null && this.expander.expanded && this.children!=null) {
-		for (var i=0; i<this.children.length; i++) {
-			this.children[i].paint(context);
-		}
-	}
+	
+	return true;
 };
 
 Element.prototype.calculateWidth = function() {
 	var context = this.template.area.model.context;
-	context.font = this.template.font;	
-	var width = context.measureText(this.label).width + 40
+	context.font = this.template.options.font;	
+	var width = context.measureText(this.label).width + 40;
 	if (this.icons != null) {
 		width += this.icons.length * 20;
 	}
