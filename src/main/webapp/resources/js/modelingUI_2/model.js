@@ -1,8 +1,9 @@
-var Model = function(canvas, theme) {
+var Model = function(canvas, elementTemplateOptions, theme) {
 	this.canvas = canvas;
 	this.canvas.focus();
 	this.context = this.canvas.getContext("2d");
 	
+	this.isMouseDown = false;
 	this.mousePosition = new Point(-1, -1);
 	this.activeObject = null;
 	this.selectedItems = [];
@@ -15,21 +16,11 @@ var Model = function(canvas, theme) {
 	this.areas = [];
 	
 	// Only options defined here, actual element templates are with the areas
-	this.elementTemplateOptions = [{
-		key: "Nonterminal",
-		primaryColor: "#e6f1ff", secondaryColor: "#0049a6"
-	}, {
-		key: "Label",
-		primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
-	}, {
-		key: "Function",
-		primaryColor: "#FFE173", secondaryColor: "#6d5603",
-		radius: 5
-	}, {
-		key: "Grammar",
-		primaryColor: "#FFE173", secondaryColor: "#6d5603",
-		radius: 5
-	}];
+	/**
+	 * key: "...", primaryColor: "#...", secondaryColor: "#...", radius: 5 (optional)
+	 * getContextMenuItems: function(element) {} to produce items[] based on actual element (see model.contextmenu.js) 
+	 */
+	this.elementTemplateOptions = elementTemplateOptions;
 	
 	this.mappingConnection = new ConnectionTemplate(this);
 	this.hierarchicalConnection = new ConnectionTemplate(this);
@@ -90,5 +81,24 @@ Model.prototype.resizeAreas = function() {
 		}		
 		this.areas[i].setRectangle(new Rectangle(x, 0, width, height));
 		x = x + width;
+	}
+};
+
+Model.prototype.select = function(object) {
+	if (object!=null && !object.selected) {
+		this.selectedItems = [];
+		this.deselectAll();
+		object.selected=true;
+		if (!this.selectedItems.contains(object)) {
+			this.selectedItems.push(object)
+		}
+		this.handleElementSelected(object);
+		this.paint();
+	}
+};
+
+Model.prototype.deselectAll = function() {
+	for (var i=0; i<this.areas.length;i++) {
+		this.areas[i].deselectAll();
 	}
 };

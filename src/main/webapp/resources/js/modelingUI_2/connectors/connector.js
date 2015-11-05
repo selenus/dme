@@ -6,6 +6,10 @@ var Connector = function(element, template) {
 	this.connections = [];
 };
 
+Connector.prototype.getContextMenuItems = function() {
+	return this.element.getContextMenuItems();
+};
+
 Connector.prototype.getCursor = function() {
 	return Cursors.cross;
 };

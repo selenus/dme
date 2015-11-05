@@ -134,9 +134,103 @@ SchemaEditor.prototype.initLayout = function() {
 
 };
 
+
+/*
+ 	var actions = [];
+	if (_this.schemaOwn || _this.schemaWrite) {
+		if (e.element.getType() === "Nonterminal" || e.element.getType() === "Label") {
+			if (e.element.getType()==="nonterminal") {
+				actions[0] = ["addNonterminal", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+			} else {
+				actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
+			}
+			actions[1] = ["addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
+			actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+			actions[3] = ["removeElement", "trash", "danger", ""];
+			_this.getElement(e.element.id);	
+		} else if (e.element.getType() === "Grammar") {
+			actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
+			actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+			actions[2] = ["removeElement", "trash", "danger", ""];
+			_this.getGrammar(e.element.id);
+		} else if (e.element.getType() === "Function") {
+			actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
+			actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
+			actions[2] = ["removeElement", "trash", "danger", ""];
+			_this.getFunction(e.element.id);
+		}
+	}
+	
+	var button;
+	for (var i=0; i<actions.length; i++) {
+		button = "<button " +
+					"class='btn btn-" + actions[i][2] + " btn-sm' " +
+					"onclick='schemaEditor." + actions[i][0] + "(); return false;' type='button'>" +
+						"<span class='glyphicon glyphicon-" + actions[i][1] + "'></span> " + actions[i][3] + 
+				 "</button> ";
+		_this.elementContextButtons.append(button);
+	}
+ 
+ */
+
+/**   - getContextMenuItems() must return an array of item objects
+*   	- {key: ..., label: ..., glyphicon: ..., e: ..., callback: function(itemKey, e)} for items or
+*   	- {key: "-"} for a separator
+*/
 SchemaEditor.prototype.initGraph = function() {
-	this.graph = new Model(this.context.canvas);
+	var _this = this;
+	this.graph = new Model(this.context.canvas, 
+			[{
+				key: "Nonterminal",
+				primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
+				getContextMenuItems: function(element) { 
+					var items = [{ 
+						key: "addNonterminal", 
+						label: __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal"), 
+						glyphicon: "plus", 
+						e: { id: element.id, type: element.simpleType }, 
+						callback: _this.addNonterminal
+					
+					}, { 
+						key: "addDescription", 
+						label: __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function"), 
+						glyphicon: "plus", 
+						e: { id: element.id, type: element.simpleType }, 
+						callback: _this.addDescription
+					
+					}, { 
+						key: "editElement", 
+						label: __translator.translate("~eu.dariah.de.minfba.common.link.edit"), 
+						glyphicon: "edit", 
+						e: { id: element.id, type: element.simpleType }, 
+						callback: _this.editElement
+					
+					}, { 
+						key: "-"
+					}, { 
+						key: "removeElement", 
+						label: __translator.translate("~eu.dariah.de.minfba.common.link.delete"), 
+						glyphicon: "trash", 
+						e: { id: element.id, type: element.simpleType }, 
+						callback: _this.removeElement
+					
+					}];
+					
+					
+					return items; 
+				}
+			}, {
+				key: "Label",
+				primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
+			}, {
+				key: "Function",
+				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5
+			}, {
+				key: "Grammar",
+				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5
+			}]);
 	this.schema = this.graph.addArea();
+		
 	this.graph.init();
  	
  	this.loadElementHierarchy();
@@ -293,7 +387,7 @@ SchemaEditor.prototype.processElementHierarchy = function(data) {
 
 	//var parent = this.schema.addRoot(editorRootTemplate, { x: 50, y: 25 }, data.id, this.formatLabel(data.name), "element", data.simpleType, null);
 	
-	var parent = this.schema.addElement("nonterminal", null, data.id, this.formatLabel(data.name), null);
+	var parent = this.schema.addElement("Nonterminal", null, data.id, this.formatLabel(data.name), null);
 	
 	this.generateTree(this.schema, parent, data.childNonterminals, null, data.functions, true);
 	
@@ -310,7 +404,7 @@ SchemaEditor.prototype.processElementHierarchy = function(data) {
 	this.schema.root.setExpanded(true);
 }; */
 
-SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, functions,  isSource) {
+SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, functions, isSource) {
 
 	if (nonterminals!=null && nonterminals instanceof Array) {
 		for (var i=0; i<nonterminals.length; i++) {
@@ -318,7 +412,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
 				icon = this.warningIcon;
 			}
-			var e = this.schema.addElement("nonterminal", parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
+			var e = this.schema.addElement("Nonterminal", parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
 			
 			this.generateTree(area, e, nonterminals[i].childNonterminals, null, nonterminals[i].functions, isSource);
 		}
@@ -329,20 +423,20 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			if (functions[i].error==true) {
 				icon = this.errorIcon;
 			}
-			var fDesc = this.schema.addElement("grammar", parent, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), icon);
+			var fDesc = this.schema.addElement("Grammar", parent, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), icon);
 			
 			if (functions[i].transformationFunctions != null && functions[i].transformationFunctions instanceof Array) {
 				for (var j=0; j<functions[i].transformationFunctions.length; j++) {
 					if (functions[i].transformationFunctions[j].error==true) {
 						icon = this.errorIcon;
 					}
-					var fOut = this.schema.addElement("function", fDesc, functions[i].transformationFunctions[j].id, 
+					var fOut = this.schema.addElement("Function", fDesc, functions[i].transformationFunctions[j].id, 
 							this.formatLabel("f: " + functions[i].transformationFunctions[j].name), icon);
 					
 					if (functions[i].transformationFunctions[j].outputElements != null && functions[i].transformationFunctions[j].outputElements instanceof Array) {
 						for (var k=0; k<functions[i].transformationFunctions[j].outputElements.length; k++) {
 							
-							var e = this.schema.addElement("label", fOut, functions[i].transformationFunctions[j].outputElements[k].id, 
+							var e = this.schema.addElement("Label", fOut, functions[i].transformationFunctions[j].outputElements[k].id, 
 									this.formatLabel(functions[i].transformationFunctions[j].outputElements[k].name), null);
 							
 							
@@ -396,7 +490,7 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	
 	var actions = [];
 	if (_this.schemaOwn || _this.schemaWrite) {
-		if (e.element.getType() === "nonterminal" || e.element.getType() === "label") {
+		if (e.element.getType() === "Nonterminal" || e.element.getType() === "Label") {
 			if (e.element.getType()==="nonterminal") {
 				actions[0] = ["addNonterminal", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
 			} else {
@@ -406,12 +500,12 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 			actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 			actions[3] = ["removeElement", "trash", "danger", ""];
 			_this.getElement(e.element.id);	
-		} else if (e.element.getType() === "grammar") {
+		} else if (e.element.getType() === "Grammar") {
 			actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
 			actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 			actions[2] = ["removeElement", "trash", "danger", ""];
 			_this.getGrammar(e.element.id);
-		} else if (e.element.getType() === "function") {
+		} else if (e.element.getType() === "Function") {
 			actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
 			actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
 			actions[2] = ["removeElement", "trash", "danger", ""];
@@ -696,18 +790,17 @@ SchemaEditor.prototype.createRoot = function() {
 	modalFormHandler.show(form_identifier)
 };
 
-SchemaEditor.prototype.removeElement = function() { 
+SchemaEditor.prototype.removeElement = function(e) { 
 	var _this = this;
 	
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), this.graph.selectedItems[0].id), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), e.id), function(result) {
 		if(result) {
 			$.ajax({
-			    url: _this.pathname + "/" + _this.graph.selectedItems[0].typeInfo + "/" 
-			    		+ _this.graph.selectedItems[0].id + "/async/remove",
+			    url: _this.pathname + "/" + e.type + "/" + e.id + "/async/remove",
 			    type: "GET",
 			    dataType: "json",
 			    success: function(data) {
-			    	_this.graph.selectedItems[0].deselect();
+			    	//_this.graph.selectedItems[0].deselect();
 			    	_this.reload();
 			    },
 			    error: __util.processServerError

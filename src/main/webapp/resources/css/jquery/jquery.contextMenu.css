@@ -13,91 +13,31 @@
  *   MIT License http://www.opensource.org/licenses/mit-license
  *
  * Date: 2015-10-28T15:16:13.762Z
+ *
+ *	TGR 2015-11-04: Adapted, extended, truncated for Schema Registry
+ *
+ *
  */
-@font-face {
+/*@font-face {
   font-family: "context-menu-icons";
   font-style: normal; 
   font-weight: normal;
 
   src: url("font/context-menu-icons.eot?4maaf");
   src: url("font/context-menu-icons.eot?4maaf#iefix") format("embedded-opentype"), url("font/context-menu-icons.woff2?4maaf") format("woff2"), url("font/context-menu-icons.woff?4maaf") format("woff"), url("font/context-menu-icons.ttf?4maaf") format("truetype");
+}*/
+
+.context-menu-item.context-menu-icon-glyphicon {
+	padding: 3px 10px;
 }
 
-.context-menu-icon-add:before, .context-menu-icon-copy:before, .context-menu-icon-cut:before, .context-menu-icon-delete:before, .context-menu-icon-edit:before, .context-menu-icon-paste:before, .context-menu-icon-quit:before {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 28px; 
-  font-family: "context-menu-icons";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  color: #2980b9;
-  text-align: center;
-  -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-       -o-transform: translateY(-50%);
-          transform: translateY(-50%);
-
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.context-menu-icon-glyphicon .glyphicon {
+	margin-right: 3px;
+	color: #7A7395;
 }
 
-.context-menu-icon-add:before {
-  content: "";
-}
-
-.context-menu-icon-add.context-menu-hover:before {
-  color: #fff;
-}
-
-.context-menu-icon-copy:before {
-  content: "";
-}
-
-.context-menu-icon-copy.context-menu-hover:before {
-  color: #fff;
-}
-
-.context-menu-icon-cut:before {
-  content: "";
-}
-
-.context-menu-icon-cut.context-menu-hover:before {
-  color: #fff;
-}
-
-.context-menu-icon-delete:before {
-  content: "";
-}
-
-.context-menu-icon-delete.context-menu-hover:before {
-  color: #fff;
-}
-
-.context-menu-icon-edit:before {
-  content: "";
-}
-
-.context-menu-icon-edit.context-menu-hover:before {
-  color: #fff;
-}
-
-.context-menu-icon-paste:before {
-  content: "";
-}
-
-.context-menu-icon-paste.context-menu-hover:before {
-  color: #fff;
-}
-
-.context-menu-icon-quit:before {
-  content: "";
-}
-
-.context-menu-icon-quit.context-menu-hover:before {
-  color: #fff;
+.context-menu-item.context-menu-hover .glyphicon {
+	color: #FFF;
 }
 
 .context-menu-list {
@@ -145,7 +85,7 @@
 .context-menu-item.context-menu-hover {
   color: #fff;
   cursor: pointer; 
-  background-color: #2980b9;
+  background-color: #7A7395;
 }
 
 .context-menu-item.context-menu-disabled {

@@ -4,6 +4,10 @@ var Expander = function(element) {
 	this.expanded = false;
 }
 
+Expander.prototype.getContextMenuItems = function() {
+	return this.element.getContextMenuItems();
+};
+
 Expander.prototype.setActive = function(active) {
 	this.active = active;
 };

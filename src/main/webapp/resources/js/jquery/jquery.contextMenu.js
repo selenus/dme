@@ -436,7 +436,7 @@
                         target = document.elementFromPoint(x - $win.scrollLeft(), y - $win.scrollTop());
                         root.$layer.show();
                     }
-
+                    
                     if (root.reposition && triggerAction) {
                         if (document.elementFromPoint) {
                             if (root.$trigger.is(target) || root.$trigger.has(target).length) {

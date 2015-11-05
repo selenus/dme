@@ -8,7 +8,8 @@ var ElementTemplate = function(area, options) {
 		lineWidth: 2,
 		radius: 0,
 		primaryColor: "#e6f1ff",
-		secondaryColor: "#0049a6"
+		secondaryColor: "#0049a6",
+		
 	}, options);
 	
 	this.connectorTemplates = [];
@@ -20,6 +21,12 @@ ElementTemplate.prototype.getExpanderPosition = function(element) {
 		return new Point(element.rectangle.x + 10, element.rectangle.y + element.rectangle.height/2);
 	} else {
 		return new Point(element.rectangle.x + element.rectangle.width - 10, element.rectangle.y + element.rectangle.height/2);
+	}
+};
+
+ElementTemplate.prototype.getContextMenuItems = function(element) {
+	if (this.options.getContextMenuItems!==undefined) {
+		return this.options.getContextMenuItems(element);
 	}
 };
 

@@ -89,7 +89,14 @@ MappingEditor.prototype.initLayout = function() {
 };
 
 MappingEditor.prototype.initGraphs = function() {
-	this.graph = new Model(this.context.canvas);
+	this.graph = new Model(this.context.canvas, 
+			[{
+				key: "Nonterminal",
+				primaryColor: "#e6f1ff", secondaryColor: "#0049a6"
+			}, {
+				key: "Label",
+				primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
+			}]);
 	this.source = this.graph.addArea();
 	this.target = this.graph.addArea();
 	this.graph.init();
