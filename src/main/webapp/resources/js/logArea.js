@@ -29,7 +29,7 @@ LogArea.prototype.autoRefresh = function() {
 LogArea.prototype.refresh = function() {
 	var _this = this;
 	$.ajax({
-	    url: _this.options.pathPrefix + "/async/getLog",
+	    url: _this.options.pathPrefix + "async/getLog",
 	    type: "GET",
 	    data: { 
 	    	maxEntries : _this.options.maxLogEntries,

@@ -16,18 +16,6 @@ SchemaEditor.prototype.sample_init = function() {
 	}
 };
 
-SchemaEditor.prototype.sample_resize = function() {
-	// Always-visible counterparts are used because sample pane is often loaded in hidden state, 
-	var helperHeight = $(".schema-editor-buttons").offsetParent().innerHeight();
-	var helperTopOffset = $(".schema-editor-buttons").offset().top - $(".schema-editor-buttons").offsetParent().offset().top;
-	
-	var containerHeight = Math.floor(helperHeight - helperTopOffset - 130);
-	
-	$("#schema-sample-output-resource").height(containerHeight - 51);
-	
-	this.sampleTextbox.height(containerHeight);
-};
-
 SchemaEditor.prototype.sample_onPaneOpenStart = function() {
 	var containerInnerWidth = $("#schema-editor-outer-east-container").innerWidth();
 	var containerWidth = $("#schema-editor-outer-east-container").width();

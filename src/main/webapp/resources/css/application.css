@@ -353,6 +353,7 @@ noscript div {
 .ui-pane-subcontainer.editor-container {
 	border: none;
 	padding: 0;
+	min-height: 100px;
 }
 
 .button-bar {
@@ -432,6 +433,7 @@ noscript div {
 	overflow: auto;
 	background-color: #F8F8F8;
 	padding: 6px 12px;
+	min-height: 100px;
 }
 
 
