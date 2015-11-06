@@ -4,14 +4,14 @@ var ConnectionTemplate = function(model) {
 
 ConnectionTemplate.prototype.paint = function(connection, context) {
 	// Parent not visible...sub-hierarchy not visible either
-	/*if (!connection.from.element.visible) {
+	if (!connection.from.element.visible) {
 		return;
-	}*/
+	}
 	
 	// TODO: ONLY FOR HIERARCHICAL Parent collapsed...
-	/*if (!connection.from.element.getExpanded()) {
+	if (!connection.from.element.getExpanded()) {
 		return;
-	}*/
+	}
 	
 	var fromPosition = connection.from.getPosition();
 	var toPosition;
@@ -29,6 +29,7 @@ ConnectionTemplate.prototype.paint = function(connection, context) {
 			context.simpleLine(fromPosition.x, toPosition.y, toPosition.x, toPosition.y);
 		}
 	} else {
+		// TODO Remove from here
 		toPosition = this.model.mousePosition;
 		context.dashedLine(fromPosition.x, fromPosition.y, toPosition.x, toPosition.y);
 	}
