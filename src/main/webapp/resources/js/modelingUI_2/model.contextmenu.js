@@ -15,8 +15,6 @@ Model.prototype.initContextMenu = function() {
 };
 
 Model.prototype.handleContextMenu = function(e) {
-	return;
-	
 	this.updateMousePosition(e);
 	this.updateActiveObject();
 	if (this.activeObject==undefined || this.activeObject==null) {
@@ -81,16 +79,13 @@ Model.prototype.createContextMenu = function (items) {
 			throw new Error('Canvas has no id');
 		}
 		
-		/*
+		/* Initial library
 		var ctx = $.contextMenu({
 			selector: "#" + this.canvas.id,
 			autoHide: true,
             zIndex: 100,
 			items: function() { return items; } 
 		});
-		*/
-		
-		
 		$.contextMenu({
 	        selector: "#" + this.canvas.id, 
 	        build: function($trigger, e) {
@@ -100,12 +95,53 @@ Model.prototype.createContextMenu = function (items) {
 	                items: items
 	            };
 	        }
-	    });
+	    }); */
 		
+		var menu = [{
+	        name: 'create',
+	        //img: 'images/create.png',
+	        title: 'create button',
+	        fun: function () {
+	            alert('i am add button')
+	        }
+	    }, {
+	        name: 'update',
+	        //img: 'images/update.png',
+	        title: 'update button',
+	        fun: function () {
+	            alert('i am update button')
+	        }
+	    }, {
+	        name: 'delete',
+	        //img: 'images/delete.png',
+	        title: 'delete button',
+	        fun: function () {
+	            alert('i am delete button')
+	        }
+	    }];
+	 
+		if (this.contextMenu!==undefined && this.contextMenu!==null) {
+			this.contextMenu.contextMenu('open');
+			console.log("opened");
+		} else {
+			this.contextMenu = $("#" + this.canvas.id).contextMenu(menu, {
+				triggerOn : 'contextmenu',
+				onOpen : createMenu
+			});
+			this.contextMenu.contextMenu('open');
+			console.log("created");
+		}
 		return true;
 	}
 	return false;
 }
+
+Model.prototype.closeContextMenu = function () {
+	if (this.contextMenu!==undefined && this.contextMenu!==null) {
+		this.contextMenu('close');
+		console.log("closed");
+	}
+};
 
 Model.prototype.contextLayerClick = function (e, contextmenu) {
 	
