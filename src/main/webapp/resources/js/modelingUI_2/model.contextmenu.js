@@ -11,10 +11,12 @@
 Model.prototype.initContextMenu = function() {
 	var _this = this;
 	// We need special treatment of layer clicks for using this on a canvas
-	$.contextMenu.handle.layerClick = function(e) { _this.contextLayerClick(e, this) };	
+	//$.contextMenu.handle.layerClick = function(e) { _this.contextLayerClick(e, this) };	
 };
 
 Model.prototype.handleContextMenu = function(e) {
+	return;
+	
 	this.updateMousePosition(e);
 	this.updateActiveObject();
 	if (this.activeObject==undefined || this.activeObject==null) {
@@ -25,8 +27,6 @@ Model.prototype.handleContextMenu = function(e) {
 		this.select(this.activeObject);
 	}
 
-	console.log (this.activeObject);
-	
 	var items = null;
 	if (this.activeObject.getContextMenuItems!==undefined) {
 		items = this.activeObject.getContextMenuItems();
@@ -81,16 +81,17 @@ Model.prototype.createContextMenu = function (items) {
 			throw new Error('Canvas has no id');
 		}
 		
+		/*
 		var ctx = $.contextMenu({
 			selector: "#" + this.canvas.id,
 			autoHide: true,
             zIndex: 100,
 			items: function() { return items; } 
 		});
+		*/
 		
 		
-		
-		/*$.contextMenu({
+		$.contextMenu({
 	        selector: "#" + this.canvas.id, 
 	        build: function($trigger, e) {
 	            return {
@@ -99,7 +100,7 @@ Model.prototype.createContextMenu = function (items) {
 	                items: items
 	            };
 	        }
-	    });*/
+	    });
 		
 		return true;
 	}
@@ -120,8 +121,8 @@ Model.prototype.contextLayerClick = function (e, contextmenu) {
 			$(this).contextMenu({x: e.pageX, y: e.pageY});
 	    });
 	}
-	root.$menu.trigger('contextmenu:hide');
-	//$.contextMenu("destroy");
+	//root.$menu.trigger('contextmenu:hide');
+	$.contextMenu("destroy", {selector: "#" + this.canvas.id});
 }
 
 Model.prototype.raiseContextMenuItemClickedEvent = function(itemKey, e) {

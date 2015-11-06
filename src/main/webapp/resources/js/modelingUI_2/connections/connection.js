@@ -28,5 +28,8 @@ Connection.prototype.addTo = function(to) {
 };
 
 Connection.prototype.paint = function(context) {
+	if (this.to==null) {
+		console.log("b");
+	}
 	this.template.paint(this, context);
 };

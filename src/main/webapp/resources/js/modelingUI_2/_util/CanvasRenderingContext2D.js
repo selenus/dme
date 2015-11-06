@@ -28,6 +28,7 @@ CanvasRenderingContext2D.prototype.dashedLine = function(x1, y1, x2, y2) {
 	{
 		this.lineTo(x2, y2);
 	}
+	this.stroke();
 };
 
 CanvasRenderingContext2D.prototype.roundedRect = function(x, y, width, height, radius) {

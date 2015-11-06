@@ -49,6 +49,8 @@ Model.prototype.leftMouseDown = function() {
 	} else if (this.activeObject instanceof Expander) {
 		this.activeObject.mouseDown();
 		this.activeObject.element.template.area.invalidate();
+	} else if (this.activeObject instanceof Connector) {
+		this.newConnection = new Connection(this.mappingConnection, this.activeObject, null);
 	} else if (this.activeObject.selected!==undefined) {
 		this.select(this.activeObject);
 	}
@@ -67,8 +69,8 @@ Model.prototype.handleMouseUp = function(e) {
 };
 
 Model.prototype.leftMouseUp = function() {
-	if (this.activeObject==undefined || this.activeObject==null) {
-		return;
+	if (this.newConnection!=null) {
+		this.newConnection=null;
 	}
 	if (this.activeObject instanceof Area) {
 		if (this.activeObject.startMoveHandle!=null) {
@@ -87,6 +89,10 @@ Model.prototype.handleMouseMove = function(e) {
 	this.updateActiveObject();
 
 	if (this.isMouseDown) {
+		if (this.newConnection!=null) {
+			this.paint();
+		}
+		
 		if (this.activeObject instanceof Area || this.activeObject instanceof VerticalScroll) {
 			this.activeObject.move(this.mousePosition);
 		}

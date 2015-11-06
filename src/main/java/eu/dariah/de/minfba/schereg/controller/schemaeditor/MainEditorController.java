@@ -148,6 +148,7 @@ public class MainEditorController extends BaseScheregController implements Initi
 		}
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
+			element.setEntityId(schemaId);
 			elementService.saveOrReplaceRoot(schemaId, element, authInfoHelper.getAuth(request));
 		}		
 		return result;

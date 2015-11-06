@@ -15,6 +15,8 @@ var Model = function(canvas, elementTemplateOptions, theme) {
 	
 	this.areas = [];
 	
+	this.newConnection = null;
+	
 	// Only options defined here, actual element templates are with the areas
 	/**
 	 * key: "...", primaryColor: "#...", secondaryColor: "#...", radius: 5 (optional)
@@ -67,6 +69,10 @@ Model.prototype.paint = function() {
 		this.canvas.style.cursor = this.activeObject.getCursor(this.mousePosition);
 	} else {
 		this.canvas.style.cursor = Cursors.arrow;
+	}
+	
+	if (this.newConnection !== null) {
+		this.newConnection.paint(this.context);
 	}
 };
 
