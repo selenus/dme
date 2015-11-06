@@ -36,9 +36,12 @@ var SchemaEditor = function() {
 	this.warningIcon = __util.getBaseUrl() + "resources/img/warning.png";
 	this.errorIcon = __util.getBaseUrl() + "resources/img/error.png";
 		
+	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
+	
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
+	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
 	
 	__translator.addTranslations(["~eu.dariah.de.minfba.common.model.id",
 	                              "~eu.dariah.de.minfba.common.model.label",
@@ -173,6 +176,7 @@ SchemaEditor.prototype.initLayout = function() {
  
  */
 
+
 /**   - getContextMenuItems() must return an array of item objects
 *   	- {key: ..., label: ..., glyphicon: ..., e: ..., callback: function(itemKey, e)} for items or
 *   	- {key: "-"} for a separator
@@ -184,39 +188,13 @@ SchemaEditor.prototype.initGraph = function() {
 				key: "Nonterminal",
 				primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
 				getContextMenuItems: function(element) { 
-					var items = [{ 
-						key: "addNonterminal", 
-						label: __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal"), 
-						glyphicon: "plus", 
-						e: { id: element.id, type: element.simpleType }, 
-						callback: _this.addNonterminal
-					
-					}, { 
-						key: "addDescription", 
-						label: __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function"), 
-						glyphicon: "plus", 
-						e: { id: element.id, type: element.simpleType }, 
-						callback: _this.addDescription
-					
-					}, { 
-						key: "editElement", 
-						label: __translator.translate("~eu.dariah.de.minfba.common.link.edit"), 
-						glyphicon: "edit", 
-						e: { id: element.id, type: element.simpleType }, 
-						callback: _this.editElement
-					
-					}, { 
-						key: "-"
-					}, { 
-						key: "removeElement", 
-						label: __translator.translate("~eu.dariah.de.minfba.common.link.delete"), 
-						glyphicon: "trash", 
-						e: { id: element.id, type: element.simpleType }, 
-						callback: _this.removeElement
-					
-					}];
-					
-					
+					var items = [
+						_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "plus", element),
+						_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "plus", element),
+						_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element),
+						_this.graph.createContextMenuSeparator(),
+						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element),
+					];
 					return items; 
 				}
 			}, {
@@ -237,6 +215,18 @@ SchemaEditor.prototype.initGraph = function() {
  	this.resizeLayout();
  	this.resizeContent();
 	this.activities_loadForSchema();
+};
+
+SchemaEditor.prototype.handleContextMenuClicked = function(e) {
+	if (e.key==="addNonterminal") {
+		this.addNode(e.nodeType, e.id, "nonterminal");
+	} else if (e.key==="addDescription") {
+		this.addNode(e.nodeType, e.id, "grammar");
+	} else if (e.key==="editElement") {
+		this.editElement(e.id);
+	} else if (e.key==="removeElement") {
+		this.removeElement(e.nodeType, e.id);
+	}
 };
 
 SchemaEditor.prototype.resizeLayout = function() {
@@ -680,12 +670,12 @@ SchemaEditor.prototype.renderContextTabDetail = function(label, data, pre) {
 	return detail;
 };
 
-SchemaEditor.prototype.editElement = function() {
+SchemaEditor.prototype.editElement = function(id) {
 	var _this = this;
-	var form_identifier = "edit-element-" + this.graph.selectedItems[0].id;
+	var form_identifier = "edit-element-" + id;
 	
 	modalFormHandler = new ModalFormHandler({
-		formUrl: "/element/" + this.graph.selectedItems[0].id + "/form/element",
+		formUrl: "/element/" + id + "/form/element",
 		identifier: form_identifier,
 		//additionalModalClasses: "wider-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
@@ -753,12 +743,14 @@ SchemaEditor.prototype.addLabel = function() {
 	this.addNode("element", "label");
 };
 
-SchemaEditor.prototype.addNode = function(type, childType) {
+SchemaEditor.prototype.addNode = function(parentType, parentId, childType) {
 	var _this = this;
-	var form_identifier = "edit-element-" + this.graph.selectedItems[0].id;
+	var form_identifier = "edit-element-" + parentId;
+	
+	var parentSupertype = (parentType=="Nonterminal" || parentType=="Label") ? "element" : parentType.toLowerCase();
 	
 	modalFormHandler = new ModalFormHandler({
-		formUrl: "/" + type + "/" + this.graph.selectedItems[0].id + "/form/new_" + childType,
+		formUrl: "/" + parentSupertype + "/" + parentId + "/form/new_" + childType.toLowerCase(),
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
@@ -790,13 +782,15 @@ SchemaEditor.prototype.createRoot = function() {
 	modalFormHandler.show(form_identifier)
 };
 
-SchemaEditor.prototype.removeElement = function(e) { 
+SchemaEditor.prototype.removeElement = function(type, id) { 
 	var _this = this;
 	
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), e.id), function(result) {
+	type = (type=="Nonterminal" || type=="Label") ? "element" : type;
+	
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), id), function(result) {
 		if(result) {
 			$.ajax({
-			    url: _this.pathname + "/" + e.type + "/" + e.id + "/async/remove",
+			    url: _this.pathname + "/" + type.toLowerCase() + "/" + id + "/async/remove",
 			    type: "GET",
 			    dataType: "json",
 			    success: function(data) {

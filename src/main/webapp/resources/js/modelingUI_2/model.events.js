@@ -9,11 +9,12 @@ Model.prototype.initEvents = function() {
 	this.canvas.addEventListener("mouseleave", this.mouseLeaveHandler, false);
 	this.canvas.addEventListener("mousemove", this.mouseMoveHandler, false);	
 	
-	if (this.handleContextMenu!==undefined) {
+	/*if (this.handleContextMenu!==undefined) {
 		this.contextMenuHandler = this.handleContextMenu.bind(this);
 		this.canvas.addEventListener("contextmenu", this.contextMenuHandler, false);
 		this.initContextMenu();
-	}
+	}*/
+	this.initContextMenu();
 };
 
 Model.prototype.removeEvents = function() {
@@ -22,9 +23,9 @@ Model.prototype.removeEvents = function() {
 	this.canvas.removeEventListener("mouseleave", this.mouseLeaveHandler);
 	this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
 	
-	if (this.handleContextmenu!==undefined) {
+	/*if (this.handleContextmenu!==undefined) {
 		this.canvas.removeEventListener("contextmenu", this.handleContextmenu, false);
-	}
+	}*/
 };
 
 Model.prototype.handleMouseDown = function(e) {

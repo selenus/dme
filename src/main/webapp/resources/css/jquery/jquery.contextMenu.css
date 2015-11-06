@@ -1,166 +1,52 @@
-@charset "UTF-8";
-/*!
- * jQuery contextMenu - Plugin for simple contextMenu handling
- *
- * Version: v2.0.0
- *
- * Authors: Björn Brala (SWIS.nl), Rodney Rehm, Addy Osmani (patches for FF)
- * Web: http://swisnl.github.io/jQuery-contextMenu/
- *
- * Copyright (c) 2011-2015 SWIS BV and contributors
- *
- * Licensed under
- *   MIT License http://www.opensource.org/licenses/mit-license
- *
- * Date: 2015-10-28T15:16:13.762Z
- *
- *	TGR 2015-11-04: Adapted, extended, truncated for Schema Registry
- *
- *
- */
-/*@font-face {
-  font-family: "context-menu-icons";
-  font-style: normal; 
-  font-weight: normal;
-
-  src: url("font/context-menu-icons.eot?4maaf");
-  src: url("font/context-menu-icons.eot?4maaf#iefix") format("embedded-opentype"), url("font/context-menu-icons.woff2?4maaf") format("woff2"), url("font/context-menu-icons.woff?4maaf") format("woff"), url("font/context-menu-icons.ttf?4maaf") format("truetype");
-}*/
-
-.context-menu-item.context-menu-icon-glyphicon {
-	padding: 3px 10px;
+.nu-context-menu {
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,0.10);
+    border-radius: 2px;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.15);
+    box-sizing: border-box;
+    display: block;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    width: 0;
+    z-index: 9999;
 }
 
-.context-menu-icon-glyphicon .glyphicon {
-	margin-right: 3px;
-	color: #7A7395;
+.nu-context-menu.active {
+    opacity: 1;
+    height: auto;
+    width: auto;
 }
 
-.context-menu-item.context-menu-hover .glyphicon {
-	color: #FFF;
+.nu-context-menu ul {
+    font-size: 15px;
+    list-style: none;
+    margin: 2px 0 0;
+    padding: 4px 0;
+    text-align: left;
 }
 
-.context-menu-list {
-  position: absolute; 
-  display: inline-block;
-  min-width: 180px;
-  max-width: 360px;
-  padding: 4px 0;
-  margin: 5px;
-  font-family: inherit;
-  font-size: inherit;
-  list-style-type: none;
-  background: #fff;
-  border: 1px solid #bebebe;
-  border-radius: 3px;
-  -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
-          box-shadow: 0 2px 5px rgba(0, 0, 0, .5);
+.nu-context-menu ul li {
+    clear: both;
+    color: #777;
+    cursor: pointer;
+    font-weight: 400;
+    line-height: 1.42857;
+    padding: 2px 20px;
+    white-space: nowrap;
 }
 
-.context-menu-item {
-  position: relative;
-  padding: 3px 28px;
-  color: #2f2f2f;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none; 
-  background-color: #fff;
+.nu-context-menu ul li:hover {
+    background: #f2f2f2;
+    color: #333;
 }
 
-.context-menu-separator {
-  padding: 0; 
-  margin: 5px 0;
-  border-bottom: 1px solid #e6e6e6;
-}
-
-.context-menu-item > label > input,
-.context-menu-item > label > textarea {
-  -webkit-user-select: text;
-     -moz-user-select: text;
-      -ms-user-select: text;
-          user-select: text;
-}
-
-.context-menu-item.context-menu-hover {
-  color: #fff;
-  cursor: pointer; 
-  background-color: #7A7395;
-}
-
-.context-menu-item.context-menu-disabled {
-  color: #626262; 
-  background-color: #fff;
-}
-
-.context-menu-input.context-menu-hover,
-.context-menu-item.context-menu-disabled.context-menu-hover {
-  cursor: default; 
-  background-color: #eee;
-}
-
-.context-menu-submenu:after {
-  position: absolute;
-  top: 50%;
-  right: 8px;
-  z-index: 1; 
-  width: 0;
-  height: 0;
-  content: '';
-  border-color: transparent transparent transparent #2f2f2f;
-  border-style: solid;
-  border-width: 4px 0 4px 4px;
-  -webkit-transform: translateY(-50%);
-      -ms-transform: translateY(-50%);
-       -o-transform: translateY(-50%);
-          transform: translateY(-50%);
-}
-
-/**
- * Inputs
- */
-.context-menu-item.context-menu-input {
-  padding: 5px 10px;
-}
-
-/* vertically align inside labels */
-.context-menu-input > label > * {
-  vertical-align: top;
-}
-
-/* position checkboxes and radios as icons */
-.context-menu-input > label > input[type="checkbox"],
-.context-menu-input > label > input[type="radio"] {
-  position: relative;
-  top: 3px;
-}
-
-.context-menu-input > label,
-.context-menu-input > label > input[type="text"],
-.context-menu-input > label > textarea,
-.context-menu-input > label > select {
-  display: block;
-  width: 100%; 
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
-.context-menu-input > label > textarea {
-  height: 100px;
-}
-
-.context-menu-item > .context-menu-list {
-  top: 5px; 
-  /* re-positioned by js */
-  right: -5px;
-  display: none;
-}
-
-.context-menu-item.context-menu-visible > .context-menu-list {
-  display: block;
-}
-
-.context-menu-accesskey {
-  text-decoration: underline;
+.nu-context-menu ul hr {
+    background: #e8e8e8;
+    border: 0;
+    color: #e8e8e8;
+    height: 1px;
+    margin: 4px 0;
 }
