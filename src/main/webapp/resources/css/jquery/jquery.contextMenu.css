@@ -30,23 +30,27 @@
 
 .nu-context-menu ul li {
     clear: both;
-    color: #777;
+    color: #666;
     cursor: pointer;
     font-weight: 400;
     line-height: 1.42857;
-    padding: 2px 20px;
+    padding: 4px 20px 4px 10px;
     white-space: nowrap;
 }
 
+.nu-context-menu ul li span.glyphicon {
+	margin-right: 5px;
+}
+
 .nu-context-menu ul li:hover {
-    background: #f2f2f2;
-    color: #333;
+    background: #7A7395;
+    color: #FFF;
 }
 
 .nu-context-menu ul hr {
-    background: #e8e8e8;
+    background: #ddd;
     border: 0;
-    color: #e8e8e8;
+    color: #ddd;
     height: 1px;
     margin: 4px 0;
 }
