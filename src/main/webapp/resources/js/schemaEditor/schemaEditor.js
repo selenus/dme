@@ -223,18 +223,13 @@ SchemaEditor.prototype.createActionButtons = function(container, contextMenuItem
 };
 
 SchemaEditor.prototype.getElementDetails = function(type, id) {
-	if (type==="Nonterminal" || type==="Label") {
-		type="element";
-	} else {
-		type=type.toLowerCase();
-	}
 	var _this = this;
 	$.ajax({
-		url: this.pathname + "/" + type + "/" + id + "/async/get",
+		url: this.pathname + "/" + this.getElementType(type) + "/" + id + "/async/get",
         type: "GET",
         dataType: "json",
         success: function(data) {
-        	switch (type) {
+        	switch (_this.getElementType(type)) {
 				case "element": return _this.processElementDetails(data);
 				case "grammar": return _this.processGrammarDetails(data);
 				case "function": return _this.processFunctionDetails(data);
@@ -243,6 +238,18 @@ SchemaEditor.prototype.getElementDetails = function(type, id) {
         },
         error: __util.processServerError
  	});
+};
+
+SchemaEditor.prototype.getElementType = function(originalType) {
+	var type = originalType.toLowerCase();
+	if (type==="nonterminal" || type==="label") {
+		type="element";
+	} else if (type==="descriptiongrammarimpl") {
+		type="grammar";
+	} else if (type==="transformationfunctionimpl") {
+		type="function";
+	}
+	return type;
 };
 
 SchemaEditor.prototype.processGrammarDetails = function(data) { 
@@ -361,21 +368,36 @@ SchemaEditor.prototype.renderContextTabDetail = function(label, data, pre) {
 	return detail;
 };
 
-SchemaEditor.prototype.addNode = function(parentType, parentId, childType) {
+SchemaEditor.prototype.addDescription = function(id) {
+	this.addNode("element", "grammar", id);
+};
+
+SchemaEditor.prototype.addTransformation = function(id) {
+	this.addNode("grammar", "function", id);
+};
+
+SchemaEditor.prototype.addNonterminal = function(id) {
+	this.addNode("element", "nonterminal", id);
+};
+
+SchemaEditor.prototype.addLabel = function(id) {
+	this.addNode("element", "label", id);
+};
+
+
+SchemaEditor.prototype.addNode = function(type, childType, id) {
 	var _this = this;
-	var form_identifier = "edit-element-" + parentId;
-	
-	var parentSupertype = (parentType=="Nonterminal" || parentType=="Label") ? "element" : parentType.toLowerCase();
+	var form_identifier = "edit-element-" + id;
 	
 	modalFormHandler = new ModalFormHandler({
-		formUrl: "/" + parentSupertype + "/" + parentId + "/form/new_" + childType.toLowerCase(),
+		formUrl: "/" + type + "/" + id + "/form/new_" + childType,
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],               
-		completeCallback: function() {
+        completeCallback: function() {
 			_this.reloadElementHierarchy(function() {
-				_this.area.expandFromElement(parentId, true);
+				_this.area.expandFromElement(id, true);
 			});
 		}
 	});
@@ -457,16 +479,14 @@ SchemaEditor.prototype.editFunction = function() {
 SchemaEditor.prototype.removeElement = function(type, id) { 
 	var _this = this;
 	
-	type = (type=="Nonterminal" || type=="Label") ? "element" : type;
-	
 	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), id), function(result) {
 		if(result) {
 			$.ajax({
-			    url: _this.pathname + "/" + type.toLowerCase() + "/" + id + "/async/remove",
+			    url: _this.pathname + "/" + _this.getElementType(type) + "/" + id + "/async/remove",
 			    type: "GET",
 			    dataType: "json",
 			    success: function(data) {
-			    	_this.deselectAll();
+			    	_this.graph.deselectAll();
 			    	_this.reloadElementHierarchy();
 			    },
 			    error: __util.processServerError

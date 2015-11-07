@@ -83,7 +83,16 @@ public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> im
 	
 	@Override
 	public int delete(Collection<String> id, String userId, String sessionId) {
-		List<T> deleted = mongoTemplate.findAllAndRemove(Query.query(Criteria.where(ID_FIELD).in(id)), this.getCollectionName());
+		List<T> delete = mongoTemplate.find(Query.query(Criteria.where(ID_FIELD).in(id)), this.clazz, this.getCollectionName());
+		
+		int count = 0;
+		for (T del : delete) {
+			this.delete(del, userId, sessionId);
+			count++;
+		}
+		return count;
+		
+		/*List<T> deleted = mongoTemplate.findAllAndRemove(Query.query(Criteria.where(ID_FIELD).in(id)), this.getCollectionName());
 		if (deleted!=null) {
 			for (T d : deleted) {
 				d.flush();
@@ -93,7 +102,7 @@ public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> im
 			}
 			return deleted.size();
 		}
-		return 0;
+		return 0;*/
 	}
 	
 	@Override

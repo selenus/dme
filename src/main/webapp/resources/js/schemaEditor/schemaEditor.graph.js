@@ -13,8 +13,8 @@ SchemaEditor.prototype.initGraph = function() {
 					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
 					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
 					    _this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "plus", element.id, element.template.options.key),
-						_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "plus", element.id, element.template.options.key),
+						_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key),
+						_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key),
 						_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
 						_this.graph.createContextMenuSeparator(),
 						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
@@ -23,13 +23,50 @@ SchemaEditor.prototype.initGraph = function() {
 				}
 			}, {
 				key: "Label",
-				primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
+				primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
+				getContextMenuItems: function(element) { 
+					var items = [
+					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+					    _this.graph.createContextMenuSeparator(),
+						_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
+						_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key),
+						_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+						_this.graph.createContextMenuSeparator(),
+						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+					];
+					return items; 
+				}
 			}, {
 				key: "TransformationFunctionImpl",
-				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5
+				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
+				getContextMenuItems: function(element) { 
+					var items = [
+					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+					    _this.graph.createContextMenuSeparator(),
+						_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
+						_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+						_this.graph.createContextMenuSeparator(),
+						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+					];
+					return items; 
+				}
 			}, {
 				key: "DescriptionGrammarImpl",
-				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5
+				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
+				getContextMenuItems: function(element) { 
+					var items = [
+					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+					    _this.graph.createContextMenuSeparator(),
+						_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key),
+						_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+						_this.graph.createContextMenuSeparator(),
+						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+					];
+					return items; 
+				}
 			}]);
 	
 	this.area = this.graph.addArea({
@@ -62,10 +99,10 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 		case "expandFromHere" : return this.area.expandFromElement(elementId, true);
 		case "collapseFromHere" : return this.area.expandFromElement(elementId, false);
 	
-		case "addNonterminal": return this.addNode(elementType, elementId, "nonterminal");
-	    case "addDescription": return this.addNode(elementType, elementId, "grammar");
-	    case "addTransformation": return this.addNode(elementType, elementId, "transformation");
-	    case "addLabel": return this.addNode(elementType, elementId, "label");
+		case "addNonterminal": return this.addNonterminal(elementId);
+	    case "addDescription": return this.addDescription(elementId);
+	    case "addFunction": return this.addTransformation(elementId);
+	    case "addLabel": return this.addLabel(elementId);
 	    
 	    case "editElement" : return this.editElement(elementId);
 	    case "editGrammar" : return this.editGrammar(elementId);
