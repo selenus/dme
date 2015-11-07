@@ -126,19 +126,18 @@ Util.prototype.renderActivities = function(container, id, data) {
 	if (data!=null) {
 		for (var i=0; i<data.length; i++) {
 			$(container).append(
-					"<div class=\"col-sm-6\">" + 
-					"<div class=\"alert alert-sm alert-info \">" + 
+					"<div class=\"alert alert-sm alert-info activity-history-element\">" + 
 						"<em>" + (data[i].timestamp==null ? "?" : data[i].timestampString) +"</em><br />" + 
 						"<h4>" +
 							" " + data[i].user + 
 						"</h4>" +
-						"<ul>" +
-							"<li>" + data[i].edits + " edits</li>" +
-							"<li>" + data[i].news + " new elements</li>" +
-							"<li>" + data[i].deletes + " deleted elements</li>" +
-						"</ul>" +
-					"</div>" +
-				"</div>");
+						"<span class=\"glyphicon glyphicon-asterisk\" aria-hidden=\"true\"></span> " + 
+							data[i].news + "&nbsp;&nbsp;" +
+						"<span class=\"glyphicon glyphicon-pencil\" aria-hidden=\"true\"></span> " + 
+							data[i].edits + "&nbsp;&nbsp;" +
+						"<span class=\"glyphicon glyphicon-trash\" aria-hidden=\"true\"></span> " + 
+							data[i].deletes +
+					"</div>");
 			
 		}
 	}

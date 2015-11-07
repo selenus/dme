@@ -6,7 +6,7 @@ SchemaEditor.prototype.activities_init = function() {
 SchemaEditor.prototype.activities_loadForSchema = function() {
 	var _this = this;
 	$.ajax({
-        url: window.location.pathname + "/async/getChangesForEntity/" + _this.schemaId,
+        url: window.location.pathname + "/async/getChangesForEntity/" + _this.schema.id,
         type: "GET",
         dataType: "json",
         success: function(data) { __util.renderActivities(_this.schemaActivitiesContainer, null, data); },

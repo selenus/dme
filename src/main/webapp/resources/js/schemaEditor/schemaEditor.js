@@ -7,6 +7,7 @@ $(document).ready(function() {
 			error: __util.getBaseUrl() + "resources/img/error.png"
 		}
 	});
+	$('[data-toggle="tooltip"]').tooltip();
 });
 $(window).resize(function() {
 	schemaEditor.resize();
@@ -82,8 +83,8 @@ SchemaEditor.prototype.init = function() {
 	
 	this.loadElementHierarchy();
 	this.sample_init();
-	//this.activities_init();
-	//this.activities_loadForSchema();
+	this.activities_init();
+	this.activities_loadForSchema();
 	
 	var _this = this;
 	this.logArea = new LogArea({

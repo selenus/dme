@@ -469,6 +469,18 @@ noscript div {
     padding: 10px;
 }
 
+.activity-history-element {
+	min-width: 150px;
+	width: 150px;
+	float: left;
+	margin-right: 7px;
+}
+
+.activity-history-element h4 {
+	margin-top: 3px;
+	margin-bottom: 3px;
+}
+
 /*!
  *	Grammar Editor
  */

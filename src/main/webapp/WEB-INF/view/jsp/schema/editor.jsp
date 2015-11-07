@@ -126,8 +126,21 @@
 									<div class="ui-pane-title">
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.schema_details" /></h4>
 									</div>
-									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
-									<div id="schema-context-buttons" class="ui-pane-subcontainer button-bar"></div>
+									<div class="panel-group ui-pane-subcontainer" id="schema-context-buttons-accordion" role="tablist" aria-multiselectable="true">
+										<div class="panel">
+									    	<div class="panel-heading" role="tab" id="schema-context-buttons-heading">
+									      		<h5 class="panel-title">
+											        <a role="button" data-toggle="collapse" data-parent="#schema-context-buttons-accordion" href="#schema-context-buttons-collapse" aria-expanded="true" aria-controls="schema-context-buttons-collapse">
+											          <s:message code="~eu.dariah.de.minfba.schereg.editor.actions" />											          
+											          <span class="pull-right"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> <span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="left" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.context_menu" />" aria-hidden="true"></span></span>
+											        </a>
+									      		</h5>
+									    	</div>
+									    	<div id="schema-context-buttons-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="schema-context-buttons-heading">
+									      		<div class="panel-body" id="schema-context-buttons"></div>
+									    	</div>
+									  	</div>
+									</div>
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
 									<div class="ui-pane-subcontainer" id="schema-context-activities"></div>
 								</div>
@@ -135,14 +148,25 @@
 									<div class="ui-pane-title">
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.element_details" /></h4>
 									</div>
-									<c:if test="${schema.own || schema.write}">
-										<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.actions" /></h5>
-										<div id="schema-element-context-buttons" class="ui-pane-subcontainer"></div>
-									</c:if>
+									<div class="panel-group ui-pane-subcontainer" id="schema-element-context-buttons-accordion" role="tablist" aria-multiselectable="true">
+										<div class="panel">
+									    	<div class="panel-heading" role="tab" id="schema-element-context-buttons-heading">
+									      		<h5 class="panel-title">
+											        <a role="button" data-toggle="collapse" data-parent="#schema-element-context-buttons-accordion" href="#schema-element-context-buttons-collapse" aria-expanded="true" aria-controls="schema-element-context-buttons-collapse">
+											          <s:message code="~eu.dariah.de.minfba.schereg.editor.actions" />											          
+											          <span class="pull-right"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> <span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="left" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.context_menu" />" aria-hidden="true"></span></span>
+											        </a>
+									      		</h5>
+									    	</div>
+									    	<div id="schema-element-context-buttons-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="schema-element-context-buttons-heading">
+									      		<div class="panel-body" id="schema-element-context-buttons"></div>
+									    	</div>
+									  	</div>
+									</div>
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.details" /></h5>
 									<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
-									<div id="schema-element-context-activities">...</div>
+									<div id="schema-element-context-activities"></div>
 								</div>
 							</div>
 						</div>

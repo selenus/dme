@@ -43,7 +43,22 @@ div.inner-east {
 	border-bottom: 1px solid #DDD;
 }
 
+.ui-pane-subcontainer.panel-group {
+	padding-right: 0px;
+	padding-left: 0px;
+	margin-bottom: 0px;
+	border: none;
+}
 
+.ui-pane-subcontainer.panel-group .panel {
+	border-radius: 0;
+	border: none;
+	border-bottom: 1px solid #DDD;
+}
+
+.ui-pane-subcontainer.panel-group .panel-title {
+	font-size: 14px;
+}
 
 /*! ================================================================== */
 /*
