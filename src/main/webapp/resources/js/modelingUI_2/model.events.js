@@ -52,7 +52,8 @@ Model.prototype.leftMouseDown = function() {
 		this.activeObject.element.template.area.invalidate();
 	} else if (this.activeObject instanceof Connector) {
 		this.newConnection = new Connection(this.mappingConnection, this.activeObject, null);
-	} else if (this.activeObject.selected!==undefined) {
+	} else if (this.activeObject.selected!==undefined && !this.activeObject.selected) {
+		this.deselectAll();
 		this.select(this.activeObject);
 	}
 	this.paint();

@@ -37,8 +37,8 @@ Model.prototype.dispose = function() {
 	}
 };
 
-Model.prototype.addArea = function() {
-	var area = new Area(this);
+Model.prototype.addArea = function(areaOptions) {
+	var area = new Area(this, areaOptions);
 	if (this.areas.length>0) {
 		area.isTarget = true;
 		this.areas[this.areas.length-1].isSource=true;
@@ -92,8 +92,6 @@ Model.prototype.resizeAreas = function() {
 
 Model.prototype.select = function(object) {
 	if (object!=null && !object.selected) {
-		this.selectedItems = [];
-		this.deselectAll();
 		object.selected=true;
 		if (!this.selectedItems.contains(object)) {
 			this.selectedItems.push(object)
@@ -104,6 +102,7 @@ Model.prototype.select = function(object) {
 };
 
 Model.prototype.deselectAll = function() {
+	this.selectedItems = [];
 	for (var i=0; i<this.areas.length;i++) {
 		this.areas[i].deselectAll();
 	}

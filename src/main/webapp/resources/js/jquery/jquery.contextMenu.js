@@ -135,11 +135,13 @@
             // Prevent memory leak 
             listItems.off();
 
+            var _this = this;
             listItems.on('click', function() {
                 var key = $(this).attr('data-key');
                 var id = $(this).attr('data-id');
                 var type = $(this).attr('data-item');
                 callback(element, key, id, type);
+                _this._close();
             });
 
             this._menu.addClass(this.options.activeClass);
@@ -155,11 +157,14 @@
         _onMouseDown: function(event) {
             // Remove menu if clicked outside
             if (!$(event.target).parents('.' + this.options.contextMenuClass).length) {
-                this._menu.removeClass(this.options.activeClass);
-                this._menuVisible = false;
-                if (this.options.menu != undefined && typeof this.options.menu == 'function') {
-                	this._menu.children('ul').empty();
-                }
+                this._close();
+            }
+        },
+        _close: function() {
+        	this._menu.removeClass(this.options.activeClass);
+            this._menuVisible = false;
+            if (this.options.menu != undefined && typeof this.options.menu == 'function') {
+            	this._menu.children('ul').empty();
             }
         },
 

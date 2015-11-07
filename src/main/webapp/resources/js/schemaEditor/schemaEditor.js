@@ -59,7 +59,14 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.model.element.transient",
 	                              "~eu.dariah.de.minfba.schereg.model.function.function",
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar",
-	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured"]);
+	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.button.expand_all",
+	                              "~eu.dariah.de.minfba.schereg.button.collapse_all",
+	                              "~eu.dariah.de.minfba.schereg.button.expand_from_here",
+	                              "~eu.dariah.de.minfba.schereg.button.collapse_from_here",
+	                              "~eu.dariah.de.minfba.common.link.reload_data",
+	                              "~eu.dariah.de.minfba.common.link.reset_view"]);
 	__translator.getTranslations();
 	
 	this.init();
@@ -171,224 +178,15 @@ SchemaEditor.prototype.resizeContent = function() {
 };
 
 
-SchemaEditor.prototype.performTreeAction = function(action, elementId, elementType) {	
-	switch(action) {
-		case "addNonterminal":
-			this.addNode(elementType, elementId, "nonterminal");
-	        break;
-	    case "addDescription":
-	    	this.addNode(elementType, elementId, "grammar");
-	        break;
-	    case "addTransformation":
-	    	this.addNode(elementType, elementId, "transformation");
-	        break;
-	    case "addLabel":
-	    	this.addNode(elementType, elementId, "label");
-	        break;
-	    case "editElement" :
-	    	this.editElement(elementId);
-	    	break;
-	    case "editGrammar" :
-	    	this.editGrammar(elementId);
-	    	break;
-	    case "editFunction" :
-	    	this.editFunction(elementId);
-	    	break;
-	    case "removeElement" :
-	    	this.removeElement(elementType, elementId);
-	    	break;
-	    default:
-	        throw new Error("Unknown tree action requested: " + action);
-	}  
-};
 
 
 
-SchemaEditor.prototype.loadElementHierarchy = function() {
-	var _this = this;
-	$.ajax({
-	    url: this.pathname + "/async/getHierarchy",
-	    type: "GET",
-	    success: function(data) {
-	    	if (data===null || data===undefined || data.length==0) {
-	    		return;
-	    	}
-	    	_this.processElementHierarchy(data);
-	    	_this.updateGraph();
-	    },
-	    error: __util.processServerError
-	});
-};
-
-SchemaEditor.prototype.reload = function() {
-	if (schemaEditor.schema.root==null) {
-		this.loadElementHierarchy();
-		return;
-	}
-	
-	var rootX = schemaEditor.schema.root.rectangle.x;
-	var rootY = schemaEditor.schema.root.rectangle.y;
-	
-	var expandedItemIds = this.getExpanded(this.area.root);
-	
-	var selectedItemIds = [];
-	for (var i=0; i<this.graph.selectedItems.length; i++) {
-		selectedItemIds.push(this.graph.selectedItems[i].id);
-		this.area.deselectAll();
-	}
-	
-	var _this = this;
-	$.ajax({
-	    url: this.pathname + "/async/getHierarchy",
-	    type: "GET",
-	    dataType: "json",
-	    success: function(data) {
-	    	if (data===null || data===undefined || data.length==0) {
-	    		return;
-	    	}
-	    	
-	    	_this.processElementHierarchy(data);	    	
-	    	_this.area.root.rectangle = new Rectangle(
-	    			rootX, rootY,
-	    			_this.area.root.rectangle.width,
-	    			_this.area.root.rectangle.height
-	    	);
-	    	
-	    	if (selectedItemIds.contains(schemaEditor.schema.root.id)) {
-	    		_this.graph.select(schemaEditor.schema.root);
-	    	}	    		
-	    	_this.selectChildren(schemaEditor.schema.root.children, selectedItemIds);
-	    	
-	    	if (expandedItemIds.contains(schemaEditor.schema.root.id)) {
-	    		schemaEditor.schema.root.setExpanded(true);
-	    	}	    		
-	    	_this.expandChildren(schemaEditor.schema.root.children, expandedItemIds);
-	    		    	
-	    	_this.area.invalidate();
-	    	_this.graph.update();
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	    	__util.processServerError(jqXHR, textStatus, errorThrown);
-	    	_this.initGraph();
-	    }
-	});	
-};
-
-SchemaEditor.prototype.getExpanded = function(parent) {
-	var expandedIds = [];
-	if (parent.getExpanded()) {
-		expandedIds.push(parent.id);
-		if (parent.children!=null) {
-			for (var i=0; i<parent.children.length; i++) {
-				var expandedSubIds = this.getExpanded(parent.children[i]); 
-				if (expandedSubIds.length > 0) {
-					for (var j=0; j<expandedSubIds.length; j++) {
-						expandedIds.push(expandedSubIds[j]);
-					}
-				}
-			}
-		}
-	}
-	return expandedIds;
-};
-
-SchemaEditor.prototype.selectChildren = function(children, ids) {
-	var _this = schemaEditor;
-	if (children!=null) {
-		for (var i=0; i<children.length; i++) {
-			if (ids.contains(children[i].id)) {
-	    		_this.graph.select(children[i]);
-	    	}	    		
-	    	_this.selectChildren(children[i].children, ids);
-		}
-	}
-};
-
-SchemaEditor.prototype.expandChildren = function(children, ids) {
-	var _this = schemaEditor;
-	if (children!=null) {
-		for (var i=0; i<children.length; i++) {
-			if (ids.contains(children[i].id)) {
-	    		children[i].setExpanded(true);
-	    	}	    		
-	    	_this.expandChildren(children[i].children, ids);
-		}
-	}
-};
 
 
-SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var parent = this.area.addElement(data.simpleType, null, data.id, this.formatLabel(data.name), null);
-	this.generateTree(this.area, parent, data.childNonterminals, null, data.functions, true);
-	this.area.elements[0].setExpanded(true);
-	this.graph.update();
-};
 
 
-SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, functions, isSource) {
 
-	if (nonterminals!=null && nonterminals instanceof Array) {
-		for (var i=0; i<nonterminals.length; i++) {
-			var icon = null;
-			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
-				icon = this.options.icons.warning;
-			}
-			var e = this.area.addElement(nonterminals[i].simpleType, parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
-			
-			this.generateTree(area, e, nonterminals[i].childNonterminals, null, nonterminals[i].functions, isSource);
-		}
-	}
-	if (functions != null && functions instanceof Array) {
-		for (var i=0; i<functions.length; i++) {
-			var icon = null;
-			if (functions[i].error==true) {
-				icon = this.options.icons.error;
-			}
-			var fDesc = this.area.addElement(functions[i].simpleType, parent, functions[i].id, this.formatLabel("g: " + functions[i].grammarName), icon);
-			
-			if (functions[i].transformationFunctions != null && functions[i].transformationFunctions instanceof Array) {
-				for (var j=0; j<functions[i].transformationFunctions.length; j++) {
-					if (functions[i].transformationFunctions[j].error==true) {
-						icon = this.options.icons.error;
-					}
-					var fOut = this.area.addElement(functions[i].transformationFunctions[j].simpleType, fDesc, functions[i].transformationFunctions[j].id, 
-							this.formatLabel("f: " + functions[i].transformationFunctions[j].name), icon);
-					
-					if (functions[i].transformationFunctions[j].outputElements != null && functions[i].transformationFunctions[j].outputElements instanceof Array) {
-						for (var k=0; k<functions[i].transformationFunctions[j].outputElements.length; k++) {
-							
-							var e = this.area.addElement(functions[i].transformationFunctions[j].outputElements[k].simpleType, fOut, functions[i].transformationFunctions[j].outputElements[k].id, 
-									this.formatLabel(functions[i].transformationFunctions[j].outputElements[k].name), null);
-							
-							
-							this.generateTree(area, e, 
-									functions[i].transformationFunctions[j].outputElements[k].childNonterminals,
-									functions[i].transformationFunctions[j].outputElements[k].subLabels,
-									functions[i].transformationFunctions[j].outputElements[k].functions, isSource);
-						}
-					}
-				}
-			}
-		}
-	}
-	if (subelements!=null && subelements instanceof Array) {
-		for (var i=0; i<subelements.length; i++) {
-			var e = this.area.addElement(subelements[i].simpleType, parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
-			if (parent != null) {
-				parent.addChild(e);
-			}
-			this.generateTree(area, e, null, subelements[i].subLabels, subelements[i].functions, isSource);
-		}
-	}
-};
 
-SchemaEditor.prototype.formatLabel = function(label) {
-	if (label.length > 25) {
-		return label.substring(0,25) + "...";
-	} else {
-		return label;
-	}	
-};
 
 SchemaEditor.prototype.deselectionHandler = function() {
 	var _this = schemaEditor;
@@ -423,41 +221,6 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	}
 	
 	_this.getElementDetails(e.element.getType(), e.element.id);
-	
-	/*var actions = [];
-	if (_this.schema.owned || _this.schema.write) {
-		if (e.element.getType() === "Nonterminal" || e.element.getType() === "Label") {
-			if (e.element.getType()==="Nonterminal") {
-				actions[0] = ["addNonterminal", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
-			} else {
-				actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_nonterminal")];
-			}
-			actions[1] = ["addDescription", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_desc_function")];
-			actions[2] = ["editElement", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-			actions[3] = ["removeElement", "trash", "danger", ""];
-			_this.getElement(e.element.id);	
-		} else if (e.element.getType() === "Grammar") {
-			actions[0] = ["addTransformation", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_trans_function")];
-			actions[1] = ["editGrammar", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-			actions[2] = ["removeElement", "trash", "danger", ""];
-			_this.getGrammar(e.element.id);
-		} else if (e.element.getType() === "Function") {
-			actions[0] = ["addLabel", "plus", "default", __translator.translate("~eu.dariah.de.minfba.schereg.button.add_label")];
-			actions[1] = ["editFunction", "edit", "default", __translator.translate("~eu.dariah.de.minfba.common.link.edit")];
-			actions[2] = ["removeElement", "trash", "danger", ""];
-			_this.getFunction(e.element.id);
-		}
-	}
-	
-	var button;
-	for (var i=0; i<actions.length; i++) {
-		button = "<button " +
-					"class='btn btn-" + actions[i][2] + " btn-sm' " +
-					"onclick='schemaEditor." + actions[i][0] + "(); return false;' type='button'>" +
-						"<span class='glyphicon glyphicon-" + actions[i][1] + "'></span> " + actions[i][3] + 
-				 "</button> ";
-		_this.elementContextButtons.append(button);
-	}*/
 	_this.activities_loadForElement(e.element.id);
 	
 	_this.elementContextContainer.removeClass("hide");

@@ -23,7 +23,8 @@ Model.prototype.handleContextMenu = function(e) {
 	if (this.activeObject==undefined || this.activeObject==null) {
 		return false;
 	}
-	if (this.activeObject.selected!==undefined) {
+	if (this.activeObject.selected!==undefined && !this.activeObject.selected) {
+		this.deselectAll();
 		this.select(this.activeObject);
 	}
 	var items = null;
@@ -57,13 +58,13 @@ Model.prototype.createMenuItems = function (items) {
 	}
 };
 
-Model.prototype.createContextMenuItem = function(key, code, glyphicon, element) {
+Model.prototype.createContextMenuItem = function(key, code, glyphicon, elementId, elementType) {
 	return {
 		key: key, 
 		label: __translator.translate(code), 
 		glyphicon: glyphicon, 
-		id: element===undefined ? undefined : element.id, 
-		type: element===undefined ? undefined :element.template.options.key
+		id: elementId, 
+		type: elementType
 	};
 };
 

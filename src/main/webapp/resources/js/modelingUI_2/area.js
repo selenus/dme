@@ -1,5 +1,6 @@
-var Area = function(model) {
+var Area = function(model, options) {
 	this.model = model;
+	this.options = options;
 	this.theme = this.model.theme;
 	this.rectangle = null;
 	this.elements = [];
@@ -26,6 +27,18 @@ Area.prototype.init = function() {
 	}
 };
 
+Area.prototype.clear = function() {
+	this.root = null;
+	this.elements = [];
+	this.recalculationRequired = true;
+};
+
+Area.prototype.getContextMenuItems = function() {
+	if (this.options.contextMenuItems!==undefined && this.options.contextMenuItems!==null) {
+		return this.options.contextMenuItems;
+	}
+};
+
 Area.prototype.setRectangle = function(rectangle) {
 	var xScroll = this.isTarget ? (rectangle.width-this.theme.verticalScroll.width)+rectangle.x : rectangle.x;
 	var xArea = this.isTarget ? rectangle.x : this.theme.verticalScroll.width+rectangle.x;
@@ -43,31 +56,41 @@ Area.prototype.getCursor = function() {
 	return Cursors.arrow;
 };
 
-Area.prototype.expandAll = function() {
-	this.expand(this.root);
+Area.prototype.expandAll = function(expand) {
+	this.expand(this.root, expand);
 	this.invalidate();
 	this.model.update();
 }
 
-Area.prototype.expand = function(element) {
-	element.setExpanded(true);
+Area.prototype.expandFromElement = function(element, expand) {
+	if (typeof element !== 'object') {
+		element = this.findElementById(this.root, element);
+	}
+	this.expand(element, expand);
+	this.invalidate();
+	this.model.update();
+};
+
+Area.prototype.expand = function(element, expand) {
+	element.setExpanded(expand);
 	
 	for (var i=0; i<element.children.length; i++) {
-		this.expand(element.children[i], true);
+		this.expand(element.children[i], expand);
 	}
 };
 
-Area.prototype.collapseAll = function() {
-	this.collapse(this.root);
-	this.invalidate();
-	this.model.update();
-}
-
-Area.prototype.collapse = function(element) {
-	element.setExpanded(false);
-	
-	for (var i=0; i<element.children.length; i++) {
-		this.collapse(element.children[i], false);
+Area.prototype.findElementById = function(parent, id) {
+	if (parent.id==id) {
+		return parent;
+	}
+	if (parent.children!=null) {
+		var result = null;
+		for (var i=0; i<parent.children.length; i++) {
+			result = this.findElementById(parent.children[i], id);
+			if (result!=null) {
+				return result;
+			}
+		}
 	}
 };
 
@@ -78,6 +101,8 @@ Area.prototype.resetView = function() {
 	this.root.rectangle.x = this.theme.rootElementPosition.x + this.rectangle.x;
 	this.root.rectangle.y = this.theme.rootElementPosition.y + this.rectangle.y;
 	this.invalidate();
+	
+	this.model.deselectAll();
 	this.model.update();
 };
 
@@ -323,4 +348,44 @@ Area.prototype.hitTest = function(position) {
 		}
 	}	
 	return this;
+};
+
+Area.prototype.getExpandedElementIds = function(parent) {
+	var expandedIds = [];
+	if (parent.getExpanded()) {
+		expandedIds.push(parent.id);
+		if (parent.children!=null) {
+			for (var i=0; i<parent.children.length; i++) {
+				var expandedSubIds = this.getExpandedElementIds(parent.children[i]); 
+				if (expandedSubIds.length > 0) {
+					for (var j=0; j<expandedSubIds.length; j++) {
+						expandedIds.push(expandedSubIds[j]);
+					}
+				}
+			}
+		}
+	}
+	return expandedIds;
+};
+
+Area.prototype.selectElementsByIds = function(parent, ids) {
+	if (ids.contains(parent.id)) {
+		this.model.select(parent);
+	}
+	if (parent.children!==null) {
+		for (var i=0; i<parent.children.length; i++) {
+			this.selectElementsByIds(parent.children[i], ids);
+		}
+	}
+};
+
+Area.prototype.expandElementsByIds = function(parent, ids) {
+	if (ids.contains(parent.id)) {
+		parent.setExpanded(true);
+	}
+	if (parent.children!==null) {
+		for (var i=0; i<parent.children.length; i++) {
+			this.expandElementsByIds(parent.children[i], ids);
+		}
+	}
 };

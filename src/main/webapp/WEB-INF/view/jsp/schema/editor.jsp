@@ -110,11 +110,11 @@
 								<div class="ui-pane-title">
 									<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.element_model" /></h4>
 								</div>
-								<div class="button-bar ui-pane-subcontainer ">
+								<!-- <div class="button-bar ui-pane-subcontainer ">
 									<button type="button" onclick="schemaEditor.schema.expandAll(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
 					      			<button type="button" onclick="schemaEditor.schema.collapseAll(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
 					      			<button type="button" onclick="schemaEditor.schema.resetView(); schemaEditor.reload(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-refresh"></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></button>		
-								</div>
+								</div> -->
 								<div class="editor-container ui-pane-subcontainer height-sized-element">
 									<canvas id="schema-editor-canvas"></canvas>
 								</div>
