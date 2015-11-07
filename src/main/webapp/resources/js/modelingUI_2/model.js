@@ -26,6 +26,9 @@ var Model = function(canvas, elementTemplateOptions, theme) {
 	
 	this.mappingConnection = new ConnectionTemplate(this);
 	this.hierarchicalConnection = new ConnectionTemplate(this);
+	
+	this.isWebKit = typeof navigator.userAgent.split("WebKit/")[1] !== "undefined";
+	this.isMozilla = navigator.appVersion.indexOf('Gecko/') >= 0 || ((navigator.userAgent.indexOf("Gecko") >= 0) && !this.isWebKit && (typeof navigator.appVersion !== "undefined"));
 	this.initEvents();
 }
 

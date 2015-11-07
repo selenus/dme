@@ -3,17 +3,18 @@ Model.prototype.initEvents = function() {
 	this.mouseUpHandler = this.handleMouseUp.bind(this);
 	this.mouseMoveHandler = this.handleMouseMove.bind(this);
 	this.mouseLeaveHandler = this.handleMouseLeave.bind(this);
+	this.mouseWheelHandler = this.mouseWheel.bind(this);
 	
 	this.canvas.addEventListener("mousedown", this.mouseDownHandler, false);
 	this.canvas.addEventListener("mouseup", this.mouseUpHandler, false);
 	this.canvas.addEventListener("mouseleave", this.mouseLeaveHandler, false);
 	this.canvas.addEventListener("mousemove", this.mouseMoveHandler, false);	
 	
-	/*if (this.handleContextMenu!==undefined) {
-		this.contextMenuHandler = this.handleContextMenu.bind(this);
-		this.canvas.addEventListener("contextmenu", this.contextMenuHandler, false);
-		this.initContextMenu();
-	}*/
+	if (this.isMozilla) {
+		this.canvas.addEventListener("DOMMouseScroll", this.mouseWheelHandler, false);
+	} else {
+		this.canvas.addEventListener("mousewheel", this.mouseWheelHandler, false);
+	}
 	this.initContextMenu();
 };
 
@@ -23,9 +24,19 @@ Model.prototype.removeEvents = function() {
 	this.canvas.removeEventListener("mouseleave", this.mouseLeaveHandler);
 	this.canvas.removeEventListener("mousemove", this.mouseMoveHandler);
 	
-	/*if (this.handleContextmenu!==undefined) {
-		this.canvas.removeEventListener("contextmenu", this.handleContextmenu, false);
-	}*/
+	if (this.isMozilla) {
+		this.canvas.removeEventListener("DOMMouseScroll", this.mouseWheelHandler);
+	} else {
+		this.canvas.removeEventListener("mousewheel", this.mouseWheelHandler);
+	}
+};
+
+Model.prototype.keyDown = function(e) {
+	console.log(e);
+};
+
+Model.prototype.keyUp= function(e) {
+	console.log(e);
 };
 
 Model.prototype.handleMouseDown = function(e) {
@@ -99,6 +110,24 @@ Model.prototype.handleMouseMove = function(e) {
 			this.activeObject.move(this.mousePosition);
 		}
 	}
+};
+
+Model.prototype.mouseWheel = function(e) {
+	e.preventDefault(); 
+	this.updateMousePosition(e);
+
+	var deltaX = (!this.isMozilla) ? e.wheelDeltaX : 0;
+	var deltaY = (!this.isMozilla) ? e.wheelDeltaY : e.detail*-40;
+	
+	for (var i=0; i<this.areas.length; i++) {
+		if (this.areas[i].hitTest(this.mousePosition)) {
+			this.areas[i].startMove(this.mousePosition);
+			this.areas[i].move(new Point(this.mousePosition.x + deltaX, this.mousePosition.y + deltaY));
+			this.areas[i].stopMove();
+			break;
+		}
+	}
+	this.update();
 };
 
 Model.prototype.handleMouseLeave = function(e) {
