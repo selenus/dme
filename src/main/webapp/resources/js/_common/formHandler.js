@@ -178,7 +178,12 @@ ModalFormHandler.prototype.setUpForm = function() {
 		});
 	}
 	
+	$(this.container).on('shown.bs.modal', function (e) {
+		$(_this.form).find('.form-control')[0].focus();
+	});
+	
 	$(this.container).modal();
+	
 };
 
 ModalFormHandler.prototype.addMessage = function(type, header, message) {
