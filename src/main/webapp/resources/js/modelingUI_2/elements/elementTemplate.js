@@ -75,8 +75,11 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 ElementTemplate.prototype.paint = function(element, context) {
 	var rectangle = element.rectangle;
 	
-	if (!this.area.rectangle.contains(new Point(rectangle.x, rectangle.y)) && 
+	if (!this.area.rectangle.contains(new Point(rectangle.x + rectangle.width, rectangle.y)) && 
+			!this.area.rectangle.contains(new Point(rectangle.x, rectangle.y)) && 
+			!this.area.rectangle.contains(new Point(rectangle.x, rectangle.y + rectangle.height)) && 
 			!this.area.rectangle.contains(new Point(rectangle.x + rectangle.width, rectangle.y + rectangle.height))) {
+		
 		return false;
 	}
 	
