@@ -39,12 +39,17 @@ SchemaEditor.prototype.initGraph = function() {
 							_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", this.schema.id, "schema"),
 							_this.graph.createContextMenuSeparator(),
 							_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", this.schema.id, "schema"),
+							_this.graph.createContextMenuItem("exportSchema", "~eu.dariah.de.minfba.schereg.button.export", "cloud-download", this.schema.id, "schema"),
 							_this.graph.createContextMenuSeparator(),
+							// Only when allowed
+							_this.graph.createContextMenuItem("importSchema", "~eu.dariah.de.minfba.schereg.button.import", "cloud-upload", this.schema.id, "schema"),
+							_this.graph.createContextMenuItem("createRoot", "~eu.dariah.de.minfba.schereg.button.create_root", "plus", this.schema.id, "schema"),
 						]
 	});
 	this.graph.init();
-	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
+	this.createActionButtons(this.schemaContextButtons, this.area.getContextMenuItems());
 	
+	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
 	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
 };
 
@@ -72,6 +77,10 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "collapseAll" : return this.area.expandAll(false);
 	    case "reload" : return this.reloadElementHierarchy();
 	    case "reset" : return this.area.resetView();
+	    
+	    case "exportSchema" : return this.exportSchema();
+	    case "importSchema" : return this.triggerUploadFile();
+	    case "createRoot" : return this.createRoot();
 	    
 	    default:
 	        throw new Error("Unknown tree action requested: " + action);
