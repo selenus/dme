@@ -25,10 +25,10 @@ SchemaEditor.prototype.initGraph = function() {
 				key: "Label",
 				primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
 			}, {
-				key: "Function",
+				key: "TransformationFunctionImpl",
 				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5
 			}, {
-				key: "Grammar",
+				key: "DescriptionGrammarImpl",
 				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5
 			}]);
 	
@@ -103,7 +103,7 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 	});
 };
 
-SchemaEditor.prototype.reloadElementHierarchy = function() {
+SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 	if (schemaEditor.area.root==null) {
 		this.loadElementHierarchy();
 		return;
@@ -134,7 +134,9 @@ SchemaEditor.prototype.reloadElementHierarchy = function() {
 	    			
 	    	_this.area.selectElementsByIds(_this.area.root, selectedItemIds);    		
 	    	_this.area.expandElementsByIds(_this.area.root, expandedItemIds);
-	    		    	
+	    	if (callback!==undefined) {
+	    		callback();
+	    	}
 	    	_this.area.invalidate();
 	    	_this.graph.paint();
 	    },

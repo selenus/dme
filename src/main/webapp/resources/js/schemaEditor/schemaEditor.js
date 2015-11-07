@@ -374,8 +374,9 @@ SchemaEditor.prototype.addNode = function(parentType, parentId, childType) {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],               
 		completeCallback: function() {
-			_this.graph.selectedItems[0].setExpanded(true);
-	    	_this.reload();
+			_this.reloadElementHierarchy(function() {
+				_this.area.expandFromElement(parentId, true);
+			});
 		}
 	});
 		
@@ -393,7 +394,7 @@ SchemaEditor.prototype.createRoot = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],               
 		completeCallback: function() {
-	    	_this.reload();
+	    	_this.reloadElementHierarchy();
 		}
 	});
 		
@@ -410,7 +411,7 @@ SchemaEditor.prototype.editElement = function(id) {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],          
-		completeCallback: function() {_this.reload();}
+		completeCallback: function() {_this.reloadElementHierarchy();}
 	});
 		
 	modalFormHandler.show(form_identifier);
@@ -428,7 +429,7 @@ SchemaEditor.prototype.editGrammar = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal); },       
-		completeCallback: function() { _this.reload(); }
+		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
 		
 	modalFormHandler.show(form_identifier);
@@ -447,7 +448,7 @@ SchemaEditor.prototype.editFunction = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
         setupCallback: function(modal) { functionEditor = new FunctionEditor(modal); },       
-		completeCallback: function() { _this.reload(); }
+		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
 		
 	modalFormHandler.show(form_identifier);
@@ -565,7 +566,7 @@ SchemaEditor.prototype.triggerUploadFile = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		completeCallback: function() {_this.reload();}
+		completeCallback: function() {_this.reloadElementHierarchy();}
 	});
 	
 	modalFormHandler.fileUploadElements.push({
