@@ -10,6 +10,7 @@ $(document).ready(function() {
 var SchemaTable = function() {
 	this.prepareTranslations(["~eu.dariah.de.minfba.common.link.delete",
 	                          "~eu.dariah.de.minfba.common.link.edit",
+	                          "~eu.dariah.de.minfba.common.link.publish",
 	                          "~eu.dariah.de.minfba.common.model.id",
 	                          "~eu.dariah.de.minfba.common.view.forms.servererror.head",
 	                          "~eu.dariah.de.minfba.common.view.forms.servererror.body",
@@ -82,13 +83,19 @@ SchemaTable.prototype.renderActionColumn = function(row, type, val, meta) {
 	var result = "";	
 	
 	if (type==="display") {
-		result += '<button class="btn btn-xs btn-default hint-tooltip" onclick="schemaTable.triggerEdit(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Edit metadata..."><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button> ';
-		result += '<a href="' + __util.getBaseUrl() + 'schema/editor/' + row.entity.id + '/" class="btn btn-xs btn-default hint-tooltip" type="button" data-toggle="tooltip" data-placement="top" title="Open in schema editor..."><span class="glyphicon glyphicon-new-window"></span></a> ';
-		if (row.entity.draft) {
-			result += '<button class="btn btn-xs btn-default hint-tooltip" onclick="schemaTable.triggerPublish(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Publish draft..."><span class="glyphicon glyphicon-export" aria-hidden="true"></span></button> ';
-			result += '<button class="btn btn-xs btn-danger hint-tooltip" onclick="schemaTable.triggerDelete(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Delete draft..."><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button> ';
-		}
+		result += '<a href="' + __util.getBaseUrl() + 'schema/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
+			__translator.translate("~eu.dariah.de.minfba.common.link.edit") +
+		'</a> ';
+		/*if (row.entity.draft) {
+			result += '<button class="btn btn-xs btn-default hint-tooltip" onclick="schemaTable.triggerPublish(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Publish draft..."><span class="glyphicon glyphicon-export" aria-hidden="true"></span> ' + 
+				__translator.translate("~eu.dariah.de.minfba.common.link.publish") +
+			'</button> ';
+			result += '<button class="btn btn-xs btn-danger hint-tooltip" onclick="schemaTable.triggerDelete(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Delete draft..."><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> ' + 
+				__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
+			'</button> ';
+		}*/
 	}
+	
 	return result;
 };
 
