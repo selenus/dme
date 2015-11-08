@@ -1,16 +1,20 @@
 var mappingEditor;
 $(document).ready(function() {
-	mappingEditor = new MappingEditor();
-	mappingEditor.initLayout();
-	mappingEditor.initGraphs();
+	mappingEditor = new MappingEditor({
+		footerOffset: 70,
+		icons: {
+			warning: __util.getBaseUrl() + "resources/img/warning.png",
+			error: __util.getBaseUrl() + "resources/img/error.png"
+		}
+	});
 });
 $(window).resize(function() {
-	mappingEditor.resizeLayout();
-	mappingEditor.resizeContent();
+	mappingEditor.resize();
 });
 
-var MappingEditor = function() {
+var MappingEditor = function(options) {
 	var _this = this;
+	this.options = options;
 	
 	this.mappingId = $("#mapping-id").val();
 	this.sourceId = $("#source-id").val();
@@ -22,8 +26,8 @@ var MappingEditor = function() {
 	this.sourcePath = __util.getBaseUrl() + "schema/editor/" + this.sourceId + "/";
 	this.targetPath = __util.getBaseUrl() + "schema/editor/" + this.targetId + "/";
 	
-	this.layoutContainer = $("#mapping-editor-layout-container");
-	this.editorContainer = $("#mapping-editor-container");
+	this.layoutContainer = $(".editor-layout-container");
+	this.editorContainer = $(".editor-container");
 	this.context = document.getElementById("mapping-editor-canvas").getContext("2d");
 	this.layout = null;
 	
@@ -31,9 +35,20 @@ var MappingEditor = function() {
 	
 	this.oneDone = false;
 	
+	__translator.addTranslations(["~eu.dariah.de.minfba.schereg.button.expand_all",
+	                              "~eu.dariah.de.minfba.schereg.button.collapse_all",
+	                              "~eu.dariah.de.minfba.schereg.button.expand_from_here",
+	                              "~eu.dariah.de.minfba.schereg.button.collapse_from_here",
+	                              "~eu.dariah.de.minfba.common.link.reload_data",
+	                              "~eu.dariah.de.minfba.common.link.reset_view"]);
+	__translator.getTranslations();
+	
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
+	
+	this.initLayout();
+	this.initGraphs();
 };
 
 MappingEditor.prototype.initLayout = function() {
@@ -62,23 +77,23 @@ MappingEditor.prototype.initLayout = function() {
 			minWidth : 200,
 			minHeight : 400,
 			initClosed : initEastClosed,
-			paneSelector : ".outer-east"
+			paneSelector : ".layout-east"
 		},
 		center : {
 			size : "50%",
-			paneSelector : ".outer-center",
+			paneSelector : ".layout-center",
 			minHeight : 200
 		}, 
 		south : {
 			size : 100,
-			paneSelector : ".outer-south"
+			paneSelector : ".layout-south"
 		},
 		west : {
 			size : "25%",
 			minWidth : 200,
 			minHeight : 400,
 			initClosed : initWestClosed,
-			paneSelector : ".outer-west"
+			paneSelector : ".layout-west"
 		},
 		onresize: function () {
 			_this.resizeContent();
@@ -89,23 +104,72 @@ MappingEditor.prototype.initLayout = function() {
 };
 
 MappingEditor.prototype.initGraphs = function() {
+	var _this = this;
+	var getContextMenuItems = function(element) { 
+		var items = [
+					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+					];
+		return items; 
+	};
+	
 	this.graph = new Model(this.context.canvas, 
 			[{
 				key: "Nonterminal",
-				primaryColor: "#e6f1ff", secondaryColor: "#0049a6"
+				primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
+				getContextMenuItems: getContextMenuItems
 			}, {
 				key: "Label",
-				primaryColor: "#f3e6ff", secondaryColor: "#5700a6"
+				primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
+				getContextMenuItems: getContextMenuItems
 			}]);
-	this.source = this.graph.addArea();
-	this.target = this.graph.addArea();
+	this.source = this.graph.addArea({
+		contextMenuItems: [
+							_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", 0, "schema"),
+							_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", 0, "schema"),
+							_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", 0, "schema"),
+							_this.graph.createContextMenuSeparator(),
+							_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", 0, "schema"),
+						]
+	});
+	this.target = this.graph.addArea({
+		contextMenuItems: [
+							_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", 1, "schema"),
+							_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", 1, "schema"),
+							_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", 1, "schema"),
+							_this.graph.createContextMenuSeparator(),
+							_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", 1, "schema"),
+						]
+	});
 	this.graph.init();
+	
+	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
+	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
 	
  	this.getElementHierarchy(this.sourcePath, this.source);
  	this.getElementHierarchy(this.targetPath, this.target);
 
  	this.resizeLayout();
  	this.resizeContent();
+};
+
+MappingEditor.prototype.handleContextMenuClicked = function(e) {
+	this.performTreeAction(e.key, e.id, e.nodeType);
+};
+
+MappingEditor.prototype.performTreeAction = function(action, elementId, elementType) {	
+	switch(action) {
+		case "expandFromHere" : return this.area.expandFromElement(elementId, true);
+		case "collapseFromHere" : return this.area.expandFromElement(elementId, false);
+	
+	    case "expandAll" :  return this.area.expandAll(true);
+	    case "collapseAll" : return this.area.expandAll(false);
+	    case "reload" : return this.reloadElementHierarchy();
+	    case "reset" : return this.area.resetView();
+	 
+	    default:
+	        throw new Error("Unknown tree action requested: " + action);
+	}  
 };
 
 MappingEditor.prototype.getElementHierarchy = function(path, area) {
@@ -190,31 +254,42 @@ MappingEditor.prototype.formatLabel = function(label) {
 	}	
 };
 
+MappingEditor.prototype.resize = function() {
+	this.resizeLayout();
+	this.resizeContent();	
+};
+
 MappingEditor.prototype.resizeLayout = function() {
-	var height = Math.floor($(window).height() - this.layoutContainer.offset().top - this.footerOffset);
+	var height = Math.floor($(window).height() - this.layoutContainer.offset().top - this.options.footerOffset);
 	
 	this.layoutContainer.height(height);
 	this.layout.resizeAll();
 }
 
 MappingEditor.prototype.resizeContent = function() {
-	var editorHeight = Math.floor(this.editorContainer.offsetParent().innerHeight() - (this.editorContainer.offset().top - this.editorContainer.offsetParent().offset().top));
-	this.editorContainer.css("height", editorHeight + "px");
+	var layoutBottom = this.layout.center.state.layoutHeight + this.layout.center.state.offsetTop;
+	var paddingBottom = this.layout.center.state.css.paddingBottom+2; // +2 just to be sure
 	
+	$(".height-sized-element").each(function() {
+		var pane = $(this).closest(".layout-pane");
+		var innerHeight = $(pane).innerHeight() + $(pane).offset().top - $(this).offset().top - parseInt($(pane).css("padding-bottom"), 10);
+		var minHeight = parseInt($(this).css("min-height"));
+		
+		if (innerHeight < minHeight) {
+			innerHeight = minHeight;
+		} else if (innerHeight < 0) {
+			innerHeight = 0;
+		}
+		$(this).css("height", Math.floor(innerHeight) + "px");
+	});
+
 	if (this.context.canvas) {
-		this.context.canvas.width = this.editorContainer.width(); // border-bottom
-		this.context.canvas.height = editorHeight; // border-top
-		window.scroll(0, 0);			
+		this.context.canvas.width = this.editorContainer.innerWidth();
+		this.context.canvas.height = this.editorContainer.innerHeight();		
 		if (this.graph !== null) {
-			if (this.source != null) {
-				this.source.setSize(new Rectangle(0, 0, Math.floor(this.context.canvas.width / 2), this.context.canvas.height));
-			}
-			if (this.target != null) {
-				this.target.setSize(new Rectangle(Math.floor(this.context.canvas.width / 2), 0, this.context.canvas.width - Math.floor(this.context.canvas.width / 2), this.context.canvas.height));
-			}
 			this.graph.update();
 		}
-	} 
+	}
 };
 
 MappingEditor.prototype.deselectionHandler = function() {};
@@ -234,16 +309,3 @@ MappingEditor.prototype.newMappingCellHandler = function(e) {
  	});
 	
 };
-
-
-
-
-
-
-
-
-
-
-
-
-

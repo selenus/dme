@@ -1,18 +1,8 @@
-var ConnectionTemplate = function(model) {
+var MappingTemplate = function(model) {
 	this.model = model;
 }
 
-ConnectionTemplate.prototype.paint = function(connection, context) {
-	// Parent not visible...sub-hierarchy not visible either
-	if (!connection.from.element.visible) {
-		return;
-	}
-	
-	// TODO: ONLY FOR HIERARCHICAL Parent collapsed...
-	if (!connection.from.element.getExpanded()) {
-		return;
-	}
-	
+MappingTemplate.prototype.paint = function(connection, context) {
 	var fromPosition = connection.from.getPosition();
 	var toPosition;
 	var height = fromPosition.y;
@@ -29,7 +19,7 @@ ConnectionTemplate.prototype.paint = function(connection, context) {
 			context.simpleLine(fromPosition.x, toPosition.y, toPosition.x, toPosition.y);
 		}
 	} else {
-		// TODO Remove from here
+		// New connection being dragged
 		toPosition = this.model.mousePosition;
 		context.dashedLine(fromPosition.x, fromPosition.y, toPosition.x, toPosition.y);
 	}

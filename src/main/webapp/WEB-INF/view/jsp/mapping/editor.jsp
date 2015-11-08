@@ -42,15 +42,15 @@
 						</h2>		
 					</div>
 					<div class="col-xs-12">
-						<div id="mapping-editor-layout-container" class="hide editor-layout-container">
+						<div class="hide editor-layout-container">
 							
 							<!-- South: Session log -->
-							<div class="outer-south">
+							<div class="layout-south layout-pane">
 								<ul id="mapping-editor-log" class="log"></ul>
 							</div>
 							
-							<!-- East: Sample transformation -->
-							<div class="outer-east">
+							<!-- West: Sample transformation -->
+							<div class="layout-west layout-pane">
 								<c:set var="currentSampleCount" value="${session.sampleOutput==null ? 0 : fn:length(session.sampleOutput)}"/>
 								<input type="hidden" id="currentSampleCount" value="${currentSampleCount}">
 								<input type="hidden" id="currentSampleIndex" value="${session.selectedOutputIndex==null ? 0 : session.selectedOutputIndex}">
@@ -85,11 +85,11 @@
 											<c:choose>
 												<c:when test="${session.sampleInput!=null && session.sampleInput!=''}">
 													<input type="hidden" id="sample-set" value="true">
-													<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" />" rows="3"></textarea>
+													<textarea id="schema-sample-textarea" class="form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" />" rows="3"></textarea>
 												</c:when>
 												<c:otherwise>
 													<input type="hidden" id="sample-set" value="false">
-													<textarea id="schema-sample-textarea" class="form-control" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" />" rows="3"></textarea>
+													<textarea id="schema-sample-textarea" class="form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" />" rows="3"></textarea>
 												</c:otherwise>
 											</c:choose>
 										</div>
@@ -99,31 +99,29 @@
 												<button id="btn-sample-prev-resource" type="button" onclick="schemaEditor.sample_getPrevResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 												<button id="btn-sample-next-resource" type="button" onclick="schemaEditor.sample_getNextResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 											</div>
-											<div id="schema-sample-output-resource">
-											
-											</div>
+											<div id="schema-sample-output-resource" class="height-sized-element"></div>
 										</div>
 									</div>
 								</div>									
 							</div>
 							
 							<!-- Center: Mapping canvas -->
-							<div class="outer-center">
+							<div class="layout-center layout-pane" style="padding-bottom: 0;">
 								<div class="ui-pane-title">
 									<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.element_model" /></h4>
 								</div>
-								<div class="button-bar ui-pane-subcontainer ">
+								<!-- <div class="button-bar ui-pane-subcontainer ">
 									<button type="button" onclick="schemaEditor.schema.performAction('expandAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.expand_all" /></button>
 					      			<button type="button" onclick="schemaEditor.schema.performAction('collapseAll'); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-small"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.collapse_all" /></button>
 					      			<button type="button" onclick="schemaEditor.schema.performAction('resetView'); schemaEditor.reload(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-refresh"></span> <s:message code="~eu.dariah.de.minfba.common.link.reload" /></button>		
-								</div>
-								<div id="mapping-editor-container" class="editor-container ui-pane-subcontainer">
+								</div> -->
+								<div class="editor-container ui-pane-subcontainer height-sized-element">
 									<canvas id="mapping-editor-canvas"></canvas>
 								</div>
 							</div>
 							
 							<!-- East: Properties -->
-							<div class="outer-west">
+							<div class="layout-east layout-pane">
 								<div id="schema-context-container">
 									<div class="ui-pane-title">
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.schema_details" /></h4>
