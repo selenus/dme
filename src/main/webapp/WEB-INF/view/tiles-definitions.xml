@@ -110,6 +110,9 @@
 			<add-attribute type="string" value="modelingUI_2/elements/elementTemplate.js" />
 			<add-attribute type="string" value="modelingUI_2/elements/expander.js" />
 			
+			<add-attribute type="string" value="modelingUI_2/functions/function.js" />
+			<add-attribute type="string" value="modelingUI_2/functions/functionTemplate.js" />
+			
 			<add-attribute type="string" value="modelingUI_2/area.js" />
 			<add-attribute type="string" value="modelingUI_2/verticalScroll.js" />
 			<add-attribute type="string" value="modelingUI_2/model.js" />
@@ -166,6 +169,9 @@
 			<add-attribute type="string" value="modelingUI_2/elements/element.js" />
 			<add-attribute type="string" value="modelingUI_2/elements/elementTemplate.js" />
 			<add-attribute type="string" value="modelingUI_2/elements/expander.js" />
+			
+			<add-attribute type="string" value="modelingUI_2/functions/function.js" />
+			<add-attribute type="string" value="modelingUI_2/functions/functionTemplate.js" />
 			
 			<add-attribute type="string" value="modelingUI_2/area.js" />
 			<add-attribute type="string" value="modelingUI_2/verticalScroll.js" />

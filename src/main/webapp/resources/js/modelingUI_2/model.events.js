@@ -178,8 +178,9 @@ Model.prototype.updateActiveObject = function() {
 	var object = null;
 	
 	for (var i=0; i<this.mappings.length; i++) {
-		if (this.mappings[i].hitTest(this.mousePosition)) {
-			object = this.mappings[i]; 
+		object = this.mappings[i].hitTest(this.mousePosition) 
+		if (object!=null) {
+			break; 
 		}
 	}
 	

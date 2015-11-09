@@ -1,23 +1,22 @@
 var MappingTemplate = function(model) {
 	this.model = model;
 	
-	this.conceptConnector = new ConnectorTemplate(this.model, {
-		name: "mappings", type: "Mapping [out] [array]", description: "Mappings out", isInteractive: true, isMappable: true,
-		position: function(connection) {
-			var rect = connection.template.getRectangle(connection);
-			return { 
-				x: rect.width/2, 
-				y: rect.height/2 
-			};
-		}
+	this.functionTemplate = new FunctionTemplate(this.model, { 
+		primaryColor: "#FFE173", 
+		secondaryColor: "#6d5603", 
+		radius: 5
 	});
 }
 
 MappingTemplate.prototype.init = function(connection) {
-	connection.connector = new Connector(connection, this.conceptConnector);
+	connection.func = new Function(connection, this.functionTemplate);
 };
 
 MappingTemplate.prototype.hitTest = function(connection, point) { 
+	var result = connection.func.hitTest(point);
+	if (result!=null) {
+		return result;
+	}
 	
 	var p1 = connection.from.getPosition();
 	var p2 = connection.to[0].getPosition();
@@ -26,7 +25,10 @@ MappingTemplate.prototype.hitTest = function(connection, point) {
 	
 	var yShould = (p2.y - p1.y) / (p2.x - p1.x) * (point.x - p1.x) + p1.y;
 		
-	return (yShould-point.y < 5 && point.y - yShould < 5); 
+	if (yShould-point.y < 10 && point.y - yShould < 10) {
+		return connection;
+	} 
+	return null;
 };
 
 MappingTemplate.prototype.paint = function(connection, context) {
@@ -54,8 +56,8 @@ MappingTemplate.prototype.paint = function(connection, context) {
 	
 	context.simpleLine(fromPosition.x, fromPosition.y, fromPosition.x, height+0.5);
 	
-	if (connection.connector!==undefined && connection.connector!==null) {
-		connection.connector.paint(context);
+	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null) {
+		connection.func.paint(context);
 	}
 };
 
@@ -67,6 +69,6 @@ MappingTemplate.prototype.getRectangle = function(connection) {
 		return new Rectangle(p1.x, p1.y, p2.x-p1.x, p2.y-p1.y)
 	} else {
 		// Just to stay compatible with 'new' connections
-		return new Rectangle(p1.x, p1.y, p1.x, p2.y);
+		return new Rectangle(p1.x, p1.y, p1.x, p1.y);
 	}
 };
