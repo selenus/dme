@@ -6,6 +6,27 @@ var Connector = function(element, template) {
 	this.connections = [];
 };
 
+Connector.prototype.isValid = function(value) {
+	if (value===this) {
+		return false;
+	}
+	var t1 = this.template.options.type.split(' ');
+	if (!t1.contains("[array]") && (this.connections.length == 1)) {
+		return false;
+	}
+	if (value instanceof Connector) {	
+		var t2 = value.template.options.type.split(' ');
+		if ((t1[0] != t2[0]) ||
+		(this.element == value.element) || 
+			(t1.contains("[in]") && !t2.contains("[out]")) || 
+			(t1.contains("[out]") && !t2.contains("[in]")) || 
+			(!t2.contains("[array]") && (value.connections.length == 1))) {
+			return false;
+		}
+	}
+	return true;
+};
+
 Connector.prototype.getContextMenuItems = function() {
 	return this.element.getContextMenuItems();
 };

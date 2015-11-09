@@ -261,8 +261,9 @@ Area.prototype.paint = function(context, theme) {
 	context.strokeStyle = this.theme.areaBorderColor;
 	context.lineWidth = this.theme.areaBorderWidth;
 	context.strokeRect(this.rectangle.x, this.rectangle.y, this.rectangle.width, this.rectangle.height);
-	
-	
+};
+
+Area.prototype.paintElements = function(context) {
 	if (this.root===null) {
 		return;
 	}

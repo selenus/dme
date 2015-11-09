@@ -15,6 +15,7 @@ var Model = function(canvas, elementTemplateOptions, theme) {
 	
 	this.areas = [];
 	
+	this.mappings = [];
 	this.newConnection = null;
 	
 	// Only options defined here, actual element templates are with the areas
@@ -65,9 +66,21 @@ Model.prototype.paint = function() {
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.canvas.style.background = this.theme.background;
 	
+	// Area background, border, scrollbar
 	for (var i=0; i<this.areas.length; i++) {
 		this.areas[i].paint(this.context, this.theme);
 	}
+	
+	// All visible mappings (below the elements)
+	for (var i=0; i<this.mappings.length; i++) {
+		this.mappings[i].paint(this.context, this.theme);
+	}
+	
+	// Elements in the areas
+	for (var i=0; i<this.areas.length; i++) {
+		this.areas[i].paintElements(this.context, this.theme);
+	}
+	
 	if (this.activeObject !== null) {
 		this.canvas.style.cursor = this.activeObject.getCursor(this.mousePosition);
 	} else {

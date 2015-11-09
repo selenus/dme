@@ -120,6 +120,16 @@ Element.prototype.paint = function(context) {
 	
 	if (this.connectors!=null) {
 		for (var i=0; i<this.connectors.length; i++) {
+			if(this.template.area.model.newConnection!==undefined && 
+					this.template.area.model.newConnection!==null) {
+				if (this.connectors[i].isValid(this.template.area.model.newConnection.from)) {
+					this.connectors[i].setActive(true);
+				} else {
+					this.connectors[i].setActive(false);
+				}
+			} else {
+				this.connectors[i].setActive(false);
+			}
 			this.connectors[i].paint(context);
 		}
 	}

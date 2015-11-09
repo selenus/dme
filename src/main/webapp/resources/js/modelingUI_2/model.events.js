@@ -81,8 +81,34 @@ Model.prototype.handleMouseUp = function(e) {
 	}
 };
 
+Model.prototype.addConnection = function (from, to, template) {
+	var c = new Connection(template, from, to);
+	from.addConnection(c);
+	for (var i=0; i<c.to.length; i++) {
+		c.to[i].addConnection(c);
+	}
+	this.mappings.push(c);
+	
+	var newConnectionEvent = document.createEvent("Event");
+	newConnectionEvent.initEvent("newConceptMappingEvent", true, true);
+	newConnectionEvent.connection = c;
+	document.dispatchEvent(newConnectionEvent);
+};
+
 Model.prototype.leftMouseUp = function() {
 	if (this.newConnection!=null) {
+		if (this.activeObject instanceof Connector) {
+			if (this.activeObject.isValid(this.newConnection.from)) {
+				this.addConnection(this.newConnection.from, this.activeObject, this.mappingConnection);
+			}
+		} else if (this.activeObject instanceof Element) {
+			for (var i=0; i<this.activeObject.connectors.length; i++) {
+				if (this.activeObject.connectors[i].isValid(this.newConnection.from)) {
+					this.addConnection(this.newConnection.from, this.activeObject.connectors[i], this.mappingConnection);
+					break;
+				}
+			}
+		}
 		this.newConnection=null;
 	}
 	if (this.activeObject instanceof Area) {

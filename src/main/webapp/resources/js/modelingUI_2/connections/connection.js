@@ -1,5 +1,6 @@
 var Connection = function(template, from, to) {
 	this.template = template;
+	this.template.init(this);
 	this.from = from;
 	
 	if (to!==undefined && to!=null) {
@@ -28,8 +29,5 @@ Connection.prototype.addTo = function(to) {
 };
 
 Connection.prototype.paint = function(context) {
-	if (this.to==null) {
-		console.log("b");
-	}
 	this.template.paint(this, context);
 };

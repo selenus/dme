@@ -158,6 +158,7 @@
 
 			<add-attribute type="string" value="modelingUI_2/connections/connection.js" />
 			<add-attribute type="string" value="modelingUI_2/connections/hierarchyTemplate.js" />
+			<add-attribute type="string" value="modelingUI_2/connections/mappingTemplate.js" />
 			
 			<add-attribute type="string" value="modelingUI_2/connectors/connector.js" />
 			<add-attribute type="string" value="modelingUI_2/connectors/connectorTemplate.js" />

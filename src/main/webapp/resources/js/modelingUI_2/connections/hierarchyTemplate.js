@@ -2,6 +2,8 @@ var HierarchyTemplate = function(model) {
 	this.model = model;
 }
 
+HierarchyTemplate.prototype.init = function(connection) {};
+
 HierarchyTemplate.prototype.paint = function(connection, context) {	
 	if (!connection.from.element.getExpanded()) {
 		return;

@@ -1,6 +1,7 @@
 var ModelingTheme = {
 	background : "#FAFAFA",
 	hierarchyConnection : "#000",
+	mappingConnectionDefault : "#0049a6",
 	selection : "#fff",
 	
 	connector : "#FFF",
