@@ -123,12 +123,12 @@ Element.prototype.paint = function(context) {
 			if(this.template.area.model.newConnection!==undefined && 
 					this.template.area.model.newConnection!==null) {
 				if (this.connectors[i].isValid(this.template.area.model.newConnection.from)) {
-					this.connectors[i].setActive(true);
+					this.connectors[i].setActiveTarget(true);
 				} else {
-					this.connectors[i].setActive(false);
+					this.connectors[i].setActiveTarget(false);
 				}
 			} else {
-				this.connectors[i].setActive(false);
+				this.connectors[i].setActiveTarget(false);
 			}
 			this.connectors[i].paint(context);
 		}

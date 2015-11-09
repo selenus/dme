@@ -12,7 +12,7 @@ function ConnectorTemplate(area, options) {
 };
 
 ConnectorTemplate.prototype.paint = function(connector, context) {
-	if (!this.options.isInteractive || (!connector.element.active && !connector.active) ){
+	if (!this.options.isInteractive || (!connector.element.active && !connector.active && !connector.activeTarget) ){
 		return;
 	}
 	
@@ -37,8 +37,8 @@ ConnectorTemplate.prototype.paint = function(connector, context) {
 
 ConnectorTemplate.prototype.getPosition = function(connector) {
 	var position = this.options.position(connector.element);	// Position within the element
-	position.x += connector.element.rectangle.x;				// Horizontal element offset
-	position.y += connector.element.rectangle.y;				// Vertical element offset
+	position.x += connector.element.rectangle.x+0.5;				// Horizontal element offset
+	position.y += connector.element.rectangle.y+0.5;				// Vertical element offset
 	
 	return position;
 };

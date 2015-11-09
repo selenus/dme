@@ -2,6 +2,7 @@ var Connector = function(element, template) {
 	this.element = element;
 	this.template = template;
 	this.active = false;
+	this.activeTarget = false;
 	
 	this.connections = [];
 };
@@ -37,6 +38,10 @@ Connector.prototype.getCursor = function() {
 
 Connector.prototype.setActive = function(active) {
 	this.active = active;
+};
+
+Connector.prototype.setActiveTarget = function(activeTarget) {
+	this.activeTarget = activeTarget;
 };
 
 Connector.prototype.paint = function(context) {
