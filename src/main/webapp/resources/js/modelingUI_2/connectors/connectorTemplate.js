@@ -1,5 +1,10 @@
-function ConnectorTemplate(area, options) {
-	this.area = area;
+function ConnectorTemplate(owner, options) {
+	if (owner instanceof Area) {
+		this.model = owner.model;
+	} else {
+		this.model = owner;
+	}
+	
 	this.options = $.extend({ 	
 			name: "parent",
 		  	type: "Person [in]",
@@ -21,11 +26,11 @@ ConnectorTemplate.prototype.paint = function(connector, context) {
 	var strokeStyle; 
 	var fillStyle;
 	if (connector.active) {
-		strokeStyle = this.area.model.theme.connectorHoverBorder; 
-		fillStyle = this.area.model.theme.connectorHover;
+		strokeStyle = this.model.theme.connectorHoverBorder; 
+		fillStyle = this.model.theme.connectorHover;
 	} else {
-		strokeStyle = this.area.model.theme.connectorBorder; 
-		fillStyle = this.area.model.theme.connector;
+		strokeStyle = this.model.theme.connectorBorder; 
+		fillStyle = this.model.theme.connector;
 	}
 	
 	context.lineWidth = 1;
@@ -37,8 +42,8 @@ ConnectorTemplate.prototype.paint = function(connector, context) {
 
 ConnectorTemplate.prototype.getPosition = function(connector) {
 	var position = this.options.position(connector.element);	// Position within the element
-	position.x += connector.element.rectangle.x+0.5;				// Horizontal element offset
-	position.y += connector.element.rectangle.y+0.5;				// Vertical element offset
+	position.x += connector.element.getRectangle().x + 0.5;		// Horizontal element offset
+	position.y += connector.element.getRectangle().y + 0.5;		// Vertical element offset
 	
 	return position;
 };

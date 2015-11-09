@@ -105,7 +105,7 @@ SchemaEditor.prototype.initLayout = function() {
 	}
 	
 	var initSouthClosed = true;
-	if ($(window).height()>700) {
+	if ($(window).height()>800) {
 		initSouthClosed = false;
 	}
 	this.layout = this.layoutContainer.layout({

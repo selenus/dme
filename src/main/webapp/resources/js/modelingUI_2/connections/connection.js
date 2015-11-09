@@ -2,6 +2,7 @@ var Connection = function(template, from, to) {
 	this.template = template;
 	this.template.init(this);
 	this.from = from;
+	this.active = false;
 	
 	if (to!==undefined && to!=null) {
 		if (to instanceof Array) {
@@ -15,6 +16,22 @@ var Connection = function(template, from, to) {
 		this.to.p
 	}
 }
+
+Connection.prototype.setActive = function(active) {
+	this.active = active;
+};
+
+Connection.prototype.getCursor = function() {
+	return Cursors.arrow;
+};
+
+Connection.prototype.hitTest = function(point) {
+	return this.template.hitTest(this, point);
+};
+
+Connection.prototype.getRectangle = function() {
+	return this.template.getRectangle(this);
+};
 
 Connection.prototype.addTo = function(to) {
 	if (to!==undefined && to!=null) {

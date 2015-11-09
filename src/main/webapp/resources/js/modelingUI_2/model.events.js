@@ -176,10 +176,19 @@ Model.prototype.updateMousePosition = function(e) {
 
 Model.prototype.updateActiveObject = function() {
 	var object = null;
-	for (var i=0; i<this.areas.length; i++) {
-		object = this.areas[i].hitTest(this.mousePosition);
-		if (object!=null) {
-			break;
+	
+	for (var i=0; i<this.mappings.length; i++) {
+		if (this.mappings[i].hitTest(this.mousePosition)) {
+			object = this.mappings[i]; 
+		}
+	}
+	
+	if (object==null) {
+		for (var i=0; i<this.areas.length; i++) {
+			object = this.areas[i].hitTest(this.mousePosition);
+			if (object!=null) {
+				break;
+			}
 		}
 	}
 

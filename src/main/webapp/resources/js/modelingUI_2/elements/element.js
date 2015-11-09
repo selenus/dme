@@ -29,6 +29,10 @@ var Element = function(template, parent, id, label, icons) {
 	this.rectangle = new Rectangle(0, 0, this.calculateWidth(), this.template.options.height);
 };
 
+Element.prototype.getRectangle = function() {
+	return this.rectangle;
+};
+
 Element.prototype.getContextMenuItems = function() {
 	return this.template.getContextMenuItems(this);
 };

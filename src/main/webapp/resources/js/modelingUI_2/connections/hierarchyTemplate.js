@@ -28,3 +28,8 @@ HierarchyTemplate.prototype.paint = function(connection, context) {
 	
 	context.simpleLine(fromPosition.x, fromPosition.y, fromPosition.x, height+0.5);
 };
+
+HierarchyTemplate.prototype.hitTest = function(connection, point) { 
+	// Irrelevant for hierarchy connections
+	return false; 
+};

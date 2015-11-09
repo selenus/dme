@@ -45,7 +45,7 @@ var MappingEditor = function(options) {
 	
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
-	document.addEventListener("newMappingCellEvent", this.newMappingCellHandler, false);
+	document.addEventListener("newConceptMappingEvent", this.newConceptMappingHandler, false);
 	
 	this.initLayout();
 	this.initGraphs();
@@ -63,6 +63,11 @@ MappingEditor.prototype.initLayout = function() {
 	}
 	if (this.layoutContainer.width()>1100) {
 		initWestClosed = false;
+	}
+	
+	var initSouthClosed = true;
+	if ($(window).height()>800) {
+		initSouthClosed = false;
 	}
 	
 	this.layout = this.layoutContainer.layout({
@@ -86,7 +91,8 @@ MappingEditor.prototype.initLayout = function() {
 		}, 
 		south : {
 			size : 100,
-			paneSelector : ".layout-south"
+			paneSelector : ".layout-south",
+			initClosed : initSouthClosed 
 		},
 		west : {
 			size : "25%",
@@ -296,16 +302,18 @@ MappingEditor.prototype.deselectionHandler = function() {};
 
 MappingEditor.prototype.selectionHandler = function(e) {};
 
-MappingEditor.prototype.newMappingCellHandler = function(e) {
+MappingEditor.prototype.newConceptMappingHandler = function(e) {
+	
+	console.log("new concept mapping");
 	
 	var _this = mappingEditor;
-	$.ajax({
+	/*$.ajax({
 		url: _this.mappingPath + 'async/saveConcept',
         type: "POST",
         data: { conceptId: e.mappingId, sourceElementId: e.input, targetElementId: e.output},
         dataType: "json",
         //success: function(data) { $("#save-notice-area").text(data);},
         //error: function(textStatus) { modalMessage.showMessage("warning", "Error updating mapping!", "Please refresh."); }
- 	});
+ 	});*/
 	
 };
