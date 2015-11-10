@@ -225,6 +225,7 @@ Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
 		this.root = e;
 		this.root.rectangle = this.calculateAbsoluteRectangle(this.model.theme.rootElementPosition.x, this.model.theme.rootElementPosition.y,
 				this.root.rectangle.width, this.root.rectangle.height);
+		this.root.setVisible(true);
 	} else {
 		
 		var cParent = parent.getConnector("children");
@@ -296,8 +297,11 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 	
 	this.recalculateMinMaxBoundaries(rectangle);
 	element.setRectangle(rectangle);
-	if (element.getExpanded() && element.children.length > 0) {
-		for (var i=0; i<element.children.length; i++) {			
+	if (/*element.isExpanded() && */element.children.length > 0) {
+		for (var i=0; i<element.children.length; i++) {
+			if (!element.children[i].isVisible()) {
+				continue;
+			}
 			var deltaX;
 			if (!this.isTarget) {
 				deltaX = x + this.model.theme.elementPositioningDelta.x;
@@ -357,10 +361,10 @@ Area.prototype.paintElements = function(context) {
 		}
 		
 		// Paint the elements now
-		/*for (var i=0; i<visibleElements.length; i++) {
+		for (var i=0; i<visibleElements.length; i++) {
 			visibleElements[i].paint(context);
-		}*/
-		this.root.paint(context);
+		}
+		//this.root.paint(context);
 	}
 	
 	this.verticalScroll.paint(context);
@@ -385,11 +389,11 @@ Area.prototype.deselectAll = function() {
 
 Area.prototype.getElements = function(element, visibleOnly) {
 	var result = []
-	if (element!=null && (visibleOnly===undefined || visibleOnly===false || element.visible)) {
+	if (element!=null && (visibleOnly===undefined || visibleOnly===false || element.isVisible())) {
 		result.push(element);
-		if (element.children.length > 0 && (visibleOnly===undefined || visibleOnly===false || element.getExpanded())) {
+		if (element.children.length > 0 && (visibleOnly===undefined || visibleOnly===false || element.isExpanded())) {
 			for (var i=0; i<element.children.length; i++) {
-				var subResult = this.getElements(element.children[i]);
+				var subResult = this.getElements(element.children[i], visibleOnly);
 				for (var j=0; j<subResult.length; j++) {
 					result.push(subResult[j]);
 				}

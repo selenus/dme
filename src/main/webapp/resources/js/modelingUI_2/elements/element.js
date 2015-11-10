@@ -7,7 +7,7 @@ var Element = function(template, parent, id, label, icons) {
 	this.children = [];
 	this.selected = false;
 	this.active = false;
-	this.visible = true;
+	this.visible = false;
 	
 	this.expander = null;
 	
@@ -27,6 +27,14 @@ var Element = function(template, parent, id, label, icons) {
 	}
 
 	this.rectangle = new Rectangle(0, 0, this.calculateWidth(), this.template.options.height);
+};
+
+Element.prototype.isVisible = function() {
+	return this.visible;
+};
+
+Element.prototype.setVisible = function(visible) {
+	this.visible = visible;
 };
 
 Element.prototype.isSelected = function() {
@@ -56,16 +64,24 @@ Element.prototype.setExpanded = function(expanded) {
 	}
 };
 
+Element.prototype.findVisibleParent = function() {
+	if (this.parent.isVisible()) {
+		return this.parent;
+	} else {
+		return this.parent.findVisibleParent();
+	}
+};
+
 Element.prototype.setChildrenVisible = function(visible) {
 	if (this.expander!=null && this.children!=null) {
 		for (var i=0; i<this.children.length; i++) {
-			this.children[i].visible = visible
-			this.children[i].setChildrenVisible(visible && this.expander.expanded);
+			this.children[i].setVisible(visible)
+			this.children[i].setChildrenVisible(visible && this.children[i].isExpanded());
 		}
 	}
 };
 
-Element.prototype.getExpanded = function() {
+Element.prototype.isExpanded = function() {
 	if (this.expander!=null) {
 		return this.expander.expanded;
 	} else {
@@ -124,11 +140,12 @@ Element.prototype.setRectangle = function(rect) {
 };
 
 Element.prototype.paint = function(context) {
-	if (this.expander!=null && this.expander.expanded && this.children!=null) {
+	/*if (this.expander!=null && this.expander.expanded && this.children!=null) {
 		for (var i=0; i<this.children.length; i++) {
 			this.children[i].paint(context);
 		}
-	}
+	}*/
+	
 	
 	if (!this.template.paint(this, context)) {
 		return false;

@@ -63,18 +63,32 @@ Model.prototype.update = function() {
 	this.paint();
 };
 
+Model.prototype.getVisibleMappings = function() {
+	var visibleMappings = []
+	for (var i=0; i<this.mappings.length; i++) {
+		if (!this.mappings[i].from.element.isVisible()) {
+			continue;
+		}
+		visibleMappings.push(this.mappings[i]);
+	}
+	return visibleMappings;
+};
+
 Model.prototype.paint = function() {
 	this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	this.canvas.style.background = this.theme.background;
 	
 	// Area background, border, scrollbar
 	for (var i=0; i<this.areas.length; i++) {
-		this.areas[i].paint(this.context, this.theme);
+		this.areas[i].paint(this.context, this.theme);	
+		// To have the connections instantly at the right place;
+		this.areas[i].recalculateAll();
 	}
 	
 	// All visible mappings (below the elements)
-	for (var i=0; i<this.mappings.length; i++) {
-		this.mappings[i].paint(this.context, this.theme);
+	var visibleMappings = this.getVisibleMappings();
+	for (var i=0; i<visibleMappings.length; i++) {
+		visibleMappings[i].paint(this.context, this.theme);
 	}
 	
 	// Elements in the areas

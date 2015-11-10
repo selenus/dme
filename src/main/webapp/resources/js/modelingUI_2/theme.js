@@ -3,6 +3,7 @@ var ModelingTheme = {
 	hierarchyConnection : "#000",
 	mappingConnectionDefault : "#0049a6",
 	mappingConnectionSelected : "#5700a6",
+	mappingConnectionInvisible : "#BBB",
 	selection : "#fff",
 	
 	connector : "#FFF",

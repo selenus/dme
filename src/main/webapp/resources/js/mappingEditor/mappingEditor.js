@@ -209,22 +209,19 @@ MappingEditor.prototype.getMappings = function() {
 	    url: _this.mappingPath + "async/getConcepts",
 	    type: "GET",
 	    success: function(data) {
-	    	if (data===null || data===undefined || data.length==0) {
-	    		return;
+	    	if (data!==undefined && data!=null && data.length>0) {
+		    	for (var i=0; i<data.length; i++) {
+		    		var lhs = _this.source.getElementById(data[i].sourceElementId).getConnector("mappings");
+		    		var rhs = [];
+		    		
+		    		for (var j=0; j<data[i].targetElementIds.length; j++) {
+		    			rhs.push(_this.target.getElementById(data[i].targetElementIds[j]).getConnector("mappings"));	
+		    		}
+		    		if (lhs != null && rhs != null) {			
+		    			_this.graph.addMappingConnection(lhs, rhs, data[i].id);	    			
+		    		}
+		    	}
 	    	}
-	    	
-	    	for (var i=0; i<data.length; i++) {
-	    		var lhs = _this.source.getElementById(data[i].sourceElementId).getConnector("mappings");
-	    		var rhs = [];
-	    		
-	    		for (var j=0; j<data[i].targetElementIds.length; j++) {
-	    			rhs.push(_this.target.getElementById(data[i].targetElementIds[j]).getConnector("mappings"));	
-	    		}
-	    		if (lhs != null && rhs != null) {			
-	    			_this.graph.addMappingConnection(lhs, rhs, data[i].id);	    			
-	    		}
-	    	}
-	    	
 	    	_this.graph.update();
 	    	
 	    	_this.registerEvents();

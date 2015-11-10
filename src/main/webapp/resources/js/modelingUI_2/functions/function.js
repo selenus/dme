@@ -3,7 +3,6 @@ var Function = function(connection, template) {
 	this.connector = null;
 	this.template = template;
 	
-	this.active = false;
 	this.visible = true;
 	
 	this.template.init(this);
@@ -22,11 +21,11 @@ Function.prototype.getContextMenuItems = function() {
 };
 
 Function.prototype.setActive = function(active) {
-	this.active = active;
+	this.connection.setActive(active);
 };
 
 Function.prototype.getActive = function() {
-	return this.active || this.connection.active;
+	return this.connection.active;
 };
 
 Function.prototype.paint = function(context) {

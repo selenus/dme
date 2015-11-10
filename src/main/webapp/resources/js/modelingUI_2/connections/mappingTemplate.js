@@ -15,7 +15,7 @@ var MappingTemplate = function(model, options) {
 
 MappingTemplate.prototype.init = function(connection) {
 	connection.func = new Function(connection, this.functionTemplate);
-	connection.forkPoint = null;
+	connection.forkPoint = new Point(0, 0);
 };
 
 MappingTemplate.prototype.hitTest = function(connection, point) { 
@@ -59,43 +59,69 @@ MappingTemplate.prototype.getCurvePositionForX = function(x, curve) {
 MappingTemplate.prototype.paint = function(connection, context) {
 	var from = connection.from.getPosition();
 	var height = from.y;
+	var strokeStyle;
 	
 	if (connection.active || connection.isSelected()) {
 		context.lineWidth = 2;
-		context.strokeStyle = this.model.theme.mappingConnectionSelected;
+		strokeStyle = this.model.theme.mappingConnectionSelected;
 	} else {
 		context.lineWidth = 1;
-		context.strokeStyle = this.model.theme.mappingConnectionDefault;
+		strokeStyle = this.model.theme.mappingConnectionDefault;
 	}
 	
+	var connectedParents = [];
+	var renderedTo = [];
+	
 	if (connection.to!==undefined && connection.to!==null && connection.to.length > 0) {
-		
 		var pFork = new Point(null, from.y);
-						
+		var count = 1; // Including the from point	
 		for (var i=0; i<connection.to.length; i++) {
-			var to = connection.to[i].getPosition();
+			if (!connection.to[i].element.isVisible()) {
+				var visibleParent = connection.to[i].element.findVisibleParent();
+				var to = visibleParent.getConnector("mappings").getPosition();
+				if (!connectedParents.contains(to)) {
+					connectedParents.push(to)
+					renderedTo.push(to)
+				} else {
+					continue;
+				}
+			} else {
+				var to = connection.to[i].getPosition();
+				renderedTo.push(connection.to[i].getPosition());
+			}
+						
 			pFork.y += to.y;
 			if (pFork.x===null || pFork.x>to.x) {
 				pFork.x = to.x;
 			}
+			count++;
 		}
 		
 		// Fork point
 		pFork.x = (pFork.x - from.x)/2 + from.x;
-		pFork.y = pFork.y / (connection.to.length+1);
+		pFork.y = pFork.y / count;
 		
 		// One line to the fork point
 		connection.forkPoint = pFork;
 
 		var split = (connection.forkPoint.x - from.x) / this.options.relativeControlPointX;
+		context.strokeStyle = strokeStyle;
 		context.beginPath();
 		context.moveTo(from.x, from.y);
 		context.bezierCurveTo(split+from.x, from.y, split*(this.options.relativeControlPointX-1)+from.x, connection.forkPoint.y, connection.forkPoint.x, connection.forkPoint.y);
 		context.stroke();
 
 		// [to.length] lines from fork point
-		for (var i=0; i<connection.to.length; i++) {
-			var to = connection.to[i].getPosition();
+		for (var i=0; i<renderedTo.length; i++) {
+			
+			var to = renderedTo[i];
+			
+			if (connectedParents.contains(to)) {
+				context.strokeStyle = this.model.theme.mappingConnectionInvisible;
+			} else {
+				context.strokeStyle = strokeStyle;
+			}
+			
 			var split = (to.x - connection.forkPoint.x) / this.options.relativeControlPointX;
 			context.beginPath();
 			context.moveTo(connection.forkPoint.x, connection.forkPoint.y);

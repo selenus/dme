@@ -14,6 +14,7 @@ Expander.prototype.setActive = function(active) {
 
 Expander.prototype.mouseDown = function() {
 	this.expanded = !this.expanded;
+	this.element.setExpanded(this.expanded);
 };
 
 Expander.prototype.getCursor = function(point) {
