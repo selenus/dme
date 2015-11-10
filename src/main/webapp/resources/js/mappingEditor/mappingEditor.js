@@ -155,11 +155,11 @@ MappingEditor.prototype.initGraphs = function() {
 	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
 	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
 	
+	
+	this.resize();
+	
  	this.getElementHierarchy(this.sourcePath, this.source);
  	this.getElementHierarchy(this.targetPath, this.target);
-
- 	this.resizeLayout();
- 	this.resizeContent();
 };
 
 MappingEditor.prototype.handleContextMenuClicked = function(e) {
@@ -191,7 +191,7 @@ MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	    		return;
 	    	}
 	    	_this.processElementHierarchy(area, data);
-	    	_this.graph.update();
+	    	//_this.graph.paint();
 	    	
 	    	if (_this.oneDone) {
 	    		_this.getMappings();
@@ -241,8 +241,6 @@ MappingEditor.prototype.processElementHierarchy = function(schema, data) {
 	
 	schema.elements[0].setExpanded(true);
 	
-	this.graph.update();
-
 };
 
 MappingEditor.prototype.generateTree = function(area, parent, children) {

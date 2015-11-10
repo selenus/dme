@@ -1,9 +1,7 @@
 var Connection = function(template, from, to, id) {
 	this.template = template;
-	this.template.init(this);
 	this.from = from;
 	this.active = false;
-	
 	this.id = id;
 		
 	if (to!==undefined && to!=null) {
@@ -19,6 +17,8 @@ var Connection = function(template, from, to, id) {
 	} else {
 		this.to = [];
 	}
+	
+	this.template.init(this);
 }
 
 Connection.prototype.setActive = function(active) {

@@ -43,3 +43,7 @@ Rectangle.prototype.union = function(rectangle) {
 Rectangle.prototype.topLeft = function() {
 	return new Point(this.x, this.y);
 };
+
+Rectangle.prototype.equals = function(rectangle) {
+	return this.x==rectangle.x && this.y==rectangle.y && this.width==rectangle.width && this.height==rectangle.height;
+};

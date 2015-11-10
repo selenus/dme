@@ -40,24 +40,28 @@ Area.prototype.getContextMenuItems = function() {
 	}
 };
 
-Area.prototype.setRectangle = function(rectangle) {
+Area.prototype.setRectangle = function(rectangle) {	
 	var xScroll = this.isTarget ? (rectangle.width-this.theme.verticalScroll.width)+rectangle.x : rectangle.x;
 	var xArea = this.isTarget ? rectangle.x : this.theme.verticalScroll.width+rectangle.x;
 	
 	this.verticalScroll.setRectangle(new Rectangle(xScroll, rectangle.y, this.theme.verticalScroll.width, rectangle.height));
 	
 	if (this.root!=null) {
-		this.oldRelativeRectangle = this.calculateRelativeRectangle(this.root.rectangle.x, this.root.rectangle.y,
+		var oldRelativeRectangle = this.calculateRelativeRectangle(this.root.rectangle.x, this.root.rectangle.y,
 				this.root.rectangle.width, this.root.rectangle.height);
 	}
 	
-	// TODO Also Check if we need to move on resize to pertain protected element area
 	this.rectangle = new Rectangle(xArea, rectangle.y, rectangle.width-this.theme.verticalScroll.width, rectangle.height);
 	
+	// Relevant for target areas: Move elements with right anchor 
 	if (this.root!=null) {
-		this.root.setRectangle(this.calculateAbsoluteRectangle(this.oldRelativeRectangle.x, this.oldRelativeRectangle.y,
+		this.root.setRectangle(this.calculateAbsoluteRectangle(oldRelativeRectangle.x, oldRelativeRectangle.y,
 				this.root.rectangle.width, this.root.rectangle.height));
 	}
+	
+	// Makes sure, that area boundaries are respected
+	this.moveByDelta(0, 0);
+	
 	this.invalidate();
 };
 
@@ -138,25 +142,50 @@ Area.prototype.move = function(point) {
 	var deltaX = point.x - this.moveHandle.x;
 	var deltaY = point.y - this.moveHandle.y;
 	
+	this.moveByDelta(deltaX, deltaY);
+	
+	this.moveHandle = point;
+	this.model.paint();
+};
+
+Area.prototype.moveByDelta = function(deltaX, deltaY) {
+	
+	if (this.index==1) {
+		console.log(this.rectangle);
+	}
+	
+	if (this.root==null || this.minX == null || this.maxX == null || this.minY == null || this.maxY == null) {
+		return;
+	}
+	
 	// Left
-	if ((deltaX + this.minX < this.rectangle.x) && 
-			(this.maxX + deltaX < this.rectangle.x + this.theme.paddingArea.x)) {
-		deltaX = (this.rectangle.x + this.theme.paddingArea.x) - this.maxX;
+	if (this.maxX + deltaX < this.rectangle.x + this.theme.paddingArea.x) {
+		deltaX = this.rectangle.x + this.theme.paddingArea.x - this.maxX;
 	}
 	// Right
-	if ((deltaX + this.maxX > this.rectangle.x + this.rectangle.width) && 
-			(this.minX + deltaX + this.theme.paddingArea.x > this.rectangle.x + this.rectangle.width)) {
+	if (this.minX + deltaX + this.theme.paddingArea.x > this.rectangle.x + this.rectangle.width) {
 		deltaX = this.rectangle.x + this.rectangle.width - this.theme.paddingArea.x - this.minX;
-	}
+	}	
 	// Bottom
-	if ((deltaY + this.maxY > this.rectangle.y + this.rectangle.height) && 
-			(this.minY + deltaY + this.theme.paddingArea.y > this.rectangle.y + this.rectangle.height)) {
+	if (this.minY + deltaY + this.theme.paddingArea.y > this.rectangle.y + this.rectangle.height) {
 		deltaY = this.rectangle.y + this.rectangle.height - this.theme.paddingArea.y - this.minY;
 	}
 	// Top
-	if ((deltaY + this.minY < this.rectangle.y) && 
-			(this.maxY + deltaY < this.rectangle.y + this.theme.paddingArea.y)) {
-		deltaY = (this.rectangle.y + this.theme.paddingArea.y) - this.maxY;
+	if (this.maxY + deltaY < this.rectangle.y + this.theme.paddingArea.y) {
+		deltaY = this.rectangle.y + this.theme.paddingArea.y - this.maxY;
+	}
+	
+	// Override if required
+	if (this.isTarget) {
+		// Left
+		if (this.minX + deltaX < this.rectangle.x + this.theme.paddingArea.x/2) {
+			deltaX = this.rectangle.x + this.theme.paddingArea.x/2 - this.minX + 0.5;
+		}
+	} else if (this.isSource) {
+		// Right
+		if (this.maxX + deltaX + this.theme.paddingArea.x/2 > this.rectangle.x + this.rectangle.width) {
+			deltaX = this.rectangle.x + this.rectangle.width - this.theme.paddingArea.x/2 - this.maxX + 0.5;
+		}
 	}
 		
 	// Repositioning the root element is enough
@@ -167,9 +196,6 @@ Area.prototype.move = function(point) {
 	
 	// Force repositioning of the elements (except root)
 	this.invalidate();	
-	
-	this.moveHandle = point;
-	this.model.paint();
 };
 
 Area.prototype.stopMove = function() {
@@ -259,7 +285,7 @@ Area.prototype.calculateRelativePoint = function(x, y) {
 	}
 };
 
-Area.prototype.recalculateAll = function() {
+Area.prototype.recalculateAll = function() {	
 	if (this.recalculationRequired && this.root!=null) {
 		this.minX = null;
 		this.maxX = null;
