@@ -41,8 +41,7 @@ FunctionTemplate.prototype.getContextMenuItems = function(element) {
 };
 
 FunctionTemplate.prototype.getAnchor = function(connection) {
-	var connRect = connection.getRectangle();
-	return new Point(connRect.x + connRect.width/2, connRect.y + connRect.height/2);
+	return connection.forkPoint;
 };
 
 FunctionTemplate.prototype.getRectangle = function(func) {
