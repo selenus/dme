@@ -65,6 +65,10 @@ Element.prototype.getExpanded = function() {
 	}
 };
 
+Element.prototype.getActive = function() {
+	return this.active;
+};
+
 Element.prototype.getType = function() {
 	return this.template.options.key;
 };

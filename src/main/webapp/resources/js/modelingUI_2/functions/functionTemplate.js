@@ -52,7 +52,12 @@ FunctionTemplate.prototype.calculateWidth = function(func) {
 FunctionTemplate.prototype.paint = function(func, context) { 
 	var rectangle = this.getRectangle(func);
 	
-	context.lineWidth = this.options.lineWidth;
+	if (func.getActive()) {
+		context.lineWidth = this.options.lineWidth+1;
+	} else {
+		context.lineWidth = this.options.lineWidth;
+	}
+	
 	context.fillStyle = func.selected ? this.options.secondaryColor : this.options.primaryColor;
 	context.strokeStyle = func.selected ? this.options.primaryColor : this.options.secondaryColor;
 		

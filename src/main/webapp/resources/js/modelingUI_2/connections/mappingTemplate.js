@@ -18,6 +18,10 @@ MappingTemplate.prototype.hitTest = function(connection, point) {
 		return result;
 	}
 	
+	if (!this.getRectangle(connection).contains(point)) {
+		return null;
+	}
+	
 	var p1 = connection.from.getPosition();
 	var p2 = connection.to[0].getPosition();
 	
@@ -25,7 +29,7 @@ MappingTemplate.prototype.hitTest = function(connection, point) {
 	
 	var yShould = (p2.y - p1.y) / (p2.x - p1.x) * (point.x - p1.x) + p1.y;
 		
-	if (yShould-point.y < 10 && point.y - yShould < 10) {
+	if (yShould-point.y < 5 && point.y - yShould < 5) {
 		return connection;
 	} 
 	return null;
@@ -55,6 +59,10 @@ MappingTemplate.prototype.paint = function(connection, context) {
 	}
 	
 	context.simpleLine(fromPosition.x, fromPosition.y, fromPosition.x, height+0.5);
+	
+	// For debugging...
+	/*var rectangle = this.getRectangle(connection);
+	context.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);*/
 	
 	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null) {
 		connection.func.paint(context);

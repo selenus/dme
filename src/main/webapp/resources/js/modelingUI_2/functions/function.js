@@ -14,6 +14,10 @@ Function.prototype.setActive = function(active) {
 	this.active = active;
 };
 
+Function.prototype.getActive = function() {
+	return this.active || this.connection.active;
+};
+
 Function.prototype.paint = function(context) {
 	if (this.template.paint(this, context)) {
 		this.connector.paint(context);
