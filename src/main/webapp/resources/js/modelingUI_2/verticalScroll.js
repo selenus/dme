@@ -11,6 +11,8 @@ var VerticalScroll = function(area) {
 
 VerticalScroll.prototype.setRectangle = function(rectangle) {
 	this.rectangle = rectangle;
+	this.lastMinY = null;
+	this.lastMaxY = null;
 };
 
 VerticalScroll.prototype.hitTest = function(point) {

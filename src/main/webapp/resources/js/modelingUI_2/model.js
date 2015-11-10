@@ -103,6 +103,7 @@ Model.prototype.resizeAreas = function() {
 			width = this.canvas.width-x; // Fill up remaining horizontal space
 		}		
 		this.areas[i].setRectangle(new Rectangle(x, 0, width, height));
+		this.areas[i].recalculateAll();
 		x = x + width;
 	}
 };

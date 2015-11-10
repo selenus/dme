@@ -45,9 +45,20 @@ Area.prototype.setRectangle = function(rectangle) {
 	var xArea = this.isTarget ? rectangle.x : this.theme.verticalScroll.width+rectangle.x;
 	
 	this.verticalScroll.setRectangle(new Rectangle(xScroll, rectangle.y, this.theme.verticalScroll.width, rectangle.height));
-
+	
+	if (this.root!=null) {
+		this.oldRelativeRectangle = this.calculateRelativeRectangle(this.root.rectangle.x, this.root.rectangle.y,
+				this.root.rectangle.width, this.root.rectangle.height);
+	}
+	
 	// TODO Also Check if we need to move on resize to pertain protected element area
 	this.rectangle = new Rectangle(xArea, rectangle.y, rectangle.width-this.theme.verticalScroll.width, rectangle.height);
+	
+	if (this.root!=null) {
+		this.root.setRectangle(this.calculateAbsoluteRectangle(this.oldRelativeRectangle.x, this.oldRelativeRectangle.y,
+				this.root.rectangle.width, this.root.rectangle.height));
+	}
+	this.invalidate();
 };
 
 Area.prototype.getCursor = function() {
@@ -158,7 +169,7 @@ Area.prototype.move = function(point) {
 	this.invalidate();	
 	
 	this.moveHandle = point;
-	this.model.update();
+	this.model.paint();
 };
 
 Area.prototype.stopMove = function() {
@@ -230,6 +241,34 @@ Area.prototype.calculateAbsolutePoint = function(x, y) {
 	}
 };
 
+Area.prototype.calculateRelativeRectangle = function(x, y, width, height) {
+	var point = this.calculateRelativePoint(x, y);
+	if (!this.isTarget) {
+		return new Rectangle(point.x, point.y, width, height);
+	} else {
+		return new Rectangle(point.x-width, point.y, width, height);
+	}
+};
+
+Area.prototype.calculateRelativePoint = function(x, y) {
+	var relY = y-this.rectangle.y;
+	if (!this.isTarget) {
+		return new Point(x-this.rectangle.x, relY);
+	} else {
+		return new Point(this.rectangle.x+this.rectangle.width-x, relY);
+	}
+};
+
+Area.prototype.recalculateAll = function() {
+	if (this.recalculationRequired && this.root!=null) {
+		this.minX = null;
+		this.maxX = null;
+		this.minY = null;
+		this.maxY = null;
+		this.recalculateElementPositions(this.root, this.elements, this.root.rectangle.x, this.root.rectangle.y);
+	}
+};
+
 Area.prototype.recalculateElementPositions = function(element, elementList, x, y) {
 	var rectangle = new Rectangle(x, y, element.rectangle.width, element.rectangle.height);
 	
@@ -278,14 +317,8 @@ Area.prototype.paintElements = function(context) {
 		return;
 	}
 	
-	if (this.recalculationRequired) {
-		this.minX = null;
-		this.maxX = null;
-		this.minY = null;
-		this.maxY = null;
-		this.recalculateElementPositions(this.root, this.elements, this.root.rectangle.x, this.root.rectangle.y);
-	}
-
+	this.recalculateAll();
+	
 	var visibleElements = this.getElements(this.root, true);
 	var hierarchyConnections = [];
 	
