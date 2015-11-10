@@ -149,11 +149,7 @@ Area.prototype.move = function(point) {
 };
 
 Area.prototype.moveByDelta = function(deltaX, deltaY) {
-	
-	if (this.index==1) {
-		console.log(this.rectangle);
-	}
-	
+
 	if (this.root==null || this.minX == null || this.maxX == null || this.minY == null || this.maxY == null) {
 		return;
 	}

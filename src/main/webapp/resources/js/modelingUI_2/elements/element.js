@@ -29,6 +29,14 @@ var Element = function(template, parent, id, label, icons) {
 	this.rectangle = new Rectangle(0, 0, this.calculateWidth(), this.template.options.height);
 };
 
+Element.prototype.isSelected = function() {
+	return this.selected;
+};
+
+Element.prototype.setSelected = function(selected) {
+	this.selected = selected;
+};
+
 Element.prototype.getRectangle = function() {
 	return this.rectangle;
 };

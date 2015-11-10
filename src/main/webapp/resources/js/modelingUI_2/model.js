@@ -109,8 +109,8 @@ Model.prototype.resizeAreas = function() {
 };
 
 Model.prototype.select = function(object) {
-	if (object!=null && !object.selected) {
-		object.selected=true;
+	if (object!=null && !object.isSelected()) {
+		object.setSelected(true);
 		if (!this.selectedItems.contains(object)) {
 			this.selectedItems.push(object)
 		}
@@ -123,5 +123,8 @@ Model.prototype.deselectAll = function() {
 	this.selectedItems = [];
 	for (var i=0; i<this.areas.length;i++) {
 		this.areas[i].deselectAll();
+	}
+	for (var i=0; i<this.mappings.length;i++) {
+		this.mappings[i].setSelected(false);
 	}
 };

@@ -21,6 +21,14 @@ var Connection = function(template, from, to, id) {
 	this.template.init(this);
 }
 
+Connection.prototype.isSelected = function() {
+	return this.selected;
+};
+
+Connection.prototype.setSelected = function(selected) {
+	this.selected = selected;
+};
+
 Connection.prototype.setActive = function(active) {
 	this.active = active;
 };

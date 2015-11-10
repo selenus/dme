@@ -4,12 +4,18 @@ var Function = function(connection, template) {
 	this.template = template;
 	
 	this.active = false;
-	this.selected = false;
 	this.visible = true;
 	
 	this.template.init(this);
 }
 
+Function.prototype.isSelected = function() {
+	return this.connection.isSelected();
+};
+
+Function.prototype.setSelected = function(selected) {
+	this.connection.setSelected(selected);
+};
 
 Function.prototype.getContextMenuItems = function() {
 	return this.template.getContextMenuItems(this);
@@ -30,7 +36,7 @@ Function.prototype.paint = function(context) {
 };
 
 Function.prototype.getCursor = function() {
-	return Cursors.cross;
+	return Cursors.select;
 };
 
 Function.prototype.hitTest = function(point) {

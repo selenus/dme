@@ -5,7 +5,7 @@ var FunctionTemplate = function(model, options) {
 	this.connectorTemplate = new ConnectorTemplate(this.model, { 
 		name: "mappings", type: "Mapping [out] [array]", description: "Mappings out", isInteractive: true, isMappable: true, 
 		position: function(func) {
-			return { x: func.getRectangle().width / 2, y: Math.floor(func.getRectangle().height / 2) };
+			return { x: func.getRectangle().width, y: Math.floor(func.getRectangle().height / 2) };
 		},
 		addConnection: function(connection) {
 			var cOwning = this.element.connection; // Connection that holds the function
@@ -23,7 +23,9 @@ var FunctionTemplate = function(model, options) {
 		radius: 0,
 		primaryColor: "#e6f1ff",
 		secondaryColor: "#0049a6",
-		font: "bold 9px Verdana",
+		font: "10px Glyphicons Halflings",
+		text: "\uE075", //Forward
+		//text: "\uE019", // Cog
 		getContextMenuItems: undefined
 	}, options);
 }
@@ -71,8 +73,8 @@ FunctionTemplate.prototype.paint = function(func, context) {
 		context.lineWidth = this.options.lineWidth;
 	}
 	
-	context.fillStyle = func.selected ? this.options.secondaryColor : this.options.primaryColor;
-	context.strokeStyle = func.selected ? this.options.primaryColor : this.options.secondaryColor;
+	context.fillStyle = func.connection.isSelected() ? this.options.secondaryColor : this.options.primaryColor;
+	context.strokeStyle = func.connection.isSelected() ? this.options.primaryColor : this.options.secondaryColor;
 		
 	if (this.options.radius==0) {
 		context.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height, true, true)
@@ -84,10 +86,10 @@ FunctionTemplate.prototype.paint = function(func, context) {
 	context.font = this.options.font;
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "middle";
-	context.fillText(this.getText(func), rectangle.x + rectangle.width/2, rectangle.y + rectangle.height/2);
+	context.fillText(this.getText(func), rectangle.x + rectangle.width/2, rectangle.y + rectangle.height/2 + 2);
 	return true;
 };
 
 FunctionTemplate.prototype.getText = function(func) {
-	return this.count;
+	return this.options.text;
 };
