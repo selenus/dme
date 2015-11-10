@@ -81,9 +81,9 @@ Model.prototype.handleMouseUp = function(e) {
 	}
 };
 
-Model.prototype.addConnection = function (from, to, template) {
-	var c = new Connection(template, from, to);
-		
+Model.prototype.addMappingConnection = function (from, to, id) {
+	var c = new Connection(this.mappingConnection, from, to, id);
+	
 	// Connection gets overwritten when from is a function -> resulting in 1:N connections
 	c = from.addConnection(c);
 	
@@ -103,12 +103,12 @@ Model.prototype.leftMouseUp = function() {
 	if (this.newConnection!=null) {
 		if (this.activeObject instanceof Connector) {
 			if (this.activeObject.isValid(this.newConnection.from)) {
-				this.addConnection(this.newConnection.from, this.activeObject, this.mappingConnection);
+				this.addMappingConnection(this.newConnection.from, this.activeObject);
 			}
 		} else if (this.activeObject instanceof Element) {
 			for (var i=0; i<this.activeObject.connectors.length; i++) {
 				if (this.activeObject.connectors[i].isValid(this.newConnection.from)) {
-					this.addConnection(this.newConnection.from, this.activeObject.connectors[i], this.mappingConnection);
+					this.addMappingConnection(this.newConnection.from, this.activeObject.connectors[i]);
 					break;
 				}
 			}

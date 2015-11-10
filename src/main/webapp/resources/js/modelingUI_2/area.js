@@ -361,6 +361,24 @@ Area.prototype.hitTest = function(position) {
 	return this;
 };
 
+Area.prototype.getElementById = function(id, parent) {
+	if (parent===undefined) {
+		parent = this.root;
+	}
+	if (parent.id==id) {
+		return parent;
+	} else if (parent.children.length>0) {
+		for (var i=0; i<parent.children.length; i++) {
+			var result = this.getElementById(id, parent.children[i]); 
+			if (result!=null) {
+				return result;
+			}
+		}
+	} else { 
+		return null;
+	}
+};
+
 Area.prototype.getExpandedElementIds = function(parent) {
 	var expandedIds = [];
 	if (parent.getExpanded()) {

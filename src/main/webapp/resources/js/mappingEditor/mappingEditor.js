@@ -43,12 +43,15 @@ var MappingEditor = function(options) {
 	                              "~eu.dariah.de.minfba.common.link.reset_view"]);
 	__translator.getTranslations();
 	
+	this.initLayout();
+	this.initGraphs();
+};
+
+MappingEditor.prototype.registerEvents = function() {
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newConceptMappingEvent", this.newConceptMappingHandler, false);
-	
-	this.initLayout();
-	this.initGraphs();
+	document.addEventListener("changeConceptMappingEvent", this.changeConceptMappingHandler, false);
 };
 
 MappingEditor.prototype.initLayout = function() {
@@ -191,7 +194,7 @@ MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	    	_this.graph.update();
 	    	
 	    	if (_this.oneDone) {
-	    		//_this.getMappings();
+	    		_this.getMappings();
 	    	} else {
 	    		_this.oneDone = true;
 	    	}
@@ -211,18 +214,20 @@ MappingEditor.prototype.getMappings = function() {
 	    	}
 	    	
 	    	for (var i=0; i<data.length; i++) {
-	    		var lhs = _this.source.getElement(data[i].sourceElementId).getConnector("mappings");
+	    		var lhs = _this.source.getElementById(data[i].sourceElementId).getConnector("mappings");
 	    		var rhs = [];
 	    		
-	    		for (var j=0; j<data.length; j++) {
-	    			rhs.push(_this.target.getElement(data[i].targetElementIds[j]).getConnector("mappings"));	
+	    		for (var j=0; j<data[i].targetElementIds.length; j++) {
+	    			rhs.push(_this.target.getElementById(data[i].targetElementIds[j]).getConnector("mappings"));	
 	    		}
 	    		if (lhs != null && rhs != null) {			
-	    			_this.graph.addMapping(lhs, rhs, data[i].id, 1);
+	    			_this.graph.addMappingConnection(lhs, rhs, data[i].id);	    			
 	    		}
 	    	}
 	    	
 	    	_this.graph.update();
+	    	
+	    	_this.registerEvents();
 	    }/*,
 	    error: __util.processServerError*/
 	});
@@ -302,18 +307,33 @@ MappingEditor.prototype.deselectionHandler = function() {};
 
 MappingEditor.prototype.selectionHandler = function(e) {};
 
-MappingEditor.prototype.newConceptMappingHandler = function(e) {
+
+MappingEditor.prototype.changeConceptMappingHandler = function(e) {
+	if (e.connection.id===undefined) {
+		throw Error("update failed, connection not saved yet");
+	}
+	var _this = mappingEditor;
 	
-	//console.log(e.connection);
+	_this.newConceptMappingHandler(e);
+}
+
+MappingEditor.prototype.newConceptMappingHandler = function(e) {
+	var targetIds = [];
+	for (var i=0; i<e.connection.to.length; i++) {
+		targetIds.push(e.connection.to[i].element.id);
+	}
 	
 	var _this = mappingEditor;
-	/*$.ajax({
+	$.ajax({
 		url: _this.mappingPath + 'async/saveConcept',
         type: "POST",
-        data: { conceptId: e.mappingId, sourceElementId: e.input, targetElementId: e.output},
+        data: { conceptId: e.connection.id, sourceElementId: e.connection.from.element.id, targetElementId: targetIds},
         dataType: "json",
-        //success: function(data) { $("#save-notice-area").text(data);},
-        //error: function(textStatus) { modalMessage.showMessage("warning", "Error updating mapping!", "Please refresh."); }
- 	});*/
+        success: function(data) { 
+        	e.connection.id = data.pojo.id;        	
+        	//$("#save-notice-area").text(data);
+        },
+        error: function(textStatus) { modalMessage.showMessage("warning", "Error updating mapping!", "Please refresh."); }
+ 	});
 	
 };
