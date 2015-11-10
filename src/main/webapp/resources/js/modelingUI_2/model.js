@@ -66,9 +66,9 @@ Model.prototype.update = function() {
 Model.prototype.getVisibleMappings = function() {
 	var visibleMappings = []
 	for (var i=0; i<this.mappings.length; i++) {
-		if (!this.mappings[i].from.element.isVisible()) {
+		/*if (!this.mappings[i].from.element.isVisible()) {
 			continue;
-		}
+		}*/
 		visibleMappings.push(this.mappings[i]);
 	}
 	return visibleMappings;

@@ -28,8 +28,8 @@ Function.prototype.getActive = function() {
 	return this.connection.active;
 };
 
-Function.prototype.paint = function(context) {
-	if (this.template.paint(this, context)) {
+Function.prototype.paint = function(context, parentsConnected) {
+	if (this.template.paint(this, context, parentsConnected)) {
 		this.connector.paint(context);
 	}
 };

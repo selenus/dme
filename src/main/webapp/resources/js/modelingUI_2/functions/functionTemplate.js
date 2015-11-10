@@ -64,7 +64,7 @@ FunctionTemplate.prototype.calculateWidth = function(func) {
 	return context.measureText(this.getText(func)).width;
 };
 
-FunctionTemplate.prototype.paint = function(func, context) { 
+FunctionTemplate.prototype.paint = function(func, context, parentsConnected) { 
 	var rectangle = this.getRectangle(func);
 	
 	if (func.getActive()) {
@@ -75,7 +75,11 @@ FunctionTemplate.prototype.paint = function(func, context) {
 	
 	context.fillStyle = func.connection.isSelected() ? this.options.secondaryColor : this.options.primaryColor;
 	context.strokeStyle = func.connection.isSelected() ? this.options.primaryColor : this.options.secondaryColor;
-		
+	
+	if (parentsConnected) {
+		context.fillStyle = this.model.theme.mappingConnectionInvisible;
+	}
+	
 	if (this.options.radius==0) {
 		context.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height, true, true)
 	} else {

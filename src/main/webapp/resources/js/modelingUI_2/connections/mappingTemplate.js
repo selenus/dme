@@ -57,7 +57,14 @@ MappingTemplate.prototype.getCurvePositionForX = function(x, curve) {
 };
 
 MappingTemplate.prototype.paint = function(connection, context) {
-	var from = connection.from.getPosition();
+	if (connection.from.element.isVisible()) {
+		var from = connection.from.getPosition();
+		var fromParent = false;
+	} else {
+		var from = connection.from.element.findVisibleParent().getConnector("mappings").getPosition();
+		var fromParent = true;
+	}
+
 	var height = from.y;
 	var strokeStyle;
 	
@@ -105,7 +112,11 @@ MappingTemplate.prototype.paint = function(connection, context) {
 		connection.forkPoint = pFork;
 
 		var split = (connection.forkPoint.x - from.x) / this.options.relativeControlPointX;
-		context.strokeStyle = strokeStyle;
+		if (fromParent) {
+			context.strokeStyle = this.model.theme.mappingConnectionInvisible;
+		} else {
+			context.strokeStyle = strokeStyle;
+		}
 		context.beginPath();
 		context.moveTo(from.x, from.y);
 		context.bezierCurveTo(split+from.x, from.y, split*(this.options.relativeControlPointX-1)+from.x, connection.forkPoint.y, connection.forkPoint.x, connection.forkPoint.y);
@@ -116,7 +127,7 @@ MappingTemplate.prototype.paint = function(connection, context) {
 			
 			var to = renderedTo[i];
 			
-			if (connectedParents.contains(to)) {
+			if (connectedParents.contains(to) || fromParent) {
 				context.strokeStyle = this.model.theme.mappingConnectionInvisible;
 			} else {
 				context.strokeStyle = strokeStyle;
@@ -139,7 +150,7 @@ MappingTemplate.prototype.paint = function(connection, context) {
 	//context.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	
 	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null) {
-		connection.func.paint(context);
+		connection.func.paint(context, fromParent || connectedParents.length>0);
 	}
 };
 
