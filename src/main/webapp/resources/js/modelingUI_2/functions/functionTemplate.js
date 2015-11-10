@@ -6,6 +6,15 @@ var FunctionTemplate = function(model, options) {
 		name: "mappings", type: "Mapping [out] [array]", description: "Mappings out", isInteractive: true, isMappable: true, 
 		position: function(func) {
 			return { x: func.getRectangle().width / 2, y: Math.floor(func.getRectangle().height / 2) };
+		},
+		addConnection: function(connection) {
+			var cOwning = this.element.connection; // Connection that holds the function
+			if (connection.to!==undefined && connection.to!==null && connection.to.length>0) {
+				for (var i=0; i<connection.to.length; i++) {
+					cOwning.addTo(connection.to[i]);
+				}
+			}
+			return cOwning;
 		}
 	});
 	
@@ -14,12 +23,21 @@ var FunctionTemplate = function(model, options) {
 		radius: 0,
 		primaryColor: "#e6f1ff",
 		secondaryColor: "#0049a6",
-		font: "bold 9px Verdana"
+		font: "bold 9px Verdana",
+		getContextMenuItems: undefined
 	}, options);
 }
 
 FunctionTemplate.prototype.init = function(func) {
 	func.connector = new Connector(func, this.connectorTemplate);
+	func.connector.addConnection = this.connectorTemplate.options.addConnection;
+};
+
+
+FunctionTemplate.prototype.getContextMenuItems = function(element) {
+	if (this.options.getContextMenuItems!==undefined) {
+		return this.options.getContextMenuItems(element);
+	}
 };
 
 FunctionTemplate.prototype.getAnchor = function(connection) {
@@ -30,10 +48,6 @@ FunctionTemplate.prototype.getAnchor = function(connection) {
 FunctionTemplate.prototype.getRectangle = function(func) {
 	var anchor = this.getAnchor(func.connection);
 	return new Rectangle(anchor.x, anchor.y, 0, 0).inflate(this.calculateWidth(func)/2 + 7, 7); 
-};
-
-Function.prototype.getCursor = function() {
-	return Cursors.cross;
 };
 
 FunctionTemplate.prototype.hitTest = function(func, point) {

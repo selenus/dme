@@ -1,4 +1,5 @@
 var Area = function(model, options) {
+	this.index = 0;
 	this.model = model;
 	this.options = options;
 	this.theme = this.model.theme;
@@ -192,11 +193,20 @@ Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
 		this.root.rectangle = this.calculateAbsoluteRectangle(this.model.theme.rootElementPosition.x, this.model.theme.rootElementPosition.y,
 				this.root.rectangle.width, this.root.rectangle.height);
 	} else {
+		
 		var cParent = parent.getConnector("children");
 		var cChild = e.getConnector("parent");
 		
-		cParent.registerConnection(cChild, this.model.hierarchicalConnection);
-		
+		var c;
+		if (cParent.connections.length>0) {
+			c = cParent.connections[0];
+		} else {
+			c = new Connection(this.model.hierarchicalConnection, cParent);
+			cParent.addConnection(c);
+		}
+		cChild.addConnection(c);
+		c.addTo(cChild);
+
 		parent.addChild(e);
 	}
 	return e;

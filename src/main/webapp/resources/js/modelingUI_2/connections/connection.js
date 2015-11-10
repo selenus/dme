@@ -11,9 +11,11 @@ var Connection = function(template, from, to) {
 			this.to = [];
 			this.to.push(to);
 		}
+		for (var i=0; i<this.to.length; i++) {
+			this.to[i].addConnection(this);
+		}
 	} else {
 		this.to = [];
-		this.to.p
 	}
 }
 
@@ -38,9 +40,11 @@ Connection.prototype.addTo = function(to) {
 		if (to instanceof Array) {
 			for (var i=0; i<to.length; i++) {
 				this.to.push(to[i]);
+				to[i].addConnection(this);
 			}
 		} else {
 			this.to.push(to);
+			to.addConnection(this);
 		}
 	}
 };

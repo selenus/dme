@@ -10,6 +10,11 @@ var Function = function(connection, template) {
 	this.template.init(this);
 }
 
+
+Function.prototype.getContextMenuItems = function() {
+	return this.template.getContextMenuItems(this);
+};
+
 Function.prototype.setActive = function(active) {
 	this.active = active;
 };
@@ -22,6 +27,10 @@ Function.prototype.paint = function(context) {
 	if (this.template.paint(this, context)) {
 		this.connector.paint(context);
 	}
+};
+
+Function.prototype.getCursor = function() {
+	return Cursors.cross;
 };
 
 Function.prototype.hitTest = function(point) {

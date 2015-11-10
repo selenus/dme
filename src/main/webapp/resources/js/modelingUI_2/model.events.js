@@ -83,16 +83,20 @@ Model.prototype.handleMouseUp = function(e) {
 
 Model.prototype.addConnection = function (from, to, template) {
 	var c = new Connection(template, from, to);
-	from.addConnection(c);
-	for (var i=0; i<c.to.length; i++) {
-		c.to[i].addConnection(c);
-	}
-	this.mappings.push(c);
+		
+	// Connection gets overwritten when from is a function -> resulting in 1:N connections
+	c = from.addConnection(c);
 	
-	var newConnectionEvent = document.createEvent("Event");
-	newConnectionEvent.initEvent("newConceptMappingEvent", true, true);
-	newConnectionEvent.connection = c;
-	document.dispatchEvent(newConnectionEvent);
+	var connectionEvent = document.createEvent("Event");
+	if (!this.mappings.contains(c)) {
+		this.mappings.push(c);
+		connectionEvent.initEvent("newConceptMappingEvent", true, true);
+	} else {
+		connectionEvent.initEvent("changeConceptMappingEvent", true, true);
+	}
+	
+	connectionEvent.connection = c;
+	document.dispatchEvent(connectionEvent);
 };
 
 Model.prototype.leftMouseUp = function() {

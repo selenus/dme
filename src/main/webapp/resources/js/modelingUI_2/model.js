@@ -53,6 +53,7 @@ Model.prototype.addArea = function(areaOptions) {
 
 Model.prototype.init = function() {
 	for (var i=0; i<this.areas.length; i++) {
+		this.areas[i].index = i;
 		this.areas[i].init();
 	}
 };

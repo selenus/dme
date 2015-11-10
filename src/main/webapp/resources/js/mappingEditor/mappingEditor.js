@@ -304,7 +304,7 @@ MappingEditor.prototype.selectionHandler = function(e) {};
 
 MappingEditor.prototype.newConceptMappingHandler = function(e) {
 	
-	console.log("new concept mapping");
+	//console.log(e.connection);
 	
 	var _this = mappingEditor;
 	/*$.ajax({
