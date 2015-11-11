@@ -1,7 +1,14 @@
-var Model = function(canvas, elementTemplateOptions, theme) {
+var Model = function(canvas, options, theme) {
 	this.canvas = canvas;
 	this.canvas.focus();
 	this.context = this.canvas.getContext("2d");
+	
+	this.options = $.extend(true, {
+		elementTemplateOptions : null,
+		mappingTemplateOptions : null
+	}, options);
+	
+	//elementTemplates
 	
 	this.isMouseDown = false;
 	this.mousePosition = new Point(-1, -1);
@@ -23,15 +30,27 @@ var Model = function(canvas, elementTemplateOptions, theme) {
 	 * key: "...", primaryColor: "#...", secondaryColor: "#...", radius: 5 (optional)
 	 * getContextMenuItems: function(element) {} to produce items[] based on actual element (see model.contextmenu.js) 
 	 */
-	this.elementTemplateOptions = elementTemplateOptions;
 	
-	this.mappingConnection = new MappingTemplate(this);
+	this.mappingConnection = new MappingTemplate(this, this.options.mappingTemplateOption);
 	this.hierarchicalConnection = new HierarchyTemplate(this);
 	
 	this.isWebKit = typeof navigator.userAgent.split("WebKit/")[1] !== "undefined";
 	this.isMozilla = navigator.appVersion.indexOf('Gecko/') >= 0 || ((navigator.userAgent.indexOf("Gecko") >= 0) && !this.isWebKit && (typeof navigator.appVersion !== "undefined"));
 	this.initEvents();
 }
+
+Model.prototype.clearMappings = function() {
+	this.mappings = [];
+};
+
+Model.prototype.selectMappingsByIds = function(ids) {
+	for (var i=0; i<this.mappings.length; i++) {
+		if (ids.contains(this.mappings[i].id)) {
+			this.select(this.mappings[i]);
+		}
+	}
+};
+
 
 Model.prototype.dispose = function() {
 	if (this.canvas !== null) {

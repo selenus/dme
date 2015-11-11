@@ -11,6 +11,10 @@ var Function = function(connection, template) {
 	this.template.init(this);
 }
 
+Function.prototype.getId = function() {
+	return this.connection.getId();
+};
+
 Function.prototype.startMove = function(point) {
 	this.moveOffsetX = this.connection.forkPoint.x - point.x;
 	this.moveOffsetY = this.connection.forkPoint.y - point.y;

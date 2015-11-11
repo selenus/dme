@@ -40,7 +40,13 @@ var MappingEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.button.expand_from_here",
 	                              "~eu.dariah.de.minfba.schereg.button.collapse_from_here",
 	                              "~eu.dariah.de.minfba.common.link.reload_data",
-	                              "~eu.dariah.de.minfba.common.link.reset_view"]);
+	                              "~eu.dariah.de.minfba.common.link.reset_view",
+	                              "~eu.dariah.de.minfba.common.link.delete",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible",
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.reset_position",
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar",
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_function"]);
 	__translator.getTranslations();
 	
 	this.initLayout();
@@ -52,6 +58,13 @@ MappingEditor.prototype.registerEvents = function() {
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	document.addEventListener("newConceptMappingEvent", this.newConceptMappingHandler, false);
 	document.addEventListener("changeConceptMappingEvent", this.changeConceptMappingHandler, false);
+};
+
+MappingEditor.prototype.deregisterEvents = function() {
+	document.removeEventListener("selectionEvent", this.selectionHandler);
+	document.removeEventListener("deselectionEvent", this.deselectionHandler);
+	document.removeEventListener("newConceptMappingEvent", this.newConceptMappingHandler);
+	document.removeEventListener("changeConceptMappingEvent", this.changeConceptMappingHandler);
 };
 
 MappingEditor.prototype.initLayout = function() {
@@ -122,7 +135,8 @@ MappingEditor.prototype.initGraphs = function() {
 		return items; 
 	};
 	
-	this.graph = new Model(this.context.canvas, 
+	this.graph = new Model(this.context.canvas, {
+		elementTemplateOptions: 
 			[{
 				key: "Nonterminal",
 				primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
@@ -131,24 +145,33 @@ MappingEditor.prototype.initGraphs = function() {
 				key: "Label",
 				primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
 				getContextMenuItems: getContextMenuItems
-			}]);
-	this.source = this.graph.addArea({
-		contextMenuItems: [
-							_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", 0, "schema"),
-							_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", 0, "schema"),
-							_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", 0, "schema"),
-							_this.graph.createContextMenuSeparator(),
-							_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", 0, "schema"),
-						]
+			}],
+		mappingTemplateOption : {
+			relativeControlPointX : 4, 
+			connectionHoverTolerance : 5,
+			functionTemplateOptions : {
+				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 3,
+				getContextMenuItems: function(element) {
+					return [
+						    _this.graph.createContextMenuItem("ensureConnectedVisible", "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible", "resize-full", element.id, element.template.options.key),
+						    _this.graph.createContextMenuItem("resetPosition", "~eu.dariah.de.minfba.schereg.editor.actions.reset_position", "repeat", element.id, element.template.options.key),
+						    _this.graph.createContextMenuSeparator(),
+						    _this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar", "edit", element.id, element.template.options.key),
+						    _this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.edit_function", "edit", element.id, element.template.options.key),
+						    _this.graph.createContextMenuItem("removeMapping", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+						];
+				}
+			}
+		}
+		
+	});
+	
+	
+	this.source = this.graph.addArea({ 
+		getContextMenuItems: _this.getAreaContextMenu 
 	});
 	this.target = this.graph.addArea({
-		contextMenuItems: [
-							_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", 1, "schema"),
-							_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", 1, "schema"),
-							_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", 1, "schema"),
-							_this.graph.createContextMenuSeparator(),
-							_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", 1, "schema"),
-						]
+		getContextMenuItems: _this.getAreaContextMenu
 	});
 	this.graph.init();
 	
@@ -162,23 +185,110 @@ MappingEditor.prototype.initGraphs = function() {
  	this.getElementHierarchy(this.targetPath, this.target);
 };
 
+MappingEditor.prototype.getAreaContextMenu = function(area) {
+	var _this = mappingEditor;
+	return [
+		_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", area.index, "area"),
+		_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", area.index, "area"),
+		_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", area.index, "area"),
+		_this.graph.createContextMenuSeparator(),
+		_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", area.index, "area"),
+	];
+};
+
 MappingEditor.prototype.handleContextMenuClicked = function(e) {
 	this.performTreeAction(e.key, e.id, e.nodeType);
 };
 
-MappingEditor.prototype.performTreeAction = function(action, elementId, elementType) {	
+
+MappingEditor.prototype.getAreaForElementId = function(elementId) {
+	for (var i=0; i<this.graph.areas.length; i++) {
+		var e = this.graph.areas[i].findElementById(this.graph.areas[i].root, elementId);
+		if (e!=null) {
+			return this.graph.areas[i];
+		}
+	}
+};
+
+MappingEditor.prototype.performTreeAction = function(action, elementId, elementKey) {	
 	switch(action) {
-		case "expandFromHere" : return this.area.expandFromElement(elementId, true);
-		case "collapseFromHere" : return this.area.expandFromElement(elementId, false);
+		case "expandFromHere" : 
+			var area = this.getAreaForElementId(elementId);
+			return area.expandFromElement(elementId, true);
+		case "collapseFromHere" : 
+			var area = this.getAreaForElementId(elementId);
+			return area.expandFromElement(elementId, false);
 	
-	    case "expandAll" :  return this.area.expandAll(true);
-	    case "collapseAll" : return this.area.expandAll(false);
-	    case "reload" : return this.reloadElementHierarchy();
-	    case "reset" : return this.area.resetView();
+	    case "expandAll" :  return this.graph.areas[elementId].expandAll(true);
+	    case "collapseAll" : return this.graph.areas[elementId].expandAll(false);
+	    case "reload" : return this.reloadAll();
+	    case "reset" : return this.graph.areas[elementId].resetView();
 	 
+	    case "ensureConnectedVisible" : return;
+	    case "resetPosition" : return;
+	    case "editGrammar" : return;
+	    case "editFunction" : return;
+	    case "removeMapping" : return;
+	    
+	    
 	    default:
 	        throw new Error("Unknown tree action requested: " + action);
 	}  
+};
+
+MappingEditor.prototype.reloadAll = function() {
+	this.deregisterEvents();
+	
+	var selectedItemIds = [];
+	for (var i=0; i<this.graph.selectedItems.length; i++) {
+		selectedItemIds.push(this.graph.selectedItems[i].getId());
+	}
+
+	this.reloadElementHierarchy(this.sourcePath, this.source, selectedItemIds);
+ 	this.reloadElementHierarchy(this.targetPath, this.target, selectedItemIds);
+};
+
+MappingEditor.prototype.reloadElementHierarchy = function(path, area, selectedItemIds) {
+	if (area.root==null) {
+		this.getElementHierarchy(path, source);
+		return;
+	}
+	
+	var rootX = area.root.rectangle.x;
+	var rootY = area.root.rectangle.y;
+	var expandedItemIds = area.getExpandedElementIds(area.root);
+
+	var _this = this;
+	$.ajax({
+		url: path + "async/getRendered",
+	    type: "GET",
+	    success: function(data) {
+	    	if (data===null || data===undefined || data.length==0) {
+	    		return;
+	    	}
+	    	area.clear();
+	    	
+	    	_this.processElementHierarchy(area, data);	    	
+	    	
+	    	area.root.rectangle = new Rectangle(rootX, rootY, area.root.rectangle.width, area.root.rectangle.height);
+	    			
+	    	area.selectElementsByIds(area.root, selectedItemIds);    		
+	    	area.expandElementsByIds(area.root, expandedItemIds);
+	    	
+	    	area.invalidate();
+	    	
+	    	if (_this.oneDone) {
+	    		_this.getMappings(selectedItemIds);
+	    		_this.oneDone = false;
+	    	} else {
+	    		_this.oneDone = true;
+	    	}
+	    }/*,
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
+	    	_this.initGraph();
+	    }*/
+	});	
 };
 
 MappingEditor.prototype.getElementHierarchy = function(path, area) {
@@ -195,6 +305,7 @@ MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	    	
 	    	if (_this.oneDone) {
 	    		_this.getMappings();
+	    		_this.oneDone = false;
 	    	} else {
 	    		_this.oneDone = true;
 	    	}
@@ -203,12 +314,14 @@ MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	});
 };
 
-MappingEditor.prototype.getMappings = function() {
+MappingEditor.prototype.getMappings = function(selectedItemIds) {
 	var _this = this;
 	$.ajax({
 	    url: _this.mappingPath + "async/getConcepts",
 	    type: "GET",
 	    success: function(data) {
+	    	_this.graph.clearMappings();
+	    	
 	    	if (data!==undefined && data!=null && data.length>0) {
 		    	for (var i=0; i<data.length; i++) {
 		    		var lhs = _this.source.getElementById(data[i].sourceElementId).getConnector("mappings");
@@ -218,9 +331,12 @@ MappingEditor.prototype.getMappings = function() {
 		    			rhs.push(_this.target.getElementById(data[i].targetElementIds[j]).getConnector("mappings"));	
 		    		}
 		    		if (lhs != null && rhs != null) {			
-		    			_this.graph.addMappingConnection(lhs, rhs, data[i].id);	    			
+		    			_this.graph.addMappingConnection(lhs, rhs, data[i].id);   			
 		    		}
 		    	}
+	    	}
+	    	if (selectedItemIds!==undefined && selectedItemIds.length>0) {
+	    		_this.graph.selectMappingsByIds(selectedItemIds);   
 	    	}
 	    	_this.graph.update();
 	    	
@@ -233,11 +349,8 @@ MappingEditor.prototype.getMappings = function() {
 
 MappingEditor.prototype.processElementHierarchy = function(schema, data) {
 	var parent = schema.addElement(data.type, null, data.id, this.formatLabel(data.label), null);
-	
 	this.generateTree(schema, parent, data.children);
-	
 	schema.elements[0].setExpanded(true);
-	
 };
 
 MappingEditor.prototype.generateTree = function(area, parent, children) {

@@ -1,16 +1,11 @@
 var MappingTemplate = function(model, options) {
 	this.model = model;
-	
-	this.functionTemplate = new FunctionTemplate(this.model, { 
-		primaryColor: "#FFE173", 
-		secondaryColor: "#6d5603", 
-		radius: 5
-	});
-	
 	this.options = $.extend(true, {
 		relativeControlPointX : 4,
 		connectionHoverTolerance : 5
 	}, options);
+	
+	this.functionTemplate = new FunctionTemplate(this.model, this.options.functionTemplateOptions);
 }
 
 MappingTemplate.prototype.init = function(connection) {

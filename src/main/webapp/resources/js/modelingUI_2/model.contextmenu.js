@@ -23,7 +23,7 @@ Model.prototype.handleContextMenu = function(e) {
 	if (this.activeObject==undefined || this.activeObject==null) {
 		return false;
 	}
-	if (this.activeObject.selected!==undefined && !this.activeObject.selected) {
+	if (this.activeObject.isSelected!==undefined && !this.activeObject.isSelected()) {
 		this.deselectAll();
 		this.select(this.activeObject);
 	}

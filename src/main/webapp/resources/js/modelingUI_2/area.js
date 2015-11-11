@@ -23,8 +23,8 @@ Area.prototype.init = function() {
 	this.verticalScroll = new VerticalScroll(this);
 	
 	this.elementTemplates = [];
-	for (var i=0; i<this.model.elementTemplateOptions.length; i++) {
-		this.elementTemplates.push(new ElementTemplate(this, this.model.elementTemplateOptions[i]));
+	for (var i=0; i<this.model.options.elementTemplateOptions.length; i++) {
+		this.elementTemplates.push(new ElementTemplate(this, this.model.options.elementTemplateOptions[i]));
 	}
 };
 
@@ -35,8 +35,8 @@ Area.prototype.clear = function() {
 };
 
 Area.prototype.getContextMenuItems = function() {
-	if (this.options.contextMenuItems!==undefined && this.options.contextMenuItems!==null) {
-		return this.options.contextMenuItems;
+	if (this.options.getContextMenuItems!==undefined && this.options.getContextMenuItems!==null) {
+		return this.options.getContextMenuItems(this);
 	}
 };
 
@@ -73,9 +73,13 @@ Area.prototype.getCursor = function() {
 };
 
 Area.prototype.expandAll = function(expand) {
-	this.expand(this.root, expand);
+	this.expand(this.root, expand);	
 	this.invalidate();
-	this.model.update();
+	this.model.paint();
+	
+	// To make sure that area bounds are respected
+	this.moveByDelta(0, 0);
+	this.model.paint();
 }
 
 Area.prototype.expandFromElement = function(element, expand) {
@@ -84,7 +88,11 @@ Area.prototype.expandFromElement = function(element, expand) {
 	}
 	this.expand(element, expand);
 	this.invalidate();
-	this.model.update();
+	this.model.paint();
+	
+	// To make sure that area bounds are respected
+	this.moveByDelta(0, 0);
+	this.model.paint();
 };
 
 Area.prototype.expand = function(element, expand) {
@@ -111,11 +119,10 @@ Area.prototype.findElementById = function(parent, id) {
 };
 
 Area.prototype.resetView = function() {
-	this.collapseAll(this.root, false);
+	this.expandAll(false);
 	this.root.setExpanded(true);
-	
-	this.root.rectangle.x = this.theme.rootElementPosition.x + this.rectangle.x;
-	this.root.rectangle.y = this.theme.rootElementPosition.y + this.rectangle.y;
+	this.root.rectangle = this.calculateAbsoluteRectangle(this.model.theme.rootElementPosition.x, this.model.theme.rootElementPosition.y,
+			this.root.rectangle.width, this.root.rectangle.height);
 	this.invalidate();
 	
 	this.model.deselectAll();
@@ -297,11 +304,8 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 	
 	this.recalculateMinMaxBoundaries(rectangle);
 	element.setRectangle(rectangle);
-	if (/*element.isExpanded() && */element.children.length > 0) {
+	if (element.isExpanded() && element.children.length > 0) {
 		for (var i=0; i<element.children.length; i++) {
-			if (!element.children[i].isVisible()) {
-				continue;
-			}
 			var deltaX;
 			if (!this.isTarget) {
 				deltaX = x + this.model.theme.elementPositioningDelta.x;
@@ -314,6 +318,16 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 	this.recalculationRequired = false;
 	return y;
 };
+
+Area.prototype.setMinMaxBoundaries = function(element) {
+	var rectangle = element.getRectangle();
+	this.recalculateMinMaxBoundaries(rectangle);
+	if (element.isExpanded() && element.children.length > 0) {
+		for (var i=0; i<element.children.length; i++) {
+			this.setMinMaxBoundaries(element.children[i]);
+		}
+	}
+}
 
 Area.prototype.recalculateMinMaxBoundaries = function(rectangle) {
 	if (this.minX == null || rectangle.x < this.minX) { 
@@ -440,7 +454,7 @@ Area.prototype.getElementById = function(id, parent) {
 
 Area.prototype.getExpandedElementIds = function(parent) {
 	var expandedIds = [];
-	if (parent.getExpanded()) {
+	if (parent.isExpanded()) {
 		expandedIds.push(parent.id);
 		if (parent.children!=null) {
 			for (var i=0; i<parent.children.length; i++) {

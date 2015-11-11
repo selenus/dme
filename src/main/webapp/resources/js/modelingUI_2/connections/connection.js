@@ -21,6 +21,10 @@ var Connection = function(template, from, to, id) {
 	this.template.init(this);
 }
 
+Connection.prototype.getId = function() {
+	return this.id;
+};
+
 Connection.prototype.isSelected = function() {
 	return this.selected;
 };

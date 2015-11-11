@@ -4,84 +4,87 @@
 */
 SchemaEditor.prototype.initGraph = function() {
 	var _this = this;
-	this.graph = new Model(this.context.canvas, 
-			[{
-				key: "Nonterminal",
-				primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
-				getContextMenuItems: function(element) { 
-					var items = [
-					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
-					    _this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key),
-						_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key),
-						_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
-						_this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
-					];
-					return items; 
-				}
-			}, {
-				key: "Label",
-				primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
-				getContextMenuItems: function(element) { 
-					var items = [
-					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
-					    _this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
-						_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key),
-						_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
-						_this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
-					];
-					return items; 
-				}
-			}, {
-				key: "TransformationFunctionImpl",
-				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
-				getContextMenuItems: function(element) { 
-					var items = [
-					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
-					    _this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
-						_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
-						_this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
-					];
-					return items; 
-				}
-			}, {
-				key: "DescriptionGrammarImpl",
-				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
-				getContextMenuItems: function(element) { 
-					var items = [
-					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
-					    _this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key),
-						_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
-						_this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
-					];
-					return items; 
-				}
-			}]);
+	this.graph = new Model(this.context.canvas, {
+		elementTemplateOptions : [{
+			key: "Nonterminal",
+			primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
+			getContextMenuItems: function(element) { 
+				var items = [
+				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+				    _this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key),
+					_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key),
+					_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+					_this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+				];
+				return items; 
+			}, 
+		}, {
+			key: "Label",
+			primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
+			getContextMenuItems: function(element) { 
+				var items = [
+				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+				    _this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
+					_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key),
+					_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+					_this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+				];
+				return items; 
+			}
+		}, {
+			key: "TransformationFunctionImpl",
+			primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
+			getContextMenuItems: function(element) { 
+				var items = [
+				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+				    _this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
+					_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+					_this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+				];
+				return items; 
+			}
+		}, {
+			key: "DescriptionGrammarImpl",
+			primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
+			getContextMenuItems: function(element) { 
+				var items = [
+				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+				    _this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key),
+					_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+					_this.graph.createContextMenuSeparator(),
+					_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
+				];
+				return items; 
+			}
+		}]
+	});
 	
 	this.area = this.graph.addArea({
-		contextMenuItems: [
-							_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", this.schema.id, "schema"),
-							_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", this.schema.id, "schema"),
-							_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", this.schema.id, "schema"),
-							_this.graph.createContextMenuSeparator(),
-							_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", this.schema.id, "schema"),
-							_this.graph.createContextMenuItem("exportSchema", "~eu.dariah.de.minfba.schereg.button.export", "cloud-download", this.schema.id, "schema"),
-							_this.graph.createContextMenuSeparator(),
-							// Only when allowed
-							_this.graph.createContextMenuItem("importSchema", "~eu.dariah.de.minfba.schereg.button.import", "cloud-upload", this.schema.id, "schema"),
-							_this.graph.createContextMenuItem("createRoot", "~eu.dariah.de.minfba.schereg.button.create_root", "plus", this.schema.id, "schema"),
-						]
+		getContextMenuItems: function(area) { 
+			return [
+				_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", area, "schema"),
+				_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", area, "schema"),
+				_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", area, "schema"),
+				_this.graph.createContextMenuSeparator(),
+				_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", area, "schema"),
+				_this.graph.createContextMenuItem("exportSchema", "~eu.dariah.de.minfba.schereg.button.export", "cloud-download", area, "schema"),
+				_this.graph.createContextMenuSeparator(),
+				// Only when allowed
+				_this.graph.createContextMenuItem("importSchema", "~eu.dariah.de.minfba.schereg.button.import", "cloud-upload", area, "schema"),
+				_this.graph.createContextMenuItem("createRoot", "~eu.dariah.de.minfba.schereg.button.create_root", "plus", area, "schema"),
+			]; 
+		}
 	});
 	this.graph.init();
 	this.createActionButtons(this.schemaContextButtons, this.area.getContextMenuItems());
