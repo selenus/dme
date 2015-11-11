@@ -244,7 +244,25 @@ MappingEditor.prototype.performTreeAction = function(action, elementId, elementK
 	}  
 };
 
-MappingEditor.prototype.editGrammar = function(connectionId) {};
+MappingEditor.prototype.editGrammar = function(connectionId) {
+	var _this = this;
+	var form_identifier = "edit-grammar-" + connectionId;
+	
+	var mapping = _this.graph.getMappingById(connectionId);
+	
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/grammar/" + mapping.grammarId + "/form/edit",
+		identifier: form_identifier,
+		additionalModalClasses: "max-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],
+		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal); },       
+		completeCallback: function() { _this.reloadAll(); }
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
 
 MappingEditor.prototype.editFunction = function(connectionId) {};
 

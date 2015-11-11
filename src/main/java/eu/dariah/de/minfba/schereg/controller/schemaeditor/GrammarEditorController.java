@@ -46,7 +46,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
-@RequestMapping(value="/schema/editor/{schemaId}/grammar/{grammarId}")
+@RequestMapping(value={"/schema/editor/{schemaId}/grammar/{grammarId}", "/mapping/editor/{schemaId}/grammar/{grammarId}"})
 public class GrammarEditorController extends BaseScheregController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private GrammarService grammarService;
@@ -88,18 +88,24 @@ public class GrammarEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getEditForm(@PathVariable String schemaId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
-		DescriptionGrammarImpl g = (DescriptionGrammarImpl)grammarService.findById(grammarId);
+		DescriptionGrammarImpl g;
+		if (grammarId.equals("undefined")) {
+			g = new DescriptionGrammarImpl(schemaId, "");
+		} else {
+			g = (DescriptionGrammarImpl)grammarService.findById(grammarId);
+		}
 		if (g.getGrammarContainer()==null) {
 			g.setGrammarContainer(new GrammarContainer());
 		}
 
-		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		// TODO Fix this for both mapping/schema editor
+		/*PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s.getSelectedValueMap()!=null) {
 			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
 			if (s.getSelectedValueMap().containsKey(elementId)) {
 				model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
 			}
-		}
+		}*/
 		
 		model.addAttribute("grammar", g);		
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/save");
