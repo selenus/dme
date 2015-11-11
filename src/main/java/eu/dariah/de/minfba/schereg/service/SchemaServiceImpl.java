@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
@@ -19,12 +20,14 @@ import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.base.BaseServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Service
-public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService {
+public class SchemaServiceImpl extends BaseReferenceServiceImpl implements SchemaService {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaDao schemaDao;
 
@@ -34,30 +37,31 @@ public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService 
 	}
 
 	@Override
-	public void saveSchema(AuthWrappedPojo<? extends Schema> schema, AuthPojo auth) {
-		RightsContainer<Schema> container = null;
-		if (schema.getId()!=null) {
-			container = schemaDao.findById(schema.getId());
-		}
-		if (container==null) {
-			container = createContainer(auth.getUserId());
-		}
-		container.setElement(schema.getPojo());
-		container.setDraft(schema.isDraft());
-		schemaDao.save(container, auth.getUserId(), auth.getSessionId());
+	public void saveSchema(AuthWrappedPojo<? extends Schema> schema, AuthPojo auth) {		
+		this.innerSaveSchema(schema.getPojo(), schema.isDraft(), auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
 	public void saveSchema(Schema schema, AuthPojo auth) {
+		this.innerSaveSchema(schema, null, auth.getUserId(), auth.getSessionId());
+	}
+	
+	private void innerSaveSchema(Schema schema, Boolean draft, String userId, String sessionId) {
 		RightsContainer<Schema> container = null;
-		if (schema.getId()!=null) {
+		boolean isNew = schema.getId()==null || schema.getId().equals("") || schema.getId().equals("undefined"); 
+		if (isNew) {
+			container = createContainer(userId);
+		} else {
 			container = schemaDao.findById(schema.getId());
 		}
-		if (container==null) {
-			container = createContainer(auth.getUserId());
-		}
 		container.setElement(schema);
-		schemaDao.save(container, auth.getUserId(), auth.getSessionId());
+		if (draft!=null) {
+			container.setDraft(draft);
+		}
+		schemaDao.save(container, userId, sessionId);
+		if (isNew) {
+			this.saveRootReference(new Reference(container.getId()));
+		}
 	}
 	
 	private RightsContainer<Schema> createContainer(String userId) {
@@ -78,8 +82,12 @@ public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService 
 		RightsContainer<Schema> s = schemaDao.findById(id);
 		if (s != null) {
 			if (this.getHasWriteAccess(s, auth.getUserId())) {
-				if (BaseDaoImpl.isValidObjectId(s.getElement().getRootNonterminalId())) {
-					elementService.removeElement(s.getId(), s.getElement().getRootNonterminalId(), auth);
+				Reference r = this.findRootReferenceById(s.getId());
+				if (r.getChildReferences()!=null && r.getChildReferences().size()>0) {
+					String rootNonterminalId = r.getChildReferences().get(Nonterminal.class.getName())[0].getId();
+					if (BaseDaoImpl.isValidObjectId(rootNonterminalId)) {
+						elementService.removeElement(s.getId(), rootNonterminalId, auth);
+					}
 				}
 				schemaDao.delete(s, auth.getUserId(), auth.getSessionId());
 			}
@@ -96,7 +104,6 @@ public class SchemaServiceImpl extends BaseServiceImpl implements SchemaService 
 		newSchema.setId(original.getId());
 		newSchema.setLabel(original.getLabel());
 		newSchema.setDescription(original.getDescription());
-		newSchema.setRootNonterminalId(original.getRootNonterminalId());
 		return newSchema;
 	}
 	

@@ -85,9 +85,6 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 				} else {
 					result = ((BaseDao)matchingDao).delete(deleteIds);
 				}
-				
-				
-				
 				logger.info("Removed {} {} entities in consequence of a delete cascade", result, clazz.getSimpleName());
 			}
 		}

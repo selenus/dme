@@ -50,7 +50,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
 		Schema s = schemaDao.findEnclosedById(schemaId);
-		if (s!=null && s.getRootNonterminalId()!=null) {
+		if (s!=null) {
 			return this.findRootByElementId(s.getRootNonterminalId(), eagerLoadHierarchy);
 		}
 		return null;
