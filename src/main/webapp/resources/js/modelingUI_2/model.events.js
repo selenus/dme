@@ -56,14 +56,17 @@ Model.prototype.leftMouseDown = function() {
 		return;
 	}
 	
-	if (this.activeObject instanceof Area || this.activeObject instanceof VerticalScroll) {
+	if (this.activeObject instanceof Area || this.activeObject instanceof VerticalScroll || 
+			this.activeObject instanceof Function) {
 		this.activeObject.startMove(this.mousePosition);
 	} else if (this.activeObject instanceof Expander) {
 		this.activeObject.mouseDown();
 		this.activeObject.element.template.area.invalidate();
 	} else if (this.activeObject instanceof Connector) {
 		this.newConnection = new Connection(this.mappingConnection, this.activeObject, null);
-	} else if (this.activeObject.isSelected!==undefined && !this.activeObject.isSelected()) {
+	}
+	
+	if (this.activeObject.isSelected!==undefined && !this.activeObject.isSelected()) {
 		this.deselectAll();
 		this.select(this.activeObject);
 	}
@@ -116,11 +119,11 @@ Model.prototype.leftMouseUp = function() {
 		this.newConnection=null;
 	}
 	if (this.activeObject instanceof Area) {
-		if (this.activeObject.startMoveHandle!=null) {
+		if (this.activeObject.startMoveHandle!=null) { // It was not a move, but a 'deselect click'
 			this.deselectAll();
 		}
 		this.activeObject.stopMove();
-	} else if (this.activeObject instanceof VerticalScroll) {
+	} else if (this.activeObject instanceof VerticalScroll || this.activeObject instanceof Function) {
 		this.activeObject.stopMove(this.mousePosition);
 	}
 	this.paint();
@@ -129,16 +132,15 @@ Model.prototype.leftMouseUp = function() {
 Model.prototype.handleMouseMove = function(e) {
 	e.preventDefault();	
 	this.updateMousePosition(e);
-	this.updateActiveObject();
 
 	if (this.isMouseDown) {
-		if (this.newConnection!=null) {
-			this.paint();
-		}
-		
-		if (this.activeObject instanceof Area || this.activeObject instanceof VerticalScroll) {
+		if (this.activeObject instanceof Area || this.activeObject instanceof VerticalScroll || 
+				this.activeObject instanceof Function) {
 			this.activeObject.move(this.mousePosition);
 		}
+		this.paint();
+	} else {
+		this.updateActiveObject();
 	}
 };
 

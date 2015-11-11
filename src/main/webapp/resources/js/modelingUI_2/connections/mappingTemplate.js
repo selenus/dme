@@ -16,6 +16,7 @@ var MappingTemplate = function(model, options) {
 MappingTemplate.prototype.init = function(connection) {
 	connection.func = new Function(connection, this.functionTemplate);
 	connection.forkPoint = new Point(0, 0);
+	connection.movedForkPoint = null; 
 };
 
 MappingTemplate.prototype.hitTest = function(connection, point) { 
@@ -107,12 +108,16 @@ MappingTemplate.prototype.paint = function(connection, context) {
 			count++;
 		}
 		
-		// Fork point
-		pFork.x = (pFork.x - from.x)/2 + from.x;
-		pFork.y = pFork.y / count;
-		
 		// One line to the fork point
-		connection.forkPoint = pFork;
+		if (connection.movedForkPoint!=null) {
+			connection.forkPoint = connection.movedForkPoint;
+		} else {
+			// Calculated fork point
+			pFork.x = (pFork.x - from.x)/2 + from.x;
+			pFork.y = pFork.y / count;
+			
+			connection.forkPoint = pFork;
+		}
 
 		var split = (connection.forkPoint.x - from.x) / this.options.relativeControlPointX;
 		if (fromParent) {
