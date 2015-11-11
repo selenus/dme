@@ -35,7 +35,15 @@ var MappingEditor = function(options) {
 	
 	this.oneDone = false;
 	
-	__translator.addTranslations(["~eu.dariah.de.minfba.schereg.button.expand_all",
+	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
+	
+	__translator.addTranslations(["~eu.dariah.de.minfba.schereg.model.schema.schema",
+	                              "~eu.dariah.de.minfba.schereg.editor.element_model",
+	                              "~eu.dariah.de.minfba.schereg.model.mapping.mapping",
+	                              "~eu.dariah.de.minfba.schereg.model.element.element",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.button.expand_all",
 	                              "~eu.dariah.de.minfba.schereg.button.collapse_all",
 	                              "~eu.dariah.de.minfba.schereg.button.expand_from_here",
 	                              "~eu.dariah.de.minfba.schereg.button.collapse_from_here",
@@ -56,15 +64,17 @@ var MappingEditor = function(options) {
 MappingEditor.prototype.registerEvents = function() {
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
-	document.addEventListener("newConceptMappingEvent", this.newConceptMappingHandler, false);
-	document.addEventListener("changeConceptMappingEvent", this.changeConceptMappingHandler, false);
+	document.addEventListener("newConceptMappingEvent", this.saveConceptMappingHandler, false);
+	document.addEventListener("changeConceptMappingEvent", this.saveConceptMappingHandler, false);
+	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
 };
 
 MappingEditor.prototype.deregisterEvents = function() {
 	document.removeEventListener("selectionEvent", this.selectionHandler);
 	document.removeEventListener("deselectionEvent", this.deselectionHandler);
-	document.removeEventListener("newConceptMappingEvent", this.newConceptMappingHandler);
-	document.removeEventListener("changeConceptMappingEvent", this.changeConceptMappingHandler);
+	document.removeEventListener("newConceptMappingEvent", this.saveConceptMappingHandler);
+	document.removeEventListener("changeConceptMappingEvent", this.saveConceptMappingHandler);
+	document.removeEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
 };
 
 MappingEditor.prototype.initLayout = function() {
@@ -127,58 +137,33 @@ MappingEditor.prototype.initLayout = function() {
 
 MappingEditor.prototype.initGraphs = function() {
 	var _this = this;
-	var getContextMenuItems = function(element) { 
-		var items = [
-					    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-					    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
-					];
-		return items; 
-	};
-	
 	this.graph = new Model(this.context.canvas, {
-		elementTemplateOptions: 
-			[{
-				key: "Nonterminal",
-				primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
-				getContextMenuItems: getContextMenuItems
+		elementTemplateOptions: [
+		    { 
+		    	key: "Nonterminal", 
+		    	primaryColor: "#e6f1ff", 
+		    	secondaryColor: "#0049a6",
+				getContextMenuItems: _this.getElementContextMenu
 			}, {
 				key: "Label",
-				primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
-				getContextMenuItems: getContextMenuItems
+				primaryColor: "#f3e6ff", 
+				secondaryColor: "#5700a6",
+				getContextMenuItems: _this.getElementContextMenu
 			}],
 		mappingTemplateOption : {
 			relativeControlPointX : 4, 
 			connectionHoverTolerance : 5,
+			getContextMenuItems: _this.getConnectionContextMenu,
 			functionTemplateOptions : {
-				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 3,
-				getContextMenuItems: function(element) {
-					return [
-						    _this.graph.createContextMenuItem("ensureConnectedVisible", "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible", "resize-full", element.id, element.template.options.key),
-						    _this.graph.createContextMenuItem("resetPosition", "~eu.dariah.de.minfba.schereg.editor.actions.reset_position", "repeat", element.id, element.template.options.key),
-						    _this.graph.createContextMenuSeparator(),
-						    _this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar", "edit", element.id, element.template.options.key),
-						    _this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.edit_function", "edit", element.id, element.template.options.key),
-						    _this.graph.createContextMenuItem("removeMapping", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key),
-						];
-				}
+				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 3
 			}
 		}
 		
 	});
+	this.source = this.graph.addArea({ getContextMenuItems: _this.getAreaContextMenu });
+	this.target = this.graph.addArea({ getContextMenuItems: _this.getAreaContextMenu });
 	
-	
-	this.source = this.graph.addArea({ 
-		getContextMenuItems: _this.getAreaContextMenu 
-	});
-	this.target = this.graph.addArea({
-		getContextMenuItems: _this.getAreaContextMenu
-	});
 	this.graph.init();
-	
-	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
-	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
-	
-	
 	this.resize();
 	
  	this.getElementHierarchy(this.sourcePath, this.source);
@@ -188,11 +173,34 @@ MappingEditor.prototype.initGraphs = function() {
 MappingEditor.prototype.getAreaContextMenu = function(area) {
 	var _this = mappingEditor;
 	return [
+	    _this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.schema.schema"),
 		_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", area.index, "area"),
 		_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", area.index, "area"),
-		_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", area.index, "area"),
-		_this.graph.createContextMenuSeparator(),
-		_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", area.index, "area"),
+		_this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.editor.element_model"),
+		_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat"),
+		_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh"),
+	];
+};
+
+MappingEditor.prototype.getElementContextMenu = function(element) {
+	var _this = mappingEditor;
+	return [
+	        _this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.element.element"),
+	        _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+			_this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key)	
+	]; 
+};
+
+MappingEditor.prototype.getConnectionContextMenu = function(connection) {
+	var _this = mappingEditor;
+	return [
+	        _this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.mapping.mapping"),
+		    _this.graph.createContextMenuItem("ensureConnectedVisible", "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible", "resize-full", connection.id),
+		    _this.graph.createContextMenuItem("resetPosition", "~eu.dariah.de.minfba.schereg.editor.actions.reset_position", "repeat", connection.id),
+		    _this.graph.createContextMenuSeparator(),
+		    _this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar", "edit", connection.id),
+		    _this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.edit_function", "edit", connection.id),
+		    _this.graph.createContextMenuItem("removeMapping", "~eu.dariah.de.minfba.common.link.delete", "trash", connection.id, undefined, "danger"),
 	];
 };
 
@@ -222,18 +230,37 @@ MappingEditor.prototype.performTreeAction = function(action, elementId, elementK
 	    case "expandAll" :  return this.graph.areas[elementId].expandAll(true);
 	    case "collapseAll" : return this.graph.areas[elementId].expandAll(false);
 	    case "reload" : return this.reloadAll();
-	    case "reset" : return this.graph.areas[elementId].resetView();
+	    case "reset" : return this.graph.resetView();
 	 
-	    case "ensureConnectedVisible" : return;
-	    case "resetPosition" : return;
-	    case "editGrammar" : return;
-	    case "editFunction" : return;
-	    case "removeMapping" : return;
+	    case "ensureConnectedVisible" : return this.ensureConnectedVisible(elementId);
+	    case "resetPosition" : return this.resetMappingPosition(elementId);
+	    case "editGrammar" : return this.editGrammar(elementId);
+	    case "editFunction" : return this.editFunction(elementId);
+	    case "removeMapping" : return this.removeConceptMapping(elementId);
 	    
 	    
 	    default:
 	        throw new Error("Unknown tree action requested: " + action);
 	}  
+};
+
+MappingEditor.prototype.editGrammar = function(connectionId) {};
+
+MappingEditor.prototype.editFunction = function(connectionId) {};
+
+MappingEditor.prototype.resetMappingPosition = function(connectionId) {
+	var mapping = this.graph.getMappingById(connectionId);
+	mapping.clearMovedForkPoint();
+	this.graph.paint();
+};
+
+MappingEditor.prototype.ensureConnectedVisible = function(connectionId) {
+	var mapping = this.graph.getMappingById(connectionId);
+	mapping.from.element.ensureVisible();
+	for (var i=0; i<mapping.to.length; i++) {
+		mapping.to[i].element.ensureVisible();
+	}
+	this.graph.update();
 };
 
 MappingEditor.prototype.reloadAll = function() {
@@ -425,7 +452,30 @@ MappingEditor.prototype.changeConceptMappingHandler = function(e) {
 	_this.newConceptMappingHandler(e);
 }
 
-MappingEditor.prototype.newConceptMappingHandler = function(e) {
+MappingEditor.prototype.removeConceptMapping = function(conceptMappingId) {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), conceptMappingId), function(result) {
+		if(result) {
+			$.ajax({
+			    url: _this.mappingPath + "mappedConcept/" + conceptMappingId + "/async/remove",
+			    type: "POST",
+			    dataType: "json",
+			    success: function(data) {
+			    	_this.graph.deselectAll();
+			    	_this.reloadAll();
+			    },
+			    error: __util.processServerError
+			});
+		}
+	});
+};
+
+MappingEditor.prototype.saveConceptMappingHandler = function(e) {
 	var targetIds = [];
 	for (var i=0; i<e.connection.to.length; i++) {
 		targetIds.push(e.connection.to[i].element.id);
@@ -433,9 +483,9 @@ MappingEditor.prototype.newConceptMappingHandler = function(e) {
 	
 	var _this = mappingEditor;
 	$.ajax({
-		url: _this.mappingPath + 'async/saveConcept',
+		url: _this.mappingPath + "mappedConcept/" + e.connection.id + '/async/save',
         type: "POST",
-        data: { conceptId: e.connection.id, sourceElementId: e.connection.from.element.id, targetElementId: targetIds},
+        data: { sourceElementId: e.connection.from.element.id, targetElementId: targetIds},
         dataType: "json",
         success: function(data) { 
         	e.connection.id = data.pojo.id;        	

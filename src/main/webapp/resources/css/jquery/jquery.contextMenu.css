@@ -23,12 +23,12 @@
 .nu-context-menu ul {
     font-size: 15px;
     list-style: none;
-    margin: 2px 0 0;
-    padding: 4px 0;
+    margin: 0;
+    padding: 0;
     text-align: left;
 }
 
-.nu-context-menu ul li {
+.nu-context-menu ul li.menu-item {
     clear: both;
     color: #666;
     cursor: pointer;
@@ -38,13 +38,39 @@
     white-space: nowrap;
 }
 
-.nu-context-menu ul li span.glyphicon {
+.nu-context-menu ul li.menu-item span.glyphicon {
 	margin-right: 5px;
 }
 
-.nu-context-menu ul li:hover {
+.nu-context-menu ul li.menu-item:hover {
     background: #7A7395;
     color: #FFF;
+}
+
+.nu-context-menu ul li.menu-item.menu-item-danger {
+    color: #AC2925;
+}
+
+.nu-context-menu ul li.menu-item.menu-item-danger:hover {
+    background: #AC2925;
+    color: #FFF;
+}
+
+.nu-context-menu ul li.menu-item.menu-item-warning {
+    color: #EB9316;
+}
+
+.nu-context-menu ul li.menu-item.menu-item-warning:hover {
+    background: #EB9316;
+    color: #FFF;
+}
+
+.nu-context-menu ul li.menu-heading {
+	font-style: italic;
+	font-size: 90%;
+	background: #eee;
+	color: #777;
+	padding: 1px 20px 1px 30px;
 }
 
 .nu-context-menu ul hr {

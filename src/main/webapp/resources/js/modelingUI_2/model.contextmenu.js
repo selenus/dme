@@ -39,15 +39,22 @@ Model.prototype.createMenuItems = function (items) {
 		var _this = this;
 		var oItems = {};
 		var sepCount = 0;
+		var hCount = 0;
 		for (var i=0; i<items.length; i++) {
 			if (items[i].key=="-") {
 				oItems["sep"+sepCount++] = "---------";
+			} else if (items[i].key==undefined) {
+				oItems["heading"+hCount++] = { 
+					title: items[i].label,
+					heading: true
+				}
 			} else {
 				oItems[items[i].key] = {
 						title: items[i].label,
 						id : items[i].id,
 						type : items[i].type,
 						glyphicon : items[i].glyphicon,
+						actionType : items[i].actionType,
 						icon: function(itemKey, item) {
 							return '<span class="glyphicon glyphicon-' + item.glyphicon + '" aria-hidden="true"></span> ';
 						}
@@ -58,18 +65,23 @@ Model.prototype.createMenuItems = function (items) {
 	}
 };
 
-Model.prototype.createContextMenuItem = function(key, code, glyphicon, elementId, elementType) {
+Model.prototype.createContextMenuItem = function(key, code, glyphicon, elementId, elementType, actionType) {
 	return {
 		key: key, 
 		label: __translator.translate(code), 
 		glyphicon: glyphicon, 
 		id: elementId, 
-		type: elementType
+		type: elementType,
+		actionType: actionType
 	};
 };
 
 Model.prototype.createContextMenuSeparator = function() {
 	return { key: "-" };
+};
+
+Model.prototype.createContextMenuHeading = function(code) {
+	return { label: __translator.translate(code) };
 };
 
 Model.prototype.raiseContextMenuItemClickedEvent = function(element, key, id, type) {

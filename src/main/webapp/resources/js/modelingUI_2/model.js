@@ -51,6 +51,36 @@ Model.prototype.selectMappingsByIds = function(ids) {
 	}
 };
 
+Model.prototype.getMappingById = function(id) {
+	for (var i=0; i<this.mappings.length; i++) {
+		if (this.mappings[i].id==id) {
+			return this.mappings[i];
+		}
+	}
+};
+
+Model.prototype.resetView = function() {
+	for (var i=0; i<this.mappings.length; i++) {
+		this.mappings[i].clearMovedForkPoint();
+	}
+	for (var i=0; i<this.areas.length; i++) {
+		this.areas[i].resetView();
+	}
+	this.update();
+};
+
+Model.prototype.findElementById = function(id) {
+	for (var i=0; i<this.areas.length; i++) {
+		var element = this.areas[i].findElementById(this.areas[i], id);
+		if (element!=null) {
+			return element;
+		}
+	}
+};
+
+Model.prototype.getRectangle = function() {
+	return new Rectangle(0, 0, this.canvas.width, this.canvas.height);
+};
 
 Model.prototype.dispose = function() {
 	if (this.canvas !== null) {

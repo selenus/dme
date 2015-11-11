@@ -21,12 +21,22 @@ var Connection = function(template, from, to, id) {
 	this.template.init(this);
 }
 
+Connection.prototype.clearMovedForkPoint = function() {
+	if (this.movedForkPoint!==undefined) {
+		this.movedForkPoint=null;
+	}
+};
+
 Connection.prototype.getId = function() {
 	return this.id;
 };
 
 Connection.prototype.isSelected = function() {
 	return this.selected;
+};
+
+Connection.prototype.getContextMenuItems = function() {
+	return this.template.getContextMenuItems(this);
 };
 
 Connection.prototype.setSelected = function(selected) {

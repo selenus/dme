@@ -34,6 +34,12 @@ MappingTemplate.prototype.hitTest = function(connection, point) {
 	return null;
 };
 
+MappingTemplate.prototype.getContextMenuItems = function(connection) {
+	if (this.options.getContextMenuItems!==undefined) {
+		return this.options.getContextMenuItems(connection);
+	}
+};
+
 MappingTemplate.prototype.getCubicCurve = function(from, to) {
 	var split = (to.x - from.x) / this.options.relativeControlPointX;
 	var p1 = new Point(split+from.x, from.y); 
@@ -162,9 +168,8 @@ MappingTemplate.prototype.paint = function(connection, context) {
 	//var rectangle = this.getRectangle(connection);
 	//context.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	
-	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null && (
-			!fromParent || renderedTo.length!=connectedParents.length)) {
-		connection.func.paint(context);
+	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null) {
+		connection.func.paint(context, (fromParent || renderedTo.length==connectedParents.length));
 	}
 };
 

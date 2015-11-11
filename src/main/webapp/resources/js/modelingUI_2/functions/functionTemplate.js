@@ -37,13 +37,6 @@ FunctionTemplate.prototype.init = function(func) {
 	func.connector.addConnection = this.connectorTemplate.options.addConnection;
 };
 
-
-FunctionTemplate.prototype.getContextMenuItems = function(element) {
-	if (this.options.getContextMenuItems!==undefined) {
-		return this.options.getContextMenuItems(element);
-	}
-};
-
 FunctionTemplate.prototype.getAnchor = function(connection) {
 	return connection.forkPoint;
 };
@@ -66,7 +59,11 @@ FunctionTemplate.prototype.calculateWidth = function(func) {
 	return context.measureText(this.getText(func)).width;
 };
 
-FunctionTemplate.prototype.paint = function(func, context) { 
+FunctionTemplate.prototype.paint = function(func, context, faded) {
+	if (faded) {
+		return this.paintFaded(func, context);
+	}
+	
 	var rectangle = this.getRectangle(func);
 	
 	if (func.getActive()) {
@@ -75,8 +72,8 @@ FunctionTemplate.prototype.paint = function(func, context) {
 		context.lineWidth = this.options.lineWidth;
 	}
 	
-	context.fillStyle = func.connection.isSelected() ? this.options.secondaryColor : this.options.primaryColor;
-	context.strokeStyle = func.connection.isSelected() ? this.options.primaryColor : this.options.secondaryColor;
+	context.fillStyle = func.getActive() || func.isSelected() ? this.options.secondaryColor : this.options.primaryColor;
+	context.strokeStyle = func.getActive() || func.isSelected() ? this.options.primaryColor : this.options.secondaryColor;
 	
 	/*if (parentsConnected) {
 		context.fillStyle = this.model.theme.mappingConnectionInvisible;
@@ -93,6 +90,22 @@ FunctionTemplate.prototype.paint = function(func, context) {
 	context.fillStyle = context.strokeStyle;
 	context.textBaseline = "middle";
 	context.fillText(this.getText(func), rectangle.x + rectangle.width/2, rectangle.y + rectangle.height/2 + 2);
+	return true;
+};
+
+FunctionTemplate.prototype.paintFaded = function(func, context) {
+	var anchor = this.getAnchor(func.connection);
+	var rectangle = new Rectangle(anchor.x, anchor.y, 0, 0).inflate(4, 4);
+	
+	context.lineWidth = this.options.lineWidth;
+	context.fillStyle = func.getActive() || func.isSelected() ? this.model.theme.functionFaded.secondary : this.model.theme.functionFaded.primary;
+	context.strokeStyle = func.getActive() || func.isSelected() ? this.model.theme.functionFaded.primary : this.model.theme.functionFaded.secondary;
+	
+	if (this.options.radius==0) {
+		context.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height, true, true);
+	} else {
+		context.drawRoundRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height, this.options.radius, true, true);
+	}
 	return true;
 };
 

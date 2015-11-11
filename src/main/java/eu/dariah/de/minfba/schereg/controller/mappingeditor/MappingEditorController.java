@@ -72,33 +72,4 @@ public class MappingEditorController extends BaseScheregController {
 	public @ResponseBody List<MappedConcept> getMappedConcepts(@PathVariable String mappingId, Model model) {
 		return mappedConceptService.findAll(mappingId);
 	}
-	
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method = RequestMethod.POST, value = "/async/saveConcept")
-	public @ResponseBody ModelActionPojo saveConcept(@PathVariable String mappingId, @RequestParam(required=false) String conceptId, @RequestParam String sourceElementId, @RequestParam(value="targetElementId[]") List<String> targetElementIds,  HttpServletRequest request) {
-		AuthPojo auth = authInfoHelper.getAuth(request);
-		
-		MappedConcept c = null;
-		if (conceptId!=null && !conceptId.equals("")) {
-			c = mappedConceptService.findById(conceptId);
-		}
-		if (c==null) {
-			c = new MappedConceptImpl();
-			c.setTargetElementIds(new ArrayList<String>(1));
-		}
-		c.setEntityId(mappingId);
-		c.setSourceElementId(sourceElementId);
-		for (String targetElementId : targetElementIds) {
-			if (!c.getTargetElementIds().contains(targetElementId)) {
-				c.getTargetElementIds().add(targetElementId);
-			}
-		}
-		
-		mappedConceptService.saveMappedConcept(c, auth);
-		
-		ModelActionPojo result = new ModelActionPojo(true);
-		result.setPojo(c);
-		
-		return result;
-	}
 }

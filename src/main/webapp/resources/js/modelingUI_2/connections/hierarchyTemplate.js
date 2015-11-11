@@ -33,3 +33,7 @@ HierarchyTemplate.prototype.hitTest = function(connection, point) {
 	// Irrelevant for hierarchy connections
 	return false; 
 };
+
+HierarchyTemplate.prototype.getContextMenuItems = function(connection) {
+	return [];
+};

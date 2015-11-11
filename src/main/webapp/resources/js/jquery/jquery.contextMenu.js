@@ -44,8 +44,7 @@
             if (this.options.menu===undefined || (typeof this.options.menu !== 'object' && typeof this.options.menu !== 'function')) {
                 return false;
             } 
-            
-            
+
        	 	// Create context menu
             this._menu = $('<div>')
                 .addClass(this.options.contextMenuClass)
@@ -74,12 +73,18 @@
                     item = $('<hr>');
                 } else if (value && typeof value === 'object') {
 
-                    item = $('<li>')
-                    	.attr('data-key', key)
-                    	.attr('data-id', value.id)
-                    	.attr('data-item', value.type)
-                    	.text(' ' + value.title);
-
+                	if (value.heading==true) {
+                		item = $('<li>')
+	                    	.attr('class', "menu-heading")
+	                    	.text(value.title);
+                	} else {
+                		item = $('<li>')
+	                    	.attr('class', "menu-item" + (value.actionType==undefined || value.actionType==null ? "" : " menu-item-" + value.actionType))
+	                    	.attr('data-key', key)
+	                    	.attr('data-id', value.id)
+	                    	.attr('data-item', value.type)
+	                    	.text(' ' + value.title);
+                	}
                     // Font-awesome support
                     if (value.icon) {
                     	if (typeof value.icon === 'function') {
@@ -89,15 +94,9 @@
                     	}
                     	item.prepend(icon);
                     }
-
                 }
-
                 menuList.append(item);
-
             });
-
-            
-        	
         },
 
         _pDefault: function(event) {

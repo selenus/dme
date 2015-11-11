@@ -26,8 +26,9 @@ Function.prototype.move = function(point) {
 		var movedY = point.y + this.moveOffsetY;
 
 		// Leave function within horizontal bounds of the connection
-		if (movedX < this.connection.getRectangle().x || 
-				movedX > (this.connection.getRectangle().x+this.connection.getRectangle().width)) {
+		if (this.connection.movedForkPoint!= null && (
+				movedX < this.template.model.getRectangle().x + this.template.model.theme.paddingArea.x || 
+				movedX > this.template.model.getRectangle().x + this.template.model.getRectangle().width - this.template.model.theme.paddingArea.x ) ) {
 			movedX = this.connection.movedForkPoint.x;
 		}
 		this.connection.movedForkPoint = new Point(movedX, movedY);
@@ -56,7 +57,7 @@ Function.prototype.setVisible = function(visible) {
 };
 
 Function.prototype.getContextMenuItems = function() {
-	return this.template.getContextMenuItems(this);
+	return this.connection.getContextMenuItems();
 };
 
 Function.prototype.setActive = function(active) {
@@ -67,8 +68,8 @@ Function.prototype.getActive = function() {
 	return this.connection.active;
 };
 
-Function.prototype.paint = function(context) {
-	if (this.template.paint(this, context)) {
+Function.prototype.paint = function(context, faded) {
+	if (this.template.paint(this, context, faded) && !faded) {
 		this.connector.paint(context);
 	}
 };

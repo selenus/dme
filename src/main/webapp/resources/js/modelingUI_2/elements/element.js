@@ -29,6 +29,15 @@ var Element = function(template, parent, id, label, icons) {
 	this.rectangle = new Rectangle(0, 0, this.calculateWidth(), this.template.options.height);
 };
 
+Element.prototype.ensureVisible = function() {
+	if (this.parent!=null) {
+		if (!this.parent.isExpanded()) {
+			this.parent.setExpanded(true);
+		}
+		this.parent.ensureVisible();
+	}
+};
+
 Element.prototype.getId = function() {
 	return this.id;
 };

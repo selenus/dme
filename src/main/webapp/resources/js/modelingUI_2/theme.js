@@ -1,9 +1,16 @@
 var ModelingTheme = {
 	background : "#FAFAFA",
 	hierarchyConnection : "#000",
+	
 	mappingConnectionDefault : "#0049a6",
 	mappingConnectionSelected : "#5700a6",
 	mappingConnectionInvisible : "#CCC",
+	
+	functionFaded : {
+		primary : "#EEE",
+		secondary : "#CCC",
+	},
+	
 	selection : "#fff",
 	
 	connector : "#FFF",
@@ -16,7 +23,7 @@ var ModelingTheme = {
 	expanderHover : "#FFF",
 	expanderHoverBorder : "#222",
 
-	areaBorderColor : "#CCC",
+	areaBorderColor : "#EEE",
 	areaBorderWidth : 1,
 
 	rootElementPosition : { y: 20, x: 20 },
