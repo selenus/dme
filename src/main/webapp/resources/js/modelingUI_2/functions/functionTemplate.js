@@ -11,7 +11,9 @@ var FunctionTemplate = function(model, options) {
 			var cOwning = this.element.connection; // Connection that holds the function
 			if (connection.to!==undefined && connection.to!==null && connection.to.length>0) {
 				for (var i=0; i<connection.to.length; i++) {
-					cOwning.addTo(connection.to[i]);
+					if (!cOwning.to.contains(connection.to[i])) {
+						cOwning.addTo(connection.to[i]);
+					}
 				}
 			}
 			return cOwning;
