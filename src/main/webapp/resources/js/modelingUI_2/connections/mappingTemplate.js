@@ -56,6 +56,9 @@ MappingTemplate.prototype.getCurvePositionForX = function(x, curve) {
 	return -100;
 };
 
+/**
+ * This should be rethought and refactored
+ */
 MappingTemplate.prototype.paint = function(connection, context) {
 	if (connection.from.element.isVisible()) {
 		var from = connection.from.getPosition();
@@ -124,10 +127,10 @@ MappingTemplate.prototype.paint = function(connection, context) {
 
 		// [to.length] lines from fork point
 		for (var i=0; i<renderedTo.length; i++) {
-			
 			var to = renderedTo[i];
+			var toParent = connectedParents.contains(to);
 			
-			if (connectedParents.contains(to) || fromParent) {
+			if (toParent) {
 				context.strokeStyle = this.model.theme.mappingConnectionInvisible;
 			} else {
 				context.strokeStyle = strokeStyle;
@@ -136,7 +139,17 @@ MappingTemplate.prototype.paint = function(connection, context) {
 			var split = (to.x - connection.forkPoint.x) / this.options.relativeControlPointX;
 			context.beginPath();
 			context.moveTo(connection.forkPoint.x, connection.forkPoint.y);
-			context.bezierCurveTo(split+connection.forkPoint.x, connection.forkPoint.y, split*(this.options.relativeControlPointX-1)+connection.forkPoint.x, to.y, to.x, to.y);
+			
+			var toY = to.y;
+			if (toParent) { 
+				if (connection.forkPoint.y < to.y) {
+					toY -= 4;
+				} else {
+					toY += 4;
+				} 			
+			} 
+			
+			context.bezierCurveTo(split+connection.forkPoint.x, connection.forkPoint.y, split*(this.options.relativeControlPointX-1)+connection.forkPoint.x, toY, to.x, toY);
 			context.stroke();
 		}
 	} else {
@@ -149,8 +162,9 @@ MappingTemplate.prototype.paint = function(connection, context) {
 	//var rectangle = this.getRectangle(connection);
 	//context.strokeRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	
-	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null) {
-		connection.func.paint(context, fromParent || connectedParents.length>0);
+	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null && (
+			!fromParent || renderedTo.length!=connectedParents.length)) {
+		connection.func.paint(context);
 	}
 };
 
