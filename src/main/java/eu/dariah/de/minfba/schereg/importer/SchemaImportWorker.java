@@ -27,6 +27,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.SchemaServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
@@ -105,11 +106,11 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	@Override
 	public synchronized void registerImportFinished(Schema schema, Nonterminal root, AuthPojo auth) {
 		if (root!=null) {
-			elementService.removeElementTree(schema.getId(), auth);
+			elementService.clearElementTree(schema.getId(), auth);
 		}
-		elementService.saveElementHierarchy(root, auth);
-		schema.setRootNonterminalId(root.getId());
-		schemaService.saveSchema(schema, auth);
+		Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
+		
+		schemaService.saveSchema(schema, rootNonterminal, auth);
 	}
 
 	@Override 

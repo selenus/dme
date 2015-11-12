@@ -17,8 +17,8 @@ import eu.dariah.de.minfba.schereg.serialization.Reference;
 public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 	@Autowired private ReferenceDao referenceDao;
 	
-	protected Reference findRootReferenceById(String referenceId) {
-		return referenceDao.findById(referenceId);
+	protected Reference findReferenceById(String schemaId) {
+		return referenceDao.findById(schemaId);
 	}
 	
 	protected void saveRootReference(Reference reference) {
@@ -62,11 +62,11 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 	 * @throws IllegalArgumentException Thrown if any of the references in the deleted subtree has an invalid ID
 	 * @throws ClassNotFoundException Thrown if a class name is specified that cannot be found by the current classloader 
 	 */
-	protected void removeReference(String rootReferenceId, String removeId, AuthPojo auth) throws IllegalArgumentException, ClassNotFoundException {
-		Reference rootReference = referenceDao.findById(rootReferenceId);
-		Assert.notNull(rootReference);
+	protected void removeReference(String schemaId, String removeId, AuthPojo auth) throws IllegalArgumentException, ClassNotFoundException {
+		Reference entityReference = referenceDao.findById(schemaId);
+		Assert.notNull(entityReference);
 		
-		Reference removeReference = removeSubreference(rootReference, removeId);
+		Reference removeReference = removeSubreference(entityReference, removeId);
 		if (removeReference!=null) {
 			// Also delete all elements that are referenced in the deleted subtree
 			Map<String, Reference[]> subordinateReferenceMap = new HashMap<String, Reference[]>();
@@ -75,7 +75,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 			referenceDao.deleteAll(subordinateReferenceMap, auth.getUserId(), auth.getSessionId());
 			
 			// Delete the removable element from the tree
-			referenceDao.save(rootReference);
+			referenceDao.save(entityReference);
 		}
 	}
 	
@@ -87,8 +87,8 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 	 * @throws IllegalArgumentException Thrown if any of the references in the deleted subtree has an invalid ID
 	 * @throws ClassNotFoundException Thrown if a class name is specified that cannot be found by the current classloader 
 	 */
-	protected void removeTree(String rootReferenceId, AuthPojo auth) throws IllegalArgumentException, ClassNotFoundException {
-		Reference rootReference = referenceDao.findById(rootReferenceId);
+	protected void clearReferenceTree(String schemaId, AuthPojo auth) throws IllegalArgumentException, ClassNotFoundException {
+		Reference rootReference = referenceDao.findById(schemaId);
 		if(rootReference==null) {
 			return;
 		}
@@ -97,7 +97,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		getAllSubordinateReferences(rootReference, subordinateReferenceMap);
 		
 		referenceDao.deleteAll(subordinateReferenceMap, auth.getUserId(), auth.getSessionId());
-		referenceDao.delete(rootReference);
+		//referenceDao.delete(rootReference);
 	}
 	
 	/**

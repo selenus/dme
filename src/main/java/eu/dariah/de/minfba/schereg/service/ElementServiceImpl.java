@@ -37,38 +37,35 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private FunctionDao functionDao;
 	
+	
 	@Override
 	public Element findRootBySchemaId(String schemaId) {
 		return this.findRootBySchemaId(schemaId, false);
 	}
-	
-	@Override
-	public Element findRootByElementId(String rootElementId) {
-		return this.findRootByElementId(rootElementId, false);
-	}
-	
+		
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
-		Schema s = schemaDao.findEnclosedById(schemaId);
-		if (s!=null) {
-			return this.findRootByElementId(s.getRootNonterminalId(), eagerLoadHierarchy);
+		Reference reference = this.findReferenceById(schemaId);
+		Reference rootElementReference = null;
+		if (reference.getChildReferences()!=null && reference.getChildReferences().containsKey(Nonterminal.class.getName()) &&
+				reference.getChildReferences().get(Nonterminal.class.getName()).length>0 ) {
+			rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[0];
 		}
-		return null;
-	}
-	
-	@Override
-	public Element findRootByElementId(String rootElementId, boolean eagerLoadHierarchy) {
-		Element root = elementDao.findById(rootElementId);
-		if (!eagerLoadHierarchy) {
-			return root;
+		if (rootElementReference==null) {
+			return null;
 		}
 		
-		List<Identifiable> elements = this.getAllElements(root.getEntityId());		
+		Element root = findById(rootElementReference.getId());
+		if (!eagerLoadHierarchy) {
+			 return root;
+		}
+		
+		List<Identifiable> elements = this.getAllElements(schemaId);		
 		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
 		for (Identifiable e : elements) {
 			elementMap.put(e.getId(), e);
 		}
-		return (Element)fillElement(findRootReferenceById(rootElementId), elementMap);
+		return (Element)fillElement(rootElementReference, elementMap);
 	}
 	
 	public static MappableElement convertElement(Element e, boolean deep) {
@@ -94,17 +91,18 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public void saveOrReplaceRoot(String schemaId, Nonterminal element, AuthPojo auth) {
-		this.removeElementTree(schemaId, auth);
+		this.clearElementTree(schemaId, auth);
 		element.setId(null);
+		
 		Reference r = this.saveElementHierarchy(element, auth);
-				
-		Schema s = schemaDao.findEnclosedById(schemaId);
-		s.setRootNonterminalId(r.getId());
-		try {
-			schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
-		} catch (GenericScheregException e) {
-			logger.error("Failed to save schema", e);
-		}
+		Reference root = this.findReferenceById(schemaId);
+	
+		Reference[] childArray = new Reference[1];
+		childArray[0] = r;
+		
+		root.setChildReferences(new HashMap<String, Reference[]>());
+		root.getChildReferences().put(element.getClass().getName(), childArray);
+		this.saveRootReference(root);
 	}
 	
 	public Identifiable fillElement(Reference r, Map<String, Identifiable> elementMap) {
@@ -195,9 +193,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public Reference saveElementHierarchy(Element e, AuthPojo auth) {
-		Reference rootReference = this.saveElementsInHierarchy(e, auth);
-		saveRootReference(rootReference);
-		return rootReference;
+		return this.saveElementsInHierarchy(e, auth);
 	}
 	
 	@Override
@@ -274,8 +270,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label, AuthPojo auth) {
-		String rootElementId = schemaDao.findEnclosedById(schemaId).getRootNonterminalId();
-		Reference rRoot = this.findRootReferenceById(rootElementId);
+		Reference rRoot = this.findReferenceById(schemaId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		Element eParent = elementDao.findById(parentElementId);
 		
@@ -295,35 +290,26 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 			
 	@Override
-	public Element removeElement(String schemaId, String elementId, AuthPojo auth) {
-		Element eRoot = findRootBySchemaId(schemaId);
-		if (eRoot.getId().equals(elementId)) {
-			return removeElementTree(schemaId, auth);
-		}
+	public void removeElement(String schemaId, String elementId, AuthPojo auth) {
 		Element eRemove = elementDao.findById(elementId);
 		if (eRemove != null) {
 			try {
-				this.removeReference(eRoot.getId(), elementId, auth);
+				this.removeReference(schemaId, elementId, auth);
 				elementDao.delete(eRemove, auth.getUserId(), auth.getSessionId());
-				return eRemove;
 			} catch (Exception e) {
 				logger.warn("An error occurred while deleting an element or its references. "
 						+ "The owning schema {} might be in an inconsistent state", schemaId, e);
 			}
 		}
-		return null;
 	}
 	
 	@Override
-	public Element removeElementTree(String schemaId, AuthPojo auth) {
+	public void clearElementTree(String schemaId, AuthPojo auth) {
 		Schema s = schemaDao.findEnclosedById(schemaId);
-		Element eRoot = findRootBySchemaId(schemaId);
-		if (eRoot!=null) {	
+		
+		if (s!=null) {	
 			try {
-				this.removeTree(eRoot.getId(), auth);
-				elementDao.delete(eRoot, auth.getUserId(), auth.getSessionId());
-				
-				s.setRootNonterminalId(null);
+				this.clearReferenceTree(schemaId, auth);
 				try {
 					schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
 				} catch (GenericScheregException e) {
@@ -333,7 +319,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 				logger.error("Failed to remove tree by schemaID", e);
 			}
 		}
-		return eRoot;
 	}
 
 	@Override

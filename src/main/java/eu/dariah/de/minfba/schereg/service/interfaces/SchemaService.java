@@ -12,6 +12,7 @@ import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
 
 public interface SchemaService extends BaseService {
@@ -33,5 +34,6 @@ public interface SchemaService extends BaseService {
 	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId);
 	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId);
 	public List<ChangeSet> getChangeSetForAllSchemas();
+	public void saveSchema(Schema schema, Reference rootNonterminal, AuthPojo auth);
 	
 }

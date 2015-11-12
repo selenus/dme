@@ -22,7 +22,6 @@ import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
-import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
@@ -31,7 +30,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 public class GrammarServiceImpl extends BaseReferenceServiceImpl implements GrammarService {
 		
 	@Autowired private GrammarDao grammarDao;
-	@Autowired private SchemaDao schemaDao;
 	@Autowired private TransformationEngine engine;
 
 	@Value(value="${paths.grammars}")
@@ -40,8 +38,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		
 	@Override
 	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label, AuthPojo auth) {
-		String rootElementId = schemaDao.findEnclosedById(schemaId).getRootNonterminalId();
-		Reference rRoot = this.findRootReferenceById(rootElementId);
+		Reference rRoot = this.findReferenceById(schemaId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		
 		DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(schemaId, getNormalizedName(label));
@@ -128,12 +125,10 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 
 	@Override
 	public DescriptionGrammar deleteGrammarById(String schemaId, String id, AuthPojo auth) {
-		String rootElementId = schemaDao.findEnclosedById(schemaId).getRootNonterminalId();
-		
 		DescriptionGrammar grammar = grammarDao.findById(id);
 		if (grammar != null) {
 			try {
-				this.removeReference(rootElementId, id, auth);
+				this.removeReference(schemaId, id, auth);
 				grammarDao.delete(grammar, auth.getUserId(), auth.getSessionId());
 				return grammar;
 			} catch (Exception e) {

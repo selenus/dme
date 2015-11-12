@@ -172,8 +172,9 @@ public class ElementEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody Element removeElement(@PathVariable String schemaId, @PathVariable String elementId, HttpServletRequest request) {
-		return elementService.removeElement(schemaId, elementId, authInfoHelper.getAuth(request));
+	public @ResponseBody ModelActionPojo removeElement(@PathVariable String schemaId, @PathVariable String elementId, HttpServletRequest request) {
+		elementService.removeElement(schemaId, elementId, authInfoHelper.getAuth(request));
+		return new ModelActionPojo(true);
 	}
 	
 

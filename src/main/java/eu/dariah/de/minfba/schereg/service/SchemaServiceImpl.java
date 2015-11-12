@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
@@ -30,7 +32,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 public class SchemaServiceImpl extends BaseReferenceServiceImpl implements SchemaService {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaDao schemaDao;
-
+	
 	@Override
 	public List<Schema> findAllSchemas() {
 		return schemaDao.findAllEnclosed();
@@ -44,6 +46,19 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 	@Override
 	public void saveSchema(Schema schema, AuthPojo auth) {
 		this.innerSaveSchema(schema, null, auth.getUserId(), auth.getSessionId());
+	}
+	
+	@Override
+	public void saveSchema(Schema schema, Reference rootNonterminal, AuthPojo auth) {
+		this.innerSaveSchema(schema, null, auth.getUserId(), auth.getSessionId());
+		
+		Reference root = this.findReferenceById(schema.getId());
+	
+		Reference[] childArray = new Reference[1];
+		childArray[0] = rootNonterminal;
+		
+		root.getChildReferences().put(Nonterminal.class.getName(), childArray);
+		this.saveRootReference(root);
 	}
 	
 	private void innerSaveSchema(Schema schema, Boolean draft, String userId, String sessionId) {
@@ -82,7 +97,7 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 		RightsContainer<Schema> s = schemaDao.findById(id);
 		if (s != null) {
 			if (this.getHasWriteAccess(s, auth.getUserId())) {
-				Reference r = this.findRootReferenceById(s.getId());
+				Reference r = this.findReferenceById(s.getId());
 				if (r.getChildReferences()!=null && r.getChildReferences().size()>0) {
 					String rootNonterminalId = r.getChildReferences().get(Nonterminal.class.getName())[0].getId();
 					if (BaseDaoImpl.isValidObjectId(rootNonterminalId)) {
