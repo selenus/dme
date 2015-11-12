@@ -54,9 +54,11 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 		
 		Reference root = this.findReferenceById(schema.getId());
 	
+		if (root.getChildReferences()==null) {
+			root.setChildReferences(new HashMap<String, Reference[]>());
+		}
 		Reference[] childArray = new Reference[1];
-		childArray[0] = rootNonterminal;
-		
+		childArray[0] = rootNonterminal;		
 		root.getChildReferences().put(Nonterminal.class.getName(), childArray);
 		this.saveRootReference(root);
 	}
