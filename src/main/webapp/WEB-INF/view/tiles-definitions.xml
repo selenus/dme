@@ -89,6 +89,8 @@
 			<add-attribute type="string" value="jquery/jquery.contextMenu.js" />
 			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
 			<add-attribute type="string" value="lib/svg-pan-zoom.js" />
+			<add-attribute type="string" value="lib/fileSaver.js" />
+			<add-attribute type="string" value="lib/blob.js" />
 			<add-attribute type="string" value="_common/svgviewer.js" />
 			<add-attribute type="string" value="logArea.js" />
 			<add-attribute type="string" value="sessions.js" />
@@ -121,6 +123,8 @@
 			<add-attribute type="string" value="modelingUI_2/theme.js" />
 			
 			<add-attribute type="string" value="mappingEditor/mappingEditor.js" />
+			<add-attribute type="string" value="schemaEditor/grammarEditor.js" />
+			<add-attribute type="string" value="schemaEditor/functionEditor.js" />
 		</put-list-attribute>
 	</definition>
 	

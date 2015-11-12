@@ -1,4 +1,5 @@
 var schemaEditor;
+
 $(document).ready(function() {
 	schemaEditor = new SchemaEditor({
 		footerOffset: 70,
@@ -39,6 +40,7 @@ var SchemaEditor = function(options) {
 	
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
+	
 	
 	
 	__translator.addTranslations(["~eu.dariah.de.minfba.common.model.id",
@@ -450,7 +452,9 @@ SchemaEditor.prototype.editGrammar = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal); },       
+		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
+			pathPrefix: __util.getBaseUrl() + "schema/editor/" + this.schema.id
+		}); },       
 		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
 		
@@ -469,7 +473,9 @@ SchemaEditor.prototype.editFunction = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-        setupCallback: function(modal) { functionEditor = new FunctionEditor(modal); },       
+        setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
+			pathPrefix: __util.getBaseUrl() + "schema/editor/" + this.schema.id
+		}); },       
 		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
 		

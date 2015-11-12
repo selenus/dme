@@ -70,6 +70,6 @@ public class MappingEditorController extends BaseScheregController {
 	
 	@RequestMapping(value="/async/getConcepts", method=RequestMethod.GET)
 	public @ResponseBody List<MappedConcept> getMappedConcepts(@PathVariable String mappingId, Model model) {
-		return mappedConceptService.findAll(mappingId);
+		return mappedConceptService.findAllByMappingId(mappingId, true);
 	}
 }

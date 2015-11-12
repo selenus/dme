@@ -105,49 +105,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		this.saveRootReference(root);
 	}
 	
-	public Identifiable fillElement(Reference r, Map<String, Identifiable> elementMap) {
-		Identifiable e = elementMap.get(r.getId());
-		
-		if (r.getChildReferences()!=null) {
-			if (e instanceof Nonterminal && r.getChildReferences().containsKey(Nonterminal.class.getName())) {
-				Nonterminal n = (Nonterminal)e;
-				n.setChildNonterminals(new ArrayList<Nonterminal>());
-				for (Reference rChild : r.getChildReferences().get(Nonterminal.class.getName())) {
-					n.getChildNonterminals().add((Nonterminal)fillElement(rChild, elementMap));
-				}	
-			} else if (e instanceof Label && r.getChildReferences().containsKey(Label.class.getName())) {
-				Label l = (Label)e;
-				l.setSubLabels(new ArrayList<Label>());
-				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
-					l.getSubLabels().add((Label)fillElement(rChild, elementMap));
-				}	
-			}
-			if ( (e instanceof Nonterminal || e instanceof Label) && 
-					r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
-				Element elem = (Element)e;
-				elem.setFunctions(new ArrayList<DescriptionGrammarImpl>());
-				for (Reference rChild : r.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
-					elem.getFunctions().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
-				}	
-			}
-			if (e instanceof DescriptionGrammarImpl && r.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
-				DescriptionGrammarImpl g = (DescriptionGrammarImpl)e;
-				g.setTransformationFunctions(new ArrayList<TransformationFunctionImpl>());
-				for (Reference rChild : r.getChildReferences().get(TransformationFunctionImpl.class.getName())) {
-					g.getTransformationFunctions().add((TransformationFunctionImpl)fillElement(rChild, elementMap));
-				}	
-			}
-			if (e instanceof TransformationFunctionImpl && r.getChildReferences().containsKey(Label.class.getName())) {
-				TransformationFunctionImpl f = (TransformationFunctionImpl)e;
-				f.setOutputElements(new ArrayList<Label>());
-				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
-					f.getOutputElements().add((Label)fillElement(rChild, elementMap));
-				}	
-			}
-		}
-		return e;		
-	}
-	
 	@Override
 	public Element findById(String elementId) {
 		return elementDao.findById(elementId);

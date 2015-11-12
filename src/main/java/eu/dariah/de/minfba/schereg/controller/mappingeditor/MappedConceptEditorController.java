@@ -60,7 +60,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 			}
 		}
 		
-		mappedConceptService.saveMappedConcept(c, auth);
+		mappedConceptService.saveMappedConcept(c, mappingId, auth);
 		
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(c);

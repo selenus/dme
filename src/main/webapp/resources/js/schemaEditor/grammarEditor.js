@@ -1,6 +1,10 @@
 var grammarEditor;
 
-var GrammarEditor = function(modal) {
+var GrammarEditor = function(modal, options) {
+	this.options = $.extend({ 	
+		pathPrefix: ""
+	}, options)
+	
 	this.modal = modal;
 	this.combinedGrammar = true;
 	this.originalMode = "";
@@ -10,7 +14,7 @@ var GrammarEditor = function(modal) {
 	this.error = $(this.modal).find("#error").val()=="true";
 	this.schemaId = schemaEditor.schemaId;
 	this.grammarId = schemaEditor.selectedElementId;
-	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/grammar/" + this.grammarId;
+	this.pathname = this.options.pathPrefix + "/grammar/" + this.grammarId;
 	
 	this.processGrammarModal = null;
 	

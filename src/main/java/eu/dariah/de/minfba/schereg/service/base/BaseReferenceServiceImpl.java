@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.service.base;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.Label;
+import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
+import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -31,15 +39,17 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 	 * @param parentReference - The reference to which the new subreference is added
 	 * @param child - The entity for which the subreference is created
 	 */
-	protected static void addChildReference(Reference parentReference, Identifiable child) {
+	protected Reference addChildReference(Reference parentReference, Identifiable child) {
 		Assert.notNull(parentReference);
 		Assert.isTrue(BaseDaoImpl.isValidObjectId(child.getId()), "Element must be saved when reference is created.");
 		
+		Reference childReference = new Reference(child.getId());
+		
 		if (parentReference.getChildReferences()==null) {
 			parentReference.setChildReferences(new HashMap<String, Reference[]>());
-			parentReference.getChildReferences().put(child.getClass().getName(), new Reference[]{ new Reference(child.getId()) });
+			parentReference.getChildReferences().put(child.getClass().getName(), new Reference[]{ childReference });
 		} else if (!parentReference.getChildReferences().containsKey(child.getClass().getName())) {
-			parentReference.getChildReferences().put(child.getClass().getName(), new Reference[]{ new Reference(child.getId()) });
+			parentReference.getChildReferences().put(child.getClass().getName(), new Reference[]{ childReference });
 		} else {
 			Reference[] subRefs = parentReference.getChildReferences().get(child.getClass().getName());
 			Reference[] newRefs = new Reference[subRefs.length + 1];
@@ -47,9 +57,11 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 			while (i<subRefs.length) {
 				newRefs[i] = subRefs[i++];
 			}
-			newRefs[i] = new Reference(child.getId());
+			newRefs[i] = childReference;
 			parentReference.getChildReferences().put(child.getClass().getName(), newRefs);
 		}
+		
+		return childReference;
 	}
 	
 	
@@ -218,6 +230,55 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		return rRemove;
 	}
 	
-	
+	protected Identifiable fillElement(Reference r, Map<String, Identifiable> elementMap) {
+		Identifiable e = elementMap.get(r.getId());
+		
+		if (r.getChildReferences()!=null) {
+			if (e instanceof Nonterminal && r.getChildReferences().containsKey(Nonterminal.class.getName())) {
+				Nonterminal n = (Nonterminal)e;
+				n.setChildNonterminals(new ArrayList<Nonterminal>());
+				for (Reference rChild : r.getChildReferences().get(Nonterminal.class.getName())) {
+					n.getChildNonterminals().add((Nonterminal)fillElement(rChild, elementMap));
+				}	
+			} else if (e instanceof Label && r.getChildReferences().containsKey(Label.class.getName())) {
+				Label l = (Label)e;
+				l.setSubLabels(new ArrayList<Label>());
+				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
+					l.getSubLabels().add((Label)fillElement(rChild, elementMap));
+				}	
+			}
+			if ( (e instanceof Nonterminal || e instanceof Label) && 
+					r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
+				Element elem = (Element)e;
+				elem.setFunctions(new ArrayList<DescriptionGrammarImpl>());
+				for (Reference rChild : r.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
+					elem.getFunctions().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
+				}	
+			}
+			if (e instanceof DescriptionGrammarImpl && r.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
+				DescriptionGrammarImpl g = (DescriptionGrammarImpl)e;
+				g.setTransformationFunctions(new ArrayList<TransformationFunctionImpl>());
+				for (Reference rChild : r.getChildReferences().get(TransformationFunctionImpl.class.getName())) {
+					g.getTransformationFunctions().add((TransformationFunctionImpl)fillElement(rChild, elementMap));
+				}	
+			}
+			if (e instanceof TransformationFunctionImpl && r.getChildReferences().containsKey(Label.class.getName())) {
+				TransformationFunctionImpl f = (TransformationFunctionImpl)e;
+				f.setOutputElements(new ArrayList<Label>());
+				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
+					f.getOutputElements().add((Label)fillElement(rChild, elementMap));
+				}	
+			}
+			
+			if (e instanceof MappedConceptImpl && r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
+				MappedConcept c = (MappedConcept)e;
+				c.setGrammars(new ArrayList<DescriptionGrammarImpl>());
+				for (Reference rChild : r.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
+					c.getGrammars().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
+				}	
+			}
+		}
+		return e;		
+	}
 	
 }

@@ -19,10 +19,12 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.MappingWithSchemasImpl;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
 @Service
-public class MappingServiceImpl implements MappingService {
+public class MappingServiceImpl extends BaseReferenceServiceImpl implements MappingService {
 	@Autowired private MappingDao mappingDao;
 	@Autowired private SchemaDao schemaDao;
 
@@ -39,7 +41,7 @@ public class MappingServiceImpl implements MappingService {
 	@Override
 	public boolean getHasWriteAccess(String id, String userId) {
 		/* User is logged in (has an ID) and creates a new mapping (no ID) */
-		if ( (id==null || id.isEmpty()) && (userId!=null && !userId.isEmpty()) ) {
+		if (isNewId(id)) {
 			return true;
 		}
 		RightsContainer<Mapping> m = mappingDao.findByIdAndUserId(id, userId, true);
@@ -62,17 +64,21 @@ public class MappingServiceImpl implements MappingService {
 	@Override
 	public void saveMapping(AuthWrappedPojo<Mapping> mapping, AuthPojo auth) {
 		RightsContainer<Mapping> container = null;
-		if (mapping.getId()!=null) {
+		boolean isNew = mapping.getId()==null || mapping.getId().equals("") || mapping.getId().equals("undefined");
+		if (!isNew) {
 			container = mappingDao.findById(mapping.getId());
 		}
 		if (container==null) {
+			isNew = true;
 			container = createContainer(auth.getUserId());
 		}
 		container.setElement(mapping.getPojo());
 		container.setDraft(mapping.isDraft());
 		mappingDao.save(container, auth.getUserId(), auth.getSessionId());
-	}	
-	
+		if (isNew) {
+			this.saveRootReference(new Reference(mapping.getId()));
+		}
+	}
 
 	@Override
 	public void deleteMappingById(String id, AuthPojo auth) {

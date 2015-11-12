@@ -1,10 +1,14 @@
 var functionEditor;
 
-var FunctionEditor = function(modal) {
+var FunctionEditor = function(modal, options) {
+	this.options = $.extend({ 	
+		pathPrefix: ""
+	}, options)
+	
 	this.modal = modal;
 	this.schemaId = schemaEditor.schemaId;
 	this.functionId = schemaEditor.selectedElementId;
-	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schemaId + "/function/" + this.functionId;
+	this.pathname = this.options.pathPrefix + "/function/" + this.functionId;
 	this.svg = null;
 	
 	this.modified = false;

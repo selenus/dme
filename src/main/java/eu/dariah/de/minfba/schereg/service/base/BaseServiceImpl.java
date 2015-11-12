@@ -18,6 +18,10 @@ public abstract class BaseServiceImpl implements BaseService {
 		return label.substring(0,1).toUpperCase() + label.substring(1);
 	}
 	
+	protected static boolean isNewId(String id) {
+		return id==null || id.equals("") || id.equals("undefined");
+	}
+	
 	@Override
 	public List<ChangeSet> getChangeSetForEntity(String entityId) {
 		return changeSetDao.findByEntityId(entityId);
