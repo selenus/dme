@@ -84,6 +84,12 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 	public MappedConcept findById(String id) {
 		return mappedConceptDao.findById(id);
 	}
+	
+	@Override
+	public String findById(String mappingId, String mappedConceptId, boolean eagerLoadHierarchy) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public void removeMappedConcept(String mappingId, String mappedConceptId, AuthPojo auth) throws GenericScheregException {
