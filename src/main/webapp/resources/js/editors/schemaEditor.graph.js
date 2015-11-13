@@ -144,7 +144,7 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 };
 
 SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
-	if (schemaEditor.area.root==null) {
+	if (editor.area.root==null) {
 		this.loadElementHierarchy();
 		return;
 	}

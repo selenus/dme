@@ -182,6 +182,18 @@ Model.prototype.select = function(object) {
 	}
 };
 
+Model.prototype.reselect = function() {
+	var selectedItemIds = [];
+	for (var i=0; i<this.selectedItems.length; i++) {
+		selectedItemIds.push(this.selectedItems[i].getId());
+	}
+	this.deselectAll();
+	for (var i=0; i<this.areas.length; i++) {
+		this.areas[i].selectElementsByIds(this.areas[i].root, selectedItemIds);    
+	}
+	this.selectMappingsByIds(selectedItemIds);
+};
+
 Model.prototype.deselectAll = function() {
 	this.selectedItems = [];
 	for (var i=0; i<this.areas.length;i++) {

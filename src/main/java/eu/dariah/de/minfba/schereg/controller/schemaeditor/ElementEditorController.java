@@ -33,7 +33,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value="/schema/editor/{schemaId}/element/{elementId}")
+@RequestMapping(value={"/schema/editor/{schemaId}/element/{elementId}", "/mapping/editor/{schemaId}/element/{elementId}"})
 public class ElementEditorController extends BaseScheregController {
 	@Autowired private ElementService elementService;
 	@Autowired private SchemaService schemaService;

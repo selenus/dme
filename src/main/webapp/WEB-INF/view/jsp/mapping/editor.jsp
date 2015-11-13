@@ -122,19 +122,75 @@
 							
 							<!-- East: Properties -->
 							<div class="layout-east layout-pane">
-								<div id="schema-context-container">
+								<div id="mapping-context-container">
 									<div class="ui-pane-title">
-										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.schema_details" /></h4>
+										<h4>~Mapping Details</h4>
 									</div>
-									
+									<div class="panel-group ui-pane-subcontainer" id="mapping-context-buttons-accordion" role="tablist" aria-multiselectable="true">
+										<div class="panel">
+									    	<div class="panel-heading" role="tab" id="mapping-context-buttons-heading">
+									      		<h5 class="panel-title">
+											        <a role="button" data-toggle="collapse" data-parent="#mapping-context-buttons-accordion" href="#mapping-context-buttons-collapse" aria-expanded="true" aria-controls="mapping-context-buttons-collapse">
+											          <s:message code="~eu.dariah.de.minfba.schereg.editor.actions" />											          
+											          <span class="pull-right"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> <span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="left" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.context_menu" />" aria-hidden="true"></span></span>
+											        </a>
+									      		</h5>
+									    	</div>
+									    	<div id="mapping-context-buttons-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="mapping-context-buttons-heading">
+									      		<div class="panel-body" id="mapping-context-buttons"></div>
+									    	</div>
+									  	</div>
+									</div>
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
-									<div class="ui-pane-subcontainer" id="schema-context-activities"></div>
+									<div class="ui-pane-subcontainer" id="mapping-context-activities"></div>
+								</div>
+								<div id="mapped-concept-context-container" class="hide">
+									<div class="ui-pane-title">
+										<h4>~Mapped Concept</h4>
+									</div>
+									<div class="panel-group ui-pane-subcontainer" id="mapped-concept-context-buttons-accordion" role="tablist" aria-multiselectable="true">
+										<div class="panel">
+									    	<div class="panel-heading" role="tab" id="mapped-concept-context-buttons-heading">
+									      		<h5 class="panel-title">
+											        <a role="button" data-toggle="collapse" data-parent="#mapped-concept-context-buttons-accordion" href="#mapped-concept-context-buttons-collapse" aria-expanded="true" aria-controls="mapped-concept-context-buttons-collapse">
+											          <s:message code="~eu.dariah.de.minfba.schereg.editor.actions" />											          
+											          <span class="pull-right"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> <span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="left" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.context_menu" />" aria-hidden="true"></span></span>
+											        </a>
+									      		</h5>
+									    	</div>
+									    	<div id="mapped-concept-context-buttons-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="mapped-concept-context-buttons-heading">
+									      		<div class="panel-body" id="mapped-concept-context-buttons"></div>
+									    	</div>
+									  	</div>
+									</div>
+									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.details" /></h5>
+									<div id="mapped-concept-context-info" class="clearfix ui-pane-subcontainer"></div>
+									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
+									<div id="mapped-concept-context-activities"></div>
 								</div>
 								<div id="schema-element-context-container" class="hide">
 									<div class="ui-pane-title">
 										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.element_details" /></h4>
 									</div>
-									
+									<div class="panel-group ui-pane-subcontainer" id="schema-element-context-buttons-accordion" role="tablist" aria-multiselectable="true">
+										<div class="panel">
+									    	<div class="panel-heading" role="tab" id="schema-element-context-buttons-heading">
+									      		<h5 class="panel-title">
+											        <a role="button" data-toggle="collapse" data-parent="#schema-element-context-buttons-accordion" href="#schema-element-context-buttons-collapse" aria-expanded="true" aria-controls="schema-element-context-buttons-collapse">
+											          <s:message code="~eu.dariah.de.minfba.schereg.editor.actions" />											          
+											          <span class="pull-right"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> <span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="left" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.context_menu" />" aria-hidden="true"></span></span>
+											        </a>
+									      		</h5>
+									    	</div>
+									    	<div id="schema-element-context-buttons-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="schema-element-context-buttons-heading">
+									      		<div class="panel-body" id="schema-element-context-buttons"></div>
+									    	</div>
+									  	</div>
+									</div>
+									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.details" /></h5>
+									<div id="schema-element-context-info" class="clearfix ui-pane-subcontainer"></div>
+									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.history" /></h5>
+									<div id="schema-element-context-activities"></div>
 								</div>
 							</div>
 							

@@ -122,9 +122,10 @@
 			<add-attribute type="string" value="modelingUI_2/model.contextmenu.js" />
 			<add-attribute type="string" value="modelingUI_2/theme.js" />
 			
-			<add-attribute type="string" value="mappingEditor/mappingEditor.js" />
-			<add-attribute type="string" value="schemaEditor/grammarEditor.js" />
-			<add-attribute type="string" value="schemaEditor/functionEditor.js" />
+			<add-attribute type="string" value="editors/base/baseEditor.js" />
+			<add-attribute type="string" value="editors/mappingEditor.js" />
+			<add-attribute type="string" value="editors/grammarEditor.js" />
+			<add-attribute type="string" value="editors/functionEditor.js" />
 		</put-list-attribute>
 	</definition>
 	
@@ -150,12 +151,13 @@
 			<add-attribute type="string" value="logArea.js" />
 			<add-attribute type="string" value="sessions.js" />
 			
-			<add-attribute type="string" value="schemaEditor/schemaEditor.js" />
-			<add-attribute type="string" value="schemaEditor/schemaEditor.sample.js" />
-			<add-attribute type="string" value="schemaEditor/schemaEditor.graph.js" />
-			<add-attribute type="string" value="schemaEditor/schemaEditor.activities.js" />
-			<add-attribute type="string" value="schemaEditor/grammarEditor.js" />
-			<add-attribute type="string" value="schemaEditor/functionEditor.js" />
+			<add-attribute type="string" value="editors/base/baseEditor.js" />
+			<add-attribute type="string" value="editors/schemaEditor.js" />
+			<add-attribute type="string" value="editors/schemaEditor.sample.js" />
+			<add-attribute type="string" value="editors/schemaEditor.graph.js" />
+			<add-attribute type="string" value="editors/schemaEditor.activities.js" />
+			<add-attribute type="string" value="editors/grammarEditor.js" />
+			<add-attribute type="string" value="editors/functionEditor.js" />
 			
 			<add-attribute type="string" value="modelingUI_2/_util/Array.js" />
 			<add-attribute type="string" value="modelingUI_2/_util/CanvasRenderingContext2D.js" />

@@ -1,7 +1,7 @@
-evar schemaEditor;
+var editor;
 
 $(document).ready(function() {
-	schemaEditor = new SchemaEditor({
+	editor = new SchemaEditor({
 		footerOffset: 70,
 		icons: {
 			warning: __util.getBaseUrl() + "resources/img/warning.png",
@@ -11,7 +11,7 @@ $(document).ready(function() {
 	$('[data-toggle="tooltip"]').tooltip();
 });
 $(window).resize(function() {
-	schemaEditor.resize();
+	editor.resize();
 });
 
 var SchemaEditor = function(options) {	
@@ -27,7 +27,7 @@ var SchemaEditor = function(options) {
 
 	this.layout = null;
 	this.layoutContainer = $(".editor-layout-container");
-	this.editorContainer = $(".editor-container");
+	this.Container = $(".editor-container");
 		
 	this.schemaContextContainer = $("#schema-context-container");
 	this.schemaContextButtons = $("#schema-context-buttons");
@@ -35,6 +35,9 @@ var SchemaEditor = function(options) {
 	this.elementContextContainer = $("#schema-element-context-container");
 	this.elementContextDetail = $("#schema-element-context-info");
 	this.elementContextButtons = $("#schema-element-context-buttons");
+	
+	this.schemaActivitiesContainer = $("#schema-context-activities");
+	this.elementActivitiesContainer = $("#schema-element-context-activities");
 	
 	this.logArea = null;
 	
@@ -79,14 +82,15 @@ var SchemaEditor = function(options) {
 	this.init();
 }
 
+SchemaEditor.prototype = new BaseEditor();
+
 SchemaEditor.prototype.init = function() {
 	this.initLayout();
 	this.initGraph();
 	
 	this.loadElementHierarchy();
 	this.sample_init();
-	this.activities_init();
-	this.activities_loadForSchema();
+	this.loadActivitiesForEntity(this.schema.id, this.schemaActivitiesContainer);
 	
 	var _this = this;
 	this.logArea = new LogArea({
@@ -176,8 +180,8 @@ SchemaEditor.prototype.resizeContent = function() {
 	});
 
 	if (this.context.canvas) {
-		this.context.canvas.width = this.editorContainer.innerWidth();
-		this.context.canvas.height = this.editorContainer.innerHeight();		
+		this.context.canvas.width = this.Container.innerWidth();
+		this.context.canvas.height = this.Container.innerHeight();		
 		if (this.graph !== null) {
 			this.graph.update();
 		}
@@ -185,190 +189,38 @@ SchemaEditor.prototype.resizeContent = function() {
 };
 
 SchemaEditor.prototype.deselectionHandler = function() {
-	var _this = schemaEditor;
+	var _this = editor;
 	
 	_this.elementContextDetail.text("");
 	_this.elementContextButtons.text("");
 	
 	_this.elementContextContainer.addClass("hide");
 	_this.schemaContextContainer.removeClass("hide");
-	_this.activities_loadForSchema();
+	_this.loadActivitiesForEntity(_this.schema.id, _this.schemaActivitiesContainer);
 };
 
 SchemaEditor.prototype.selectionHandler = function(e) {
-	var _this = schemaEditor;
+	var _this = editor;
 
 	_this.elementContextDetail.text("");
 	_this.elementContextButtons.text("");
 	
-	_this.createActionButtons(_this.elementContextButtons, e.element.getContextMenuItems());
+	_this.createActionButtons(_this.elementContextButtons, e.element.getContextMenuItems(), "editor");
 	
-	_this.getElementDetails(e.element.getType(), e.element.id);
-	_this.activities_loadForElement(e.element.id);
+	if (e.element.getType()==="Nonterminal") {
+		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail, _this.processTerminalElement);
+	} else {
+		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail);
+	}
+	
+	
+	_this.loadActivitiesForElement(e.element.id, _this.elementActivitiesContainer);
 	
 	_this.elementContextContainer.removeClass("hide");
 	_this.schemaContextContainer.addClass("hide");
 };
 
-SchemaEditor.prototype.createActionButtons = function(container, contextMenuItems) {
-	for (var i=0; i<contextMenuItems.length; i++) {
-		if (contextMenuItems[i].key==="-") {
-			continue;
-		}
-		button = "<button " +
-					"class='btn btn-default btn-sm' " +
-					"onclick='schemaEditor.performTreeAction(\"" + contextMenuItems[i].key + "\", \"" + contextMenuItems[i].id + "\", \"" + contextMenuItems[i].type + "\"); return false;' type='button'>" +
-						"<span class='glyphicon glyphicon-" + contextMenuItems[i].glyphicon + "'></span> " + contextMenuItems[i].label + 
-				 "</button> ";
-		container.append(button);
-	}
-};
 
-SchemaEditor.prototype.getElementDetails = function(type, id) {
-	var _this = this;
-	$.ajax({
-		url: this.pathname + "/" + this.getElementType(type) + "/" + id + "/async/get",
-        type: "GET",
-        dataType: "json",
-        success: function(data) {
-        	switch (_this.getElementType(type)) {
-				case "element": return _this.processElementDetails(data);
-				case "grammar": return _this.processGrammarDetails(data);
-				case "function": return _this.processFunctionDetails(data);
-				default: throw Error("Unknown element type: " + type);
-			}
-        },
-        error: __util.processServerError
- 	});
-};
-
-SchemaEditor.prototype.getElementType = function(originalType) {
-	var type = originalType.toLowerCase();
-	if (type==="nonterminal" || type==="label") {
-		type="element";
-	} else if (type==="descriptiongrammarimpl") {
-		type="grammar";
-	} else if (type==="transformationfunctionimpl") {
-		type="function";
-	}
-	return type;
-};
-
-SchemaEditor.prototype.processGrammarDetails = function(data) { 
-	var details = $("<div class=\"clearfix\">");
-	
-	details.append(this.renderContextTabDetail("State", 
-			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
-			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
-			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "") +
-			(data.passthrough==true ? "<span class='glyphicon glyphicon-forward' aria-hidden='true'></span>&nbsp;" : "")
-	));
-	
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.grammarName));
-	details.append(this.renderContextTabDetail("~Base rule", data.baseMethod));
-	
-	if (data.passthrough!=true && data.grammarContainer!=null) {
-		if (data.grammarContainer.lexerGrammar!==null && data.grammarContainer.lexerGrammar !=="") {
-			details.append(this.renderContextTabDetail("~Grammar layout", "separate lexer/parser grammars"));
-		} else {
-			details.append(this.renderContextTabDetail("~Grammar layout", "combined grammar"));
-		}
-	}
-	
-	this.elementContextDetail.append(details);  	   
-};
-
-SchemaEditor.prototype.processFunctionDetails = function(data) { 
-	var details = $("<div class=\"clearfix\">");
-	
-	details.append(this.renderContextTabDetail("State", 
-			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
-			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
-			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "")
-	));
-	
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.name));
-	
-	this.elementContextDetail.append(details);
-};
-
-SchemaEditor.prototype.processElementDetails = function(data) { 
-	var details = $("<div class=\"clearfix\">");
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.transient));
-		
-	this.elementContextDetail.append(details);  	
-	var _this = this;
-	if (data.terminalId!=null && data.terminalId!="") {
-		$.ajax({
-			url: _this.pathname + "/element/" + data.id + "/async/getTerminal",
-	        type: "GET",
-	        dataType: "json",
-	        success: function(data) {
-	        	var details = $("<div class=\"clearfix tab-details-block\">");
-	        	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));
-	        		
-	        	_this.elementContextDetail.append(details);
-	        },
-	        error: function(textStatus) {}
-	 	});    
-	} else if (data.simpleType==="Nonterminal") {
-		var details = $("<div class=\"clearfix tab-details-block\">");
-		details.append("<div class='alert alert-sm alert-warning' role='alert'>" + 
-				"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +
-				__translator.translate("~eu.dariah.de.minfba.schereg.notification.no_terminal_configured") +
-				"</div>");
-		this.elementContextDetail.append(details);
-	}
-};
-
-SchemaEditor.prototype.renderContextTabDetail = function(label, data, pre) {
-	var detail = $("<div class=\"row\">");
-	
-	if (pre) {
-		if (label!=null && label!="") {
-			detail.append("<div class=\"schema-metadata-label\">" + label + ":</div>");
-		} else {
-			detail.append("<div>&nbsp;</div>");
-		}
-		
-		var dataE = "<div class=\"schema-metadata-data\"><pre>";
-		if (data===true) {
-			dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
-		} else if (data===false) {
-			dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
-		} else {
-			dataE += data;
-		}
-		
-		detail.append(dataE + "</pre></div>");
-	} else {
-		if (label!=null && label!="") {
-			detail.append("<div class=\"schema-metadata-label col-xs-3 col-md-4\">" + label + ":</div>");
-		} else {
-			detail.append("<div class=\"col-xs-3 col-md-4\">&nbsp;</div>");
-		}
-		
-		var dataE = "<div class=\"schema-metadata-data col-xs-9 col-md-8\">";
-		if (data===true) {
-			dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
-		} else if (data===false) {
-			dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
-		} else {
-			dataE += data;
-		}
-		
-		detail.append(dataE + "</div>");
-	}
-	return detail;
-};
 
 SchemaEditor.prototype.addDescription = function(id) {
 	this.addNode("element", "grammar", id);
@@ -453,7 +305,7 @@ SchemaEditor.prototype.editGrammar = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
+			pathPrefix: __util.getBaseUrl() + "schema//" + _this.schema.id,
 			entityId : _this.schema.id,
 			grammarId : this.graph.selectedItems[0].id
 		}); },       
@@ -476,7 +328,7 @@ SchemaEditor.prototype.editFunction = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
         setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "schema/editor/" + this.schema.id,
+			pathPrefix: __util.getBaseUrl() + "schema//" + this.schema.id,
 			entityId : _this.schema.id,
 			functionId : this.graph.selectedItems[0].id
 		}); },       
