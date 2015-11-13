@@ -1,6 +1,9 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
+import java.util.List;
+
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
@@ -27,6 +30,8 @@ public interface ElementService extends BaseService {
 	public Terminal removeTerminal(String schemaId, String terminalId, AuthPojo auth);
 	public void saveOrReplaceRoot(String schemaId, Nonterminal element, AuthPojo auth);
 	public void clearElementTree(String schemaId, AuthPojo auth);
-
+	
+	public List<Identifiable> getElementTrees(String schemaId, List<String> elementIds);
+	public <T extends Identifiable> List<Label> convertToLabels(List<T> elements);
 	
 }

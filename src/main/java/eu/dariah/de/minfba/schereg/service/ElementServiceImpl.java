@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.BaseElement;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -121,6 +122,37 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	public Identifiable getElementSubtree(String schemaId, String elementId) {
 		Element root = this.findRootBySchemaId(schemaId, true);
 		return this.getElementSubtree(root, elementId);
+	}
+	
+	@Override
+	public List<Identifiable> getElementTrees(String schemaId, List<String> elementIds) {
+		Element root = this.findRootBySchemaId(schemaId, true);
+		List<Identifiable> result = new ArrayList<Identifiable>(elementIds.size());
+		for (String elementId : elementIds) {
+			result.add(this.getElementSubtree(root, elementId));
+		}
+		return result;
+	}
+	
+	@Override
+	public <T extends Identifiable> List<Label> convertToLabels(List<T> elements) {
+		List<Label> result = new ArrayList<Label>(elements.size());
+		Label convert;
+		List<Element> subelements;
+		for (Identifiable i : elements) {
+			if (i instanceof BaseElement) {
+				BaseElement e = (BaseElement)i;
+				convert = new Label(e.getEntityId(), e.getName());
+				convert.setId(e.getId());
+				
+				subelements = e.getAllChildElements();
+				if (subelements!=null && subelements.size()>0) {
+					convert.setSubLabels(convertToLabels(subelements));
+				}
+				result.add(convert);
+			}
+		}
+		return result;
 	}
 	
 	private Identifiable getElementSubtree(Element searchElement, String matchElementId) {

@@ -306,7 +306,7 @@ MappingEditor.prototype.editFunction = function(connectionId) {
 	            setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
 	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.mappingId,
 	    			entityId : _this.mappingId,
-	    			functionId : data.grammars[0].id
+	    			functionId : data.grammars[0].transformationFunctions[0].id
 	    		}); },       
 	    		//completeCallback: function() { _this.reloadElementHierarchy(); }
 	    	});
