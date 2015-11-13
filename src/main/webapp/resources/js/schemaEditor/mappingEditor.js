@@ -28,6 +28,18 @@ var MappingEditor = function(options) {
 	
 	this.layoutContainer = $(".editor-layout-container");
 	this.editorContainer = $(".editor-container");
+	
+	this.mappingContextContainer = $("#mapping-context-container");
+	this.mappingContextButtons = $("#mapping-context-buttons");
+	
+	this.conceptContextContainer = $("#mapped-concept-context-container");
+	this.conceptContextDetail = $("#mapped-concept-context-info");
+	this.conceptContextButtons = $("#mapped-concept-context-buttons");
+		
+	this.elementContextContainer = $("#schema-element-context-container");
+	this.elementContextDetail = $("#schema-element-context-info");
+	this.elementContextButtons = $("#schema-element-context-buttons");
+	
 	this.context = document.getElementById("mapping-editor-canvas").getContext("2d");
 	this.layout = null;
 	
@@ -506,9 +518,56 @@ MappingEditor.prototype.resizeContent = function() {
 	}
 };
 
-MappingEditor.prototype.deselectionHandler = function() {};
+/*this.mappingContextContainer
+this.mappingContextButtons
 
-MappingEditor.prototype.selectionHandler = function(e) {};
+this.conceptContextContainer
+this.conceptContextDetail
+this.conceptContextButtons*/
+
+MappingEditor.prototype.deselectionHandler = function() {
+	var _this = mappingEditor;
+	
+	_this.conceptContextDetail.text("");
+	_this.conceptContextButtons.text("");
+	_this.elementContextDetail.text("");
+	_this.elementContextButtons.text("");
+	
+	_this.conceptContextContainer.addClass("hide");
+	_this.elementContextContainer.addClass("hide");
+	_this.mappingContextContainer.removeClass("hide");
+	
+	
+	//TODO: _this.activities_loadForMapping();
+};
+
+MappingEditor.prototype.selectionHandler = function(e) {
+	var _this = mappingEditor;
+	
+	_this.conceptContextDetail.text("");
+	_this.conceptContextButtons.text("");
+	_this.elementContextDetail.text("");
+	_this.elementContextButtons.text("");
+	
+	_this.mappingContextContainer.addClass("hide");
+	
+	
+	
+	// TODO _this.createActionButtons(_this.elementContextButtons, e.element.getContextMenuItems());
+	
+	// TODO _this.getElementDetails(e.element.getType(), e.element.id);
+	// TODO _this.activities_loadForConcept(e.element.id);
+	
+	if (e.element instanceof Element) {
+		_this.elementContextContainer.removeClass("hide");
+		_this.conceptContextContainer.addClass("hide");
+	} else if (e.element instanceof Connection || e.element instanceof Function) {
+		_this.elementContextContainer.addClass("hide");
+		_this.conceptContextContainer.removeClass("hide");
+	} else {
+		throw new Error("Element selection not supported");
+	}
+};
 
 
 MappingEditor.prototype.changeConceptMappingHandler = function(e) {

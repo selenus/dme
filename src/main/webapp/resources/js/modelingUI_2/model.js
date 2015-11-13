@@ -188,6 +188,12 @@ Model.prototype.deselectAll = function() {
 		this.areas[i].deselectAll();
 	}
 	for (var i=0; i<this.mappings.length;i++) {
-		this.mappings[i].setSelected(false);
+		if (this.mappings[i].isSelected()) {
+			this.mappings[i].setSelected(false);
+			if (this.selectedItems.contains(this.mappings[i])) {
+				this.selectedItems.remove(this.mappings[i])
+			}
+			this.handleElementDeselected(this.mappings[i]);
+		}
 	}
 };
