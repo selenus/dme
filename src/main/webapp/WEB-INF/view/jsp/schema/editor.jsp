@@ -58,13 +58,13 @@
 								</div>
 								<h5>~Sessions</h5>									
 								<div class="ui-pane-subcontainer button-bar">
-									<button type="button" onclick="sessions.saveSession(schemaEditor.schemaId);" class="btn btn-default btn-sm">~ Save session</button>
-									<button type="button" onclick="sessions.loadSession(schemaEditor.schemaId);" class="btn btn-default btn-sm">~ Load session</button>
-									<button type="button" onclick="schemaEditor.sample_resetSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
+									<button type="button" onclick="sessions.saveSession(editor.schema.id);" class="btn btn-default btn-sm">~ Save session</button>
+									<button type="button" onclick="sessions.loadSession(editor.schema.id);" class="btn btn-default btn-sm">~ Load session</button>
+									<button type="button" onclick="editor.resetSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
 								</div>
 								<div id="schema-editor-sample-container">
 									<h5>~Sample</h5>
-									<button type="button" onclick="schemaEditor.sample_applyAndExecute(); return false;" class="pull-right btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
+									<button type="button" onclick="editor.applyAndExecuteSample(); return false;" class="pull-right btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
 									<ul class="nav nav-tabs" role="tablist">
 										<li role="presentation"<c:if test="${currentSampleCount==0}"> class="active"</c:if>>
 											<a href="#schema-sample-input-container" aria-controls="schema-sample-input-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /></a>
@@ -94,8 +94,8 @@
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="schema-sample-output-container">
 											<div class="button-bar">
 												<span class="schema-sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
-												<button id="btn-sample-prev-resource" type="button" onclick="schemaEditor.sample_getPrevResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
-												<button id="btn-sample-next-resource" type="button" onclick="schemaEditor.sample_getNextResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+												<button id="btn-sample-prev-resource" type="button" onclick="schemaEditor.getPrevSampleResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+												<button id="btn-sample-next-resource" type="button" onclick="schemaEditor.getNextSampleResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 											</div>
 											<div id="schema-sample-output-resource" class="height-sized-element">
 											

@@ -1,4 +1,4 @@
-SchemaEditor.prototype.sample_init = function() {
+BaseEditor.prototype.initSample = function() {
 	var _this = this;
 	
 	this.sampleTextbox = $("#schema-sample-textarea");  //schema-editor-outer-east-container, schema-editor-detail-pane
@@ -16,32 +16,20 @@ SchemaEditor.prototype.sample_init = function() {
 	}
 };
 
-SchemaEditor.prototype.sample_onPaneOpenStart = function() {
-	var containerInnerWidth = $("#schema-editor-outer-east-container").innerWidth();
-	var containerWidth = $("#schema-editor-outer-east-container").width();
-	
-	if(containerInnerWidth < 500) {
-		this.outerLayout.sizePane("east", Math.floor(500 + containerWidth - containerInnerWidth));
-		// Just to 'notify' the inner center to resize
-		this.innerLayout.sizePane("east", 250);
-	}
-};
-
-
-SchemaEditor.prototype.sample_applyAndExecute = function() {
+BaseEditor.prototype.applyAndExecuteSample = function() {
 	var _this = this;
 	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").hide();
 	
 	if (this.sampleModified) {
-		this.sample_apply(function() {
-			_this.sample_execute();
+		this.applySample(function() {
+			_this.executeSample();
 		})
 	} else {
-		this.sample_execute();
+		this.executeSample();
 	}
 };
 
-SchemaEditor.prototype.sample_apply = function(callback) {
+BaseEditor.prototype.applySample = function(callback) {
 	var _this = this;
 	$.ajax({
 	    url: _this.pathname + "/async/applySample",
@@ -59,7 +47,7 @@ SchemaEditor.prototype.sample_apply = function(callback) {
 	});
 };
 
-SchemaEditor.prototype.sample_execute = function() {
+BaseEditor.prototype.executeSample = function() {
 	var _this = this;
 	$.ajax({
 	    url: _this.pathname + "/async/executeSample",
@@ -68,7 +56,7 @@ SchemaEditor.prototype.sample_execute = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) {
-	    		_this.sample_processExecutionResult(data.pojo);
+	    		_this.processSampleExecutionResult(data.pojo);
 	    	}
 	    	_this.currentSampleIndex = 0;
 	    	_this.logArea.refresh();
@@ -82,7 +70,7 @@ SchemaEditor.prototype.sample_execute = function() {
 	});
 };
 
-SchemaEditor.prototype.sample_processExecutionResult = function(count) {
+BaseEditor.prototype.processSampleExecutionResult = function(count) {
 	var navTab = $("#schema-editor-sample-container a[href='#schema-sample-output-container']");
 	var enabled = false;
 	
@@ -107,10 +95,10 @@ SchemaEditor.prototype.sample_processExecutionResult = function(count) {
 		$(navTab).removeAttr("data-toggle");
 		$("#schema-editor-sample-container a[href='#schema-sample-input-container']").tab('show');
 	}
-	this.sample_getSampleResource();
+	this.getSampleResource();
 };
 
-SchemaEditor.prototype.sample_getSampleResource = function() {
+BaseEditor.prototype.getSampleResource = function() {
 	var _this = this;
 	$.ajax({
 	    url: _this.pathname + "/async/getSampleResource",
@@ -119,16 +107,16 @@ SchemaEditor.prototype.sample_getSampleResource = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	var result = $("<ul>");
-	    	result.append(_this.sample_buildSampleResource(data));
+	    	result.append(_this.buildSampleResource(data));
 	    	$("#schema-sample-output-resource").html(result);
-	    	_this.sample_setNavigationBar();
+	    	_this.setSampleNavigationBar();
 	    },
 	    error: __util.processServerError
 	});
 };
 
 
-SchemaEditor.prototype.sample_setNavigationBar = function() {
+BaseEditor.prototype.setSampleNavigationBar = function() {
 	$(".schema-sample-output-counter").text("" + (this.currentSampleIndex+1) + " / " + this.sampleResourceCount);
 	
 	if (this.currentSampleIndex > 0) {
@@ -143,14 +131,14 @@ SchemaEditor.prototype.sample_setNavigationBar = function() {
 	}	
 };
 
-SchemaEditor.prototype.sample_getPrevResource = function() {
+BaseEditor.prototype.getPrevSampleResource = function() {
 	if (this.currentSampleIndex > 0) {
 		this.currentSampleIndex--;
 		this.sample_getSampleResource();
 	}
 };
 
-SchemaEditor.prototype.sample_getNextResource = function() {
+BaseEditor.prototype.getNextSampleResource = function() {
 	if (this.currentSampleIndex < this.sampleResourceCount-1) {
 		this.currentSampleIndex++;
 		this.sample_getSampleResource();
@@ -158,7 +146,7 @@ SchemaEditor.prototype.sample_getNextResource = function() {
 };
 
 
-SchemaEditor.prototype.sample_buildSampleResource = function(resource) {
+BaseEditor.prototype.buildSampleResource = function(resource) {
 	var key = Object.getOwnPropertyNames(resource)[0];
 	var value = resource[key];
 	
@@ -170,10 +158,10 @@ SchemaEditor.prototype.sample_buildSampleResource = function(resource) {
 	
 	if (Array.isArray(value)) {
 		for (var j=0; j<value.length; j++) {
-			subItemCount += this.sample_buildSampleResourceValue(value[j], item, subItems);
+			subItemCount += this.buildSampleResourceValue(value[j], item, subItems);
 		}
 	} else {
-		subItemCount += this.sample_buildSampleResourceValue(value, item, subItems);
+		subItemCount += this.buildSampleResourceValue(value, item, subItems);
 	}
 	if (subItemCount>0) {
 		item.append(subItems);
@@ -181,20 +169,20 @@ SchemaEditor.prototype.sample_buildSampleResource = function(resource) {
 	return item;
 };
 
-SchemaEditor.prototype.sample_buildSampleResourceValue = function(resource, parentItem, subItems) {
+BaseEditor.prototype.buildSampleResourceValue = function(resource, parentItem, subItems) {
 	var key = Object.getOwnPropertyNames(resource)[0];
 	if (key==="") {
 		parentItem.append(": <span class=\"schema-sample-output-value\">" + resource[key] + "</span>");
 		return 0;
 	} else {
-		subItems.append(this.sample_buildSampleResource(resource));
+		subItems.append(this.buildSampleResource(resource));
 		return 1;
 	}
 };
 
-SchemaEditor.prototype.sample_resetSession = function() {
+BaseEditor.prototype.resetSampleSession = function() {
 	var _this = this;
-	sessions.resetSession(_this.schemaId, function() {
+	sessions.resetSession(_this.schema.id, function() {
 		window.location.reload();
 	});
 };

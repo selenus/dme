@@ -123,6 +123,7 @@
 			<add-attribute type="string" value="modelingUI_2/theme.js" />
 			
 			<add-attribute type="string" value="editors/base/baseEditor.js" />
+			<add-attribute type="string" value="editors/base/baseEditor.sample.js" />
 			<add-attribute type="string" value="editors/mappingEditor.js" />
 			<add-attribute type="string" value="editors/grammarEditor.js" />
 			<add-attribute type="string" value="editors/functionEditor.js" />
@@ -152,10 +153,9 @@
 			<add-attribute type="string" value="sessions.js" />
 			
 			<add-attribute type="string" value="editors/base/baseEditor.js" />
+			<add-attribute type="string" value="editors/base/baseEditor.sample.js" />
 			<add-attribute type="string" value="editors/schemaEditor.js" />
-			<add-attribute type="string" value="editors/schemaEditor.sample.js" />
 			<add-attribute type="string" value="editors/schemaEditor.graph.js" />
-			<add-attribute type="string" value="editors/schemaEditor.activities.js" />
 			<add-attribute type="string" value="editors/grammarEditor.js" />
 			<add-attribute type="string" value="editors/functionEditor.js" />
 			
