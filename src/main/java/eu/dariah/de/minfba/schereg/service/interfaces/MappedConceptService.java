@@ -9,7 +9,7 @@ import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 public interface MappedConceptService {
 	public List<MappedConcept> findAllByMappingId(String mappingId);
 	public List<MappedConcept> findAllByMappingId(String mappingId, boolean eagerLoadHierarchy);	
-	public String findById(String mappingId, String mappedConceptId, boolean eagerLoadHierarchy);
+	public MappedConcept findById(String mappingId, String mappedConceptId, boolean eagerLoadHierarchy);
 	public MappedConcept findById(String conceptId);
 	
 	public void removeMappedConcept(String mappingId, String mappedConceptId, AuthPojo auth) throws GenericScheregException;

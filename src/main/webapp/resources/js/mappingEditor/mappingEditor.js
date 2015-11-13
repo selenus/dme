@@ -248,44 +248,72 @@ MappingEditor.prototype.editGrammar = function(connectionId) {
 	var _this = this;
 	var form_identifier = "edit-grammar-" + connectionId;
 	
-	var mapping = _this.graph.getMappingById(connectionId);
 	
-	modalFormHandler = new ModalFormHandler({
-		formUrl: "/grammar/" + mapping.grammarId + "/form/edit",
-		identifier: form_identifier,
-		additionalModalClasses: "max-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
-		                ],
-		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + this.mapping.id
-		}); },     
-		completeCallback: function() { _this.reloadAll(); }
+	$.ajax({
+		url: this.mappingPath + "mappedConcept/" + connectionId + "/get",
+	    type: "GET",
+	    success: function(data) {
+	    	if (data===null || data===undefined || data.length==0) {
+	    		return;
+	    	}
+	    	
+	    	var mapping = _this.graph.getMappingById(connectionId);
+	    	
+	    	modalFormHandler = new ModalFormHandler({
+	    		formUrl: "/grammar/" + data.grammars[0].id + "/form/edit",
+	    		identifier: form_identifier,
+	    		additionalModalClasses: "max-modal",
+	    		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+	    		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+	    		                ],
+	    		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
+	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + connectionId,
+	    			entityId : _this.mappingId,
+	    			grammarId : data.grammars[0].id
+	    		}); },     
+	    		//completeCallback: function() { _this.reloadAll(); }
+	    	});
+	    		
+	    	modalFormHandler.show(form_identifier);
+	    }
 	});
-		
-	modalFormHandler.show(form_identifier);
 };
 
 MappingEditor.prototype.editFunction = function(connectionId) {
 	var _this = this;	
 	var mapping = _this.graph.getMappingById(connectionId);
 	
-	var form_identifier = "edit-function-" + connectionId;
 	
-	modalFormHandler = new ModalFormHandler({
-		formUrl: "/function/" + mapping.functionId + "/form/edit",
-		identifier: form_identifier,
-		additionalModalClasses: "max-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
-		                ],
-        setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "schema/editor/" + this.schema.id
-		}); },       
-		completeCallback: function() { _this.reloadElementHierarchy(); }
+	$.ajax({
+		url: this.mappingPath + "mappedConcept/" + connectionId + "/get",
+	    type: "GET",
+	    success: function(data) {
+	    	if (data===null || data===undefined || data.length==0) {
+	    		return;
+	    	}
+	    	
+	    	var mapping = _this.graph.getMappingById(connectionId);
+	    	
+	    	var form_identifier = "edit-function-" + connectionId;
+	    	
+	    	modalFormHandler = new ModalFormHandler({
+	    		formUrl: "/function/" + data.grammars[0].transformationFunctions[0].id + "/form/edit",
+	    		identifier: form_identifier,
+	    		additionalModalClasses: "max-modal",
+	    		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+	    		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+	    		                ],
+	            setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
+	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.mappingId,
+	    			entityId : _this.mappingId,
+	    			functionId : data.grammars[0].id
+	    		}); },       
+	    		//completeCallback: function() { _this.reloadElementHierarchy(); }
+	    	});
+	    		
+	    	modalFormHandler.show(form_identifier);
+	    }
 	});
-		
-	modalFormHandler.show(form_identifier);
 };
 
 MappingEditor.prototype.resetMappingPosition = function(connectionId) {

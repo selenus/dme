@@ -45,7 +45,8 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
-@RequestMapping(value="/schema/editor/{schemaId}/function/{functionId}")
+@RequestMapping(value={"/schema/editor/{schemaId}/function/{functionId}",
+		"/mapping/editor/{schemaId}/function/{functionId}"})
 public class FunctionEditorController extends BaseScheregController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;

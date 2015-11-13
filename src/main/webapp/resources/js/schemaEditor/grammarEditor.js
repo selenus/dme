@@ -2,7 +2,9 @@ var grammarEditor;
 
 var GrammarEditor = function(modal, options) {
 	this.options = $.extend({ 	
-		pathPrefix: ""
+		pathPrefix: "",
+		entityId : "",
+		grammarId : ""
 	}, options)
 	
 	this.modal = modal;
@@ -12,8 +14,8 @@ var GrammarEditor = function(modal, options) {
 	this.grammarModified = false;
 	this.validated = false;
 	this.error = $(this.modal).find("#error").val()=="true";
-	this.schemaId = schemaEditor.schemaId;
-	this.grammarId = schemaEditor.selectedElementId;
+	this.schemaId = this.options.entityId;
+	this.grammarId = this.options.grammarId;
 	this.pathname = this.options.pathPrefix + "/grammar/" + this.grammarId;
 	
 	this.processGrammarModal = null;

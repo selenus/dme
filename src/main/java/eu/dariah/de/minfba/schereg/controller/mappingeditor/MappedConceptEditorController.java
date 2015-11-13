@@ -34,7 +34,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(value="/get", method=RequestMethod.GET)
-	public String getMappedConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, HttpServletRequest request) {
+	public @ResponseBody MappedConcept getMappedConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, HttpServletRequest request) {
 		return mappedConceptService.findById(mappingId, mappedConceptId, true);
 	}
 	

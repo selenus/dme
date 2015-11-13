@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
@@ -86,9 +88,48 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 	}
 	
 	@Override
-	public String findById(String mappingId, String mappedConceptId, boolean eagerLoadHierarchy) {
-		// TODO Auto-generated method stub
-		return null;
+	public MappedConcept findById(String mappingId, String mappedConceptId, boolean eagerLoadHierarchy) {
+		Reference reference = this.findReferenceById(mappingId);
+		if (reference.getChildReferences()==null || reference.getChildReferences().size()==0 || 
+				!reference.getChildReferences().containsKey(MappedConceptImpl.class.getName()) || 
+				reference.getChildReferences().get(MappedConceptImpl.class.getName()).length==0) {
+			return null;
+		}
+		
+		List<String> grammarIds = new ArrayList<String>();
+		List<String> functionIds = new ArrayList<String>();
+		Reference r = null;
+		
+		for (Reference rConcept : reference.getChildReferences().get(MappedConceptImpl.class.getName())) {
+			if (rConcept.getId().equals(mappedConceptId)) {
+				r = rConcept;
+				if (rConcept.getChildReferences()!=null && rConcept.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
+					for (Reference rGrammar : rConcept.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
+						grammarIds.add(rGrammar.getId());
+						if (rGrammar.getChildReferences()!=null && rGrammar.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
+							for (Reference rFunction : rGrammar.getChildReferences().get(TransformationFunctionImpl.class.getName())) {
+								functionIds.add(rFunction.getId());
+							}
+						}
+					}
+				}
+				break;
+			}
+		}
+		List<Identifiable> elements = new ArrayList<Identifiable>();
+		elements.add(mappedConceptDao.findById(mappedConceptId));
+		elements.addAll(grammarDao.find(Query.query(Criteria.where("_id").in(grammarIds))));
+		elements.addAll(functionDao.find(Query.query(Criteria.where("_id").in(functionIds))));
+		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
+		for (Identifiable e : elements) {
+			elementMap.put(e.getId(), e);
+		}
+		
+		if (r==null) {
+			return null;
+		}
+		
+		return (MappedConcept)this.fillElement(r, elementMap);
 	}
 
 	@Override

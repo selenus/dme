@@ -20,9 +20,11 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
+import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
+import eu.dariah.de.minfba.schereg.dao.interfaces.MappedConceptDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.MappableElement;
@@ -36,7 +38,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Autowired private SchemaDao schemaDao;
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private FunctionDao functionDao;
-	
+	@Autowired private MappedConceptDao mappedConceptDao;
 	
 	@Override
 	public Element findRootBySchemaId(String schemaId) {
@@ -47,9 +49,14 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
 		Reference reference = this.findReferenceById(schemaId);
 		Reference rootElementReference = null;
-		if (reference.getChildReferences()!=null && reference.getChildReferences().containsKey(Nonterminal.class.getName()) &&
-				reference.getChildReferences().get(Nonterminal.class.getName()).length>0 ) {
-			rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[0];
+		if (reference.getChildReferences()!=null) {
+			if (reference.getChildReferences().containsKey(Nonterminal.class.getName()) &&
+					reference.getChildReferences().get(Nonterminal.class.getName()).length>0 ) {
+				rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[0];
+			} else if (reference.getChildReferences().containsKey(MappedConceptImpl.class.getName()) &&
+					reference.getChildReferences().get(MappedConceptImpl.class.getName()).length>0 ) {
+				rootElementReference = reference.getChildReferences().get(MappedConceptImpl.class.getName())[0];
+			}
 		}
 		if (rootElementReference==null) {
 			return null;
@@ -321,6 +328,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		elements.addAll(elementDao.findByEntityId(schemaId));
 		elements.addAll(grammarDao.findByEntityId(schemaId));
 		elements.addAll(functionDao.findByEntityId(schemaId));
+		elements.addAll(mappedConceptDao.findByEntityId(schemaId));
 		return elements;
 	}
 }
