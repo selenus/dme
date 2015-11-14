@@ -51,6 +51,8 @@ var MappingEditor = function(options) {
 	
 	this.oneDone = false;
 	
+	this.logArea = null;
+	
 	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
 	
 	__translator.addTranslations(["~eu.dariah.de.minfba.schereg.model.schema.schema",
@@ -75,6 +77,13 @@ var MappingEditor = function(options) {
 	
 	this.initLayout();
 	this.initGraphs();
+	this.initSample(this.mappingPath, this.mappingId, true);
+	
+	this.logArea = new LogArea({
+		pathPrefix :  __util.getBaseUrl() + "sessions/",
+		entityId : _this.mappingId,
+		logList: $("ul#mapping-editor-log"),
+	});
 };
 
 MappingEditor.prototype = new BaseEditor();

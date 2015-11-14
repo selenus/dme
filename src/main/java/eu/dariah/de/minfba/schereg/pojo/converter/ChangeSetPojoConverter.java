@@ -13,6 +13,7 @@ import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.schereg.dao.interfaces.PersistedUserDetailsDao;
+import eu.dariah.de.minfba.schereg.model.PersistedUserDetails;
 import eu.dariah.de.minfba.schereg.pojo.ChangeSetPojo;
 
 @Component
@@ -31,7 +32,10 @@ public class ChangeSetPojoConverter {
 					}
 				} else {
 					cPojo = new ChangeSetPojo();
-					cPojo.setUser(userDetailsDao.findById(c.getUserId()).getUsername());
+					PersistedUserDetails ud = userDetailsDao.findById(c.getUserId());
+					if (c.getUserId()!=null && ud!=null) {
+						cPojo.setUser(ud.getUsername());
+					}
 					cPojo.setTimestamp(c.getTimestamp());
 				}
 				if (cPojo.getChanges()==null) {

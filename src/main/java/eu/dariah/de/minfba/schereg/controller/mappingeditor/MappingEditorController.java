@@ -23,10 +23,9 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value="/mapping/editor/{mappingId}/")
+@RequestMapping(value="/mapping/editor/{entityId}/")
 public class MappingEditorController extends BaseMainEditorController {
 	@Autowired private SchemaService schemaService;
-	@Autowired private MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private PersistedSessionService sessionService;
@@ -36,10 +35,10 @@ public class MappingEditorController extends BaseMainEditorController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String getEditor(@PathVariable String mappingId, Model model, HttpServletRequest request) {
+	public String getEditor(@PathVariable String entityId, Model model, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		
-		AuthWrappedPojo<Mapping> mapping = authPojoConverter.convert(mappingService.findByIdAndAuth(mappingId, auth), auth.getUserId()); 
+		AuthWrappedPojo<Mapping> mapping = authPojoConverter.convert(mappingService.findByIdAndAuth(entityId, auth), auth.getUserId()); 
 		if (mapping==null) {
 			return "redirect:/registry/";
 		}
@@ -49,7 +48,7 @@ public class MappingEditorController extends BaseMainEditorController {
 		model.addAttribute("target", authPojoConverter.convert(schemaService.findByIdAndAuth(mapping.getPojo().getTargetId(), auth), auth.getUserId()));
 		
 		try {
-			model.addAttribute("session", sessionService.accessOrCreate(mappingId, request.getSession().getId(), auth.getUserId()));
+			model.addAttribute("session", sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId()));
 		} catch (GenericScheregException e) {
 			logger.error("Failed to load/initialize persisted session", e);
 		} 
@@ -57,7 +56,7 @@ public class MappingEditorController extends BaseMainEditorController {
 	}
 	
 	@RequestMapping(value="/async/getConcepts", method=RequestMethod.GET)
-	public @ResponseBody List<MappedConcept> getMappedConcepts(@PathVariable String mappingId, Model model) {
-		return mappedConceptService.findAllByMappingId(mappingId);
+	public @ResponseBody List<MappedConcept> getMappedConcepts(@PathVariable String entityId, Model model) {
+		return mappedConceptService.findAllByMappingId(entityId);
 	}
 }

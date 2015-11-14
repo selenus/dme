@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -23,10 +24,11 @@ import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 
 public abstract class BaseMainEditorController extends BaseScheregController {
-
+	@Autowired protected MappingService mappingService;
 	@Autowired protected PersistedSessionService sessionService;
 	@Autowired protected ElementService elementService;
 	
@@ -72,9 +74,14 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		result.setPojo(0);
 		
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
-				
+		
 		XmlSchema s = (XmlSchema)schemaService.findSchemaById(entityId);
-		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(entityId, true);
+		if (s==null) {
+			Mapping m = mappingService.findMappingById(entityId);
+			s = (XmlSchema)schemaService.findSchemaById(m.getSourceId());
+		}		
+		
+		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);
 		
 		XmlStringProcessingService processingSvc = appContext.getBean(XmlStringProcessingService.class);
 		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
