@@ -1,4 +1,4 @@
-BaseEditor.prototype.initSample = function(samplePath, sampleEntityId, isMappingEditor) {
+BaseEditor.prototype.initSample = function(samplePath, sampleEntityId) {
 	var _this = this;
 	
 	this.samplePath = samplePath;
@@ -8,7 +8,6 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId, isMapping
 	this.sampleModified = !$("#sample-set").val();
 	this.currentSampleIndex = parseInt(Number($("#currentSampleIndex").val()));
 	this.sampleResourceCount = parseInt(Number($("#currentSampleCount").val()));
-	this.isMappingEditor = isMappingEditor;
 	
 	$(this.sampleTextbox).on('change keyup paste', function() {
 		_this.sampleModified = true;
@@ -19,13 +18,13 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId, isMapping
 	}
 };
 
-BaseEditor.prototype.applyAndExecuteSample = function(callback) {
+BaseEditor.prototype.applyAndExecuteSample = function() {
 	var _this = this;
 	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").hide();
 	
 	if (this.sampleModified) {
 		this.applySample(function() {
-			_this.executeSample(callback);
+			_this.executeSample();
 		})
 	} else {
 		this.executeSample();
@@ -50,7 +49,7 @@ BaseEditor.prototype.applySample = function(callback) {
 	});
 };
 
-BaseEditor.prototype.executeSample = function(callback) {
+BaseEditor.prototype.executeSample = function() {
 	var _this = this;
 	$.ajax({
 	    url: this.samplePath + "async/executeSample",
@@ -65,9 +64,27 @@ BaseEditor.prototype.executeSample = function(callback) {
 	    	_this.logArea.refresh();
 	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
 	    	
-	    	if (callback!==undefined) {
-	    		callback();
+	    	if (_this instanceof MappingEditor) {
+	    		_this.executeSampleMapping();
 	    	}
+	    }, 
+	    error: function(jqXHR, textStatus, errorThrown ) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
+	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
+	    }
+	});
+};
+
+BaseEditor.prototype.executeSampleMapping = function() {
+	var _this = this;
+	$.ajax({
+	    url: this.samplePath + "async/executeSampleMapping",
+	    type: "GET",
+	    //data: { sample : $("#schema-sample-textarea").val() },
+	    dataType: "json",
+	    success: function(data) {
+	    	console.log("return exec sample")
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) {
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);

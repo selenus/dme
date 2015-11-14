@@ -77,7 +77,7 @@ var MappingEditor = function(options) {
 	
 	this.initLayout();
 	this.initGraphs();
-	this.initSample(this.mappingPath, this.mappingId, true);
+	this.initSample(this.mappingPath, this.mappingId);
 	
 	this.logArea = new LogArea({
 		pathPrefix :  __util.getBaseUrl() + "sessions/",

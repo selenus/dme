@@ -88,9 +88,11 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		if (deep) {
 			List<Element> eChildren = e.getAllChildElements();
 			if (eChildren!=null && eChildren.size()>0) {
+				MappableElement meChild;
 				eMap.setChildren(new ArrayList<MappableElement>(eChildren.size()));
 				for (Element eChild : eChildren) {
-					eMap.getChildren().add(convertElement(eChild, true));
+					meChild = convertElement(eChild, true); 
+					eMap.getChildren().add(meChild);
 				}
 			}
 		}

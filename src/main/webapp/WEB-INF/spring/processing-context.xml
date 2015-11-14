@@ -16,7 +16,13 @@
     </bean>
     
     
-    	
+   	<bean id="mappingExecutionService" class="eu.dariah.de.minfba.mapping.MappingExecutionServiceImpl" scope="prototype">
+   		<property name="elementProcessors">
+    		<list>
+				<ref bean="gtfElementProcessor" />
+			</list>
+    	</property>
+    </bean>
 
     <bean id="gtfElementProcessor" class="de.unibamberg.minf.processing.gtf.GtfElementProcessor">
 		<property name="transformationEngine" ref="transformationEngine" />

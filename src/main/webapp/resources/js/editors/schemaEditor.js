@@ -89,7 +89,7 @@ SchemaEditor.prototype.init = function() {
 	this.initGraph();
 	
 	this.loadElementHierarchy();
-	this.initSample(this.pathname, this.schema.id, true);
+	this.initSample(this.pathname, this.schema.id);
 	this.loadActivitiesForEntity(this.schema.id, this.schemaActivitiesContainer);
 	
 	var _this = this;

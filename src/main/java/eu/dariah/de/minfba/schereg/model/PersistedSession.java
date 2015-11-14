@@ -32,6 +32,7 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 	
 	private String sampleInput;
 	private List<Resource> sampleOutput;
+	private List<Resource> sampleMapped;
 	private int selectedOutputIndex;
 	private Map<String, String> selectedValueMap;
 	
@@ -65,6 +66,9 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 	public List<Resource> getSampleOutput() { return sampleOutput; }
 	public void setSampleOutput(List<Resource> sampleOutput) { this.sampleOutput = sampleOutput; }
 
+	public List<Resource> getSampleMapped() { return sampleMapped; }
+	public void setSampleMapped(List<Resource> sampleMapped) { this.sampleMapped = sampleMapped; }
+	
 	public int getSelectedOutputIndex() { return selectedOutputIndex; }
 	public void setSelectedOutputIndex(int selectedOutputIndex) { this.selectedOutputIndex = selectedOutputIndex; }
 	
