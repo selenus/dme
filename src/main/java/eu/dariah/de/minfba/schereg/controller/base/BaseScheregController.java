@@ -19,7 +19,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 public abstract class BaseScheregController extends BaseTranslationController {
 
 	@Autowired protected AuthInfoHelper authInfoHelper;
-	@Autowired private SchemaService schemaService;
+	@Autowired protected SchemaService schemaService;
 	@Autowired private ChangeSetPojoConverter changeSetPojoConverter;
 	
 	

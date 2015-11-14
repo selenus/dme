@@ -6,8 +6,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -47,37 +45,25 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
-import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.processing.model.base.Resource;
-import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
-import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.controller.base.BaseMainEditorController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
-import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
-import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
-import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
-import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
-import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
-import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{schemaId}/")
-public class MainEditorController extends BaseScheregController implements InitializingBean {
+public class MainEditorController extends BaseMainEditorController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
-	@Autowired private SchemaService schemaService;
-	@Autowired private ElementService elementService;
+	
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
-	
-	@Autowired private PersistedSessionService sessionService;
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	private String tmpUploadDirPath;
@@ -301,103 +287,5 @@ public class MainEditorController extends BaseScheregController implements Initi
 			return ((XmlSchema)s).getTerminals();
 		}
 		return null;
-	}
-	
-	@RequestMapping(method = RequestMethod.POST, value = "/async/applySample")
-	public @ResponseBody ModelActionPojo applySample(@PathVariable String schemaId, @RequestParam String sample, HttpServletRequest request, Locale locale) {
-		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		s.setSampleInput(sample);
-		s.addLogEntry(LogType.INFO, "~ Sample set for your current session");
-		sessionService.saveSession(s);
-		
-		return new ModelActionPojo(true);
-	}
-		
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getSampleResource")
-	public @ResponseBody Resource getSampleResource(@PathVariable String schemaId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, Locale locale) {
-		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		
-		if (s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
-			
-			if (s.getSampleOutput().size()>index) {
-				Map<String, String> valueMap = new HashMap<String, String>();
-				this.fillValueMap(valueMap, s.getSampleOutput().get(index));
-				
-				s.setSelectedValueMap(valueMap);
-				s.setSelectedOutputIndex(index);
-				
-				sessionService.saveSession(s);
-				
-				return s.getSampleOutput().get(index);
-			} 
-		}
-		return null;
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
-	public @ResponseBody ModelActionPojo executeSample(@PathVariable String schemaId, HttpServletRequest request, Locale locale) {
-		Stopwatch sw = new Stopwatch();
-		ModelActionPojo result = new ModelActionPojo(true);
-		result.setPojo(0);
-		
-		PersistedSession session = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
-				
-		XmlSchema s = (XmlSchema)schemaService.findSchemaById(schemaId);
-		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(schemaId, true);
-		
-		XmlStringProcessingService processingSvc = appContext.getBean(XmlStringProcessingService.class);
-		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
-		
-		processingSvc.setXmlString(session.getSampleInput());
-		processingSvc.setSchema(s);
-		processingSvc.addConsumptionService(consumptionService);
-		try {
-			processingSvc.init(r);
-			
-			sw.start();
-			processingSvc.run();
-			
-			session.setSampleOutput(consumptionService.getResources());
-			session.setSelectedOutputIndex(0);
-			
-			if (session.getSampleOutput()!=null && session.getSampleOutput().size()>0) {
-				result.setPojo(session.getSampleOutput().size());
-				
-				if (session.getSampleOutput().size()==1) {
-					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample input processed (total %sms): 1 resource found", sw.getElapsedTime(), consumptionService.getResources().size()));
-				} else {
-					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample input processed (total %sms): %s resources found", sw.getElapsedTime(), consumptionService.getResources().size()));	
-				}
-			} else {
-				session.addLogEntry(LogType.WARNING, "~ Sample input processed: No resources found");
-			}
-			
-			sessionService.saveSession(session);
-		} catch (Exception e) {
-			logger.error("Error parsing XML string", e);
-		}
-		
-		return result;
-	}
-	
-	
-	
-	private void fillValueMap(Map<String, String> valueMap, Resource r) {
-		if (!valueMap.containsKey(r.getElementId())) {
-			valueMap.put(r.getElementId(), r.getValue()==null ? "" : r.getValue().toString());
-		}
-		if (r.getChildResources()!=null) {
-			for (Resource rChild : r.getChildResources()) {
-				this.fillValueMap(valueMap, rChild);
-			}
-		}
-	}
-			
-	public static String humanReadableByteCount(long bytes, boolean si) {
-	    int unit = si ? 1000 : 1024;
-	    if (bytes < unit) return bytes + " B";
-	    int exp = (int) (Math.log(bytes) / Math.log(unit));
-	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 }
