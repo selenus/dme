@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -90,14 +91,20 @@ public class MappingEditorController extends BaseMainEditorController {
 		Schema sTarget = schemaService.findSchemaById(m.getTargetId());
 		List<Resource> inputResources = session.getSampleOutput();
 		Element r = elementService.findRootBySchemaId(sTarget.getId(), true);
-		List<MappedConcept> c = mappedConceptService.findAllByMappingId(m.getId(), true);
+		List<MappedConcept> concepts = mappedConceptService.findAllByMappingId(m.getId(), true);
 		
+		if (concepts!=null) {
+			for (MappedConcept c : concepts) {
+				List<Identifiable> targetElements = elementService.getElementTrees(sTarget.getId(), c.getTargetElementIds());
+				c.getGrammars().get(0).getTransformationFunctions().get(0).setOutputElements(elementService.convertToLabels(targetElements));
+			}
+		}
 		
 		MappingExecutionService mappingExecService = appContext.getBean(MappingExecutionService.class);
 		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
 		
 		try {
-			mappingExecService.init(m, sTarget, inputResources, r, c);
+			mappingExecService.init(m, sTarget, inputResources, r, concepts);
 			mappingExecService.addConsumptionService(consumptionService);
 			
 			mappingExecService.run();
