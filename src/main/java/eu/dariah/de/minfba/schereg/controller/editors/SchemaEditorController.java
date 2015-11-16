@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller.schemaeditor;
+package eu.dariah.de.minfba.schereg.controller.editors;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -57,8 +57,8 @@ import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 
 @Controller
-@RequestMapping(value="/schema/editor/{schemaId}/")
-public class MainEditorController extends BaseMainEditorController implements InitializingBean {
+@RequestMapping(value="/schema/editor/{entityId}/")
+public class SchemaEditorController extends BaseMainEditorController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
 	
@@ -68,7 +68,7 @@ public class MainEditorController extends BaseMainEditorController implements In
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	private String tmpUploadDirPath;
 	
-	public MainEditorController() {
+	public SchemaEditorController() {
 		super("schemaEditor");
 	}
 		
@@ -79,11 +79,11 @@ public class MainEditorController extends BaseMainEditorController implements In
 	}
 	
 	@RequestMapping(method=GET, value="")
-	public String getEditor(@PathVariable String schemaId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request) {
+	public String getEditor(@PathVariable String entityId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(schemaId, auth), auth.getUserId()));
+		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(entityId, auth), auth.getUserId()));
 		try {
-			PersistedSession s = sessionService.accessOrCreate(schemaId, request.getSession().getId(), auth.getUserId());
+			PersistedSession s = sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId());
 			model.addAttribute("session", s);
 		} catch (GenericScheregException e) {
 			logger.error("Failed to load/initialize persisted session", e);
@@ -93,14 +93,14 @@ public class MainEditorController extends BaseMainEditorController implements In
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/import"})
-	public String getImportForm(@PathVariable String schemaId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public String getImportForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+		if(!schemaService.getHasWriteAccess(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/async/import");
-		model.addAttribute("schema", schemaService.findSchemaById(schemaId));
+		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/import");
+		model.addAttribute("schema", schemaService.findSchemaById(entityId));
 		return "schemaEditor/form/import";
 	}
 	
@@ -112,30 +112,30 @@ public class MainEditorController extends BaseMainEditorController implements In
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/form/createRoot")
-	public String getNewNonterminalForm(@PathVariable String schemaId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public String getNewNonterminalForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+		if(!schemaService.getHasWriteAccess(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
 		model.addAttribute("element", new Nonterminal());
-		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/async/saveNewRoot");
+		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(entityId));
+		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/saveNewRoot");
 		return "schemaEditor/form/element/edit_nonterminal";
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewRoot")
-	public @ResponseBody ModelActionPojo saveNonterminal(@PathVariable String schemaId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveNonterminal(@PathVariable String entityId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+		if(!schemaService.getHasWriteAccess(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			element.setEntityId(schemaId);
-			elementService.saveOrReplaceRoot(schemaId, element, authInfoHelper.getAuth(request));
+			element.setEntityId(entityId);
+			elementService.saveOrReplaceRoot(entityId, element, authInfoHelper.getAuth(request));
 		}		
 		return result;
 	}
@@ -242,9 +242,9 @@ public class MainEditorController extends BaseMainEditorController implements In
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/export")
-	public @ResponseBody ModelActionPojo exportSchema(@PathVariable String schemaId, Model model, Locale locale) {
-		Schema s = schemaService.findSchemaById(schemaId);
-		Element r = elementService.findRootBySchemaId(schemaId, true);
+	public @ResponseBody ModelActionPojo exportSchema(@PathVariable String entityId, Model model, Locale locale) {
+		Schema s = schemaService.findSchemaById(entityId);
+		Element r = elementService.findRootBySchemaId(entityId, true);
 		
 		SerializableSchemaContainer sp = new SerializableSchemaContainer();
 		sp.setSchema(s);
@@ -260,8 +260,8 @@ public class MainEditorController extends BaseMainEditorController implements In
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
-	public @ResponseBody Element getHierarchy(@PathVariable String schemaId, Model model, Locale locale, HttpServletResponse response) throws IOException {
-		Element result = elementService.findRootBySchemaId(schemaId, true);
+	public @ResponseBody Element getHierarchy(@PathVariable String entityId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		Element result = elementService.findRootBySchemaId(entityId, true);
 		if (result==null) {
 			response.getWriter().print("null");
 			response.setContentType("application/json");
@@ -270,8 +270,8 @@ public class MainEditorController extends BaseMainEditorController implements In
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getRendered")
-	public @ResponseBody MappableElement getRenderedHierarchy(@PathVariable String schemaId, Model model, Locale locale, HttpServletResponse response) throws IOException {
-		Element e = elementService.findRootBySchemaId(schemaId, true);
+	public @ResponseBody MappableElement getRenderedHierarchy(@PathVariable String entityId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		Element e = elementService.findRootBySchemaId(entityId, true);
 		MappableElement result =  ElementServiceImpl.convertElement(e, true);
 		if (result==null) {
 			response.getWriter().print("null");
@@ -281,8 +281,8 @@ public class MainEditorController extends BaseMainEditorController implements In
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")
-	public @ResponseBody List<? extends Terminal> getTerminals(@PathVariable String schemaId) {
-		Schema s = schemaService.findSchemaById(schemaId);
+	public @ResponseBody List<? extends Terminal> getTerminals(@PathVariable String entityId) {
+		Schema s = schemaService.findSchemaById(entityId);
 		if (s instanceof XmlSchema) {	
 			return ((XmlSchema)s).getTerminals();
 		}

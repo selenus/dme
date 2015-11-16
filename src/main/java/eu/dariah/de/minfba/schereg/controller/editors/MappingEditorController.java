@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller.mappingeditor;
+package eu.dariah.de.minfba.schereg.controller.editors;
 
 import java.util.List;
 import java.util.Locale;

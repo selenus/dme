@@ -64,7 +64,7 @@ BaseEditor.prototype.executeSample = function() {
 	    	_this.logArea.refresh();
 	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
 	    	
-	    	if (_this instanceof MappingEditor) {
+	    	if (_this.mappingId!==undefined && _this instanceof MappingEditor) {
 	    		_this.executeSampleMapping();
 	    	}
 	    }, 
@@ -138,7 +138,7 @@ BaseEditor.prototype.getSampleResource = function() {
 	    	result.append(_this.buildSampleResource(data));
 	    	$("#schema-sample-output-resource").html(result);
 	    	_this.setSampleNavigationBar();
-	    	if (_this instanceof MappingEditor) {
+	    	if (_this.mappingId!==undefined && _this instanceof MappingEditor) {
 	    		_this.getTransformedResource();
 	    	}
 	    },

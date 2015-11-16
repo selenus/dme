@@ -1,4 +1,4 @@
-package eu.dariah.de.minfba.schereg.controller.schemaeditor;
+package eu.dariah.de.minfba.schereg.controller.editors;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,14 +98,13 @@ public class GrammarEditorController extends BaseScheregController {
 			g.setGrammarContainer(new GrammarContainer());
 		}
 
-		// TODO Fix this for both mapping/schema editor
-		/*PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s.getSelectedValueMap()!=null) {
 			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
 			if (s.getSelectedValueMap().containsKey(elementId)) {
 				model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
 			}
-		}*/
+		}
 		
 		model.addAttribute("grammar", g);		
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/save");

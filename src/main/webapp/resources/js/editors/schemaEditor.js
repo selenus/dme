@@ -22,7 +22,7 @@ var SchemaEditor = function(options) {
 			write: $("#schema-write").val()==="true"
 	}
 	
-	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schema.id;
+	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schema.id + "/";
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
 
 	this.layout = null;
@@ -305,9 +305,9 @@ SchemaEditor.prototype.editGrammar = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "schema//" + _this.schema.id,
+			pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
 			entityId : _this.schema.id,
-			grammarId : this.graph.selectedItems[0].id
+			grammarId : _this.graph.selectedItems[0].id
 		}); },       
 		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
@@ -328,9 +328,9 @@ SchemaEditor.prototype.editFunction = function() {
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
         setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "schema//" + this.schema.id,
+			pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
 			entityId : _this.schema.id,
-			functionId : this.graph.selectedItems[0].id
+			functionId : _this.graph.selectedItems[0].id
 		}); },       
 		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
