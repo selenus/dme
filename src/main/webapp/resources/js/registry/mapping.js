@@ -14,6 +14,11 @@ var MappingTable = function() {
 	                          "~eu.dariah.de.minfba.common.model.id",
 	                          "~eu.dariah.de.minfba.common.view.forms.servererror.head",
 	                          "~eu.dariah.de.minfba.common.view.forms.servererror.body",
+	                          
+	                          "~eu.dariah.de.minfba.common.model.stub",
+	                          "~eu.dariah.de.minfba.common.model.draft",
+	                          "~eu.dariah.de.minfba.common.model.public",
+	                          "~eu.dariah.de.minfba.common.model.readonly"
 	                          ]);
 	this.createTable();
 };
@@ -62,9 +67,22 @@ MappingTable.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	var result = "";	
 	if (type=="display") {
 		if (row.entity.draft) {
-			result += '<span class="label label-warning">Draft</span> ';
+			result += '<span class="label label-warning">' + __translator.translate("~eu.dariah.de.minfba.common.model.draft") + '</span> ';
 		} else {
-			result += '<span class="label label-info">Public</span> ';
+			result += '<span class="label label-info">' + __translator.translate("~eu.dariah.de.minfba.common.model.public") + '</span> ';
+		}
+		
+		if (row.entity.readOnly) {
+			result += '<span class="label label-info">' + __translator.translate("~eu.dariah.de.minfba.common.model.readonly") + '</span> ';
+		} 
+	} else {
+		if (row.entity.draft) {
+			result += __translator.translate("~eu.dariah.de.minfba.common.model.draft") + " ";
+		} else {
+			result += __translator.translate("~eu.dariah.de.minfba.common.model.public" + " ");
+		}
+		if (row.entity.readOnly) {
+			result += __translator.translate("~eu.dariah.de.minfba.common.model.draft" + " ");
 		}
 	}
 	return result;

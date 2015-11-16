@@ -120,8 +120,8 @@ public class MappingController extends BaseScheregController {
 			saveMapping = mapping;
 		} else {
 			saveMapping.setDescription(mapping.getDescription());
-			saveMapping.setSourceId(mapping.getSourceId());
-			saveMapping.setTargetId(mapping.getTargetId());
+			/*saveMapping.setSourceId(mapping.getSourceId());
+			saveMapping.setTargetId(mapping.getTargetId());*/
 		}
 		mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft, readOnly), auth);
 		return result;

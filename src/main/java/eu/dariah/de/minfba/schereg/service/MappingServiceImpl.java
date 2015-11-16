@@ -73,6 +73,7 @@ public class MappingServiceImpl extends BaseReferenceServiceImpl implements Mapp
 			container = createContainer(auth.getUserId());
 		}
 		container.setElement(mapping.getPojo());
+		container.setReadOnly(mapping.isReadOnly());
 		container.setDraft(mapping.isDraft());
 		mappingDao.save(container, auth.getUserId(), auth.getSessionId());
 		if (isNew) {
