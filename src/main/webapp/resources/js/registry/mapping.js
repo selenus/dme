@@ -56,9 +56,7 @@ MappingTable.prototype.createTable = function() {
 };
 
 /* Overrides the base abstract method */
-MappingTable.prototype.handleSelection = function(id) {
-	console.log("mapping handle " + id);
-};
+MappingTable.prototype.handleSelection = function(id) { };
 
 MappingTable.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	var result = "";	
@@ -116,66 +114,4 @@ MappingTable.prototype.triggerEdit = function(mappingId) {
 	});
 		
 	modalFormHandler.show(form_identifier);
-};
-
-MappingTable.prototype.triggerPublish = function(mappingId) {
-	if (!__util.isLoggedIn()) {
-		__util.showLoginNote();
-		return;
-	}
-	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_publish"), mappingId), function(result) {
-		if(result) {
-			$.ajax({
-		        url: __util.getBaseUrl() + "mapping/async/publish/" + mappingId,
-		        type: "GET",
-		        dataType: "json",
-		        success: function(data) { 
-		        	if (data.success) {
-		        		__notifications.showMessage(NOTIFICATION_TYPES.INFO, 
-			        			__translator.translate("~eu.dariah.de.minfba.schereg.notification.published.head"), 
-			        			String.format(__translator.translate("~eu.dariah.de.minfba.schereg.notification.published.body"), mappingId));
-		        	} else {
-		        		__notifications.showMessage(NOTIFICATION_TYPES.WARNING, 
-			        			__translator.translate("~eu.dariah.de.minfba.schereg.notification.publish_error.head"), 
-			        			String.format(__translator.translate("~eu.dariah.de.minfba.schereg.notification.publish_error.body"), mappingId));
-		        	}		        	
-		        	_this.refresh();
-		        },
-		        error: function(textStatus) {
-		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
-		        }
-			});
-		}
-	});
-};
-
-MappingTable.prototype.triggerDelete = function(mappingId) {
-	if (!__util.isLoggedIn()) {
-		__util.showLoginNote();
-		return;
-	}
-	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), mappingId), function(result) {
-		if(result) {
-			$.ajax({
-		        url: __util.getBaseUrl() + "mapping/async/delete/" + mappingId,
-		        type: "GET",
-		        dataType: "json",
-		        success: function(data) { 
-		        	__notifications.showMessage(NOTIFICATION_TYPES.INFO, 
-		        			__translator.translate("~eu.dariah.de.minfba.schereg.notification.deleted.head"), 
-		        			String.format(__translator.translate("~eu.dariah.de.minfba.schereg.notification.deleted.body"), mappingId));
-		        	_this.refresh();
-		        },
-		        error: function(textStatus) {
-		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
-		        }
-			});
-		}
-	});
 };

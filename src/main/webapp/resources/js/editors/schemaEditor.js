@@ -480,3 +480,75 @@ SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
 	select.removeProp("disabled");
 	$("#btn-submit-schema-elements").removeProp("disabled");
 };
+
+SchemaEditor.prototype.triggerEditSchema = function() {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	
+	var _this = this;
+	var form_identifier = "edit-schema-" + _this.schema.id;
+	
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/forms/edit/",
+		identifier: form_identifier,
+		additionalModalClasses: "wide-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],
+		completeCallback: function() { window.location.reload(); }
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
+
+SchemaEditor.prototype.triggerDeleteSchema = function() {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), _this.schema.id), function(result) {
+		if(result) {
+			$.ajax({
+		        url: _this.pathname + "/async/delete/",
+		        type: "GET",
+		        dataType: "json",
+		        success: function(data) { 
+		        	window.location.reload();
+		        },
+		        error: function(textStatus) {
+		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        }
+			});
+		}
+	});
+};
+
+SchemaEditor.prototype.triggerPublish = function() {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_publish"), _this.schema.id), function(result) {
+		if(result) {
+			$.ajax({
+		        url: __util.getBaseUrl() + "schema/async/publish/" + _this.schema.id,
+		        type: "GET",
+		        dataType: "json",
+		        success: function(data) { 
+		        	window.location.reload();
+		        },
+		        error: function(textStatus) {
+		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        }
+			});
+		}
+	});
+};

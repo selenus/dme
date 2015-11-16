@@ -16,4 +16,5 @@ public interface MappingService {
 	boolean getHasWriteAccess(RightsContainer<Mapping> m, String userId);
 	public void deleteMappingById(String id, AuthPojo auth);
 	public List<RightsContainer<Mapping>> findAllByAuth(AuthPojo auth, boolean view);
+	public List<RightsContainer<Mapping>> getMappings(String entityId);
 }

@@ -101,7 +101,7 @@ public class SchemaController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getHasWriteAccess(schema.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -124,7 +124,7 @@ public class SchemaController extends BaseScheregController {
 			saveSchema.setDescription(schema.getDescription());
 		}
 		
-		schemaService.saveSchema(new AuthWrappedPojo<XmlSchema>((XmlSchema) saveSchema, true, false, false, draft), auth);
+		schemaService.saveSchema(new AuthWrappedPojo<XmlSchema>((XmlSchema) saveSchema, true, false, false, draft, readOnly), auth);
 		return result;
 	}
 	

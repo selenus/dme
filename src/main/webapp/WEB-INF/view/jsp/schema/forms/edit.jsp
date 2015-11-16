@@ -29,6 +29,13 @@
 				<sf:textarea path="description" class="form-control" rows="4" id="schema_description" />
 			</div>
 		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<label>
+					<input type="checkbox" name="readOnly" id="readOnly"<c:if test="${readOnly}"> checked="checked"</c:if>> ~Read only:
+				</label>
+			</div>
+		</div>	
 	</div>
 	<div class="form-footer form-group">
 		<div class="col-sm-12">

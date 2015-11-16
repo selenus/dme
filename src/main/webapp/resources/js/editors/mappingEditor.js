@@ -646,3 +646,76 @@ MappingEditor.prototype.saveConceptMappingHandler = function(e) {
  	});
 	
 };
+
+MappingEditor.prototype.triggerEdit = function() {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	
+	var _this = this;
+	var form_identifier = "edit-mapping-" + _this.mappingId;
+	var url = __util.getBaseUrl() + "mapping/forms/edit/" + _this.mappingId;
+	
+	modalFormHandler = new ModalFormHandler({
+		formFullUrl: url,
+		identifier: form_identifier,
+		//additionalModalClasses: "wide-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],
+		completeCallback: function() { window.location.reload(); }
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
+
+MappingEditor.prototype.triggerPublish = function() {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_publish"), _this.mappingId), function(result) {
+		if(result) {
+			$.ajax({
+		        url: __util.getBaseUrl() + "mapping/async/publish/" + _this.mappingId,
+		        type: "GET",
+		        dataType: "json",
+		        success: function(data) { 
+		        	window.location.reload();
+		        },
+		        error: function(textStatus) {
+		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        }
+			});
+		}
+	});
+};
+
+MappingEditor.prototype.triggerDelete = function() {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), _this.mappingId), function(result) {
+		if(result) {
+			$.ajax({
+		        url: __util.getBaseUrl() + "mapping/async/delete/" + _this.mappingId,
+		        type: "GET",
+		        dataType: "json",
+		        success: function(data) { 
+		        	window.location.reload();
+		        },
+		        error: function(textStatus) {
+		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
+		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        }
+			});
+		}
+	});
+};

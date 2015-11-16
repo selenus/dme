@@ -93,13 +93,14 @@ public class MappingController extends BaseScheregController {
 		
 		model.addAttribute("actionPath", "/mapping/async/save");
 		model.addAttribute("draft", mapping.isDraft());
+		model.addAttribute("readOnly", mapping.isReadOnly());
 		model.addAttribute("mapping", mapping.getElement());
 		return "mapping/form/edit";
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value="async/save")
-	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!mappingService.getHasWriteAccess(mapping.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -122,7 +123,7 @@ public class MappingController extends BaseScheregController {
 			saveMapping.setSourceId(mapping.getSourceId());
 			saveMapping.setTargetId(mapping.getTargetId());
 		}
-		mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft), auth);
+		mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft, readOnly), auth);
 		return result;
 	}
 	

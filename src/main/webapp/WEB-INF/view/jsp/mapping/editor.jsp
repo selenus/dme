@@ -39,7 +39,21 @@
 						<h2 class="pull-left"><small>~Source</small>
 						${source.pojo.label} <small>~Target</small> ${target.pojo.label} 
 							<c:if test="${!mapping.own && !mapping.write}"> <span class="glyphicon glyphicon-lock"></span></c:if>
-						</h2>		
+						&nbsp;</h2>
+						
+						<c:if test="${mapping.draft}"><span class="label label-warning">~ Draft</span></c:if>
+						<c:if test="${mapping.readOnly}"><span class="label label-info">~ Read-only</span></c:if>
+						
+						<c:if test="${mapping.own || mapping.write}">
+							<div class="pull-right">
+								<button type="button" onclick="editor.triggerEdit(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" /></button>
+								
+								<c:if test="${mapping.draft}">
+									<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
+									<button type="button" onclick="editor.triggerDelete(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
+								</c:if>
+							</div>		
+						</c:if>
 					</div>
 					<div class="col-xs-12">
 						<div class="hide editor-layout-container">

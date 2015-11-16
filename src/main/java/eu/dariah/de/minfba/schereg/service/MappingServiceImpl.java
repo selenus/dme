@@ -142,4 +142,13 @@ public class MappingServiceImpl extends BaseReferenceServiceImpl implements Mapp
 		
 		return mappings;
 	}
+
+	@Override
+	public List<RightsContainer<Mapping>> getMappings(String entityId) {
+		Query q = new Query();
+		q.addCriteria(new Criteria().orOperator(Criteria.where("element.sourceId").is(entityId),
+				Criteria.where("element.targetId").is(entityId)));
+		
+		return mappingDao.find(q);
+	}
 }

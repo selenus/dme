@@ -40,17 +40,17 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 
 	@Override
 	public void saveSchema(AuthWrappedPojo<? extends Schema> schema, AuthPojo auth) {		
-		this.innerSaveSchema(schema.getPojo(), schema.isDraft(), auth.getUserId(), auth.getSessionId());
+		this.innerSaveSchema(schema.getPojo(), schema.isDraft(), schema.isReadOnly(), auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
 	public void saveSchema(Schema schema, AuthPojo auth) {
-		this.innerSaveSchema(schema, null, auth.getUserId(), auth.getSessionId());
+		this.innerSaveSchema(schema, null, null, auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
 	public void saveSchema(Schema schema, Reference rootNonterminal, AuthPojo auth) {
-		this.innerSaveSchema(schema, null, auth.getUserId(), auth.getSessionId());
+		this.innerSaveSchema(schema, null, null, auth.getUserId(), auth.getSessionId());
 		
 		Reference root = this.findReferenceById(schema.getId());
 	
@@ -63,7 +63,7 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 		this.saveRootReference(root);
 	}
 	
-	private void innerSaveSchema(Schema schema, Boolean draft, String userId, String sessionId) {
+	private void innerSaveSchema(Schema schema, Boolean draft, Boolean readOnly, String userId, String sessionId) {
 		RightsContainer<Schema> container = null;
 		boolean isNew = schema.getId()==null || schema.getId().equals("") || schema.getId().equals("undefined"); 
 		if (isNew) {
@@ -74,6 +74,9 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 		container.setElement(schema);
 		if (draft!=null) {
 			container.setDraft(draft);
+		}
+		if (readOnly!=null) {
+			container.setReadOnly(readOnly);
 		}
 		schemaDao.save(container, userId, sessionId);
 		if (isNew) {

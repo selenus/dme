@@ -9,15 +9,17 @@ public class AuthWrappedPojo<T extends Identifiable> implements Identifiable {
 	
 	private boolean own;
 	private boolean draft;
+	private boolean readOnly;
 	private boolean write;
 	private boolean share;
 	
 	
 	public AuthWrappedPojo() {}
-	public AuthWrappedPojo(T pojo, boolean own, boolean write, boolean share, boolean draft) {
+	public AuthWrappedPojo(T pojo, boolean own, boolean write, boolean share, boolean draft, boolean readOnly) {
 		this.pojo = pojo;
 		this.own = own;
 		this.write = write;
+		this.readOnly = readOnly;
 		this.share = share;
 		this.draft = draft;
 	}
@@ -36,6 +38,9 @@ public class AuthWrappedPojo<T extends Identifiable> implements Identifiable {
 	
 	public boolean isDraft() { return draft; }
 	public void setDraft(boolean draft) { this.draft = draft; }
+	
+	public boolean isReadOnly() { return readOnly; }
+	public void setReadOnly(boolean readOnly) { this.readOnly = readOnly; }
 	
 	@Override public String getId() { return this.pojo.getId(); }
 	@Override public void setId(String id) { this.pojo.setId(id); }

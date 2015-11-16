@@ -19,6 +19,7 @@ public class AuthWrappedPojoConverter {
 		AuthWrappedPojo<T> result = new AuthWrappedPojo<T>();
 		result.setPojo(element.getElement());
 		result.setDraft(element.isDraft());
+		result.setReadOnly(element.isReadOnly());
 		if (userId!=null) {
 			result.setOwn(element.getOwnerId().equals(userId));
 			result.setWrite(element.getWriteIds()!=null && element.getWriteIds().contains(userId));

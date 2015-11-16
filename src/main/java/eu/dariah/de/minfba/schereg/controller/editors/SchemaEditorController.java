@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
@@ -53,17 +54,20 @@ import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
+import eu.dariah.de.minfba.schereg.model.RightsContainer;
+import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
 @Controller
 @RequestMapping(value="/schema/editor/{entityId}/")
 public class SchemaEditorController extends BaseMainEditorController implements InitializingBean {
 	private static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
-	
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
+	@Autowired private MappingService mappingService;
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	private String tmpUploadDirPath;
@@ -82,6 +86,9 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	public String getEditor(@PathVariable String entityId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		model.addAttribute("schema", authPojoConverter.convert(schemaService.findByIdAndAuth(entityId, auth), auth.getUserId()));
+		
+		List<RightsContainer<Mapping>> mappings = mappingService.getMappings(entityId);
+		model.addAttribute("mapped", mappings!=null && mappings.size()>0);
 		try {
 			PersistedSession s = sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId());
 			model.addAttribute("session", s);
@@ -89,6 +96,29 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			logger.error("Failed to load/initialize persisted session", e);
 		} 
 		return "schemaEditor";
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/forms/edit"})
+	public String getEditForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request) {
+		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, authInfoHelper.getAuth(request));
+		model.addAttribute("actionPath", "/schema/async/save");
+		model.addAttribute("schema", schema.getElement());
+		model.addAttribute("readOnly", schema.isReadOnly());
+		return "schema/form/edit";
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/async/delete"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String entityId, HttpServletRequest request) {
+		ModelActionPojo result;
+		if (entityId!=null && !entityId.isEmpty()) {
+			schemaService.deleteSchemaById(entityId, authInfoHelper.getAuth(request));
+			result = new ModelActionPojo(true);
+		} else {
+			result = new ModelActionPojo(false);
+		}		
+		return result;
 	}
 	
 	@PreAuthorize("isAuthenticated()")

@@ -16,24 +16,33 @@
 		<sf:hidden path="id" />
 	</div>
 	<div class="form-content">
-		<div class="form-group">
-			<label class="control-label col-sm-3" for="mapping_source">~ Source:</label>
-			<div class="col-sm-9">
-				<sf:select path="sourceId" cssClass="form-control" items="${schemas}" itemLabel="element.label" itemValue="id" />
-				<sf:errors path="sourceId" cssClass="error" />
+		<fieldset<c:if test="${mapping.id!=null && mapping.id!=''}"> disabled</c:if>>
+			<div class="form-group">
+				<label class="control-label col-sm-3" for="mapping_source">~ Source:</label>
+				<div class="col-sm-9">
+					<sf:select path="sourceId" cssClass="form-control read-only" items="${schemas}" itemLabel="element.label" itemValue="id" />
+					<sf:errors path="sourceId" cssClass="error" />
+				</div>
 			</div>
-		</div>
-		<div class="form-group">
-			<label class="control-label col-sm-3" for="mapping_source">~ Target:</label>
-			<div class="col-sm-9">
-				<sf:select path="targetId" cssClass="form-control" items="${schemas}" itemLabel="element.label" itemValue="id" />
-				<sf:errors path="targetId" cssClass="error" />
+			<div class="form-group">
+				<label class="control-label col-sm-3" for="mapping_source">~ Target:</label>
+				<div class="col-sm-9">
+					<sf:select path="targetId" cssClass="form-control" items="${schemas}" itemLabel="element.label" itemValue="id" />
+					<sf:errors path="targetId" cssClass="error" />
+				</div>
 			</div>
-		</div>
+		</fieldset>
 		<div class="form-group">
 			<label class="control-label col-sm-3" for="mapping_description"><s:message code="~eu.dariah.de.minfba.mapreg.model.mapping.description" />:</label>
 			<div class="col-sm-9">
 				<sf:textarea path="description" class="form-control" rows="4" id="mapping_description" />
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<label>
+					<input type="checkbox" name="readOnly" id="readOnly"<c:if test="${readOnly}"> checked="checked"</c:if>> ~Read only:
+				</label>
 			</div>
 		</div>
 	</div>

@@ -54,9 +54,7 @@ SchemaTable.prototype.createTable = function() {
 };
 
 /* Overrides the base abstract method */
-SchemaTable.prototype.handleSelection = function(id) {
-	console.log("schema handle " + id);
-};
+SchemaTable.prototype.handleSelection = function(id) { };
 
 SchemaTable.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	var result = "";	

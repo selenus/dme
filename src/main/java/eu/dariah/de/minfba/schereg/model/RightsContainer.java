@@ -13,6 +13,7 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 	private T element;
 	
 	private boolean draft;
+	private boolean readOnly;
 	private String ownerId;
 	
 	private List<String> readIds;
@@ -41,7 +42,13 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 		this.addChange(ChangeType.EDIT_VALUE, "draft", this.draft, draft);
 		this.draft = draft; 
 	}
-
+	
+	public boolean isReadOnly() { return readOnly; }
+	public void setReadOnly(boolean readOnly) {
+		this.addChange(ChangeType.EDIT_VALUE, "readOnly", this.readOnly, readOnly);
+		this.readOnly = readOnly;
+	}
+	
 	public String getOwnerId() { return ownerId; }
  	public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
 

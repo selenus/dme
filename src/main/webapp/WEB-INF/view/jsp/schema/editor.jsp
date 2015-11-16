@@ -34,10 +34,29 @@
 			<div id="main-content">
 				<div class="row">
 					<div class="col-xs-12">
-						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /> 
-						<small>${schema.pojo.label}
-							<c:if test="${!schema.own && !schema.write}"> <span class="glyphicon glyphicon-lock"></span></c:if>
-						</small>&nbsp;</h2>		
+						<h2 class="pull-left">
+						<small><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /></small>&nbsp;${schema.pojo.label}
+							<c:if test="${!schema.own && !schema.write}"> <small><span class="glyphicon glyphicon-lock"></span></small></c:if>
+						&nbsp;</h2>
+
+						<c:if test="${schema.draft}"><span class="label label-warning">~ Draft</span></c:if>
+						<c:if test="${schema.readOnly}"><span class="label label-info">~ Read-only</span></c:if>
+						
+						
+						
+						<c:if test="${schema.own || schema.write}">
+							<div class="pull-right">
+								<button type="button" onclick="editor.triggerEditSchema(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" /></button>
+								
+								<c:if test="${schema.draft}">
+									<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
+								</c:if>
+								
+								<c:if test="${!mapped && schema.draft}">
+									<button type="button" onclick="editor.triggerDeleteSchema(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
+								</c:if>
+							</div>		
+						</c:if>
 					</div>
 					<div class="col-xs-12">
 						<div class="hide editor-layout-container">
