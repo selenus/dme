@@ -138,6 +138,26 @@ BaseEditor.prototype.getSampleResource = function() {
 	    	result.append(_this.buildSampleResource(data));
 	    	$("#schema-sample-output-resource").html(result);
 	    	_this.setSampleNavigationBar();
+	    	if (_this instanceof MappingEditor) {
+	    		_this.getTransformedResource();
+	    	}
+	    },
+	    error: __util.processServerError
+	});
+};
+
+BaseEditor.prototype.getTransformedResource = function() {
+	var _this = this;
+	$.ajax({
+	    url: this.samplePath + "async/getTransformedResource",
+	    type: "GET",
+	    data: { index : _this.currentSampleIndex },
+	    dataType: "json",
+	    success: function(data) {
+	    	var result = $("<ul>");
+	    	result.append(_this.buildSampleResource(data));
+	    	$("#schema-sample-transformed-resource").html(result);
+	    	_this.setSampleNavigationBar();
 	    },
 	    error: __util.processServerError
 	});
@@ -148,14 +168,14 @@ BaseEditor.prototype.setSampleNavigationBar = function() {
 	$(".schema-sample-output-counter").text("" + (this.currentSampleIndex+1) + " / " + this.sampleResourceCount);
 	
 	if (this.currentSampleIndex > 0) {
-		$("#btn-sample-prev-resource").removeClass("disabled");
+		$(".btn-sample-prev-resource").removeClass("disabled");
 	} else {
-		$("#btn-sample-prev-resource").addClass("disabled");
+		$(".btn-sample-prev-resource").addClass("disabled");
 	}
 	if (this.currentSampleIndex < this.sampleResourceCount-1) {
-		$("#btn-sample-next-resource").removeClass("disabled");
+		$(".btn-sample-next-resource").removeClass("disabled");
 	} else {
-		$("#btn-sample-next-resource").addClass("disabled");
+		$(".btn-sample-next-resource").addClass("disabled");
 	}	
 };
 
@@ -173,6 +193,15 @@ BaseEditor.prototype.getNextSampleResource = function() {
 	}
 };
 
+BaseEditor.prototype.showSampleResourceTarget = function() {
+	$("#schema-sample-output-resource").addClass("hide");
+	$("#schema-sample-transformed-resource").removeClass("hide");
+}
+
+BaseEditor.prototype.showSampleResourceSource = function() {
+	$("#schema-sample-output-resource").removeClass("hide");
+	$("#schema-sample-transformed-resource").addClass("hide");
+}
 
 BaseEditor.prototype.buildSampleResource = function(resource) {
 	var key = Object.getOwnPropertyNames(resource)[0];

@@ -95,11 +95,18 @@
 										</div>
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="schema-sample-output-container">
 											<div class="button-bar">
+												<div class="pull-left">
+													<button type="button" onclick="editor.showSampleResourceSource(); return false;" class="btn btn-default btn-sample-source btn-sm">~ Source</button>
+													<button type="button" onclick="editor.showSampleResourceTarget(); return false;" class="btn btn-default btn-sample-target btn-sm">~ Target</button>
+												</div>
 												<span class="schema-sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
-												<button id="btn-sample-prev-resource" type="button" onclick="editor.getPrevSampleResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
-												<button id="btn-sample-next-resource" type="button" onclick="editor.getNextSampleResource(); return false;" class="btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
+												<button type="button" onclick="editor.getPrevSampleResource(); return false;" class="btn btn-default btn-sample-prev-resource btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
+												<button type="button" onclick="editor.getNextSampleResource(); return false;" class="btn btn-default btn-sample-next-resource btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 											</div>
-											<div id="schema-sample-output-resource" class="height-sized-element"></div>
+											<div class="height-sized-element">
+												<div id="schema-sample-output-resource"></div>
+												<div id="schema-sample-transformed-resource" class="hide"></div>
+											</div>
 										</div>
 									</div>
 								</div>									

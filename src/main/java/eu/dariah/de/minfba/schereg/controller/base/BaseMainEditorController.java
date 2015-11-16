@@ -67,6 +67,26 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		return null;
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getTransformedResource")
+	public @ResponseBody Resource getTransformedResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, Locale locale) {
+		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s.getSampleMapped()!=null && s.getSampleMapped().size()>0) {
+			
+			if (s.getSampleMapped().size()>index) {
+				/*Map<String, String> valueMap = new HashMap<String, String>();
+				this.fillValueMap(valueMap, s.getSampleOutput().get(index));
+				
+				s.setSelectedValueMap(valueMap);*/
+				s.setSelectedOutputIndex(index);
+				
+				sessionService.saveSession(s);
+				
+				return s.getSampleMapped().get(index);
+			} 
+		}
+		return null;
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
 	public @ResponseBody ModelActionPojo executeSample(@PathVariable String entityId, HttpServletRequest request, Locale locale) {
 		Stopwatch sw = new Stopwatch();
