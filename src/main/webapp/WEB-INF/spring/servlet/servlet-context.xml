@@ -57,33 +57,9 @@
 		<property name="rootItems">
 			<list>
 				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
-					<property name="id" value="myfederation" />
-					<property name="displayCode" value="~eu.dariah.de.minfba.myfederation.title" />
-					<property name="glyphicon" value="glyphicon glyphicon-star" />
-					<property name="subItems">
-						<list>
-							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
-								<property name="id" value="myfederation" />
-								<property name="displayCode" value="~eu.dariah.de.minfba.myfederation.title" />
-								<property name="linkUrl" value="/nirvana" />
-							</bean>
-						</list>
-					</property>
-				</bean>
-				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 					<property name="id" value="registry" />
 					<property name="displayCode" value="~eu.dariah.de.minfba.schereg.title" />
 					<property name="linkUrl" value="/registry/" />
-				</bean>
-				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
-					<property name="id" value="schema" />
-					<property name="displayCode" value="~eu.dariah.de.minfba.schereg.title" />
-					<property name="linkUrl" value="/schema/" />
-				</bean>
-				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
-					<property name="id" value="mapping" />
-					<property name="displayCode" value="~eu.dariah.de.minfba.mapreg.title" />
-					<property name="linkUrl" value="/mapping/" />
 				</bean>
 			</list>
 		</property>

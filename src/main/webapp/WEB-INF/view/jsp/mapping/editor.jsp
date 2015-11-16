@@ -25,7 +25,7 @@
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
 				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
-				<li><a href='<s:url value="/registry/" />' target="_self">~Schemas and Mappings</a></li>
+				<li><a href='<s:url value="/registry" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.registry.title" /></a></li>
 				<li class="active">~Mapping Editor</li>
 			</ul>
 			<input type="hidden" id="mapping-id" value="${mapping.id}" />
