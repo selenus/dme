@@ -6,7 +6,7 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="terminal" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.edit" /></h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.terminal.edit" /></h3>	
 		<sf:hidden path="id" />
 	</div>
 	<div class="form-content">

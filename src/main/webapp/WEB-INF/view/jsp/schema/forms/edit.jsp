@@ -7,10 +7,10 @@
 	<div class="form-header">
 		<c:choose>
 			<c:when test="${schema.id!=null && schema.id!=''}">
-				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.edit" /></h3>
+				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.schema.edit" /></h3>
 			</c:when>
 			<c:otherwise>
-				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.create" /></h3>
+				<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.schema.create" /></h3>
 			</c:otherwise>
 		</c:choose>		
 		<sf:hidden path="id" />
@@ -32,7 +32,7 @@
 		<div class="form-group">
 			<div class="col-sm-offset-3 col-sm-9">
 				<label>
-					<input type="checkbox" name="readOnly" id="readOnly"<c:if test="${readOnly}"> checked="checked"</c:if>> ~Read only:
+					<input type="checkbox" name="readOnly" id="readOnly"<c:if test="${readOnly}"> checked="checked"</c:if>> <s:message code="~eu.dariah.de.minfba.common.model.readonly" />
 				</label>
 			</div>
 		</div>	

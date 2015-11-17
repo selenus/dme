@@ -3,7 +3,7 @@
 
 <div class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title">~Progress</h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.title" /></h3>	
 	</div>
 	<div class="form-content">
 		<div class="panel-group" id="accordion-validate-grammar" role="tablist" aria-multiselectable="true">
@@ -14,7 +14,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 ~Uploading grammar
+						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.uploading" />
 					</h4>
 				</div>
 				<div id="collapse-grammar-uploading" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-grammar-uploading">
@@ -29,7 +29,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 ~Generating Java parser/lexer source code from grammar rules
+						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.java_creation" />
 					</h4>
 				</div>
 				<div id="collapse-grammar-parsing" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-grammar-parsing">
@@ -44,7 +44,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 ~Compiling executable Java bytecode
+						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.compiling" />
 					</h4>
 				</div>
 				<div id="collapse-grammar-compiling" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-grammar-compiling">
@@ -59,7 +59,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 ~Preparing transformation sandbox for grammar
+						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.sandboxing" />
 					</h4>
 				</div>
 				<div id="collapse-grammar-sandboxing" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-grammar-sandboxing">
@@ -72,7 +72,7 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset">~Close</button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
 		</div>
 	</div>
 </div>

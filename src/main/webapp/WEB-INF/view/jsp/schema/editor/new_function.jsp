@@ -6,7 +6,7 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="function" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.new" /></h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.create" /></h3>	
 		<sf:hidden path="id" />
 		<sf:hidden path="entityId" />
 	</div>

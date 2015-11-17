@@ -3,7 +3,7 @@
 
 <div class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title">~Progress</h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.process.title" /></h3>	
 	</div>
 	<div class="form-content">
 		<div class="panel-group" id="accordion-validate-function" role="tablist" aria-multiselectable="true">
@@ -14,7 +14,7 @@
 						<span class="glyphicon glyphicon-console function-waiting hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok function-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign function-error hide" aria-hidden="true"></span>
-						 ~Parsing function
+						 <s:message code="~eu.dariah.de.minfba.schereg.form.function.process.parsing_function" />
 					</h4>
 				</div>
 				<div id="collapse-function-parsing" class="panel-collapse" role="tabpanel" aria-labelledby="heading-function-parsing">
@@ -38,7 +38,7 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset">~Close</button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
 		</div>
 	</div>
 </div>
