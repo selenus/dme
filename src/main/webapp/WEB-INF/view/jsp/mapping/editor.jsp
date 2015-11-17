@@ -70,16 +70,18 @@
 								<input type="hidden" id="currentSampleIndex" value="${session.selectedOutputIndex==null ? 0 : session.selectedOutputIndex}">
 								
 								<div class="ui-pane-title">
-									<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.title" /></h4>
+									<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.title" />
+										<span class="pull-right"><span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="top" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.sessions" />" aria-hidden="true"></span></span>
+									</h4>
 								</div>
-								<h5>~Sessions</h5>									
+								<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sessions" /></h5>									
 								<div class="ui-pane-subcontainer button-bar">
-									<button type="button" onclick="sessions.saveSession(editor.mappingId);" class="btn btn-default btn-sm">~ Save session</button>
-									<button type="button" onclick="sessions.loadSession(editor.mappingId);" class="btn btn-default btn-sm">~ Load session</button>
+									<button type="button" onclick="sessions.saveSession(editor.mappingId);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></button>
+									<button type="button" onclick="sessions.loadSession(editor.mappingId);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></button>
 									<button type="button" onclick="editor.resetSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
 								</div>
 								<div id="schema-editor-sample-container">
-									<h5>~Sample</h5>
+									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.data" /></h5>
 									<button type="button" onclick="editor.applyAndExecuteSample(); return false;" class="pull-right btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
 									<ul class="nav nav-tabs" role="tablist">
 										<li role="presentation"<c:if test="${currentSampleCount==0}"> class="active"</c:if>>

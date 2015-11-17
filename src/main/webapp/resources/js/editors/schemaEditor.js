@@ -8,7 +8,7 @@ $(document).ready(function() {
 			error: __util.getBaseUrl() + "resources/img/error.png"
 		}
 	});
-	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-toggle="tooltip"]').tooltip( { container: 'body' });
 });
 $(window).resize(function() {
 	editor.resize();
