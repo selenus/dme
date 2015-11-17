@@ -46,7 +46,13 @@ public class TerminalEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getElement(@PathVariable String schemaId, @PathVariable String terminalId, Model model, Locale locale) {
+	public String getElement(@PathVariable String schemaId, @PathVariable String terminalId, Model model, Locale locale, HttpServletRequest request) {
+		if (!schemaService.getHasWriteAccess(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+			model.addAttribute("readonly", true);
+		} else {
+			model.addAttribute("readonly", false);
+		}
+		
 		Schema s = schemaService.findSchemaById(schemaId);
 		XmlTerminal terminal = null;
 		if (terminalId != "-1") {

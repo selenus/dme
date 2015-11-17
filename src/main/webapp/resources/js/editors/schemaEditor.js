@@ -50,6 +50,7 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.common.model.label",
 	                              "~eu.dariah.de.minfba.common.model.type",
 	                              "~eu.dariah.de.minfba.common.link.edit",
+	                              "~eu.dariah.de.minfba.common.link.view",
 	                              "~eu.dariah.de.minfba.common.link.delete",
 	                              "~eu.dariah.de.minfba.schereg.button.add_nonterminal",
 	                              "~eu.dariah.de.minfba.schereg.button.add_label", 

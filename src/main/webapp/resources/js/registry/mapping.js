@@ -9,6 +9,7 @@ $(document).ready(function() {
 
 var MappingTable = function() {
 	this.prepareTranslations(["~eu.dariah.de.minfba.common.link.delete",
+	                          "~eu.dariah.de.minfba.common.link.view",
 	                          "~eu.dariah.de.minfba.common.link.edit",
 	                          "~eu.dariah.de.minfba.common.link.publish",
 	                          "~eu.dariah.de.minfba.common.model.id",
@@ -92,9 +93,16 @@ MappingTable.prototype.renderActionColumn = function(row, type, val, meta) {
 	var result = "";	
 	
 	if (type==="display") {
-		result += '<a href="' + __util.getBaseUrl() + 'mapping/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
-			__translator.translate("~eu.dariah.de.minfba.common.link.edit") +
-		'</a> ';
+		if (row.entity.own || row.entity.write || row.entity.share) {
+			result += '<a href="' + __util.getBaseUrl() + 'mapping/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
+				__translator.translate("~eu.dariah.de.minfba.common.link.edit") +
+			'</a> ';
+		} else {
+			result += '<a href="' + __util.getBaseUrl() + 'mapping/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
+				__translator.translate("~eu.dariah.de.minfba.common.link.view") +
+			'</a> ';
+		}
+		
 		/*if (row.entity.draft) {
 			result += '<button class="btn btn-xs btn-default hint-tooltip" onclick="mappingTable.triggerPublish(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Publish draft..."><span class="glyphicon glyphicon-export" aria-hidden="true"></span> ' +
 				__translator.translate("~eu.dariah.de.minfba.common.link.publish") +

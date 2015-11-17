@@ -32,6 +32,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappingImpl;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
+import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
@@ -163,6 +164,17 @@ public class MappingController extends BaseScheregController {
 			AuthPojo auth = authInfoHelper.getAuth(request);			
 			RightsContainer<Mapping> existMapping = mappingService.findByIdAndAuth(id, auth);
 			if (existMapping!=null) {
+				RightsContainer<Schema> source = schemaService.findByIdAndAuth(existMapping.getElement().getSourceId(), auth);
+				RightsContainer<Schema> target = schemaService.findByIdAndAuth(existMapping.getElement().getTargetId(), auth);
+				
+				if (source==null || target==null) {
+					result.setMessage(new MessagePojo("error", "~ Publish not possible", "~ No rights to view either source, target or both"));
+					return result;
+				} else if (source.isDraft() || target.isDraft()) {
+					result.setMessage(new MessagePojo("error", "~ Publish not possible", "~ Either source, target or both are drafts, so mapping cannot be published either"));
+					return result;
+				}
+				
 				existMapping.setDraft(false);
 				mappingService.saveMapping(authPojoConverter.convert(existMapping, auth.getUserId()), auth);
 				result.setSuccess(true);

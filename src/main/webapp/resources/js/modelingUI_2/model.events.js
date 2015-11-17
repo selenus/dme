@@ -85,7 +85,7 @@ Model.prototype.handleMouseUp = function(e) {
 };
 
 Model.prototype.addMappingConnection = function (from, to, id) {
-	if (from.element.template.area.isTarget) {
+	if (from.element instanceof Element && from.element.template.area.isTarget) {
 		var c = new Connection(this.mappingConnection, to, from, id);
 	} else {
 		var c = new Connection(this.mappingConnection, from, to, id);

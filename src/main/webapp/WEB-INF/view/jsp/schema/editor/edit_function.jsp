@@ -19,13 +19,13 @@
 			<div class="legend"><strong>1</strong> ~Edit function</div>
 			<div class="form-group row">
 				<div class="col-sm-8">
-					<label class="control-label" for="function_name">~Function name:</label>
-					<div>
-						<sf:input path="name" class="form-control" id="function_name" />
-						<sf:errors path="name" cssClass="error" />
-						
-						
-					</div>
+					<fieldset<c:if test="${readonly}"> disabled</c:if>>
+						<label class="control-label" for="function_name">~Function name:</label>
+						<div>
+							<sf:input path="name" class="form-control" id="function_name" />
+							<sf:errors path="name" cssClass="error" />
+						</div>
+					</fieldset>
 				</div>
 				<div class="col-sm-4">
 					<label class="control-label" for="base_method">~Language version:</label>
@@ -64,8 +64,15 @@
 			</div>		
 			<div class="form-footer">
 				<div class="controls">
-					<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
-					<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+					<c:choose>
+						<c:when test="${readonly}">
+							<button class="btn btn-primary btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
+						</c:when>
+						<c:otherwise>
+							<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
+							<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 		</div>

@@ -17,11 +17,13 @@
 			<div class="legend"><strong>1</strong> Edit grammar</div>
 			<div class="form-group row">
 				<div class="col-sm-6">
-					<label class="control-label" for="grammar_name">~Grammar name:</label>
-					<div>
-						<sf:input path="grammarName" class="form-control" id="grammar_name" />
-						<sf:errors path="grammarName" cssClass="error" />
-					</div>
+					<fieldset<c:if test="${readonly}"> disabled</c:if>>
+						<label class="control-label" for="grammar_name">~Grammar name:</label>
+						<div>
+							<sf:input path="grammarName" class="form-control" id="grammar_name" />
+							<sf:errors path="grammarName" cssClass="error" />
+						</div>
+					</fieldset>
 				</div>
 				<div class="col-sm-6">
 					<label class="control-label" for="base_method">~Base rule:</label>
@@ -75,8 +77,15 @@
 			</div>	
 			<div class="form-footer">
 				<div class="controls">
-					<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
-					<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+					<c:choose>
+						<c:when test="${readonly}">
+							<button class="btn btn-primary btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
+						</c:when>
+						<c:otherwise>
+							<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
+							<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 		</div>

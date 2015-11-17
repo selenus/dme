@@ -675,7 +675,15 @@ MappingEditor.prototype.triggerEdit = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		completeCallback: function() { window.location.reload(); }
+		completeCallback: function() { 
+			if (data.success) {
+				window.location.reload();
+			} else {
+        		__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+	        			__translator.translate(data.message.messageHead), 
+	        			__translator.translate(data.message.messageBody));
+        	}
+		}
 	});
 		
 	modalFormHandler.show(form_identifier);
@@ -694,7 +702,13 @@ MappingEditor.prototype.triggerPublish = function() {
 		        type: "GET",
 		        dataType: "json",
 		        success: function(data) { 
-		        	window.location.reload();
+		        	if (data.success) {
+		        		window.location.reload();
+		        	} else {
+		        		__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+			        			__translator.translate(data.message.messageHead), 
+			        			__translator.translate(data.message.messageBody));
+		        	}
 		        },
 		        error: function(textStatus) {
 		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
@@ -719,7 +733,13 @@ MappingEditor.prototype.triggerDelete = function() {
 		        type: "GET",
 		        dataType: "json",
 		        success: function(data) { 
-		        	window.location.reload();
+		        	if (data.success) {
+		        		window.location.reload();
+		        	} else {
+		        		__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
+			        			__translator.translate(data.message.messageHead), 
+			        			__translator.translate(data.message.messageBody));
+		        	}
 		        },
 		        error: function(textStatus) {
 		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 

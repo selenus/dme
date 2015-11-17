@@ -27,6 +27,7 @@ import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.CommonController;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
@@ -44,10 +45,15 @@ public class ElementEditorController extends BaseScheregController {
 	}
 		
 	@RequestMapping(method = RequestMethod.GET, value = "/form/element")
-	public String getEditElementForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
+	public String getEditElementForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale, HttpServletRequest request) {		
 		Element elem = elementService.findById(elementId);
 		model.addAttribute("element", elem);
 		
+		if (!schemaService.getHasWriteAccess(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+			model.addAttribute("readonly", true);
+		} else {
+			model.addAttribute("readonly", false);
+		}
 		if (elem instanceof Nonterminal) {
 			model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
 			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");

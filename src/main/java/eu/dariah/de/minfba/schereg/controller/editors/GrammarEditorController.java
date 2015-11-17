@@ -88,6 +88,12 @@ public class GrammarEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getEditForm(@PathVariable String schemaId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
+		if (!schemaService.getHasWriteAccess(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+			model.addAttribute("readonly", true);
+		} else {
+			model.addAttribute("readonly", false);
+		}
+		
 		DescriptionGrammarImpl g;
 		if (grammarId.equals("undefined")) {
 			g = new DescriptionGrammarImpl(schemaId, "");
