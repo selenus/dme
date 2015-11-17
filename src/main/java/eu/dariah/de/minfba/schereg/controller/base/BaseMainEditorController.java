@@ -40,7 +40,8 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	public @ResponseBody ModelActionPojo applySample(@PathVariable String entityId, @RequestParam String sample, HttpServletRequest request, Locale locale) {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		s.setSampleInput(sample);
-		s.addLogEntry(LogType.INFO, "~ Sample set for your current session");
+		s.addLogEntry(LogType.INFO, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.session_started", null, locale));
+		
 		sessionService.saveSession(s);
 		
 		return new ModelActionPojo(true);
@@ -120,14 +121,14 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			
 			if (session.getSampleOutput()!=null && session.getSampleOutput().size()>0) {
 				result.setPojo(session.getSampleOutput().size());
-				
-				if (session.getSampleOutput().size()==1) {
-					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample input processed (total %sms): 1 resource found", sw.getElapsedTime(), consumptionService.getResources().size()));
+								
+				if (session.getSampleOutput().size()==1) {				
+					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.processed_1_results", new Object[]{sw.getElapsedTime()}, locale));
 				} else {
-					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample input processed (total %sms): %s resources found", sw.getElapsedTime(), consumptionService.getResources().size()));	
+					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.processed_n_results", new Object[]{sw.getElapsedTime(), consumptionService.getResources().size()}, locale));	
 				}
 			} else {
-				session.addLogEntry(LogType.WARNING, "~ Sample input processed: No resources found");
+				session.addLogEntry(LogType.WARNING, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.processed_no_results", null, locale));
 			}
 			
 			sessionService.saveSession(session);
