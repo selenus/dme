@@ -1,4 +1,12 @@
 /*!
+ *	Quick and dirty for workshop
+ */ 
+.tab-buttons {
+	padding-top: 4px;
+}
+
+
+/*!
  *	Data Tables
  */
 .data-table-filter, 

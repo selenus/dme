@@ -11,8 +11,8 @@
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-4 control-label" for="sessionId"><s:message code="~eu.dariah.de.minfba.schereg.model.session.previous_sessions" />: </label>
-			<div class="col-sm-8">
+			<label class="col-sm-5 control-label" for="sessionId"><s:message code="~eu.dariah.de.minfba.schereg.model.session.previous_sessions" />: </label>
+			<div class="col-sm-7">
 				<select id="sessionId" name="sessionId" class="form-control">
 					<c:if test="${fn:length(savedSessions)>0}">
 						<optgroup label="<s:message code="~eu.dariah.de.minfba.schereg.model.session.persisted_sessions" />">
