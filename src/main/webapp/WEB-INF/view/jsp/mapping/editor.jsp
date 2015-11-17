@@ -15,7 +15,7 @@
 				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title" /></div>
 			</div>
 			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
-				<h1>~ Mapping Editor</h1>
+				<h1><s:message code="~eu.dariah.de.minfba.schereg.view.mapping_editor" /></h1>
 			</div>
 		</div>
 	</div>
@@ -26,7 +26,7 @@
 			<ul class="breadcrumb">
 				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
 				<li><a href='<s:url value="/registry" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.registry.title" /></a></li>
-				<li class="active">~Mapping Editor</li>
+				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.view.mapping_editor" /></li>
 			</ul>
 			<input type="hidden" id="mapping-id" value="${mapping.id}" />
 			<input type="hidden" id="source-id" value="${source.id}" />
@@ -36,24 +36,31 @@
 			<div id="main-content">
 				<div class="row">
 					<div class="col-xs-12">
-						<h2 class="pull-left"><small>~Source</small>
-						${source.pojo.label} <small>~Target</small> ${target.pojo.label} 
-							<c:if test="${!mapping.own && !mapping.write}"> <span class="glyphicon glyphicon-lock"></span></c:if>
+						<h2 class="pull-left"><small><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.source" />:</small>
+						${source.pojo.label} <small><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.target" />:</small> ${target.pojo.label} 
+							<c:if test="${!mapping.own && !mapping.write}"></c:if>
 						&nbsp;</h2>
 						
-						<c:if test="${mapping.draft}"><span class="label label-warning">~ Draft</span></c:if>
-						<c:if test="${mapping.readOnly}"><span class="label label-info">~ Read-only</span></c:if>
+						<c:if test="${mapping.draft}"><span class="label label-warning"><s:message code="~eu.dariah.de.minfba.common.model.draft" /></span></c:if>
+						<c:if test="${mapping.readOnly}"><span class="label label-info"><s:message code="~eu.dariah.de.minfba.common.model.readonly" /></span></c:if>
+												
 						
-						<c:if test="${mapping.own || mapping.write}">
-							<div class="pull-right">
-								<button type="button" onclick="editor.triggerEdit(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" /></button>
+						<div class="pull-right">
+							<c:choose>
+								<c:when test="${mapping.own || mapping.write}">
+									<button type="button" onclick="editor.triggerEdit(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" /></button>
 								
-								<c:if test="${mapping.draft}">
-									<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
-									<button type="button" onclick="editor.triggerDelete(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
-								</c:if>
-							</div>		
-						</c:if>
+									<c:if test="${mapping.draft}">
+										<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
+										<button type="button" onclick="editor.triggerDelete(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
+									</c:if>
+								</c:when>
+								<c:otherwise>
+									<span class="glyphicon glyphicon-lock"></span>
+								</c:otherwise>
+							</c:choose>
+						</div>
+						
 					</div>
 					<div class="col-xs-12">
 						<div class="hide editor-layout-container">
@@ -112,8 +119,8 @@
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="schema-sample-output-container">
 											<div class="button-bar">
 												<div class="pull-left">
-													<button type="button" onclick="editor.showSampleResourceSource(); return false;" class="btn btn-default btn-sample-source btn-sm">~ Source</button>
-													<button type="button" onclick="editor.showSampleResourceTarget(); return false;" class="btn btn-default btn-sample-target btn-sm">~ Target</button>
+													<button type="button" onclick="editor.showSampleResourceSource(); return false;" class="btn btn-default btn-sample-source btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.source" /></button>
+													<button type="button" onclick="editor.showSampleResourceTarget(); return false;" class="btn btn-default btn-sample-target btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.target" /></button>
 												</div>
 												<span class="schema-sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
 												<button type="button" onclick="editor.getPrevSampleResource(); return false;" class="btn btn-default btn-sample-prev-resource btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
@@ -147,7 +154,7 @@
 							<div class="layout-east layout-pane">
 								<div id="mapping-context-container">
 									<div class="ui-pane-title">
-										<h4>~Mapping Details</h4>
+										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.mapping_details" /></h4>
 									</div>
 									<div class="panel-group ui-pane-subcontainer" id="mapping-context-buttons-accordion" role="tablist" aria-multiselectable="true">
 										<div class="panel">
@@ -169,7 +176,7 @@
 								</div>
 								<div id="mapped-concept-context-container" class="hide">
 									<div class="ui-pane-title">
-										<h4>~Mapped Concept</h4>
+										<h4><s:message code="~eu.dariah.de.minfba.schereg.editor.mapped_concept_details" /></h4>
 									</div>
 									<div class="panel-group ui-pane-subcontainer" id="mapped-concept-context-buttons-accordion" role="tablist" aria-multiselectable="true">
 										<div class="panel">

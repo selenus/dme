@@ -15,7 +15,7 @@
 				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title" /></div>
 			</div>
 			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
-				<h1><s:message code="~eu.dariah.de.minfba.schereg.view.home.title_short" /></h1>
+				<h1><s:message code="~eu.dariah.de.minfba.schereg.view.schema_editor" /></h1>
 			</div>
 		</div>
 	</div>
@@ -26,7 +26,7 @@
 			<ul class="breadcrumb">
 				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
 				<li><a href='<s:url value="/registry" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.registry.title" /></a></li>
-				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /></li>
+				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.view.schema_editor" /></li>
 			</ul>
 			<input type="hidden" id="schema-id" value="${schema.id}" />
 			<input type="hidden" id="schema-write" value="${schema.write}" />
@@ -35,28 +35,31 @@
 				<div class="row">
 					<div class="col-xs-12">
 						<h2 class="pull-left">
-						<small><s:message code="~eu.dariah.de.minfba.schereg.view.editor.title" /></small>&nbsp;${schema.pojo.label}
-							<c:if test="${!schema.own && !schema.write}"> <small><span class="glyphicon glyphicon-lock"></span></small></c:if>
+						<small><s:message code="~eu.dariah.de.minfba.schereg.model.schema.schema" />:</small>&nbsp;${schema.pojo.label}
+							<c:if test="${!schema.own && !schema.write}"> <small></small></c:if>
 						&nbsp;</h2>
 
-						<c:if test="${schema.draft}"><span class="label label-warning">~ Draft</span></c:if>
-						<c:if test="${schema.readOnly}"><span class="label label-info">~ Read-only</span></c:if>
+						<c:if test="${schema.draft}"><span class="label label-warning"><s:message code="~eu.dariah.de.minfba.common.model.draft" /></span></c:if>
+						<c:if test="${schema.readOnly}"><span class="label label-info"><s:message code="~eu.dariah.de.minfba.common.model.readonly" /></span></c:if>
 						
-						
-						
-						<c:if test="${schema.own || schema.write}">
-							<div class="pull-right">
-								<button type="button" onclick="editor.triggerEditSchema(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" /></button>
-								
-								<c:if test="${schema.draft}">
-									<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
-								</c:if>
-								
-								<c:if test="${!mapped && schema.draft}">
-									<button type="button" onclick="editor.triggerDeleteSchema(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
-								</c:if>
-							</div>		
-						</c:if>
+						<div class="pull-right">
+							<c:choose>
+								<c:when test="${schema.own || schema.write}">
+									<button type="button" onclick="editor.triggerEditSchema(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" /></button>
+									
+									<c:if test="${schema.draft}">
+										<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
+									</c:if>
+									
+									<c:if test="${!mapped && schema.draft}">
+										<button type="button" onclick="editor.triggerDeleteSchema(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
+									</c:if>
+								</c:when>
+								<c:otherwise>
+									<span class="glyphicon glyphicon-lock"></span>
+								</c:otherwise>
+							</c:choose>
+						</div>
 					</div>
 					<div class="col-xs-12">
 						<div class="hide editor-layout-container">
