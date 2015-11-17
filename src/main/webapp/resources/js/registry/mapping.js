@@ -124,6 +124,19 @@ MappingTable.prototype.triggerEdit = function(mappingId) {
 	modalFormHandler = new ModalFormHandler({
 		formFullUrl: url,
 		identifier: form_identifier,
+		setupCallback: function(form) {
+			$(form).find("select.form-control").on("change", function(e) {
+				if ($("#sourceId").val()==$("#targetId").val()) {
+					var changeId = e.target.id=="sourceId" ? "#targetId" : "#sourceId";
+					$(changeId).find("option").removeAttr("selected");
+					$(changeId).find("option").each(function() {
+						if ($(this).val()!=$(changeId).val()) {
+							$(this).attr("selected", true);
+						}
+					});
+				}
+			})
+		},
 		//additionalModalClasses: "wide-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}

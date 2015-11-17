@@ -53,7 +53,8 @@ Connector.prototype.getPosition = function() {
 };
 
 Connector.prototype.hitTest = function(position) {
-	if (this.template.options.isInteractive && this.template.getRectangle(this).clone().inflate(2, 2).contains(position)) {
+	if ( (this.template.options.isInteractive && this.template.getRectangle(this).clone().inflate(2, 2).contains(position) &&
+			!this.template.model.options.readOnly)) {
 		return this;
 	}
 	return null;

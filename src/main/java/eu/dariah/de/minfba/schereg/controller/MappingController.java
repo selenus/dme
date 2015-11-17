@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,8 +73,15 @@ public class MappingController extends BaseScheregController {
 	@Secured("IS_AUTHENTICATED_FULLY")
 	@RequestMapping(method=GET, value="forms/add")
 	public String getAddForm(Model model, Locale locale, HttpServletRequest request) {
-		model.addAttribute("mapping", new MappingImpl());
-		model.addAttribute("schemas", schemaService.findAllByAuth(authInfoHelper.getAuth(request)));
+		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
+		Mapping m = new MappingImpl();
+		if (schemas.size()>1) {
+			m.setSourceId(schemas.get(0).getId());
+			m.setTargetId(schemas.get(1).getId());
+		}
+		
+		model.addAttribute("mapping", m);
+		model.addAttribute("schemas", schemas);
 		model.addAttribute("draft", true);
 		model.addAttribute("actionPath", "/mapping/async/save");
 		return "mapping/form/edit";
@@ -106,11 +114,17 @@ public class MappingController extends BaseScheregController {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
+		if (mapping.getSourceId().equals(mapping.getTargetId())) {
+			bindingResult.addError(new ObjectError("mapping", new String[]{"~ same in and out"}, null, "same in and out"));
+		}
 		
-		ModelActionPojo result = this.getActionResult(bindingResult, locale);
-		if (mapping.getId().isEmpty()) {
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);		
+		if (bindingResult.hasErrors()) {
+			return result;
+		} else if (mapping.getId().isEmpty()) {
 			mapping.setId(null);
 		}
+		
 		
 		RightsContainer<Mapping> existMapping = mappingService.findByIdAndAuth(mapping.getId(), auth); 
 		Mapping saveMapping = existMapping==null ? null : existMapping.getElement();

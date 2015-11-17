@@ -4,6 +4,7 @@ var Model = function(canvas, options, theme) {
 	this.context = this.canvas.getContext("2d");
 	
 	this.options = $.extend(true, {
+		readOnly: false,
 		elementTemplateOptions : null,
 		mappingTemplateOptions : null
 	}, options);

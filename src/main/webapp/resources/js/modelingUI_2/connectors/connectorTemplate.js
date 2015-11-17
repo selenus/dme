@@ -17,7 +17,9 @@ function ConnectorTemplate(owner, options) {
 };
 
 ConnectorTemplate.prototype.paint = function(connector, context) {
-	if (!this.options.isInteractive || (!connector.element.getActive() && !connector.active && !connector.activeTarget) ){
+	if (!this.options.isInteractive || 
+			(!connector.element.getActive() && !connector.active && !connector.activeTarget) || 
+			this.model.options.readOnly ){
 		return;
 	}
 	

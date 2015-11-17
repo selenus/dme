@@ -62,7 +62,7 @@ Model.prototype.leftMouseDown = function() {
 	} else if (this.activeObject instanceof Expander) {
 		this.activeObject.mouseDown();
 		this.activeObject.element.template.area.invalidate();
-	} else if (this.activeObject instanceof Connector) {
+	} else if (this.activeObject instanceof Connector && !this.options.readOnly) {
 		this.newConnection = new Connection(this.mappingConnection, this.activeObject, null);
 	}
 	
@@ -85,7 +85,13 @@ Model.prototype.handleMouseUp = function(e) {
 };
 
 Model.prototype.addMappingConnection = function (from, to, id) {
-	var c = new Connection(this.mappingConnection, from, to, id);
+	if (from.element.template.area.isTarget) {
+		var c = new Connection(this.mappingConnection, to, from, id);
+	} else {
+		var c = new Connection(this.mappingConnection, from, to, id);
+	}
+	
+	
 	
 	// Connection gets overwritten when from is a function -> resulting in 1:N connections
 	c = from.addConnection(c);
@@ -103,7 +109,7 @@ Model.prototype.addMappingConnection = function (from, to, id) {
 };
 
 Model.prototype.leftMouseUp = function() {
-	if (this.newConnection!=null) {
+	if (this.newConnection!=null && !this.options.readOnly) {
 		if (this.activeObject instanceof Connector) {
 			if (this.activeObject.isValid(this.newConnection.from)) {
 				this.addMappingConnection(this.newConnection.from, this.activeObject);

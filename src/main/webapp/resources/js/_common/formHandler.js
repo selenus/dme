@@ -191,10 +191,10 @@ ModalFormHandler.prototype.addMessage = function(type, header, message) {
 	var msgContainer = $("<div class='alert alert-" + type + "'>");
 	msgContainer.append("<button data-dismiss='alert' class='close' type='button'>×</button>");
 	if (header!=="") { 
-		msgContainer.append($("<h4>").text(header)); 
+		msgContainer.append($("<h4>").html(header)); 
 	}
 	if (message!=="") {
-		msgContainer.append($("<p>").text(message));
+		msgContainer.append($("<p>").html(message));
 	}
 	
 	var _this = this;
@@ -290,9 +290,11 @@ ModalFormHandler.prototype.processSubmitResponse = function(data) {
 		}
 		
 		if (data.objectErrors !== null) {
-			var list = $("</ul>");
-			$(data.objectErrors).each(function() {list.append($("<li>").text(this));});
-			msg += $(list).html();
+			var list = "<ul>";
+			for (var i=0; i<data.objectErrors.length; i++) {
+				list += "<li>" + data.objectErrors[i] + "</li>";
+			}
+			msg += list + "</ul>";
 		}
 		this.addMessage("danger", _this.translate("~*validationerrors.head"), msg);
 		

@@ -165,6 +165,7 @@ MappingEditor.prototype.initLayout = function() {
 MappingEditor.prototype.initGraphs = function() {
 	var _this = this;
 	this.graph = new Model(this.context.canvas, {
+		readOnly: !(_this.mappingOwn || _this.mappingWrite),
 		elementTemplateOptions: [
 		    { 
 		    	key: "Nonterminal", 
@@ -201,7 +202,8 @@ MappingEditor.prototype.initGraphs = function() {
 };
 
 MappingEditor.prototype.getAreaContextMenu = function(area) {
-	return [
+	var _this = editor;
+	var items = [
 	    area.model.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.schema.schema"),
 	    area.model.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", area.index, "area"),
 	    area.model.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", area.index, "area"),
@@ -209,28 +211,37 @@ MappingEditor.prototype.getAreaContextMenu = function(area) {
 	    area.model.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat"),
 	    area.model.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh"),
 	];
+	return items;
 };
 
 MappingEditor.prototype.getElementContextMenu = function(element) {
 	var _this = editor;
-	return [
+	var items = [
 	        _this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.element.element"),
 	        _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
 			_this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key)	
 	]; 
+	return items;
 };
 
 MappingEditor.prototype.getConnectionContextMenu = function(connection) {
 	var _this = editor;
-	return [
+	var items = [
 	        _this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.mapping.mapping"),
 		    _this.graph.createContextMenuItem("ensureConnectedVisible", "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible", "resize-full", connection.id),
 		    _this.graph.createContextMenuItem("resetPosition", "~eu.dariah.de.minfba.schereg.editor.actions.reset_position", "repeat", connection.id),
-		    _this.graph.createContextMenuSeparator(),
-		    _this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar", "edit", connection.id),
-		    _this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.edit_function", "edit", connection.id),
-		    _this.graph.createContextMenuItem("removeMapping", "~eu.dariah.de.minfba.common.link.delete", "trash", connection.id, undefined, "danger"),
 	];
+	if (_this.mappingOwn || _this.mappingWrite) {
+		items.push(_this.graph.createContextMenuSeparator(),
+			    _this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar", "edit", connection.id),
+			    _this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.edit_function", "edit", connection.id),
+			    _this.graph.createContextMenuItem("removeMapping", "~eu.dariah.de.minfba.common.link.delete", "trash", connection.id, undefined, "danger"))
+	} else {
+		items.push(_this.graph.createContextMenuSeparator(),
+				_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.show_grammar", "edit", connection.id),
+				_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.show_function", "edit", connection.id));
+	}
+	return items;
 };
 
 MappingEditor.prototype.handleContextMenuClicked = function(e) {
