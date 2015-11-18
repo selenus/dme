@@ -40,7 +40,7 @@ GrammarEditor.prototype.updateGrammarState = function() {
 		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.passthrough");
 		this.setSampleParseFunctionality(false);
 	} else if (this.originalModeModified || this.grammarModified) {
-		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.modified") + "; " + __translator.translate("~eu.dariah.de.minfba.common.link.validation_needed");
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.modified") + "; " + __translator.translate("~eu.dariah.de.minfba.common.link.validation_required");
 		this.setSampleParseFunctionality(false);
 	} else if (this.error) {
 		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.error");

@@ -47,7 +47,7 @@ FunctionEditor.prototype.init = function() {
 FunctionEditor.prototype.updateFunctionState = function() {
 	var state = "";
 	if (this.modified) {
-		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.modified") + "; " + __translator.translate("~eu.dariah.de.minfba.common.link.validation_needed");
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.modified") + "; " + __translator.translate("~eu.dariah.de.minfba.common.link.validation_required");
 	} else if (this.error) {
 		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.error");
 	} else if (this.grammarError) {

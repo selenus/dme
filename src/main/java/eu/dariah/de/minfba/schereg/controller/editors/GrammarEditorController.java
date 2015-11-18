@@ -42,6 +42,7 @@ import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
@@ -52,6 +53,7 @@ public class GrammarEditorController extends BaseScheregController {
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
 	@Autowired protected TransformationEngine engine;
+	@Autowired protected MappingService mappingService;
 	
 	@Autowired private PersistedSessionService sessionService;
 		
@@ -88,10 +90,13 @@ public class GrammarEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getEditForm(@PathVariable String schemaId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
-		if (!schemaService.getHasWriteAccess(schemaId, authInfoHelper.getAuth(request).getUserId())) {
-			model.addAttribute("readonly", true);
-		} else {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if (mappingService.findMappingById(schemaId)!=null && mappingService.getHasWriteAccess(schemaId, auth.getUserId())) {
 			model.addAttribute("readonly", false);
+		} else if (schemaService.findSchemaById(schemaId)!=null && schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+			model.addAttribute("readonly", false);
+		} else {
+			model.addAttribute("readonly", true);
 		}
 		
 		DescriptionGrammarImpl g;
@@ -106,7 +111,7 @@ public class GrammarEditorController extends BaseScheregController {
 
 		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s.getSelectedValueMap()!=null) {
-			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
+			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();			
 			if (s.getSelectedValueMap().containsKey(elementId)) {
 				model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
 			}

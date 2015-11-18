@@ -138,11 +138,6 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		if (!c.getEntityId().equals(mappingId)) {
 			throw new GenericScheregException("Attempted to delete mapped concept via wrong mapping");
 		}
-		List<String> deleteFunctionIds = new ArrayList<String>();
-		if (c.getGrammars()!=null) {
-			
-		}
-
 		try {
 			this.removeReference(mappingId, mappedConceptId, auth);
 			mappedConceptDao.delete(c, auth.getUserId(), auth.getSessionId());

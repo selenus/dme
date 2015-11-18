@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
@@ -84,10 +85,13 @@ public class FunctionEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getEditForm(@PathVariable String schemaId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
-		if (!schemaService.getHasWriteAccess(schemaId, authInfoHelper.getAuth(request).getUserId())) {
-			model.addAttribute("readonly", true);
-		} else {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if (mappingService.findMappingById(schemaId)!=null && mappingService.getHasWriteAccess(schemaId, auth.getUserId())) {
 			model.addAttribute("readonly", false);
+		} else if (schemaService.findSchemaById(schemaId)!=null && schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
+			model.addAttribute("readonly", false);
+		} else {
+			model.addAttribute("readonly", true);
 		}
 		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
 		

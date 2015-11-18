@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.controller.base;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.util.Stopwatch;
@@ -24,11 +26,13 @@ import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 
 public abstract class BaseMainEditorController extends BaseScheregController {
 	@Autowired protected MappingService mappingService;
+	@Autowired protected MappedConceptService mappedConceptService;
 	@Autowired protected PersistedSessionService sessionService;
 	@Autowired protected ElementService elementService;
 	
@@ -56,6 +60,18 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			if (s.getSampleOutput().size()>index) {
 				Map<String, String> valueMap = new HashMap<String, String>();
 				this.fillValueMap(valueMap, s.getSampleOutput().get(index));
+				
+				// Also add values for our mapped concepts 
+				if (mappingService.findMappingById(entityId) != null) {
+					List<MappedConcept> concepts = mappedConceptService.findAllByMappingId(entityId);
+					if (concepts != null) {
+						for (MappedConcept c : concepts) {
+							if (valueMap.containsKey(c.getSourceElementId())) {
+								valueMap.put(c.getId(), valueMap.get(c.getSourceElementId()));
+							}
+						}
+					}
+				}				
 				
 				s.setSelectedValueMap(valueMap);
 				s.setSelectedOutputIndex(index);
