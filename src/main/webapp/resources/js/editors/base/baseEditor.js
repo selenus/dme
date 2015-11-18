@@ -4,7 +4,18 @@ function BaseEditor() {
 	                              "~eu.dariah.de.minfba.schereg.model.element.name",
 	                              "~eu.dariah.de.minfba.schereg.model.element.transient",
 	                              "~eu.dariah.de.minfba.schereg.model.element.attribute",
-	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured"]);
+	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.model.mapped_concept.source",
+	                              "~eu.dariah.de.minfba.schereg.model.mapped_concept.targets",
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar",
+	                              "~eu.dariah.de.minfba.schereg.model.function.function",
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.state",
+	                              "~eu.dariah.de.minfba.schereg.model.function.state",
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.base_rule",
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout",
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.separate",
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.combined"]);
 };
 
 BaseEditor.prototype.createActionButtons = function(container, contextMenuItems) {
@@ -58,15 +69,15 @@ BaseEditor.prototype.getElementType = function(originalType) {
 BaseEditor.prototype.processMappedConceptDetails = function(data, callback, container, pathPrefix) {
 	var details = $("<div class=\"clearfix\">");
 	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail("~source", data.sourceElementId));
-	details.append(this.renderContextTabDetail("~targets", data.targetElementIds));
+	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.source"), data.sourceElementId));
+	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.targets"), data.targetElementIds));
 	
-	details.append("<h5>Grammar</h5>");
+	details.append("<h5>" + __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar") + "</h5>");
 	container.append(details);
 	
 	var _this = this;
 	this.getElementDetails(pathPrefix, "DescriptionGrammarImpl", data.grammars[0].id, details, function() {
-		details.append("<h5>Function</h5>");
+		details.append("<h5>" + __translator.translate("~eu.dariah.de.minfba.schereg.model.function.function") + "</h5>");
 		_this.getElementDetails(pathPrefix, "TransformationFunctionImpl", data.grammars[0].transformationFunctions[0].id, details);
 	});
 	
@@ -78,7 +89,7 @@ BaseEditor.prototype.processMappedConceptDetails = function(data, callback, cont
 BaseEditor.prototype.processGrammarDetails = function(data, callback, container, pathPrefix) { 
 	var details = $("<div class=\"clearfix\">");
 	
-	details.append(this.renderContextTabDetail("State", 
+	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.state"), 
 			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "") +
@@ -87,13 +98,13 @@ BaseEditor.prototype.processGrammarDetails = function(data, callback, container,
 	
 	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
 	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.grammarName));
-	details.append(this.renderContextTabDetail("~Base rule", data.baseMethod));
+	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.base_rule"), data.baseMethod));
 	
 	if (data.passthrough!=true && data.grammarContainer!=null) {
 		if (data.grammarContainer.lexerGrammar!==null && data.grammarContainer.lexerGrammar !=="") {
-			details.append(this.renderContextTabDetail("~Grammar layout", "separate lexer/parser grammars"));
+			details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout"), __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.separate")));
 		} else {
-			details.append(this.renderContextTabDetail("~Grammar layout", "combined grammar"));
+			details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout"), __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.combined")));
 		}
 	}
 	
@@ -107,7 +118,7 @@ BaseEditor.prototype.processGrammarDetails = function(data, callback, container,
 BaseEditor.prototype.processFunctionDetails = function(data, callback, container, pathPrefix) { 
 	var details = $("<div class=\"clearfix\">");
 	
-	details.append(this.renderContextTabDetail("State", 
+	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.function.state"), 
 			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "")

@@ -72,7 +72,9 @@ var MappingEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible",
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.reset_position",
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_function"]);
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_function",
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_grammar",
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_function"]);
 	__translator.getTranslations();
 	
 	this.initLayout();

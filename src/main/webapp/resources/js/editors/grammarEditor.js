@@ -22,25 +22,34 @@ var GrammarEditor = function(modal, options) {
 	
 	this.svg = null;
 	
+	__translator.addTranslations(["~eu.dariah.de.minfba.common.link.ok",
+	                              "~eu.dariah.de.minfba.common.link.error",
+	                              "~eu.dariah.de.minfba.common.link.validated",
+	                              "~eu.dariah.de.minfba.common.link.modified",
+	                              "~eu.dariah.de.minfba.common.link.validation_required",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.passthrough"]);
+	__translator.getTranslations();
+	
 	this.init();
 }
 
 GrammarEditor.prototype.updateGrammarState = function() {
 	var state = "";
 	if ($(this.modal).find("#passthrough").val()=="true") {
-		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> ~passthrough";
+		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.passthrough");
 		this.setSampleParseFunctionality(false);
 	} else if (this.originalModeModified || this.grammarModified) {
-		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> modified, validation needed";
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.modified") + "; " + __translator.translate("~eu.dariah.de.minfba.common.link.validation_needed");
 		this.setSampleParseFunctionality(false);
 	} else if (this.error) {
-		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> error";
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.error");
 		this.setSampleParseFunctionality(false);
 	} else if (this.validated) {
-		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> validated";
+		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.validated");
 		this.setSampleParseFunctionality(true);
 	} else {
-		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> ok";
+		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.ok");
 		this.setSampleParseFunctionality(true);
 	}
 	$(this.modal).find("#grammar_state").html(state);
