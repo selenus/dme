@@ -90,7 +90,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		List<RightsContainer<Mapping>> mappings = mappingService.getMappings(entityId);
 		model.addAttribute("mapped", mappings!=null && mappings.size()>0);
 		try {
-			PersistedSession s = sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId());
+			PersistedSession s = sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId(), messageSource, locale);
 			model.addAttribute("session", s);
 		} catch (GenericScheregException e) {
 			logger.error("Failed to load/initialize persisted session", e);

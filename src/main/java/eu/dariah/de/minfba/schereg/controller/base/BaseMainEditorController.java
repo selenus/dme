@@ -40,7 +40,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	public @ResponseBody ModelActionPojo applySample(@PathVariable String entityId, @RequestParam String sample, HttpServletRequest request, Locale locale) {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		s.setSampleInput(sample);
-		s.addLogEntry(LogType.INFO, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.session_started", null, locale));
+		s.addLogEntry(LogType.INFO, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.session_sample_set", null, locale));
 		
 		sessionService.saveSession(s);
 		

@@ -1,10 +1,12 @@
 package eu.dariah.de.minfba.schereg.service;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -36,16 +38,16 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 	}
 	
 	@Override
-	public PersistedSession accessOrCreate(String entityId, String httpSessionId, String userId) throws GenericScheregException {
+	public PersistedSession accessOrCreate(String entityId, String httpSessionId, String userId, MessageSource messageSource, Locale locale) throws GenericScheregException {
 		PersistedSession s = this.find(entityId, httpSessionId, userId);
 		if (s==null) {
-			s = createAndSaveSession(entityId, httpSessionId, userId);
+			s = createAndSaveSession(entityId, httpSessionId, userId, messageSource, locale);
 		}
 		return this.saveSession(s);
 	}
 	
 	@Override
-	public PersistedSession createAndSaveSession(String entityId, String httpSessionId, String userId) throws GenericScheregException {
+	public PersistedSession createAndSaveSession(String entityId, String httpSessionId, String userId, MessageSource messageSource, Locale locale) throws GenericScheregException {
 		if (httpSessionId==null) {
 			throw new GenericScheregException("PersistedSession can only be created on a valid http session -> none provided");
 		}
@@ -54,7 +56,7 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 		session.setHttpSessionId(httpSessionId);
 		session.setUserId(userId);
 		session.setEntityId(entityId);
-		session.addLogEntry(LogType.INFO, String.format("~ Schema editor session started [id: %s]", session.getId()));
+		session.addLogEntry(LogType.INFO, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.session_started", new Object[]{session.getId()}, locale));
 		session.setCreated(DateTime.now());
 		return this.saveSession(session);
 	}

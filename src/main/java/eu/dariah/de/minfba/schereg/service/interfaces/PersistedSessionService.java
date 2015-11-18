@@ -1,8 +1,10 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.joda.time.DateTime;
+import org.springframework.context.MessageSource;
 
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
@@ -12,13 +14,13 @@ public interface PersistedSessionService {
 	public List<PersistedSession> findExpiredSessions(DateTime cutoffTimestamp);
 	
 	public PersistedSession access(String entityId, String httpSessionId, String userId);
-	public PersistedSession accessOrCreate(String entityId, String httpSessionId, String userId) throws GenericScheregException;
+	public PersistedSession accessOrCreate(String entityId, String httpSessionId, String userId, MessageSource messageSource, Locale locale) throws GenericScheregException;
 	
-	public PersistedSession createAndSaveSession(String entityId, String httpSessionId, String userId) throws GenericScheregException;
 	public PersistedSession reassignPersistedSession(String httpSessionId, String userId, String persistedSessionId);
 	public PersistedSession saveSession(PersistedSession session);
 	
 	public void deleteSession(String entityId, String httpSessionId, String userId);
 	public void deleteSession(PersistedSession session);
-	public void deleteSessions(List<PersistedSession> sessions);	
+	public void deleteSessions(List<PersistedSession> sessions);
+	public PersistedSession createAndSaveSession(String entityId, String httpSessionId, String userId, MessageSource messageSource, Locale locale) throws GenericScheregException;	
 }

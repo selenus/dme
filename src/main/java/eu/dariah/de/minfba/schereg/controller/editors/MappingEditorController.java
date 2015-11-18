@@ -54,7 +54,7 @@ public class MappingEditorController extends BaseMainEditorController {
 	}
 	
 	@RequestMapping(value="", method=RequestMethod.GET)
-	public String getEditor(@PathVariable String entityId, Model model, HttpServletRequest request) {
+	public String getEditor(@PathVariable String entityId, Model model, HttpServletRequest request, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		
 		AuthWrappedPojo<Mapping> mapping = authPojoConverter.convert(mappingService.findByIdAndAuth(entityId, auth), auth.getUserId()); 
@@ -67,7 +67,7 @@ public class MappingEditorController extends BaseMainEditorController {
 		model.addAttribute("target", authPojoConverter.convert(schemaService.findByIdAndAuth(mapping.getPojo().getTargetId(), auth), auth.getUserId()));
 		
 		try {
-			model.addAttribute("session", sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId()));
+			model.addAttribute("session", sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId(), messageSource, locale));
 		} catch (GenericScheregException e) {
 			logger.error("Failed to load/initialize persisted session", e);
 		} 
