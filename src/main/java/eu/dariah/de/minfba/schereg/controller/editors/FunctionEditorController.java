@@ -166,7 +166,7 @@ public class FunctionEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample) {
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample, Locale locale) {
 		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
 		DescriptionGrammar g = grammarService.findById(grammarId);
 		
@@ -215,7 +215,7 @@ public class FunctionEditorController extends BaseScheregController {
 				}
 				result.setPojo(resultPojos);
 				if (!allMatched) {
-					result.addObjectWarning("~ Not all produced labels are found in the schema definition");
+					result.addObjectWarning(messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.function.validation.labels_not_found", null, locale));
 				}
 			}
 		} catch (GrammarProcessingException | DataTransformationException e) {

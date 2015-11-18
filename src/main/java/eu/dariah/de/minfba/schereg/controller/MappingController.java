@@ -116,7 +116,7 @@ public class MappingController extends BaseScheregController {
 			return new ModelActionPojo(false);
 		}
 		if (mapping.getSourceId().equals(mapping.getTargetId())) {
-			bindingResult.addError(new ObjectError("mapping", new String[]{"~ same in and out"}, null, "same in and out"));
+			bindingResult.addError(new ObjectError("mapping", new String[]{"~eu.dariah.de.minfba.schereg.model.mapping.validation.same_source_and_target"}, null, "Source and target schema cannot be the same"));
 		}
 		
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);		
@@ -167,11 +167,8 @@ public class MappingController extends BaseScheregController {
 				RightsContainer<Schema> source = schemaService.findByIdAndAuth(existMapping.getElement().getSourceId(), auth);
 				RightsContainer<Schema> target = schemaService.findByIdAndAuth(existMapping.getElement().getTargetId(), auth);
 				
-				if (source==null || target==null) {
-					result.setMessage(new MessagePojo("error", "~ Publish not possible", "~ No rights to view either source, target or both"));
-					return result;
-				} else if (source.isDraft() || target.isDraft()) {
-					result.setMessage(new MessagePojo("error", "~ Publish not possible", "~ Either source, target or both are drafts, so mapping cannot be published either"));
+				if (source.isDraft() || target.isDraft()) {
+					result.setMessage(new MessagePojo("error", "~eu.dariah.de.minfba.schereg.model.mapping.validation.no_pub_schema_drafts", "Either source, target or both are drafts, so mapping cannot be published either"));
 					return result;
 				}
 				

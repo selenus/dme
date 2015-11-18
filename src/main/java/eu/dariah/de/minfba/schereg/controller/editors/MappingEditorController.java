@@ -115,12 +115,12 @@ public class MappingEditorController extends BaseMainEditorController {
 				result.setPojo(session.getSampleMapped().size());
 				
 				if (session.getSampleOutput().size()==1) {
-					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample mapping executed (total %sms): 1 resource processed", sw.getElapsedTime(), consumptionService.getResources().size()));
+					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_1_results", new Object[]{sw.getElapsedTime()}, locale));
 				} else {
-					session.addLogEntry(LogType.SUCCESS, String.format("~ Sample mapping executed (total %sms): %s resources processed", sw.getElapsedTime(), consumptionService.getResources().size()));	
+					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_n_results", new Object[]{sw.getElapsedTime(), consumptionService.getResources().size()}, locale));	
 				}
 			} else {
-				session.addLogEntry(LogType.WARNING, "~ Sample mapping executed: No resources found");
+				session.addLogEntry(LogType.WARNING, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_no_results", null, locale));
 			}
 			
 			sessionService.saveSession(session);

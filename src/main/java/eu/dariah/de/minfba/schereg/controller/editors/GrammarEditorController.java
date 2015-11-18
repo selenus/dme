@@ -170,13 +170,13 @@ public class GrammarEditorController extends BaseScheregController {
 	}
 		
 	@RequestMapping(method = RequestMethod.POST, value = "/async/upload")
-	public @ResponseBody ModelActionPojo uploadGrammar(@PathVariable String grammarId, @RequestParam boolean combined, @RequestParam String lexerGrammar, @RequestParam String parserGrammar, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo uploadGrammar(@PathVariable String grammarId, @RequestParam boolean combined, @RequestParam String lexerGrammar, @RequestParam String parserGrammar, HttpServletRequest request, Locale locale) {
 		ModelActionPojo result = new ModelActionPojo(false);
-		if (parserGrammar==null || parserGrammar.trim().isEmpty()) {
-			result.addFieldError("grammarContainer_parserGrammar", "~Parser grammar cannot be empty!");
+		if (parserGrammar==null || parserGrammar.trim().isEmpty()) {			
+			result.addFieldError("grammarContainer_parserGrammar", messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.grammar.validation.parser_grammar_empty", null, locale));
 		}
 		if (!combined && (lexerGrammar==null || lexerGrammar.trim().isEmpty())) {
-			result.addFieldError("grammarContainer_lexerGrammar", "~Lexer grammar cannot be empty for separate layout grammars!");
+			result.addFieldError("grammarContainer_lexerGrammar", messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.grammar.validation.lexer_grammar_empty", null, locale));
 		}
 		
 		if (result.getErrorCount()==0) {
@@ -225,7 +225,7 @@ public class GrammarEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/sandbox")
-	public @ResponseBody ModelActionPojo sandboxGrammar(@PathVariable String grammarId, @RequestParam String baseMethod, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo sandboxGrammar(@PathVariable String grammarId, @RequestParam String baseMethod, HttpServletRequest request, Locale locale) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
 			if (baseMethod==null || baseMethod.trim().isEmpty()) {
@@ -236,7 +236,7 @@ public class GrammarEditorController extends BaseScheregController {
 				if (parserRules.contains(baseMethod.trim())) {
 					result.setSuccess(true);
 				} else {
-					result.addFieldError("base_method", "~Specified base method was not found in grammar");
+					result.addFieldError("base_method", messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.grammar.validation.base_rule_not_found", null, locale));
 				}
 			}
 			
@@ -251,7 +251,7 @@ public class GrammarEditorController extends BaseScheregController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample, @RequestParam(defaultValue="true") Boolean temporary, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample, @RequestParam(defaultValue="true") Boolean temporary, HttpServletRequest request, Locale locale) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		try {
 			DescriptionGrammar g;
@@ -268,7 +268,7 @@ public class GrammarEditorController extends BaseScheregController {
 			} else {
 				g.setBaseMethod(initRule);
 				if (!parserRules.contains(initRule.trim())) {
-					result.addObjectError("~Specified base method was not found in grammar");
+					result.addObjectError(messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.grammar.validation.base_rule_not_found", null, locale));
 					return result;
 				}
 			}
@@ -277,7 +277,7 @@ public class GrammarEditorController extends BaseScheregController {
 				result.setPojo(engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>())));
 			} else {
 				// Grammar not on server yet (new or error)
-				result.addObjectWarning("~ No grammar available on server, validate first");
+				result.addObjectWarning(messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.grammar.validation.no_grammar_found", null, locale));
 			}
 			
 		} catch (Exception e) {
