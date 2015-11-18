@@ -36,6 +36,37 @@
 		<user name="tgradl" password="hairad" authorities="ROLE_ADMINISTRATOR, ROLE_CONTRIBUTOR" />
 		<user name="tgradl_user" password="hairad" authorities="" />
 		<user name="ahenrich" password="hairad" authorities="ROLE_CONTRIBUTOR" />
+		
+		<user name="workshop1" password="dariah41" authorities="" />
+		<user name="workshop2" password="dariah52" authorities="" />
+		<user name="workshop3" password="dariah11" authorities="" />
+		<user name="workshop4" password="dariah12" authorities="" />
+		<user name="workshop5" password="dariah75" authorities="" />
+		<user name="workshop6" password="dariah21" authorities="" />
+		<user name="workshop7" password="dariah43" authorities="" />
+		<user name="workshop8" password="dariah52" authorities="" />
+		<user name="workshop9" password="dariah97" authorities="" />
+		<user name="workshop10" password="dariah62" authorities="" />
+		<user name="workshop11" password="dariah42" authorities="" />
+		<user name="workshop12" password="dariah77" authorities="" />
+		<user name="workshop13" password="dariah24" authorities="" />
+		<user name="workshop14" password="dariah25" authorities="" />
+		<user name="workshop15" password="dariah78" authorities="" />
+		<user name="workshop16" password="dariah42" authorities="" />
+		<user name="workshop17" password="dariah46" authorities="" />
+		<user name="workshop18" password="dariah77" authorities="" />
+		<user name="workshop19" password="dariah28" authorities="" />
+		<user name="workshop20" password="dariah19" authorities="" />
+		<user name="workshop21" password="dariah12" authorities="" />
+		<user name="workshop22" password="dariah11" authorities="" />
+		<user name="workshop23" password="dariah18" authorities="" />
+		<user name="workshop24" password="dariah89" authorities="" />
+		<user name="workshop25" password="dariah63" authorities="" />
+		<user name="workshop26" password="dariah46" authorities="" />
+		<user name="workshop27" password="dariah93" authorities="" />
+		<user name="workshop28" password="dariah11" authorities="" />
+		<user name="workshop29" password="dariah34" authorities="" />
+		<user name="workshop30" password="dariah91" authorities="" />
     </user-service>
 
 	

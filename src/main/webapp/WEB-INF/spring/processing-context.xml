@@ -75,12 +75,12 @@
 						<property name="nlpProcessor">
 							<bean class="de.unibamberg.minf.gtf.extensions.nlp.processing.SimpleStanfordProcessor">
 								<property name="lang" value="de" />
-								<property name="lexParserModelPath" value="/home/tobias/_srv/schereg/models/stanford/lex/DE.ser.gz" />
-								<property name="maxentTaggerModelPath" value="/home/tobias/_srv/schereg/models/stanford/pos/DE.tagger" />
-								<property name="nerCombinerModelPath" value="/home/tobias/_srv/schereg/models/stanford/ner/DE.crf.ser.gz" />
-								<property name="sutimeDefsPath" value="/home/tobias/_srv/schereg/models/sutime/defs.sutime.txt" />
-								<property name="sutimeLangHolidaysPath" value="/home/tobias/_srv/schereg/models/sutime/DE.holidays.sutime.txt" />
-								<property name="sutimeLangPath" value="/home/tobias/_srv/schereg/models/sutime/DE.sutime.txt" />
+								<property name="lexParserModelPath" value="${paths.models}/stanford/lex/DE.ser.gz" />
+								<property name="maxentTaggerModelPath" value="${paths.models}/stanford/pos/DE.tagger" />
+								<property name="nerCombinerModelPath" value="${paths.models}/stanford/ner/DE.crf.ser.gz" />
+								<property name="sutimeDefsPath" value="${paths.models}/sutime/defs.sutime.txt" />
+								<property name="sutimeLangHolidaysPath" value="${paths.models}/sutime/DE.holidays.sutime.txt" />
+								<property name="sutimeLangPath" value="${paths.models}/sutime/DE.sutime.txt" />
 							</bean>
 						</property>
 					</bean>
