@@ -97,6 +97,7 @@ public class MappingEditorController extends BaseMainEditorController {
 			for (MappedConcept c : concepts) {
 				if (c==null) {
 					logger.error("Database consistency issue: Referencing mapped concept that does no longer exist");
+					continue;
 				}
 				List<Identifiable> targetElements = elementService.getElementTrees(sTarget.getId(), c.getTargetElementIds());
 				c.getGrammars().get(0).getTransformationFunctions().get(0).setOutputElements(elementService.convertToLabels(targetElements));

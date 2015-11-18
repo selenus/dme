@@ -141,8 +141,8 @@ BaseEditor.prototype.getSampleResource = function() {
 	    	if (_this.mappingId!==undefined && _this instanceof MappingEditor) {
 	    		_this.getTransformedResource();
 	    	}
-	    },
-	    error: __util.processServerError
+	    }/*,
+	    error: __util.processServerError*/
 	});
 };
 
@@ -158,8 +158,8 @@ BaseEditor.prototype.getTransformedResource = function() {
 	    	result.append(_this.buildSampleResource(data));
 	    	$("#schema-sample-transformed-resource").html(result);
 	    	_this.setSampleNavigationBar();
-	    },
-	    error: __util.processServerError
+	    }/*,
+	    error: __util.processServerError*/
 	});
 };
 

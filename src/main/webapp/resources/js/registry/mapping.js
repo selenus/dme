@@ -42,20 +42,20 @@ MappingTable.prototype.createTable = function() {
 	    	   "targets": [2],
 	    	   "data": "entity.pojo.targetLabel",
 	    	   "width" : "50%"
-	       }, {	
-	    	   "targets": [3],
-	    	   "data": "entity.pojo.sourceId",
-	    	   "visible" : false
-	       }, {	
-	    	   "targets": [4],
-	    	   "data": "entity.pojo.targetId",
-	    	   "visible" : false
 	       }, {
-	    	   "targets": [5],
+	    	   "targets": [3],
 	           "searchable": false,
 	           "sortable" : false,
 	           "class" : "td-no-wrap",
 	           "data": function (row, type, val, meta) { return mappingTable.renderActionColumn(row, type, val, meta); }
+	       }, {	
+	    	   "targets": [4],
+	    	   "data": "entity.pojo.sourceId",
+	    	   "visible" : false
+	       }, {	
+	    	   "targets": [5],
+	    	   "data": "entity.pojo.targetId",
+	    	   "visible" : false
 	       }
 	   ]
 	}, this.baseSettings));
