@@ -64,7 +64,7 @@ BaseEditor.prototype.executeSample = function() {
 	    	_this.logArea.refresh();
 	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
 	    	
-	    	if (_this.mappingId!==undefined && _this instanceof MappingEditor) {
+	    	if (data.success==true && data.pojo>0 && _this.mappingId!==undefined && _this instanceof MappingEditor) {
 	    		_this.executeSampleMapping();
 	    	}
 	    }, 

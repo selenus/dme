@@ -138,14 +138,18 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		if (!c.getEntityId().equals(mappingId)) {
 			throw new GenericScheregException("Attempted to delete mapped concept via wrong mapping");
 		}
-		/*List<String> deleteFunctionIds = new ArrayList<String>();
+		List<String> deleteFunctionIds = new ArrayList<String>();
 		if (c.getGrammars()!=null) {
-		}*/
-		mappedConceptDao.delete(c, auth.getUserId(), auth.getSessionId());
+			
+		}
+
+		try {
+			this.removeReference(mappingId, mappedConceptId, auth);
+			mappedConceptDao.delete(c, auth.getUserId(), auth.getSessionId());
+		} catch (IllegalArgumentException | ClassNotFoundException e) {
+			logger.error("Failed to remove mapped concept", e);
+		}
 		
-		Reference root = this.findReferenceById(mappingId);
-		removeSubreference(root, mappedConceptId);
-		this.saveRootReference(root);
 	}
 	
 	private List<Identifiable> getAllElements(String mappingId) {
