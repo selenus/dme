@@ -69,7 +69,7 @@
 					<bean class="de.unibamberg.minf.gtf.extensions.nlp.commands.LanguageDispatcher">
 						<property name="sentenceDetector">
 							<bean class="de.unibamberg.minf.gtf.extensions.nlp.sentences.OpenNlpSentenceDetectorImpl">
-								<property name="sentenceModelPath" value="/data/_srv/schereg/models/openNLP/DE-sent.bin" />	
+								<property name="sentenceModelPath" value="${paths.models}/openNLP/DE-sent.bin" />	
 							</bean>
 						</property>
 						<property name="nlpProcessor">

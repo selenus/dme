@@ -158,9 +158,13 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 	
 	protected Nonterminal getRoot(String rootElementNs, String rootElementName) {
 		XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
+		boolean nsMatch;
 		for (int j=0; j<elements.getLength(); j++) {
 			XSElementDecl elem = (XSElementDecl)elements.item(j);
-			if (elem.getNamespace().equals(rootElementNs) && elem.getName().equals(rootElementName)) {
+			nsMatch = elem.getNamespace()==null && rootElementNs==null || 
+					( elem.getNamespace()!=null && rootElementNs!=null && elem.getNamespace().equals(rootElementNs) );
+			
+			if (nsMatch && elem.getName().equals(rootElementName)) {
 				logger.info("Identified root element declaration [{}]{}", rootElementNs, rootElementName);
 				// Enter element processing at identified root element
 				return this.processElement(null, elem, new ArrayList<String>());
@@ -172,11 +176,13 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 	
 	protected Nonterminal processElement(Nonterminal parentNonterminal, XSElementDecl element, List<String> processedTerminalQNs) {
 		String terminalQN = this.createTerminalQN(element.getNamespace(), element.getName(), false);
+		Nonterminal n = this.createNonterminal(element.getNamespace(), element.getName(), false);
 		if (processedTerminalQNs.contains(terminalQN)) {
 			logger.warn("Recursion detected [{}]...element processing is cut", terminalQN);
+			return n;
+		} else {
+			processedTerminalQNs.add(terminalQN);
 		}
-		
-		Nonterminal n = this.createNonterminal(element.getNamespace(), element.getName(), false);
 		
 		XSTypeDefinition typeDef = element.getTypeDefinition();		
 		if (typeDef.getTypeCategory()==XSTypeDefinition.COMPLEX_TYPE) {

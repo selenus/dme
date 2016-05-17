@@ -15,8 +15,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<eu.dariah.de.minfba.core-web.version>1.1.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
-		<eu.dariah.de.minfba.core-metamodel.version>3.0.0-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
-		<eu.dariah.de.minfba.processing.version>2.1.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
+		<eu.dariah.de.minfba.core-metamodel.version>3.1.0-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
+		<eu.dariah.de.minfba.processing.version>2.2.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
 		<de.unibamberg.minf.gtf-version>0.3-SNAPSHOT</de.unibamberg.minf.gtf-version>
 
 		<org.springframework-version>4.1.7.RELEASE</org.springframework-version>
@@ -24,11 +24,36 @@
 		<org.apache.tiles-version>3.0.5</org.apache.tiles-version>
 		<org.slf4j-version>1.7.12</org.slf4j-version>
 		<ch.qos.logback.version>1.1.3</ch.qos.logback.version>
+		<org.antlr4-version>4.5.3</org.antlr4-version>
 	</properties>
 
 	<dependencies>
 	
-		<!-- These are indirect requirements that are sometimes not loaded -->
+	<!-- NEW!! -->
+		<!-- ANTLR 4 -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-runtime</artifactId>
+			<version>${org.antlr4-version}</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4-annotations</artifactId>
+			<version>${org.antlr4-version}</version>
+		</dependency> -->
+		<dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>antlr4</artifactId>
+			<version>${org.antlr4-version}</version>
+		</dependency>
+		<!-- <dependency>
+			<groupId>org.antlr</groupId>
+			<artifactId>stringtemplate</artifactId>
+			<version>4.0.2</version>
+		</dependency>  -->
+	
+	<!-- Old!! -->
+		<!-- These are indirect requirements that are sometimes not loaded
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
@@ -59,7 +84,7 @@
 			<artifactId>org.abego.treelayout.core</artifactId>
 			<version>1.0.1</version>
 		</dependency>
-
+ -->
 		<!-- DARIAH -->
 		<dependency>
 			<groupId>eu.dariah.de.minfba.core</groupId>
