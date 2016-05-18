@@ -55,11 +55,26 @@
 	<!-- The prototype scope is important as controllers adapt the active states of the items -->
 	<bean id="navigation" class="eu.dariah.de.minfba.core.web.navigation.Navigation" scope="prototype">
 		<property name="rootItems">
-			<list>
+			<list>				
 				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
 					<property name="id" value="registry" />
 					<property name="displayCode" value="~eu.dariah.de.minfba.schereg.title" />
-					<property name="linkUrl" value="/registry/" />
+					<property name="groupHeader" value="true" />
+					<!-- <property name="glyphicon" value="glyphicon glyphicon-search" />  -->
+					<property name="subItems">
+						<list>
+							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
+								<property name="id" value="registry" />
+								<property name="displayCode" value="~eu.dariah.de.minfba.schereg.registry.title" />
+								<property name="linkUrl" value="/registry/" />
+							</bean>
+							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
+								<property name="id" value="vocabulary" />
+								<property name="displayCode" value="~eu.dariah.de.minfba.schereg.vocabulary.title" />
+								<property name="linkUrl" value="/vocabulary/" />
+							</bean>
+						</list>
+					</property>
 				</bean>
 			</list>
 		</property>

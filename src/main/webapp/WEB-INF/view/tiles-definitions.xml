@@ -75,6 +75,15 @@
 	</definition>
 	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
 	
+	<!-- Vocabulary -->
+	<definition name="vocabulary/home" extends="template_tables">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/vocabulary/home.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="vocabulary.js" />
+		</put-list-attribute>
+	</definition>
+	<definition name="vocabulary/form/edit" template="/WEB-INF/view/jsp/vocabulary/forms/edit.jsp" />
+	
 	<!-- Mapping Editor -->
 	<definition name="mappingEditor" extends="template_tables">
 		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/editor.jsp" />
