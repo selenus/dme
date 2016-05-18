@@ -92,7 +92,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		try {
 			PersistedSession s = sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId(), messageSource, locale);
 			model.addAttribute("session", s);
-		} catch (GenericScheregException e) {
+		} catch (Exception e) {
 			logger.error("Failed to load/initialize persisted session", e);
 		} 
 		return "schemaEditor";

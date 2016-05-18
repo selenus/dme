@@ -444,7 +444,7 @@ SchemaEditor.prototype.triggerUploadFile = function() {
 	var form_identifier = "upload-file-" + this.schema.id;
 	
 	modalFormHandler = new ModalFormHandler({
-		formUrl: "/forms/import/",
+		formUrl: "forms/import/",
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
@@ -454,8 +454,8 @@ SchemaEditor.prototype.triggerUploadFile = function() {
 	
 	modalFormHandler.fileUploadElements.push({
 		selector: "#schema_source",				// selector for identifying where to put widget
-		formSource: "/forms/fileupload",		// where is the form
-		uploadTarget: "/async/upload", 			// where to we upload the file(s) to
+		formSource: "forms/fileupload",		// where is the form
+		uploadTarget: "async/upload", 			// where to we upload the file(s) to
 		multiFiles: false, 						// one or multiple files
 		elementChangeCallback: _this.handleFileValidatedOrFailed
 	});
