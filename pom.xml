@@ -17,7 +17,7 @@
 		<eu.dariah.de.minfba.core-web.version>1.1.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
 		<eu.dariah.de.minfba.core-metamodel.version>3.1.0-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
 		<eu.dariah.de.minfba.processing.version>2.2.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
-		<de.unibamberg.minf.gtf-version>0.3-SNAPSHOT</de.unibamberg.minf.gtf-version>
+		<de.unibamberg.minf.gtf-version>0.4-SNAPSHOT</de.unibamberg.minf.gtf-version>
 
 		<org.springframework-version>4.1.7.RELEASE</org.springframework-version>
 		<org.springsecurity-version>4.0.2.RELEASE</org.springsecurity-version>
