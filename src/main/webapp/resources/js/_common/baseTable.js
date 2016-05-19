@@ -72,20 +72,25 @@ BaseTable.prototype.assignTableEvents = function() {
     // After a reload, some selection might still be applicable
     $(this.containerSelector).find(".data-table-count select").trigger("change");
     		
-    $(this.containerSelector).find("tbody").on("click", "tr", function () {
+    /*$(this.containerSelector).find("tbody").on("click", "tr", function () {
         if ($(this).hasClass("selected")) {
             $(this).removeClass("selected");
-            _this.handleSelection(null);
+            if (_this.handleSelection!==undefined) {
+            	_this.handleSelection(null);
+            }
         } else {
         	_this._base.table.$("tr.selected").removeClass("selected");
             $(this).addClass("selected");
-            _this.handleSelection($(this).prop("id"));
+            
+            if (_this.handleSelection!==undefined) {
+            	_this.handleSelection($(this).prop("id"));
+            }
         }
-    });
+    });*/
 };
 
 /* Just an 'abstract' method that is intended to be overridden */
-BaseTable.prototype.handleSelection = function(id) { };
+//BaseTable.prototype.handleSelection = function(id) {};
 
 BaseTable.prototype.handleAjaxError = function(xhr, textStatus, error) {
     // Reload because the session has expired
@@ -124,13 +129,17 @@ BaseTable.prototype.refresh = function() {
 					$("#"+selected[i]).each(function() {
 						$(this).addClass("selected");
 						// Only executed if the row (id) still exists
-						_this.handleSelection(selected[i]);
+						if (_this.handleSelection!==undefined) {
+							_this.handleSelection(selected[i]);
+						}
 						hasSelected = true;
 					});
 				}
 			} 
 			if (!hasSelected) {
-				_this.handleSelection(null);
+				if (_this.handleSelection!==undefined) {
+					_this.handleSelection(null);
+				}
 			}
 		});
 	}

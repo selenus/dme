@@ -27,7 +27,7 @@
 			</ul>
 			<div id="main-content">
 				<div class="row">
-					<div id="vocabulary-table-container" class="col-lg-5">
+					<div id="vocabulary-table-container" class="col-lg-6">
 						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.vocabulary.title" />&nbsp;</h2>
 						<div class="pull-right">
 							<button id="btn-add-vocabulary" class="btn btn-default btn-sm pull-left">
@@ -63,43 +63,46 @@
 							</table>
 						</div>
 					</div>
-					<div id="vocabulary-item-table-container" class="col-lg-7">
-						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.vocabulary.items.title" />&nbsp;</h2>
-						<div class="pull-right">
-							<button id="btn-add-mapping" class="btn btn-default btn-sm pull-left">
-								<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_vocabulary_item" />
-							</button>
-							<div class="data-table-filter">
-								<input type="text" class="form-control input-sm" placeholder='<s:message code="~eu.dariah.de.minfba.common.link.filter"/>'>
+					<div id="vocabulary-item-table-container" class="col-lg-6">
+						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.vocabulary.item.title" />&nbsp;</h2>
+						<div id="vocabulary-item-table-hide" style="clear: both;">
+							<s:message code="~eu.dariah.de.minfba.schereg.vocabulary.item.none_selected" />
+						</div>
+						<div id="vocabulary-item-table-display" class="hide">
+							<div class="pull-right">
+								<button id="btn-add-mapping" onclick="vocabularyTable.itemTable.triggerAdd();" class="btn btn-default btn-sm pull-left">
+									<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_vocabulary_item" />
+								</button>
+								<div class="data-table-filter">
+									<input type="text" class="form-control input-sm" placeholder='<s:message code="~eu.dariah.de.minfba.common.link.filter"/>'>
+								</div>
+								<div class="data-table-count">
+									<select class="form-control input-sm">
+									  <option>10</option>
+									  <option>25</option>
+									  <option>50</option>
+									  <option>100</option>
+									  <option><s:message code="~eu.dariah.de.minfba.common.link.all"/></option>
+									</select>
+								</div>					
 							</div>
-							<div class="data-table-count">
-								<select class="form-control input-sm">
-								  <option>10</option>
-								  <option>25</option>
-								  <option>50</option>
-								  <option>100</option>
-								  <option><s:message code="~eu.dariah.de.minfba.common.link.all"/></option>
-								</select>
-							</div>					
-						</div>
-						<div class="clearfix">
-							<table id="vocabulary-item-table" class="table table-striped table-bordered table-condensed">
-								<thead>
+							<div class="clearfix">
+								<table id="vocabulary-item-table" class="table table-striped table-bordered table-condensed">
+									<thead>
+										<tr>
+											<th></th> <!-- Status -->
+											<th><s:message code="~eu.dariah.de.minfba.schereg.vocabulary.item.model.id" /></th>
+											<th></th> <!-- Actions -->
+										</tr>
+									</thead>
+									<tbody>
 									<tr>
-										<th></th> <!-- Status -->
-										<th><s:message code="~eu.dariah.de.minfba.schereg.vocabulary.item.model.id" /></th>
-										<th><s:message code="~eu.dariah.de.minfba.schereg.vocabulary.item.model.data" /></th>
-										<th></th> <!-- Actions -->
+										<td colspan="3" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
 									</tr>
-								</thead>
-								<tbody>
-								<tr>
-									<td colspan="4" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
-								</tr>
-								</tbody>
-							</table>
+									</tbody>
+								</table>
+							</div>
 						</div>
-					
 					</div>
 				</div>
 			</div>

@@ -83,6 +83,7 @@
 		</put-list-attribute>
 	</definition>
 	<definition name="vocabulary/form/edit" template="/WEB-INF/view/jsp/vocabulary/forms/edit.jsp" />
+	<definition name="vocabulary/form/edit_item" template="/WEB-INF/view/jsp/vocabulary/forms/edit_item.jsp" />
 	
 	<!-- Mapping Editor -->
 	<definition name="mappingEditor" extends="template_tables">
