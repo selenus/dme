@@ -38,6 +38,10 @@
 		<property name="objMapper" ref="objectMapper" />
 	</bean>
 	
+	<bean id="vocabularyEngine" class="de.unibamberg.minf.gtf.vocabulary.VocabularyEngine">
+	
+	</bean>
+	
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
 		<property name="messageConverters">
 	        <list>
