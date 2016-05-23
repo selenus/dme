@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.model;
 
+import de.unibamberg.minf.gtf.serialization.JsonSyntaxTreeDeserializer;
 import de.unibamberg.minf.gtf.vocabulary.VocabularyItem;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
@@ -15,4 +16,10 @@ public class PersistedVocabularyItem extends VocabularyItem implements Identifia
 	
 	public String getSerializedData() { return serializedData; }
 	public void setSerializedData(String serializedData) { this.serializedData = serializedData; }
+	
+	@Override
+	public void compile() {
+		this.setData(JsonSyntaxTreeDeserializer.deserialize(this.getSerializedData()));
+		super.compile();
+	}
 }

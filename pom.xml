@@ -124,6 +124,11 @@
 		</dependency>
 		<dependency>
 			<groupId>de.unibamberg.minf.gtf</groupId>
+			<artifactId>gtf-extension-vocabulary</artifactId>
+			<version>${de.unibamberg.minf.gtf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unibamberg.minf.gtf</groupId>
 			<artifactId>gtf-processing-adapter</artifactId>
 			<version>${de.unibamberg.minf.gtf-version}</version>
 		</dependency>

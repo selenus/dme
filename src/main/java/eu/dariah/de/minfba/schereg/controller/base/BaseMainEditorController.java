@@ -139,7 +139,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				result.setPojo(session.getSampleOutput().size());
 								
 				if (session.getSampleOutput().size()==1) {				
-					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.processed_1_results", new Object[]{sw.getElapsedTime()}, locale));
+					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.processed_1_result", new Object[]{sw.getElapsedTime()}, locale));
 				} else {
 					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.processed_n_results", new Object[]{sw.getElapsedTime(), consumptionService.getResources().size()}, locale));	
 				}

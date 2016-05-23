@@ -18,8 +18,7 @@ public class PersistedVocabularyServiceImpl implements InitializingBean, Persist
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO Auto-generated method stub
-		
+		vocabularyEngine.setVocabularies(vocabularyDao.findAll());
 	}
 	
 	@Override
@@ -29,7 +28,10 @@ public class PersistedVocabularyServiceImpl implements InitializingBean, Persist
 
 	@Override
 	public PersistedVocabulary save(PersistedVocabulary saveVocabulary) {
-		return vocabularyDao.save(saveVocabulary);
+		saveVocabulary = vocabularyDao.save(saveVocabulary);
+		vocabularyEngine.setVocabularies(vocabularyDao.findAll());
+		
+		return saveVocabulary;
 	}
 
 	@Override
