@@ -36,11 +36,12 @@ public class ApiController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/schemas")
-	public @ResponseBody List<Schema> getSchemas(HttpServletRequest request) {
+	public @ResponseBody List<SerializableSchemaContainer> getSchemas(HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(auth);
-		List<Schema> result = new ArrayList<Schema>();
+		List<SerializableSchemaContainer> result = new ArrayList<SerializableSchemaContainer>();
 		ChangeSet ch;
+		SerializableSchemaContainer sp;
 		if (schemas!=null) {
 			for (RightsContainer<Schema> s : schemas) {
 				if (s.getElement() instanceof XmlSchema) {
@@ -57,8 +58,10 @@ public class ApiController {
 					s.getElement().setVersionId(ch.getId());
 				}
 				
+				sp = new SerializableSchemaContainer();
+				sp.setSchema(s.getElement());
 				
-				result.add(s.getElement());
+				result.add(sp);
 			}
 		}
 		return result;
