@@ -53,10 +53,10 @@ public class ApiController {
 				}
 				
 				ch = schemaService.getLatestChangeSetForEntity(s.getId());
-				
 				if (ch!=null) {
-					s.getElement().setVersionHash(ch.getTimestamp().getMillis());
-				}			
+					s.getElement().setVersionId(ch.getId());
+				}
+				
 				
 				result.add(s.getElement());
 			}

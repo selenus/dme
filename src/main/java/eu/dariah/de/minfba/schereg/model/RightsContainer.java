@@ -21,9 +21,6 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 	private List<String> shareIds;
 	
 	
-	@Override public long getVersionHash() { return this.getElement().getVersionHash(); }
-	@Override public void setVersionHash(long versionHash) { this.getElement().setVersionHash(versionHash); }
-	
 	@Override public String getId() { return this.id; }
 	@Override public void setId(String id) { 
 		this.id = id;
