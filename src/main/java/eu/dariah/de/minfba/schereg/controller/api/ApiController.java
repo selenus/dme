@@ -52,11 +52,13 @@ public class ApiController {
 					xmlS.setRootElementNamespace(null);
 					xmlS.setRecordPath(null);
 				}
-				
+												
 				ch = schemaService.getLatestChangeSetForEntity(s.getId());
 				if (ch!=null) {
 					s.getElement().setVersionId(ch.getId());
 				}
+				
+				s.getElement().flush();
 				
 				sp = new SerializableSchemaContainer();
 				sp.setSchema(s.getElement());
