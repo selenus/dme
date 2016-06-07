@@ -72,6 +72,12 @@ public class ApiController {
 		
 		SerializableSchemaContainer sp = new SerializableSchemaContainer();
 		sp.setSchema(s.getElement());
+		
+		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
+		if (ch!=null) {
+			s.getElement().setVersionId(ch.getId());
+		}
+		
 		sp.setRoot(r);
 		
 		return sp;
