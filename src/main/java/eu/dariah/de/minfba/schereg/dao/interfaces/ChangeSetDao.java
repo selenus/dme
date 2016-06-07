@@ -12,4 +12,6 @@ public interface ChangeSetDao extends BaseDao<ChangeSet> {
 	public List<ChangeSet> findByElementId(String elementId);
 	public List<ChangeSet> findByEntityIds(List<String> entityIds);
 	public List<ChangeSet> findByElementIds(List<String> elementIds);
+
+	public ChangeSet findLatestByEntityId(String id);
 }

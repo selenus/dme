@@ -66,4 +66,13 @@ public class ChangeSetDaoImpl extends BaseDaoImpl<ChangeSet> implements ChangeSe
 		q.with(new Sort(Sort.Direction.DESC, "timestamp"));
 		return this.find(q);
 	}
+
+	@Override
+	public ChangeSet findLatestByEntityId(String entityId) {
+		Query q = Query.query(Criteria.where("entityId").is(entityId));
+		q.with(new Sort(Sort.Direction.DESC, "timestamp"));
+		q.limit(1);		
+
+		return this.findOne(q);
+	}
 }

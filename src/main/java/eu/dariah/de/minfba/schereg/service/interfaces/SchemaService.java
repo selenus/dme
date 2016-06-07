@@ -35,5 +35,6 @@ public interface SchemaService extends BaseService {
 	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId);
 	public List<ChangeSet> getChangeSetForAllSchemas();
 	public void saveSchema(Schema schema, Reference rootNonterminal, AuthPojo auth);
+
 	
 }

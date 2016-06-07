@@ -28,6 +28,11 @@ public abstract class BaseServiceImpl implements BaseService {
 	}
 	
 	@Override
+	public ChangeSet getLatestChangeSetForEntity(String id) {
+		return changeSetDao.findLatestByEntityId(id);
+	}
+	
+	@Override
 	public List<ChangeSet> getChangeSetForElement(String elementId) {
 		return changeSetDao.findByElementId(elementId);
 	}

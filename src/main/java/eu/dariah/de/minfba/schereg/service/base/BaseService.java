@@ -9,4 +9,5 @@ public interface BaseService {
 	public List<ChangeSet> getChangeSetForElement(String elementId);
 	public List<ChangeSet> getChangeSetForEntities(List<String> entityIds);
 	public List<ChangeSet> getChangeSetForElements(List<String> elementIds);
+	public ChangeSet getLatestChangeSetForEntity(String id);
 }

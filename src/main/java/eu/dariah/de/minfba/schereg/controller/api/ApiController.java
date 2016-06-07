@@ -18,8 +18,10 @@ import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
+import eu.dariah.de.minfba.schereg.pojo.converter.ChangeSetPojoConverter;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
@@ -32,11 +34,13 @@ public class ApiController {
 	@Autowired private SchemaService schemaService;
 	@Autowired protected ElementService elementService;
 	
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/schemas")
 	public @ResponseBody List<Schema> getSchemas(HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(auth);
 		List<Schema> result = new ArrayList<Schema>();
+		ChangeSet ch;
 		if (schemas!=null) {
 			for (RightsContainer<Schema> s : schemas) {
 				if (s.getElement() instanceof XmlSchema) {
@@ -47,6 +51,13 @@ public class ApiController {
 					xmlS.setRootElementNamespace(null);
 					xmlS.setRecordPath(null);
 				}
+				
+				ch = schemaService.getLatestChangeSetForEntity(s.getId());
+				
+				if (ch!=null) {
+					s.getElement().setVersionHash(ch.getTimestamp().getMillis());
+				}			
+				
 				result.add(s.getElement());
 			}
 		}
