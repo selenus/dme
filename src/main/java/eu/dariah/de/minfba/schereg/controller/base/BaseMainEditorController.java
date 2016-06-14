@@ -127,7 +127,8 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		processingSvc.setSchema(s);
 		processingSvc.addConsumptionService(consumptionService);
 		try {
-			processingSvc.init(r);
+			processingSvc.setRoot(r);
+			processingSvc.init();
 			
 			sw.start();
 			processingSvc.run();
