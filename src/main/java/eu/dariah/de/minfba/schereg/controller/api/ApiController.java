@@ -16,13 +16,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
-import eu.dariah.de.minfba.schereg.pojo.converter.ChangeSetPojoConverter;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
@@ -31,9 +33,42 @@ public class ApiController {
 	protected static final Logger logger = LoggerFactory.getLogger(ApiController.class);
 	
 	@Autowired protected AuthInfoHelper authInfoHelper;
+	
 	@Autowired private SchemaService schemaService;
 	@Autowired protected ElementService elementService;
 	
+	@Autowired private MappingService mappingService;
+	@Autowired private MappedConceptService mappedConceptService;
+	
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/mappings")
+	public @ResponseBody List<Mapping> getMappings(HttpServletRequest request) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		List<RightsContainer<Mapping>> mappings = mappingService.findAllByAuth(auth, false);
+		List<Mapping> result = new ArrayList<Mapping>();
+		
+		if (mappings!=null) {
+			for (RightsContainer<Mapping> m : mappings) {
+				result.add(m.getElement());
+			}
+		}
+		
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/mappings/{entityId}")
+	public @ResponseBody Mapping getMapping(@PathVariable String entityId, HttpServletRequest request) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		RightsContainer<Mapping> mapping = mappingService.findByIdAndAuth(entityId, auth);
+		if (mapping!=null) {
+			Mapping result = mapping.getElement(); 
+			result.setConcepts(mappedConceptService.findAllByMappingId(entityId));
+			result.flush();
+			
+			return result;
+		}
+		return null;
+	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/schemas")
 	public @ResponseBody List<SerializableSchemaContainer> getSchemas(HttpServletRequest request) {
