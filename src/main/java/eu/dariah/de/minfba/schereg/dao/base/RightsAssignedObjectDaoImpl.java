@@ -90,6 +90,21 @@ public class RightsAssignedObjectDaoImpl<T extends TrackedEntity> extends Tracke
 	}
 	
 	@Override
+	public List<RightsContainer<T>> findByCriteriaAndUserId(Criteria c, String userId) {
+		Query q = new Query();
+		
+		Criteria cNoDraft = Criteria.where("draft").is(false);
+		if (userId==null) {
+			q.addCriteria(new Criteria().andOperator(c, cNoDraft));
+		} else {
+			Criteria cOwner = Criteria.where("ownerId").is(userId);
+			Criteria sharedDraft = Criteria.where("readIds").is(userId);
+			q.addCriteria(new Criteria().andOperator(c, new Criteria().orOperator(cOwner, cNoDraft, sharedDraft)));
+		}
+		return this.find(q);	
+	}
+	
+	@Override
 	public void updateContained(T e, String userId, String sessionId) throws GenericScheregException {
 		if (e.getId()==null) {
 			throw new GenericScheregException("Contained update only allowed for existing element (no ID provided)");

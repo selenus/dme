@@ -17,4 +17,7 @@ public interface MappingService {
 	public void deleteMappingById(String id, AuthPojo auth);
 	public List<RightsContainer<Mapping>> findAllByAuth(AuthPojo auth, boolean view);
 	public List<RightsContainer<Mapping>> getMappings(String entityId);
+	public List<RightsContainer<Mapping>> findAllByAuthAndSourceId(AuthPojo auth, String sourceId);
+	public List<RightsContainer<Mapping>> findAllByAuthAndTargetId(AuthPojo auth, String targetId);
+	public RightsContainer<Mapping> findByAuthAndSourceAndTargetId(AuthPojo auth, String sourceId, String targetId);
 }

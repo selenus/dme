@@ -152,4 +152,28 @@ public class MappingServiceImpl extends BaseReferenceServiceImpl implements Mapp
 		
 		return mappingDao.find(q);
 	}
+
+	@Override
+	public List<RightsContainer<Mapping>> findAllByAuthAndSourceId(AuthPojo auth, String sourceId) {
+		return mappingDao.findByCriteriaAndUserId(Criteria.where("element.sourceId").is(sourceId), auth.getUserId());
+	}
+
+	@Override
+	public List<RightsContainer<Mapping>> findAllByAuthAndTargetId(AuthPojo auth, String targetId) {
+		return mappingDao.findByCriteriaAndUserId(Criteria.where("element.targetId").is(targetId), auth.getUserId());
+	}
+
+	@Override
+	public RightsContainer<Mapping> findByAuthAndSourceAndTargetId(AuthPojo auth, String sourceId, String targetId) {
+		Criteria c = new Criteria().andOperator(
+				Criteria.where("element.sourceId").is(sourceId),
+				Criteria.where("element.targetId").is(targetId));
+
+		// TODO: This is an issue (#522) and needs to be solved otherwise
+		List<RightsContainer<Mapping>> mappings = mappingDao.findByCriteriaAndUserId(c, auth.getUserId());
+		if (mappings==null || mappings.size()==0) {
+			return null;
+		}
+		return mappings.get(0);
+	}
 }

@@ -16,65 +16,26 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.serialization.SerializableMappingContainer;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
-import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
-import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value="/api/")
-public class ApiController {
-	protected static final Logger logger = LoggerFactory.getLogger(ApiController.class);
+@RequestMapping(value="/api/schemas")
+public class SchemaApiController {
+	protected static final Logger logger = LoggerFactory.getLogger(SchemaApiController.class);
 	
 	@Autowired protected AuthInfoHelper authInfoHelper;
 	
 	@Autowired private SchemaService schemaService;
 	@Autowired protected ElementService elementService;
+
 	
-	@Autowired private MappingService mappingService;
-	@Autowired private MappedConceptService mappedConceptService;
-	
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/mappings")
-	public @ResponseBody List<SerializableMappingContainer> getMappings(HttpServletRequest request) {
-		AuthPojo auth = authInfoHelper.getAuth(request);
-		List<RightsContainer<Mapping>> mappings = mappingService.findAllByAuth(auth, false);
-		List<SerializableMappingContainer> result = new ArrayList<SerializableMappingContainer>();
-		
-		if (mappings!=null) {
-			for (RightsContainer<Mapping> m : mappings) {
-				SerializableMappingContainer mc = new SerializableMappingContainer();
-				mc.setMapping(m.getElement());
-				result.add(mc);
-			}
-		}
-		
-		return result;
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/mappings/{entityId}")
-	public @ResponseBody SerializableMappingContainer getMapping(@PathVariable String entityId, HttpServletRequest request) {
-		AuthPojo auth = authInfoHelper.getAuth(request);
-		RightsContainer<Mapping> mapping = mappingService.findByIdAndAuth(entityId, auth);
-		if (mapping!=null) {
-			SerializableMappingContainer result = new SerializableMappingContainer();
-			result.setMapping(mapping.getElement()); 
-			mapping.getElement().setConcepts(mappedConceptService.findAllByMappingId(entityId));
-			mapping.getElement().flush();
-			// TODO: Include grammars
-			return result;
-		}
-		return null;
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/schemas")
+	@RequestMapping(method = RequestMethod.GET, value = "")
 	public @ResponseBody List<SerializableSchemaContainer> getSchemas(HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(auth);
@@ -108,7 +69,7 @@ public class ApiController {
 		return result;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/schemas/{entityId}")
+	@RequestMapping(method = RequestMethod.GET, value = "/{entityId}")
 	public @ResponseBody SerializableSchemaContainer exportSchema(@PathVariable String entityId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		RightsContainer<Schema> s = schemaService.findByIdAndAuth(entityId, auth);
