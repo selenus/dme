@@ -18,6 +18,7 @@ import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.serialization.SerializableMappingContainer;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
@@ -42,14 +43,16 @@ public class ApiController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/mappings")
-	public @ResponseBody List<Mapping> getMappings(HttpServletRequest request) {
+	public @ResponseBody List<SerializableMappingContainer> getMappings(HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		List<RightsContainer<Mapping>> mappings = mappingService.findAllByAuth(auth, false);
-		List<Mapping> result = new ArrayList<Mapping>();
+		List<SerializableMappingContainer> result = new ArrayList<SerializableMappingContainer>();
 		
 		if (mappings!=null) {
 			for (RightsContainer<Mapping> m : mappings) {
-				result.add(m.getElement());
+				SerializableMappingContainer mc = new SerializableMappingContainer();
+				mc.setMapping(m.getElement());
+				result.add(mc);
 			}
 		}
 		
@@ -57,14 +60,15 @@ public class ApiController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/mappings/{entityId}")
-	public @ResponseBody Mapping getMapping(@PathVariable String entityId, HttpServletRequest request) {
+	public @ResponseBody SerializableMappingContainer getMapping(@PathVariable String entityId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		RightsContainer<Mapping> mapping = mappingService.findByIdAndAuth(entityId, auth);
 		if (mapping!=null) {
-			Mapping result = mapping.getElement(); 
-			result.setConcepts(mappedConceptService.findAllByMappingId(entityId));
-			result.flush();
-			
+			SerializableMappingContainer result = new SerializableMappingContainer();
+			result.setMapping(mapping.getElement()); 
+			mapping.getElement().setConcepts(mappedConceptService.findAllByMappingId(entityId));
+			mapping.getElement().flush();
+			// TODO: Include grammars
 			return result;
 		}
 		return null;
