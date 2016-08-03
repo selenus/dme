@@ -104,6 +104,8 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		return grammarCompiler.getParserRules();
 	}
 	
+	 
+	
 	public void copyTemporaryGrammar(String grammarId) throws GrammarProcessingException {
 		
 	}
@@ -206,6 +208,11 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 			parserGrammar = "grammar " + grammar.getIdentifier() + ";\n\n" + parserGrammar;
 			Files.write(Paths.get(filePathPrefix + ".g4"), parserGrammar.getBytes());
 		}
+	}
+
+	@Override
+	public List<DescriptionGrammar> findByEntityId(String entityId) {
+		return grammarDao.findByEntityId(entityId);
 	}
 
 

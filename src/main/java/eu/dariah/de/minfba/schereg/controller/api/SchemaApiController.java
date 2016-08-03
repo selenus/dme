@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
@@ -22,6 +23,7 @@ import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
@@ -33,6 +35,8 @@ public class SchemaApiController {
 	
 	@Autowired private SchemaService schemaService;
 	@Autowired protected ElementService elementService;
+	
+	@Autowired private GrammarService grammarService;
 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "")
@@ -84,6 +88,8 @@ public class SchemaApiController {
 		}
 		
 		sp.setRoot(r);
+		
+		List<DescriptionGrammar> grammars = grammarService.findByEntityId(entityId);
 		
 		return sp;
 	}

@@ -32,7 +32,6 @@ import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.SerializableDescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -292,7 +291,7 @@ public class GrammarEditorController extends BaseScheregController {
 	}
 	
 	private DescriptionGrammar getTemporaryGrammar(String id, String userId) {
-		SerializableDescriptionGrammar g = new DescriptionGrammarImpl();
+		DescriptionGrammar g = new DescriptionGrammarImpl();
 		g.setTemporary(true);
 		g.setId(id);
 		g.setUserId(userId);

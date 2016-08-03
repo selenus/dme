@@ -27,4 +27,6 @@ public interface GrammarService extends BaseService {
 	public List<String> getParserRules(DescriptionGrammar grammar) throws GrammarProcessingException;
 
 	public void clearGrammar(DescriptionGrammar g);
+
+	public List<DescriptionGrammar> findByEntityId(String entityId);
 }
