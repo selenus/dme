@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.service;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
@@ -51,17 +54,17 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		return grammar;
 	}
 
-	private String getGrammarDirectory(DescriptionGrammar grammar, boolean temporary) {
-		return grammarsRootPath + File.separator + grammar.getIdentifier() + File.separator;
+	private String getGrammarDirectory(String grammarId, boolean temporary) {
+		return grammarsRootPath + File.separator + grammarId + File.separator;
 	}
 	
-	private String getGrammarFilePrefix(DescriptionGrammar grammar, boolean temporary) {
-		return getGrammarDirectory(grammar, temporary) + grammar.getIdentifier();
+	private String getGrammarFilePrefix(String grammarId, boolean temporary) {
+		return getGrammarDirectory(grammarId, temporary) + grammarId;
 	}
 	
 	@Override
 	public void clearGrammar(DescriptionGrammar g) {
-		File dirPath = new File(getGrammarDirectory(g, g.isTemporary()));
+		File dirPath = new File(getGrammarDirectory(g.getIdentifier(), g.isTemporary()));
 		try {
 			logger.info(String.format("Clearing %s grammar %s", g.isTemporary() ? "temporary" : "persistent", g.getIdentifier()));
 			engine.unloadGrammar(g, dirPath);
@@ -75,14 +78,14 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public Collection<String> saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException {
 		saveGrammarToFilesystem(grammar, lexerGrammar, parserGrammar, true);
 		
-		File dirPath = new File(getGrammarDirectory(grammar, true));
+		File dirPath = new File(getGrammarDirectory(grammar.getIdentifier(), true));
 		return collectFileNames(dirPath, ".g4");
 	}
 		
 	@Override
 	public Collection<String> parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		File dirPath = new File(getGrammarDirectory(grammar, true));
+		File dirPath = new File(getGrammarDirectory(grammar.getIdentifier(), true));
 		grammarCompiler.init(dirPath, grammar.getIdentifier());
 		grammarCompiler.generateGrammar();
 		return collectFileNames(dirPath, ".java");
@@ -91,7 +94,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	@Override
 	public Collection<String> compileTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException, IOException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		File dirPath = new File(getGrammarDirectory(grammar, true));
+		File dirPath = new File(getGrammarDirectory(grammar.getIdentifier(), true));
 		grammarCompiler.init(dirPath, grammar.getIdentifier());
 		grammarCompiler.compileGrammar();
 		return collectFileNames(dirPath, ".class");
@@ -100,7 +103,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	@Override
 	public List<String> getParserRules(DescriptionGrammar grammar) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
-		grammarCompiler.init(new File(getGrammarDirectory(grammar, true)), grammar.getIdentifier());		
+		grammarCompiler.init(new File(getGrammarDirectory(grammar.getIdentifier(), true)), grammar.getIdentifier());		
 		return grammarCompiler.getParserRules();
 	}
 	
@@ -163,7 +166,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 				this.saveGrammarToFilesystem(grammar, grammar.getGrammarContainer().getLexerGrammar(), grammar.getGrammarContainer().getParserGrammar(), false);
 				
 				GrammarCompiler grammarCompiler = new GrammarCompiler();
-				grammarCompiler.init(new File(this.getGrammarDirectory(grammar, false)), grammar.getIdentifier());
+				grammarCompiler.init(new File(this.getGrammarDirectory(grammar.getIdentifier(), false)), grammar.getIdentifier());
 				grammarCompiler.generateGrammar();
 				grammarCompiler.compileGrammar();
 				
@@ -188,8 +191,8 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 
 
 	private void saveGrammarToFilesystem(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
-		String dirPath = getGrammarDirectory(grammar, temporary);
-		String filePathPrefix = getGrammarFilePrefix(grammar, temporary);
+		String dirPath = getGrammarDirectory(grammar.getIdentifier(), temporary);
+		String filePathPrefix = getGrammarFilePrefix(grammar.getIdentifier(), temporary);
 		
 		if (Files.exists(Paths.get(dirPath))) {				
 			FileUtils.deleteDirectory(new File(dirPath));
@@ -211,10 +214,12 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 
 	@Override
-	public List<DescriptionGrammar> findByEntityId(String entityId) {
-		return grammarDao.findByEntityId(entityId);
+	public List<DescriptionGrammar> findByEntityId(String entityId, boolean includeSources) {
+		if (!includeSources) {		
+			return grammarDao.findByEntityId(entityId);
+		} else {
+			return grammarDao.find(Query.query(Criteria.where("entityId").is(entityId)));
+		}
 	}
-
-
 
 }

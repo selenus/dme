@@ -24,7 +24,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
 @Controller
 @RequestMapping(value="/api/mappings")
-public class MappingApiController {
+public class MappingApiController extends BaseApiController {
 	protected static final Logger logger = LoggerFactory.getLogger(MappingApiController.class);
 			
 	@Autowired protected AuthInfoHelper authInfoHelper;
@@ -93,7 +93,8 @@ public class MappingApiController {
 			result.setMapping(mapping.getElement()); 
 			mapping.getElement().setConcepts(mappedConceptService.findAllByMappingId(mapping.getId()));
 			mapping.getElement().flush();
-			// TODO: Include grammars
+			
+			result.setGrammars(this.serializeGrammarSources(mapping.getId()));			
 			return result;
 		}
 		return null;
