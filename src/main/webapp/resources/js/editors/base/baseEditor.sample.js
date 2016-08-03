@@ -203,28 +203,41 @@ BaseEditor.prototype.showSampleResourceSource = function() {
 	$("#schema-sample-transformed-resource").addClass("hide");
 }
 
-BaseEditor.prototype.buildSampleResource = function(resource) {
-	var key = Object.getOwnPropertyNames(resource)[0];
-	var value = resource[key];
+BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
+	var items = [];
+	for (var i=0; i<Object.getOwnPropertyNames(resource).length; i++) {
+		var key = Object.getOwnPropertyNames(resource)[i];
+		
+		if (key==="") {
+			parentItem.append(": <span class=\"schema-sample-output-value\">" + resource[key] + "</span>");
+			continue;
+		}
+		
+		var value = resource[key];
+		if (Array.isArray(value)) {
+			for (var j=0; j<value.length; j++) {
+				items.push(this.buildSampleResourceItem(key, value[j]));
+			}
+		} else {
+			items.push(this.buildSampleResourceItem(key, value));
+		}
+	}
+	return items;
+};
+
+BaseEditor.prototype.buildSampleResourceItem = function(key, resource) {
 	
 	var item = $("<li>");
 	item.append("&#8594; <span class=\"schema-sample-output-key\">" + key + "</span>");
 	
-	var subItems = $("<ul>");
-	var subItemCount = 0;
+	var subItems = this.buildSampleResource(resource, item);
+	if (subItems.length > 0) {
+		item.append($("<ul>").append(subItems));
+	}
 	
-	if (Array.isArray(value)) {
-		for (var j=0; j<value.length; j++) {
-			subItemCount += this.buildSampleResourceValue(value[j], item, subItems);
-		}
-	} else {
-		subItemCount += this.buildSampleResourceValue(value, item, subItems);
-	}
-	if (subItemCount>0) {
-		item.append(subItems);
-	}
 	return item;
 };
+
 
 BaseEditor.prototype.buildSampleResourceValue = function(resource, parentItem, subItems) {
 	var key = Object.getOwnPropertyNames(resource)[0];
