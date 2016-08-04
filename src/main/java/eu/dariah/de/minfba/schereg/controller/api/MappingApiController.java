@@ -18,6 +18,7 @@ import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableMappingContainer;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
@@ -78,8 +79,17 @@ public class MappingApiController extends BaseApiController {
 	private List<SerializableMappingContainer> processMappings(List<RightsContainer<Mapping>> mappings) {
 		List<SerializableMappingContainer> result = new ArrayList<SerializableMappingContainer>();
 		if (mappings!=null) {
+			ChangeSet ch;
 			for (RightsContainer<Mapping> m : mappings) {
 				SerializableMappingContainer mc = new SerializableMappingContainer();
+				
+				ch = mappingService.getLatestChangeSetForEntity(m.getId());
+				if (ch!=null) {
+					m.getElement().setVersionId(ch.getId());
+				}
+				
+				m.getElement().flush();
+				
 				mc.setMapping(m.getElement());
 				result.add(mc);
 			}
@@ -91,7 +101,14 @@ public class MappingApiController extends BaseApiController {
 		if (mapping!=null) {
 			SerializableMappingContainer result = new SerializableMappingContainer();
 			result.setMapping(mapping.getElement()); 
-			mapping.getElement().setConcepts(mappedConceptService.findAllByMappingId(mapping.getId()));
+			mapping.getElement().setConcepts(mappedConceptService.findAllByMappingId(mapping.getId(), true));
+			mapping.getElement().flush();
+			
+			ChangeSet ch = mappingService.getLatestChangeSetForEntity(mapping.getId());
+			if (ch!=null) {
+				mapping.getElement().setVersionId(ch.getId());
+			}
+			
 			mapping.getElement().flush();
 			
 			result.setGrammars(this.serializeGrammarSources(mapping.getId()));			
