@@ -250,9 +250,9 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 			if ( (e instanceof Nonterminal || e instanceof Label) && 
 					r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
 				Element elem = (Element)e;
-				elem.setFunctions(new ArrayList<DescriptionGrammarImpl>());
+				elem.setGrammars(new ArrayList<DescriptionGrammarImpl>());
 				for (Reference rChild : r.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
-					elem.getFunctions().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
+					elem.getGrammars().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
 				}	
 			}
 			if (e instanceof DescriptionGrammarImpl && r.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {

@@ -171,8 +171,8 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			}
 		}
 		// Produced subelements of the grammars/functions are contained in getAllChildElements() above
-		if (searchElement.getFunctions()!=null) {
-			for (DescriptionGrammarImpl g : searchElement.getFunctions()) {
+		if (searchElement.getGrammars()!=null) {
+			for (DescriptionGrammarImpl g : searchElement.getGrammars()) {
 				if (g.getId().equals(matchElementId)) {
 					return g;
 				} else {
