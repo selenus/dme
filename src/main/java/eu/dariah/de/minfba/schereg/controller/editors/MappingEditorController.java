@@ -92,18 +92,7 @@ public class MappingEditorController extends BaseMainEditorController {
 		List<Resource> inputResources = session.getSampleOutput();
 		Element r = elementService.findRootBySchemaId(sTarget.getId(), true);
 		List<MappedConcept> concepts = mappedConceptService.findAllByMappingId(m.getId(), true);
-		
-		if (concepts!=null) {
-			for (MappedConcept c : concepts) {
-				if (c==null) {
-					logger.error("Database consistency issue: Referencing mapped concept that does no longer exist");
-					continue;
-				}
-				List<Identifiable> targetElements = elementService.getElementTrees(sTarget.getId(), c.getTargetElementIds());
-				c.getGrammars().get(0).getTransformationFunctions().get(0).setOutputElements(elementService.convertToLabels(targetElements));
-			}
-		}
-		
+				
 		MappingExecutionService mappingExecService = appContext.getBean(MappingExecutionService.class);
 		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
 		

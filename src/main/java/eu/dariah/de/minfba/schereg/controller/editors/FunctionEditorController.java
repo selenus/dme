@@ -26,6 +26,7 @@ import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
+import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -123,8 +124,11 @@ public class FunctionEditorController extends BaseScheregController {
 			f.setFunction(func);
 			
 			CompiledTransformationFunction fCompiled = engine.compileOutputFunction(f, true);
-			result.setPojo(fCompiled.getSvg());
-			result.setObjectErrors(fCompiled.getErrors());
+			
+			if (fCompiled instanceof CompiledTransformationFunctionImpl) {
+				result.setPojo(((CompiledTransformationFunctionImpl)fCompiled).getSvg());
+				result.setObjectErrors(((CompiledTransformationFunctionImpl)fCompiled).getErrors());
+			}
 			
 			result.setSuccess(true);
 		} catch (Exception e) {	}
