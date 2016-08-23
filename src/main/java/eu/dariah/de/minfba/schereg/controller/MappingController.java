@@ -114,23 +114,16 @@ public class MappingController extends BaseScheregController {
 		if(!mappingService.getHasWriteAccess(mapping.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
-		}
-		if (mapping.getSourceId().equals(mapping.getTargetId())) {
-			bindingResult.addError(new ObjectError("mapping", new String[]{"~eu.dariah.de.minfba.schereg.model.mapping.validation.same_source_and_target"}, null, "Source and target schema cannot be the same"));
-		}
+		}		
 		
-		ModelActionPojo result = this.getActionResult(bindingResult, locale);		
-		if (bindingResult.hasErrors()) {
-			return result;
-		} else if (mapping.getId().isEmpty()) {
+		if (mapping.getId().isEmpty()) {
 			mapping.setId(null);
 		}
-		
 		
 		RightsContainer<Mapping> existMapping = mappingService.findByIdAndAuth(mapping.getId(), auth); 
 		Mapping saveMapping = existMapping==null ? null : existMapping.getElement();
 		boolean draft = existMapping==null ? true : existMapping.isDraft();
-		
+
 		if (saveMapping==null) {
 			saveMapping = mapping;
 		} else {
@@ -138,6 +131,16 @@ public class MappingController extends BaseScheregController {
 			/*saveMapping.setSourceId(mapping.getSourceId());
 			saveMapping.setTargetId(mapping.getTargetId());*/
 		}
+		
+		if (saveMapping.getSourceId().equals(saveMapping.getTargetId())) {
+			bindingResult.addError(new ObjectError("mapping", new String[]{"~eu.dariah.de.minfba.schereg.model.mapping.validation.same_source_and_target"}, null, "Source and target schema cannot be the same"));
+		}
+		
+		ModelActionPojo result = this.getActionResult(bindingResult, locale);		
+		if (bindingResult.hasErrors()) {
+			return result;
+		} 
+		
 		mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft, readOnly), auth);
 		return result;
 	}
