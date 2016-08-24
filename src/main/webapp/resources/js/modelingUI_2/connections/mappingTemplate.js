@@ -62,11 +62,11 @@ MappingTemplate.prototype.getCurvePositionForX = function(x, curve) {
  * This should be rethought and refactored
  */
 MappingTemplate.prototype.paint = function(connection, context) {
-	if (connection.from.element.isVisible()) {
-		var from = connection.from.getPosition();
+	if (connection.from[0].element.isVisible()) {
+		var from = connection.from[0].getPosition();
 		var fromParent = false;
 	} else {
-		var from = connection.from.element.findVisibleParent().getConnector("mappings").getPosition();
+		var from = connection.from[0].element.findVisibleParent().getConnector("mappings").getPosition();
 		var fromParent = true;
 	}
 
@@ -174,7 +174,7 @@ MappingTemplate.prototype.paint = function(connection, context) {
 };
 
 MappingTemplate.prototype.getRectangle = function(connection) {
-	var from = connection.from.getPosition();
+	var from = connection.from[0].getPosition();
 	var pMin = new Point(from.x, from.y);
 	var pMax = new Point(from.x, from.y);
 	

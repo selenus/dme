@@ -85,16 +85,11 @@ Model.prototype.handleMouseUp = function(e) {
 };
 
 Model.prototype.addMappingConnection = function (from, to, id) {
-	if (from.element instanceof Element && from.element.template.area.isTarget) {
+	if (from[0].element instanceof Element && from[0].element.template.area.isTarget) {
 		var c = new Connection(this.mappingConnection, to, from, id);
 	} else {
 		var c = new Connection(this.mappingConnection, from, to, id);
 	}
-	
-	
-	
-	// Connection gets overwritten when from is a function -> resulting in 1:N connections
-	c = from.addConnection(c);
 	
 	var connectionEvent = document.createEvent("Event");
 	if (!this.mappings.contains(c)) {

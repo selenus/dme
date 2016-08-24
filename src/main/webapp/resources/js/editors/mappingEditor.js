@@ -461,9 +461,13 @@ MappingEditor.prototype.getMappings = function(selectedItemIds) {
 	    	
 	    	if (data!==undefined && data!=null && data.length>0) {
 		    	for (var i=0; i<data.length; i++) {
-		    		var lhs = _this.source.getElementById(data[i].sourceElementId).getConnector("mappings");
+		    		var lhs = [];
 		    		var rhs = [];
-		    		
+	    			for (var key in data[i].elementGrammarIdsMap) {
+	    				if(data[i].elementGrammarIdsMap.hasOwnProperty(key)) {
+	    					lhs.push(_this.source.getElementById(key).getConnector("mappings"));	
+	    				}
+	    			}
 		    		for (var j=0; j<data[i].targetElementIds.length; j++) {
 		    			rhs.push(_this.target.getElementById(data[i].targetElementIds[j]).getConnector("mappings"));	
 		    		}

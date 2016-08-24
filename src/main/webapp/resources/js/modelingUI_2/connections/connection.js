@@ -1,9 +1,22 @@
 var Connection = function(template, from, to, id) {
 	this.template = template;
-	this.from = from;
 	this.active = false;
 	this.id = id;
 		
+	if (from!==undefined && from!=null) {
+		if (from instanceof Array) {
+			this.from = from;
+		} else {
+			this.from = [];
+			this.from.push(from);
+		}
+		for (var i=0; i<this.from.length; i++) {
+			this.from[i].addConnection(this);
+		}
+	} else {
+		this.from = [];
+	}
+	
 	if (to!==undefined && to!=null) {
 		if (to instanceof Array) {
 			this.to = to;

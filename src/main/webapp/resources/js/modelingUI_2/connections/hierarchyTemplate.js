@@ -5,11 +5,11 @@ var HierarchyTemplate = function(model) {
 HierarchyTemplate.prototype.init = function(connection) {};
 
 HierarchyTemplate.prototype.paint = function(connection, context) {	
-	if (!connection.from.element.isExpanded()) {
+	if (!connection.from[0].element.isExpanded()) {
 		return;
 	}
 	
-	var fromPosition = connection.from.getPosition();
+	var fromPosition = connection.from[0].getPosition();
 	var toPosition;
 	var height = fromPosition.y;
 	
