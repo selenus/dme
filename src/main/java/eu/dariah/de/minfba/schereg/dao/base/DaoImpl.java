@@ -18,6 +18,9 @@ public abstract class DaoImpl<T extends Identifiable> implements Dao {
 	@Override public Class<?> getClazz() { return clazz; }
 	@Override public String getCollectionName() { return collectionName; }
 	
+	public static boolean isNewId(String id) {
+		return id==null || id.equals("") || id.equals("undefined");
+	}
 	
 	public DaoImpl(Class<?> clazz) {
 		this.clazz = (Class<T>)clazz;

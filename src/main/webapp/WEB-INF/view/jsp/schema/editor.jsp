@@ -51,7 +51,7 @@
 										<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
 									</c:if>
 									
-									<c:if test="${!mapped && schema.draft}">
+									<c:if test="${!mapped}">
 										<button type="button" onclick="editor.triggerDeleteSchema(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
 									</c:if>
 								</c:when>

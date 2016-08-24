@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.MappingDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.MappingWithSchemasImpl;
@@ -41,7 +42,7 @@ public class MappingServiceImpl extends BaseReferenceServiceImpl implements Mapp
 	@Override
 	public boolean getHasWriteAccess(String id, String userId) {
 		/* User is logged in (has an ID) and creates a new mapping (no ID) */
-		if (isNewId(id)) {
+		if (DaoImpl.isNewId(id)) {
 			return true;
 		}
 		RightsContainer<Mapping> m = mappingDao.findByIdAndUserId(id, userId, true);

@@ -49,10 +49,9 @@
 							<c:choose>
 								<c:when test="${mapping.own || mapping.write}">
 									<button type="button" onclick="editor.triggerEdit(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" /></button>
-								
+									<button type="button" onclick="editor.triggerDelete(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
 									<c:if test="${mapping.draft}">
 										<button type="button" onclick="editor.triggerPublish(); return false;" class="btn btn-sm btn-default"><span class="glyphicon glyphicon-export"></span> <s:message code="~eu.dariah.de.minfba.common.link.publish" /></button>
-										<button type="button" onclick="editor.triggerDelete(); return false;" class="btn btn-sm btn-danger"><span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" /></button>
 									</c:if>
 								</c:when>
 								<c:otherwise>

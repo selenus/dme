@@ -65,11 +65,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				if (mappingService.findMappingById(entityId) != null) {
 					List<MappedConcept> concepts = mappedConceptService.findAllByMappingId(entityId);
 					if (concepts != null) {
-						for (MappedConcept c : concepts) {
+						// TODO: Adapt
+						/*for (MappedConcept c : concepts) {
 							if (valueMap.containsKey(c.getSourceElementId())) {
 								valueMap.put(c.getId(), valueMap.get(c.getSourceElementId()));
 							}
-						}
+						}*/
 					}
 				}				
 				

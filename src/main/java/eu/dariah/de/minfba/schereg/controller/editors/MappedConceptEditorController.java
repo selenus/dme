@@ -1,6 +1,6 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
+import eu.dariah.de.minfba.core.metamodel.mapping.TargetElementGroup;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
@@ -57,13 +59,17 @@ public class MappedConceptEditorController extends BaseScheregController {
 		}
 		if (c==null) {
 			c = new MappedConceptImpl();
-			c.setTargetElementIds(new ArrayList<String>(1));
+			c.setSourceElementMap(new HashMap<String, DescriptionGrammarImpl>());
 		}
 		c.setEntityId(mappingId);
-		c.setSourceElementId(sourceElementId);
+		c.addSourceElement(sourceElementId, null);
+
 		for (String targetElementId : targetElementIds) {
-			if (!c.getTargetElementIds().contains(targetElementId)) {
-				c.getTargetElementIds().add(targetElementId);
+			if (c.getTargetElementIds()==null || !c.getTargetElementIds().contains(targetElementId)) {
+				TargetElementGroup g = new TargetElementGroup();
+				g.addTargetElementId(targetElementId);
+				
+				c.addTargetElementGroup(g);
 			}
 		}
 		

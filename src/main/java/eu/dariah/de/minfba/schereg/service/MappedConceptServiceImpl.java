@@ -18,6 +18,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
+import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
@@ -36,24 +37,32 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 	
 	@Override
 	public void saveMappedConcept(MappedConcept mappedConcept, String mappingId, AuthPojo auth) {		
-		boolean isNew = isNewId(mappedConcept.getId()); 
+		boolean isNew = DaoImpl.isNewId(mappedConcept.getId()); 
 		
 		mappedConcept.setEntityId(mappingId);
 		mappedConceptDao.save(mappedConcept, auth.getUserId(), auth.getSessionId());
 		
-		Element source = elementDao.findById(mappedConcept.getSourceElementId());
 		if (isNew) {
-			TransformationFunction function = new TransformationFunctionImpl(mappingId, "g" + source.getName());
-			functionDao.save(function, auth.getUserId(), auth.getSessionId());
-			
-			DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(mappingId, "f" + source.getName());
-			grammar.setPassthrough(true);
-			grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
-			
 			Reference root = this.findReferenceById(mappingId);
-			addChildReference(addChildReference(addChildReference(root, mappedConcept), grammar), function); 
+			Reference refConcept = addChildReference(root, mappedConcept);
+			
+			for (String sourceElementId : mappedConcept.getSourceElementIds()) {
+				Element source = elementDao.findById(sourceElementId);
+				
+				TransformationFunction function = new TransformationFunctionImpl(mappingId, "g" + source.getName());
+				functionDao.save(function, auth.getUserId(), auth.getSessionId());
+				
+				DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(mappingId, "f" + source.getName());
+				grammar.setPassthrough(true);
+				grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
+				
+				mappedConcept.addSourceElement(sourceElementId, grammar);
+				
+				addChildReference(addChildReference(refConcept, grammar), function); 
+			}
 			
 			this.saveRootReference(root);
+			mappedConceptDao.save(mappedConcept, auth.getUserId(), auth.getSessionId());
 		}
 	}
 	
