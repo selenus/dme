@@ -1,6 +1,7 @@
 var Function = function(connection, template) {
 	this.connection = connection;
-	this.connector = null;
+	this.inConnector = null;
+	this.outConnector = null;
 	this.template = template;
 	
 	this.visible = true;
@@ -70,7 +71,8 @@ Function.prototype.getActive = function() {
 
 Function.prototype.paint = function(context, faded) {
 	if (this.template.paint(this, context, faded) && !faded) {
-		this.connector.paint(context);
+		this.inConnector.paint(context);
+		this.outConnector.paint(context);
 	}
 };
 
@@ -79,8 +81,11 @@ Function.prototype.getCursor = function() {
 };
 
 Function.prototype.hitTest = function(point) {
-	if (this.connector.hitTest(point)!=null) {
-		return this.connector;
+	if (this.inConnector.hitTest(point)!=null) {
+		return this.inConnector;
+	}
+	if (this.outConnector.hitTest(point)!=null) {
+		return this.outConnector;
 	}
 	return this.template.hitTest(this, point);
 };

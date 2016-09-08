@@ -46,7 +46,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			Reference root = this.findReferenceById(mappingId);
 			Reference refConcept = addChildReference(root, mappedConcept);
 			
-			for (String sourceElementId : mappedConcept.getSourceElementIds()) {
+			for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
 				Element source = elementDao.findById(sourceElementId);
 				
 				TransformationFunction function = new TransformationFunctionImpl(mappingId, "g" + source.getName());
@@ -56,7 +56,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 				grammar.setPassthrough(true);
 				grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 				
-				mappedConcept.addSourceElement(sourceElementId, grammar);
+				mappedConcept.getElementGrammarIdsMap().put(sourceElementId, null);
 				
 				addChildReference(addChildReference(refConcept, grammar), function); 
 			}

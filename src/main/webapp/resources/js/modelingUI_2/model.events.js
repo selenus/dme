@@ -91,6 +91,9 @@ Model.prototype.addMappingConnection = function (from, to, id) {
 		var c = new Connection(this.mappingConnection, from, to, id);
 	}
 	
+	// Connection gets overwritten when from is a function -> resulting in 1:N connections
+	c = from[0].addConnection(c);
+	
 	var connectionEvent = document.createEvent("Event");
 	if (!this.mappings.contains(c)) {
 		this.mappings.push(c);

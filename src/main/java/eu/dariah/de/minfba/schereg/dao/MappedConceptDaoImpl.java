@@ -27,7 +27,7 @@ public class MappedConceptDaoImpl extends TrackedEntityDaoImpl<MappedConcept> im
 	@Override
 	public <S extends MappedConcept> S save(S element, String userId, String sessionId) {
 		
-		element.setElementGrammarIdsMap(null);
+		/*element.setElementGrammarIdsMap(null);
 		if (element.getSourceElementMap()!=null && element.getSourceElementMap().size()>0) {
 			element.setElementGrammarIdsMap(new LinkedHashMap<String, String>());
 			DescriptionGrammarImpl g;
@@ -42,7 +42,7 @@ public class MappedConceptDaoImpl extends TrackedEntityDaoImpl<MappedConcept> im
 				}
 			}
 			
-		} 
+		} */
 		
 		return super.save(element, userId, sessionId);
 	}

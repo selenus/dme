@@ -653,7 +653,7 @@ MappingEditor.prototype.saveConceptMappingHandler = function(e) {
 	$.ajax({
 		url: _this.mappingPath + "mappedConcept/" + e.connection.id + '/async/save',
         type: "POST",
-        data: { sourceElementId: e.connection.from.element.id, targetElementId: targetIds},
+        data: { sourceElementId: e.connection.from[0].element.id, targetElementId: targetIds},
         dataType: "json",
         success: function(data) { 
         	e.connection.id = data.pojo.id;        	

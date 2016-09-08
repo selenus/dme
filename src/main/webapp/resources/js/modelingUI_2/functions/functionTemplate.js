@@ -2,10 +2,28 @@ var FunctionTemplate = function(model, options) {
 	this.model = model;
 	this.count = 1;
 	
-	this.connectorTemplate = new ConnectorTemplate(this.model, { 
+	this.outConnectorTemplate = new ConnectorTemplate(this.model, { 
 		name: "mappings", type: "Mapping [out] [array]", description: "Mappings out", isInteractive: true, isMappable: true, 
 		position: function(func) {
 			return { x: func.getRectangle().width, y: Math.floor(func.getRectangle().height / 2) };
+		},
+		addConnection: function(connection) {
+			var cOwning = this.element.connection; // Connection that holds the function
+			if (connection.to!==undefined && connection.to!==null && connection.to.length>0) {
+				for (var i=0; i<connection.to.length; i++) {
+					if (!cOwning.to.contains(connection.to[i])) {
+						cOwning.addTo(connection.to[i]);
+					}
+				}
+			}
+			return cOwning;
+		}
+	});
+	
+	this.inConnectorTemplate = new ConnectorTemplate(this.model, { 
+		name: "mappings", type: "Mapping [in] [array]", description: "Mappings in", isInteractive: true, isMappable: true, 
+		position: function(func) {
+			return { x: 0, y: Math.floor(func.getRectangle().height / 2) };
 		},
 		addConnection: function(connection) {
 			var cOwning = this.element.connection; // Connection that holds the function
@@ -33,8 +51,11 @@ var FunctionTemplate = function(model, options) {
 }
 
 FunctionTemplate.prototype.init = function(func) {
-	func.connector = new Connector(func, this.connectorTemplate);
-	func.connector.addConnection = this.connectorTemplate.options.addConnection;
+	func.inConnector = new Connector(func, this.inConnectorTemplate);
+	func.inConnector.addConnection = this.inConnectorTemplate.options.addConnection;
+	
+	func.outConnector = new Connector(func, this.outConnectorTemplate);
+	func.outConnector.addConnection = this.outConnectorTemplate.options.addConnection;
 };
 
 FunctionTemplate.prototype.getAnchor = function(connection) {

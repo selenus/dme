@@ -59,10 +59,10 @@ public class MappedConceptEditorController extends BaseScheregController {
 		}
 		if (c==null) {
 			c = new MappedConceptImpl();
-			c.setSourceElementMap(new HashMap<String, DescriptionGrammarImpl>());
+			c.setElementGrammarIdsMap(new HashMap<String, String>());
 		}
 		c.setEntityId(mappingId);
-		c.addSourceElement(sourceElementId, null);
+		c.getElementGrammarIdsMap().put(sourceElementId, null);
 
 		for (String targetElementId : targetElementIds) {
 			if (c.getTargetElementIds()==null || !c.getTargetElementIds().contains(targetElementId)) {
