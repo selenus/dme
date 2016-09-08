@@ -27,10 +27,10 @@ var FunctionTemplate = function(model, options) {
 		},
 		addConnection: function(connection) {
 			var cOwning = this.element.connection; // Connection that holds the function
-			if (connection.to!==undefined && connection.to!==null && connection.to.length>0) {
-				for (var i=0; i<connection.to.length; i++) {
-					if (!cOwning.to.contains(connection.to[i])) {
-						cOwning.addTo(connection.to[i]);
+			if (connection.from!==undefined && connection.from!==null && connection.from.length>0) {
+				for (var i=0; i<connection.from.length; i++) {
+					if (!cOwning.from.contains(connection.from[i])) {
+						cOwning.addFrom(connection.from[i]);
 					}
 				}
 			}

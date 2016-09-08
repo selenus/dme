@@ -72,6 +72,20 @@ Connection.prototype.getRectangle = function() {
 	return this.template.getRectangle(this);
 };
 
+Connection.prototype.addFrom = function(from) {
+	if (from!==undefined && from!=null) {
+		if (from instanceof Array) {
+			for (var i=0; i<from.length; i++) {
+				this.from.push(from[i]);
+				from[i].addConnection(this);
+			}
+		} else {
+			this.from.push(from);
+			from.addConnection(this);
+		}
+	}
+};
+
 Connection.prototype.addTo = function(to) {
 	if (to!==undefined && to!=null) {
 		if (to instanceof Array) {

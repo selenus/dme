@@ -70,8 +70,30 @@ Function.prototype.getActive = function() {
 };
 
 Function.prototype.paint = function(context, faded) {
-	if (this.template.paint(this, context, faded) && !faded) {
+	if (this.connection.template.paint(this, context, faded) && !faded) {
+		
+		if(this.connection.template.model.newConnection!==undefined && 
+				this.connection.template.model.newConnection!==null) {
+			if (this.inConnector.isValid(this.template.area.model.newConnection.from)) {
+				this.inConnector.setActiveTarget(true);
+			} else {
+				this.inConnector.setActiveTarget(false);
+			}
+		} else {
+			this.inConnector.setActiveTarget(false);
+		}
 		this.inConnector.paint(context);
+		
+		if(this.connection.template.model.newConnection!==undefined && 
+				this.connection.template.model.newConnection!==null) {
+			if (this.outConnector.isValid(this.template.area.model.newConnection.from)) {
+				this.outConnector.setActiveTarget(true);
+			} else {
+				this.outConnector.setActiveTarget(false);
+			}
+		} else {
+			this.outConnector.setActiveTarget(false);
+		}
 		this.outConnector.paint(context);
 	}
 };

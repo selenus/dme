@@ -50,7 +50,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, @RequestParam String sourceElementId, @RequestParam(value="targetElementId[]") List<String> targetElementIds,  HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, @RequestParam(value="sourceElementId[]") List<String> sourceElementId, @RequestParam(value="targetElementId[]") List<String> targetElementIds,  HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		
 		MappedConcept c = null;
@@ -62,7 +62,12 @@ public class MappedConceptEditorController extends BaseScheregController {
 			c.setElementGrammarIdsMap(new HashMap<String, String>());
 		}
 		c.setEntityId(mappingId);
-		c.getElementGrammarIdsMap().put(sourceElementId, null);
+		
+		for (String sourceId : sourceElementId) {
+			if (!c.getElementGrammarIdsMap().keySet().contains(sourceId)) {
+				c.getElementGrammarIdsMap().put(sourceId, null);
+			}
+		}
 
 		for (String targetElementId : targetElementIds) {
 			if (c.getTargetElementIds()==null || !c.getTargetElementIds().contains(targetElementId)) {

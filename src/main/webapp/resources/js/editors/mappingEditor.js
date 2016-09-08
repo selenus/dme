@@ -649,11 +649,17 @@ MappingEditor.prototype.saveConceptMappingHandler = function(e) {
 		targetIds.push(e.connection.to[i].element.id);
 	}
 	
+	var sourceIds = [];
+	for (var i=0; i<e.connection.from.length; i++) {
+		sourceIds.push(e.connection.from[i].element.id);
+	}
+	
+	
 	var _this = editor;
 	$.ajax({
 		url: _this.mappingPath + "mappedConcept/" + e.connection.id + '/async/save',
         type: "POST",
-        data: { sourceElementId: e.connection.from[0].element.id, targetElementId: targetIds},
+        data: { sourceElementId: sourceIds, targetElementId: targetIds},
         dataType: "json",
         success: function(data) { 
         	e.connection.id = data.pojo.id;        	
