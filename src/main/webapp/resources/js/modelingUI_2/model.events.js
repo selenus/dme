@@ -85,6 +85,7 @@ Model.prototype.handleMouseUp = function(e) {
 	}
 };
 
+// TODO Calls to this method are somewhat weird, also array[0] checking -> clean up!
 Model.prototype.addMappingConnection = function (from, to, id) {
 	if (from[0].element instanceof Element && from[0].element.template.area.isTarget) {
 		var c = new Connection(this.mappingConnection, to, from, id);
@@ -93,7 +94,13 @@ Model.prototype.addMappingConnection = function (from, to, id) {
 	}
 	
 	// Connection gets overwritten when from is a function -> resulting in 1:N connections
-	c = from[0].addConnection(c);
+	if (from[0].element instanceof Function) {
+		c = from[0].addConnection(c);
+	}
+	if (to.element instanceof Function) {
+		c = to.addConnection(c);
+	}
+	
 	
 	var connectionEvent = document.createEvent("Event");
 	if (!this.mappings.contains(c)) {
