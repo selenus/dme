@@ -1,7 +1,6 @@
 var Function = function(connection, template) {
 	this.connection = connection;
-	this.inConnector = null;
-	this.outConnector = null;
+	this.connectors = null;
 	this.template = template;
 	
 	this.visible = true;
@@ -70,31 +69,17 @@ Function.prototype.getActive = function() {
 };
 
 Function.prototype.paint = function(context, faded) {
-	if (this.connection.template.paint(this, context, faded) && !faded) {
-		
-		if(this.connection.template.model.newConnection!==undefined && 
-				this.connection.template.model.newConnection!==null) {
-			if (this.inConnector.isValid(this.template.area.model.newConnection.from)) {
-				this.inConnector.setActiveTarget(true);
-			} else {
-				this.inConnector.setActiveTarget(false);
+	if (this.template.paint(this, context, faded) && !faded) {
+		if (this.connectors!=null) {
+			var newConnection = this.connection.template.model.newConnection;
+			var isNewConnection = newConnection!==undefined && newConnection!==null
+			var activeConnector = this.connection.template.model.activeConnector;
+			
+			for (var i=0; i<this.connectors.length; i++) {
+				this.connectors[i].setActiveTarget(isNewConnection && this.connectors[i].isValid(activeConnector));
+				this.connectors[i].paint(context);
 			}
-		} else {
-			this.inConnector.setActiveTarget(false);
 		}
-		this.inConnector.paint(context);
-		
-		if(this.connection.template.model.newConnection!==undefined && 
-				this.connection.template.model.newConnection!==null) {
-			if (this.outConnector.isValid(this.template.area.model.newConnection.from)) {
-				this.outConnector.setActiveTarget(true);
-			} else {
-				this.outConnector.setActiveTarget(false);
-			}
-		} else {
-			this.outConnector.setActiveTarget(false);
-		}
-		this.outConnector.paint(context);
 	}
 };
 
@@ -103,11 +88,10 @@ Function.prototype.getCursor = function() {
 };
 
 Function.prototype.hitTest = function(point) {
-	if (this.inConnector.hitTest(point)!=null) {
-		return this.inConnector;
-	}
-	if (this.outConnector.hitTest(point)!=null) {
-		return this.outConnector;
+	for (var i=0; i<this.connectors.length; i++) {
+		if (this.connectors[i].hitTest(point)!=null) {
+			return this.connectors[i];
+		}
 	}
 	return this.template.hitTest(this, point);
 };

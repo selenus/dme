@@ -100,6 +100,20 @@ Connection.prototype.addTo = function(to) {
 	}
 };
 
+Connection.prototype.addElement = function(array, element) {
+	if (element!==undefined && element!=null) {
+		if (element instanceof Array) {
+			for (var i=0; i<element.length; i++) {
+				array.push(element[i]);
+				element[i].addConnection(this);
+			}
+		} else {
+			array.push(element);
+			element.addConnection(this);
+		}
+	}
+}
+
 Connection.prototype.paint = function(context) {
 	this.template.paint(this, context);
 };

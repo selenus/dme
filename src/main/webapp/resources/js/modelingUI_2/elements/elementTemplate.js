@@ -56,7 +56,10 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 	
 	if (this.area.isSource) {
 		this.connectorTemplates.push(new ConnectorTemplate(this.area, {
-			name: "mappings", type: "Mapping [out] [array]", description: "Mappings out", isInteractive: true, isMappable: true,
+			name: "mappings", type: "Mapping [out] [array]", 
+			isOut: true,
+			isArray: true,
+			description: "Mappings out", isInteractive: true, isMappable: true,
 			position: function(element) {
 				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
 			}
@@ -64,7 +67,10 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 	}
 	if (this.area.isTarget) {
 		this.connectorTemplates.push(new ConnectorTemplate(this.area, {
-			name: "mappings", type: "Mapping [in] [array]", description: "Mappings in", isInteractive: true, isMappable: true,
+			name: "mappings", 
+			isOut: false,
+			isArray: true,
+			type: "Mapping [in] [array]", description: "Mappings in", isInteractive: true, isMappable: true,
 			position: function(element) {
 				return { x: 0, y: Math.floor(element.rectangle.height / 2) };
 			}

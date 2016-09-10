@@ -2,8 +2,16 @@ var FunctionTemplate = function(model, options) {
 	this.model = model;
 	this.count = 1;
 	
-	this.outConnectorTemplate = new ConnectorTemplate(this.model, { 
-		name: "mappings", type: "Mapping [out] [array]", description: "Mappings out", isInteractive: true, isMappable: true, 
+	this.connectorTemplates = [];
+	
+	this.connectorTemplates.push(new ConnectorTemplate(this.model, { 
+		name: "mappings", 
+		type: "Mapping [out] [array]",
+		isOut: true,
+		isArray: true,
+		description: "Mappings out", 
+		isInteractive: true, 
+		isMappable: true, 
 		position: function(func) {
 			return { x: func.getRectangle().width, y: Math.floor(func.getRectangle().height / 2) };
 		},
@@ -18,10 +26,16 @@ var FunctionTemplate = function(model, options) {
 			}
 			return cOwning;
 		}
-	});
+	}));
 	
-	this.inConnectorTemplate = new ConnectorTemplate(this.model, { 
-		name: "mappings", type: "Mapping [in] [array]", description: "Mappings in", isInteractive: true, isMappable: true, 
+	this.connectorTemplates.push(new ConnectorTemplate(this.model, { 
+		name: "mappings", 
+		type: "Mapping [in] [array]", 
+		description: "Mappings in", 
+		isInteractive: true, 
+		isMappable: true, 
+		isOut: false,
+		isArray: true,
 		position: function(func) {
 			return { x: 0, y: Math.floor(func.getRectangle().height / 2) };
 		},
@@ -36,7 +50,7 @@ var FunctionTemplate = function(model, options) {
 			}
 			return cOwning;
 		}
-	});
+	}));
 	
 	this.options = $.extend(true, {
 		lineWidth: 2,
@@ -51,11 +65,14 @@ var FunctionTemplate = function(model, options) {
 }
 
 FunctionTemplate.prototype.init = function(func) {
-	func.inConnector = new Connector(func, this.inConnectorTemplate);
-	func.inConnector.addConnection = this.inConnectorTemplate.options.addConnection;
+	func.connectors = [];
 	
-	func.outConnector = new Connector(func, this.outConnectorTemplate);
-	func.outConnector.addConnection = this.outConnectorTemplate.options.addConnection;
+	var c = null;
+	for (var i=0; i<this.connectorTemplates.length; i++) {
+		c = new Connector(func, this.connectorTemplates[i]);
+		c.addConnection = this.connectorTemplates[i].options.addConnection;
+		func.connectors.push(c);
+	}
 };
 
 FunctionTemplate.prototype.getAnchor = function(connection) {

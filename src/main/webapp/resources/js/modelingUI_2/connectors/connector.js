@@ -7,26 +7,33 @@ var Connector = function(element, template) {
 	this.connections = [];
 };
 
-Connector.prototype.isValid = function(value) {
-	if (value===this) {
+Connector.prototype.isValid = function(from) {
+	if (from===this) {
 		return false;
 	}
-	var t1 = this.template.options.type.split(' ');
-	if (!t1.contains("[array]") && (this.connections.length == 1)) {
+	
+	if (!this.isArray() && this.connections.length > 0) {
 		return false;
 	}
-	if (value instanceof Connector) {	
-		var t2 = value.template.options.type.split(' ');
-		if ((t1[0] != t2[0]) ||
-		(this.element == value.element) || 
-			(t1.contains("[in]") && !t2.contains("[out]")) || 
-			(t1.contains("[out]") && !t2.contains("[in]")) || 
-			(!t2.contains("[array]") && (value.connections.length == 1))) {
+	
+	if (from instanceof Connector) {
+		if (!from.isArray() && from.connections.length > 0) {
 			return false;
 		}
+		if (from.isOut()!==this.isOut() && from.element!==this.element) {
+			return true;
+		}
 	}
-	return true;
+	return false;
 };
+
+Connector.prototype.isOut = function() {
+	return this.template.options.isOut===true;
+}
+
+Connector.prototype.isArray = function() {
+	return this.template.options.isOut===true;
+}
 
 Connector.prototype.getContextMenuItems = function() {
 	return this.element.getContextMenuItems();

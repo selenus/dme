@@ -64,6 +64,7 @@ Model.prototype.leftMouseDown = function() {
 		this.activeObject.element.template.area.invalidate();
 	} else if (this.activeObject instanceof Connector && !this.options.readOnly) {
 		this.newConnection = new Connection(this.mappingConnection, this.activeObject, null);
+		this.activeConnector = this.activeObject;
 	}
 	
 	if (this.activeObject.isSelected!==undefined && !this.activeObject.isSelected()) {
@@ -109,18 +110,19 @@ Model.prototype.addMappingConnection = function (from, to, id) {
 Model.prototype.leftMouseUp = function() {
 	if (this.newConnection!=null && !this.options.readOnly) {
 		if (this.activeObject instanceof Connector) {
-			if (this.activeObject.isValid(this.newConnection.from)) {
+			if (this.activeObject.isValid(this.activeConnector)) {
 				this.addMappingConnection(this.newConnection.from, this.activeObject);
 			}
 		} else if (this.activeObject instanceof Element) {
 			for (var i=0; i<this.activeObject.connectors.length; i++) {
-				if (this.activeObject.connectors[i].isValid(this.newConnection.from)) {
+				if (this.activeObject.connectors[i].isValid(this.activeConnector)) {
 					this.addMappingConnection(this.newConnection.from, this.activeObject.connectors[i]);
 					break;
 				}
 			}
 		}
 		this.newConnection=null;
+		this.activeConnector=null;
 	}
 	if (this.activeObject instanceof Area) {
 		if (this.activeObject.startMoveHandle!=null) { // It was not a move, but a 'deselect click'

@@ -153,29 +153,17 @@ Element.prototype.setRectangle = function(rect) {
 };
 
 Element.prototype.paint = function(context) {
-	/*if (this.expander!=null && this.expander.expanded && this.children!=null) {
-		for (var i=0; i<this.children.length; i++) {
-			this.children[i].paint(context);
-		}
-	}*/
-	
-	
 	if (!this.template.paint(this, context)) {
 		return false;
 	}
 	
 	if (this.connectors!=null) {
+		var newConnection = this.template.area.model.newConnection;
+		var isNewConnection = newConnection!==undefined && newConnection!==null
+		var activeConnector = this.template.area.model.activeConnector;
+		
 		for (var i=0; i<this.connectors.length; i++) {
-			if(this.template.area.model.newConnection!==undefined && 
-					this.template.area.model.newConnection!==null) {
-				if (this.connectors[i].isValid(this.template.area.model.newConnection.from)) {
-					this.connectors[i].setActiveTarget(true);
-				} else {
-					this.connectors[i].setActiveTarget(false);
-				}
-			} else {
-				this.connectors[i].setActiveTarget(false);
-			}
+			this.connectors[i].setActiveTarget(isNewConnection && this.connectors[i].isValid(activeConnector));
 			this.connectors[i].paint(context);
 		}
 	}

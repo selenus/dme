@@ -25,6 +25,7 @@ var Model = function(canvas, options, theme) {
 	
 	this.mappings = [];
 	this.newConnection = null;
+	this.activeConnector = null;
 	
 	// Only options defined here, actual element templates are with the areas
 	/**
