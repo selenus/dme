@@ -121,63 +121,59 @@ MappingTemplate.prototype.paint = function(connection, context) {
 		connection.forkPoint = pFork;
 	}
 	
-	
-	var renderedFrom = [];
-	for (var i=0; i<connection.from.length; i++) {
-		renderedFrom.push(connection.from[i].getPosition());
-	}
-	
-	for (var i=0; i<renderedFrom.length; i++) {
-		
-		
-		var split = (connection.forkPoint.x - renderedFrom[i].x) / this.options.relativeControlPointX;
-		/*if (fromParent) {
-			context.strokeStyle = this.model.theme.mappingConnectionInvisible;
-		} else {*/
-			context.strokeStyle = strokeStyle;
-		//}
-		context.beginPath();
-		context.moveTo(renderedFrom[i].x, renderedFrom[i].y);
-		context.bezierCurveTo(split+renderedFrom[i].x, renderedFrom[i].y, split*(this.options.relativeControlPointX-1)+renderedFrom[i].x, connection.forkPoint.y, connection.forkPoint.x, connection.forkPoint.y);
-		context.stroke();
-	}
-	
-
-
 	/**
 	 * Stroke from fork point to 'to'
 	 */
-	for (var i=0; i<toVisible.length; i++) {
-		var to = toVisible[i];
-		var toParent = toParents.contains(to);
-		
-		if (toParent) {
-			context.strokeStyle = this.model.theme.mappingConnectionInvisible;
-		} else {
-			context.strokeStyle = strokeStyle;
-		}
-		
-		var split = (to.x - connection.forkPoint.x) / this.options.relativeControlPointX;
-		context.beginPath();
-		context.moveTo(connection.forkPoint.x, connection.forkPoint.y);
-		
-		var toY = to.y;
-		if (toParent) { 
-			if (connection.forkPoint.y < to.y) {
-				toY -= 4;
-			} else {
-				toY += 4;
-			} 			
-		} 
-		
-		context.bezierCurveTo(split+connection.forkPoint.x, connection.forkPoint.y, split*(this.options.relativeControlPointX-1)+connection.forkPoint.x, toY, to.x, toY);
-		context.stroke();
+	var hasHidden = false; 
+	for (var i=0; i<fromVisible.length; i++) {
+		hasHidden = this.paintSegment(fromVisible[i], fromVisible, fromParents, connection, context, strokeStyle) || hasHidden;
 	}
-	
+	for (var i=0; i<toVisible.length; i++) {
+		hasHidden = this.paintSegment(toVisible[i], toVisible, toParents, connection, context, strokeStyle) || hasHidden;
+	}
+
+	/**
+	 * Draw function
+	 */
 	if (connection.to.length>0 && connection.func!==undefined && connection.func!==null) {
-		connection.func.paint(context, false);//(fromParent || renderedTo.length==connectedParents.length));
+		connection.func.paint(context, hasHidden);
 	}
 };
+
+MappingTemplate.prototype.paintSegment = function(connector, connectors, parents, connection, context, strokeStyle) {
+	var isParent = parents.contains(connector);
+	var isParentOnly = true;
+	for (var i=0; i<connectors.length; i++) {
+		if (connectors[i]!==connector && connectors[i].x==connector.x && connectors[i].y==connector.y) {
+			isParentOnly = false;
+			break;
+		}
+	}
+	
+	if (isParent) {
+		context.strokeStyle = this.model.theme.mappingConnectionInvisible;
+	} else {
+		context.strokeStyle = strokeStyle;
+	}
+	
+	var split = (connector.x - connection.forkPoint.x) / this.options.relativeControlPointX;
+	context.beginPath();
+	context.moveTo(connection.forkPoint.x, connection.forkPoint.y);
+	
+	var toY = connector.y;
+	if (isParent && !isParentOnly) {
+		if (connection.forkPoint.y < connector.y) {
+			toY -= 5;
+		} else {
+			toY += 5;
+		} 			
+	} 
+	
+	context.bezierCurveTo(split+connection.forkPoint.x, connection.forkPoint.y, split*(this.options.relativeControlPointX-1)+connection.forkPoint.x, toY, connector.x, toY);
+	context.stroke();
+	
+	return isParent;
+}
 
 MappingTemplate.prototype.addPosOrParent = function(connector, from, fromParents) {
 	if (!connector.element.isVisible()) {
@@ -185,7 +181,11 @@ MappingTemplate.prototype.addPosOrParent = function(connector, from, fromParents
 		var parentPos = parentElement.getConnector("mappings").getPosition();
 		if (!fromParents.contains(parentPos)) {
 			fromParents.push(parentPos);
-		} 
+		}
+		// So we have only one collection that we need to iterate later
+		if (!from.contains(parentPos)) {
+			from.push(parentPos);
+		}
 		return parentPos;
 	} else {
 		var pos = connector.getPosition();
