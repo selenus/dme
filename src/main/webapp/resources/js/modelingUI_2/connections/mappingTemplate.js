@@ -61,7 +61,7 @@ MappingTemplate.prototype.getCurvePositionForX = function(x, curve) {
 
 MappingTemplate.prototype.paint = function(connection, context) {
 	if (connection.to===undefined || connection.to===null || connection.to.length==0) {
-		this.paintNewConnection(connection.from[0], context);
+		this.paintNewConnection(connection.from[0].getPosition(), context);
 		return;
 	}
 	

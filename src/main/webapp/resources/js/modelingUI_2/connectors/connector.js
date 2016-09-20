@@ -32,7 +32,7 @@ Connector.prototype.isOut = function() {
 }
 
 Connector.prototype.isArray = function() {
-	return this.template.options.isOut===true;
+	return this.template.options.isArray===true;
 }
 
 Connector.prototype.getContextMenuItems = function() {
