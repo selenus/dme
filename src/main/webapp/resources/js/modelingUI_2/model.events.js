@@ -63,7 +63,11 @@ Model.prototype.leftMouseDown = function() {
 		this.activeObject.mouseDown();
 		this.activeObject.element.template.area.invalidate();
 	} else if (this.activeObject instanceof Connector && !this.options.readOnly) {
-		this.newConnection = new Connection(this.mappingConnection, this.activeObject, null);
+		if (this.activeObject.isOut()) {
+			this.newConnection = new Connection(this.mappingConnection, this.activeObject, null);
+		} else {
+			this.newConnection = new Connection(this.mappingConnection, null, this.activeObject);
+		}		
 		this.activeConnector = this.activeObject;
 	}
 	
@@ -85,10 +89,27 @@ Model.prototype.handleMouseUp = function(e) {
 	}
 };
 
-// TODO Calls to this method are somewhat weird, also array[0] checking -> clean up!
 Model.prototype.addMappingConnection = function (from, to, id) {
+	var c = new Connection(this.mappingConnection, to, from, id);
+	
+	var connectionEvent = document.createEvent("Event");
+	if (!this.mappings.contains(c)) {
+		this.mappings.push(c);
+		connectionEvent.initEvent("newConceptMappingEvent", true, true);
+	} else {
+		connectionEvent.initEvent("changeConceptMappingEvent", true, true);
+	}
+	
+	connectionEvent.connection = c;
+	document.dispatchEvent(connectionEvent);
+};
+
+Model.prototype.addOrComplementMappingConnection = function (from, to, id) {
+	
+	// TODO Check all cases -> Call should only come from ll. 131, 136
+	
 	if (from[0].element instanceof Element && from[0].element.template.area.isTarget) {
-		var c = new Connection(this.mappingConnection, to, from, id);
+		
 	} else {
 		var c = new Connection(this.mappingConnection, from, to, id);
 	}
@@ -101,17 +122,6 @@ Model.prototype.addMappingConnection = function (from, to, id) {
 		c = to.addConnection(c);
 	}
 	
-	
-	var connectionEvent = document.createEvent("Event");
-	if (!this.mappings.contains(c)) {
-		this.mappings.push(c);
-		connectionEvent.initEvent("newConceptMappingEvent", true, true);
-	} else {
-		connectionEvent.initEvent("changeConceptMappingEvent", true, true);
-	}
-	
-	connectionEvent.connection = c;
-	document.dispatchEvent(connectionEvent);
 };
 
 Model.prototype.leftMouseUp = function() {
