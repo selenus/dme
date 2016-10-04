@@ -15,14 +15,16 @@ var FunctionTemplate = function(model, options) {
 		position: function(func) {
 			return { x: func.getRectangle().width, y: Math.floor(func.getRectangle().height / 2) };
 		},
-		addConnection: function(connection) {
+		addConnection: function(c) {
 			var cOwning = this.element.connection; // Connection that holds the function
-			if (connection.to!==undefined && connection.to!==null && connection.to.length>0) {
-				for (var i=0; i<connection.to.length; i++) {
-					if (!cOwning.to.contains(connection.to[i])) {
-						cOwning.addTo(connection.to[i]);
+			if (c instanceof Connection && c.to!==undefined && c.to!==null && c.to.length>0) {
+				for (var i=0; i<c.to.length; i++) {
+					if (!cOwning.to.contains(c.to[i])) {
+						cOwning.addTo(c.to[i]);
 					}
 				}
+			} else if (c instanceof Connector && !cOwning.to.contains(c)) {
+				cOwning.addTo(c);
 			}
 			return cOwning;
 		}
@@ -39,14 +41,16 @@ var FunctionTemplate = function(model, options) {
 		position: function(func) {
 			return { x: 0, y: Math.floor(func.getRectangle().height / 2) };
 		},
-		addConnection: function(connection) {
+		addConnection: function(c) {
 			var cOwning = this.element.connection; // Connection that holds the function
-			if (connection.from!==undefined && connection.from!==null && connection.from.length>0) {
-				for (var i=0; i<connection.from.length; i++) {
-					if (!cOwning.from.contains(connection.from[i])) {
-						cOwning.addFrom(connection.from[i]);
+			if (c instanceof Connection && c.from!==undefined && c.from!==null && c.from.length>0) {
+				for (var i=0; i<c.from.length; i++) {
+					if (!cOwning.from.contains(c.from[i])) {
+						cOwning.addFrom(c.from[i]);
 					}
 				}
+			} else if (c instanceof Connector && !cOwning.from.contains(c)) {
+				cOwning.addFrom(c);
 			}
 			return cOwning;
 		}

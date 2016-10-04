@@ -90,7 +90,7 @@ Model.prototype.handleMouseUp = function(e) {
 };
 
 Model.prototype.addMappingConnection = function (from, to, id) {
-	var c = new Connection(this.mappingConnection, to, from, id);
+	var c = new Connection(this.mappingConnection, from, to, id);
 	
 	var connectionEvent = document.createEvent("Event");
 	if (!this.mappings.contains(c)) {
@@ -104,36 +104,37 @@ Model.prototype.addMappingConnection = function (from, to, id) {
 	document.dispatchEvent(connectionEvent);
 };
 
-Model.prototype.addOrComplementMappingConnection = function (from, to, id) {
+Model.prototype.addOrComplementMappingConnection = function (cDrawn, to, id) {
+	var fromConnector = cDrawn.from.length>0 ? cDrawn.from[0] : to;
+	var toConnector = cDrawn.from.length>0 ? to : cDrawn.to[0];
 	
-	// TODO Check all cases -> Call should only come from ll. 131, 136
-	
-	if (from[0].element instanceof Element && from[0].element.template.area.isTarget) {
+	if (fromConnector.element instanceof Function || toConnector.element instanceof Function) {
+		var connectionEvent = document.createEvent("Event");
+		connectionEvent.initEvent("changeConceptMappingEvent", true, true);
 		
+		if (fromConnector.element instanceof Function) {
+			var c = fromConnector.addConnection(toConnector);
+		} else {
+			var c = toConnector.addConnection(fromConnector);
+		}
+
+		connectionEvent.connection = c;
+		document.dispatchEvent(connectionEvent);
 	} else {
-		var c = new Connection(this.mappingConnection, from, to, id);
-	}
-	
-	// Connection gets overwritten when from is a function -> resulting in 1:N connections
-	if (from[0].element instanceof Function) {
-		c = from[0].addConnection(c);
-	}
-	if (to.element instanceof Function) {
-		c = to.addConnection(c);
-	}
-	
+		this.addMappingConnection(fromConnector, toConnector, id);
+	}	
 };
 
 Model.prototype.leftMouseUp = function() {
 	if (this.newConnection!=null && !this.options.readOnly) {
 		if (this.activeObject instanceof Connector) {
 			if (this.activeObject.isValid(this.activeConnector)) {
-				this.addMappingConnection(this.newConnection.from, this.activeObject);
+				this.addOrComplementMappingConnection(this.newConnection, this.activeObject);
 			}
 		} else if (this.activeObject instanceof Element) {
 			for (var i=0; i<this.activeObject.connectors.length; i++) {
 				if (this.activeObject.connectors[i].isValid(this.activeConnector)) {
-					this.addMappingConnection(this.newConnection.from, this.activeObject.connectors[i]);
+					this.addOrComplementMappingConnection(this.newConnection, this.activeObject.connectors[i]);
 					break;
 				}
 			}

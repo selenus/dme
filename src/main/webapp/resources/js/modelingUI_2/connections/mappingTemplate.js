@@ -64,6 +64,10 @@ MappingTemplate.prototype.paint = function(connection, context) {
 		this.paintNewConnection(connection.from[0].getPosition(), context);
 		return;
 	}
+	if (connection.from===undefined || connection.from===null || connection.from.length==0) {
+		this.paintNewConnection(connection.to[0].getPosition(), context);
+		return;
+	}
 	
 	var strokeStyle = this.model.theme.mappingConnectionDefault;
 	context.lineWidth = 1;
