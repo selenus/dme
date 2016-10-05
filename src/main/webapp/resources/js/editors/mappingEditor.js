@@ -71,10 +71,8 @@ var MappingEditor = function(options) {
 	                              
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible",
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.reset_position",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_function",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_grammar",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_function"]);
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_connection",
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_connection"]);
 	__translator.getTranslations();
 	
 	this.initLayout();
@@ -235,13 +233,11 @@ MappingEditor.prototype.getConnectionContextMenu = function(connection) {
 	];
 	if (_this.mappingOwn || _this.mappingWrite) {
 		items.push(_this.graph.createContextMenuSeparator(),
-			    _this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.edit_grammar", "edit", connection.id),
-			    _this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.edit_function", "edit", connection.id),
+			    _this.graph.createContextMenuItem("editConnection", "~eu.dariah.de.minfba.schereg.editor.actions.edit_connection", "edit", connection.id),
 			    _this.graph.createContextMenuItem("removeMapping", "~eu.dariah.de.minfba.common.link.delete", "trash", connection.id, undefined, "danger"))
 	} else {
 		items.push(_this.graph.createContextMenuSeparator(),
-				_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.schereg.editor.actions.show_grammar", "edit", connection.id),
-				_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.schereg.editor.actions.show_function", "edit", connection.id));
+				_this.graph.createContextMenuItem("editConnection", "~eu.dariah.de.minfba.schereg.editor.actions.show_connection", "edit", connection.id));
 	}
 	return items;
 };
@@ -276,6 +272,7 @@ MappingEditor.prototype.performTreeAction = function(action, elementId, elementK
 	 
 	    case "ensureConnectedVisible" : return this.ensureConnectedVisible(elementId);
 	    case "resetPosition" : return this.resetMappingPosition(elementId);
+	    case "editConnection" : return this.editConnection(elementId);
 	    case "editGrammar" : return this.editGrammar(elementId);
 	    case "editFunction" : return this.editFunction(elementId);
 	    case "removeMapping" : return this.removeConceptMapping(elementId);
@@ -284,6 +281,23 @@ MappingEditor.prototype.performTreeAction = function(action, elementId, elementK
 	    default:
 	        throw new Error("Unknown tree action requested: " + action);
 	}  
+};
+
+MappingEditor.prototype.editConnection = function(connectionId) {
+
+	var form_identifier = "edit-connection-" + connectionId;
+
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "mappedConcept/" + connectionId + "/form/edit",
+		identifier: form_identifier,
+		additionalModalClasses: "max-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],     
+		completeCallback: function() { _this.graph.reselect(); }
+	});
+		
+	modalFormHandler.show(form_identifier);
 };
 
 MappingEditor.prototype.editGrammar = function(connectionId) {

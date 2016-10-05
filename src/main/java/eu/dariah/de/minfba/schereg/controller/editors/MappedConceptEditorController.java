@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.controller.editors;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,17 +18,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.core.metamodel.mapping.TargetElementGroup;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
+import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
 @Controller
 @RequestMapping(value="/mapping/editor/{mappingId}/mappedConcept/{mappedConceptId}")
 public class MappedConceptEditorController extends BaseScheregController {
+	@Autowired protected MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
 	
 	
@@ -84,5 +89,34 @@ public class MappedConceptEditorController extends BaseScheregController {
 		result.setPojo(c);
 		
 		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
+	public String getEditForm(@PathVariable String mappingId, @PathVariable String mappedConceptId, HttpServletRequest request, Model model, Locale locale) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if (mappingService.findMappingById(mappingId)!=null && mappingService.getHasWriteAccess(mappingId, auth.getUserId())) {
+			model.addAttribute("readonly", false);
+		} else if (schemaService.findSchemaById(mappingId)!=null && schemaService.getHasWriteAccess(mappingId, auth.getUserId())) {
+			model.addAttribute("readonly", false);
+		} else {
+			model.addAttribute("readonly", true);
+		}
+		
+		/*
+		 * This will be required later
+		 
+			if (s.getSelectedValueMap()!=null) {
+				String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();			
+				if (s.getSelectedValueMap().containsKey(elementId)) {
+					model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
+				}
+			} 
+		*/
+		
+		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
+		
+		model.addAttribute("concept", mc);		
+		
+		return "mappingEditor/form/concept/edit";
 	}
 }

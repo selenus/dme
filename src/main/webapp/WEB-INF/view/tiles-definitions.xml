@@ -211,7 +211,10 @@
 	<definition name="schemaEditor/form/function/process" template="/WEB-INF/view/jsp/schema/editor/process_function.jsp" />
 	<definition name="schemaEditor/form/function/new" template="/WEB-INF/view/jsp/schema/editor/new_function.jsp" />
 	
-		
+	
+	<definition name="mappingEditor/form/concept/edit" template="/WEB-INF/view/jsp/mapping/editor/edit_concept.jsp" />
+	
+
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 	<definition name="common/forms/maximizeSvg" template="/WEB-INF/view/jsp/common/forms/maximizeSvg.jsp" />
 
