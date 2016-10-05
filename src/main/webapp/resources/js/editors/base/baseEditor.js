@@ -76,10 +76,18 @@ BaseEditor.prototype.processMappedConceptDetails = function(data, callback, cont
 	container.append(details);
 	
 	var _this = this;
-	this.getElementDetails(pathPrefix, "DescriptionGrammarImpl", data.grammars[0].id, details, function() {
-		details.append("<h5>" + __translator.translate("~eu.dariah.de.minfba.schereg.model.function.function") + "</h5>");
-		_this.getElementDetails(pathPrefix, "TransformationFunctionImpl", data.grammars[0].transformationFunctions[0].id, details);
-	});
+	
+	for (var elementId in data.elementGrammarIdsMap) {
+		if (data.elementGrammarIdsMap.hasOwnProperty(elementId)) {
+			var grammar = data.elementGrammarIdsMap[elementId];
+			if (grammar!=null) {
+				this.getElementDetails(pathPrefix, "DescriptionGrammarImpl", grammar.id, details, function() {
+					details.append("<h5>" + __translator.translate("~eu.dariah.de.minfba.schereg.model.function.function") + "</h5>");
+					_this.getElementDetails(pathPrefix, "TransformationFunctionImpl", grammar.id.transformationFunctions[0].id, details);
+				});
+			}
+		}
+	}
 	
 	if (callback!==undefined) {
 		callback(data, container, pathPrefix);
