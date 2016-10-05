@@ -14,7 +14,9 @@
 			<div class="form-group">
 				<label id="label-parser-grammar" class="control-label" for="grammarContainer_parserGrammar"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.parser_grammar" />:</label>
 				<div>
-					
+					<c:forEach var="element" items="${concept.sourceElementMap}">
+						${element.key}; ${element.value.grammarName}; ${element.value.transformationFunctions[0].name}  <br />
+					</c:forEach>
 				</div>
 			</div>	
 			<div class="form-footer">
