@@ -271,13 +271,16 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 			}
 			
 			// TODO New reference tree
-			/*if (e instanceof MappedConceptImpl && r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
-				MappedConcept c = (MappedConcept)e;
+			if (e instanceof MappedConceptImpl && r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
+				MappedConceptImpl c = (MappedConceptImpl)e;
+				
+				/*
+				
 				c.setGrammars(new ArrayList<DescriptionGrammarImpl>());
 				for (Reference rChild : r.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
 					c.getGrammars().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
-				}	
-			}*/
+				}	*/
+			}
 		}
 		return e;		
 	}
