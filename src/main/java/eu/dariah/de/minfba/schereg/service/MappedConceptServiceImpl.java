@@ -42,11 +42,19 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		mappedConcept.setEntityId(mappingId);
 		mappedConceptDao.save(mappedConcept, auth.getUserId(), auth.getSessionId());
 		
+
+		Reference root = this.findReferenceById(mappingId);
+		Reference refConcept;
+		boolean needReferenceSave = false; 
+		
 		if (isNew) {
-			Reference root = this.findReferenceById(mappingId);
-			Reference refConcept = addChildReference(root, mappedConcept);
-			
-			for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
+			refConcept = this.addChildReference(root, mappedConcept);
+		} else {
+			refConcept = findSubreference(root, mappedConcept.getId());
+		}
+				
+		for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
+			if (mappedConcept.getElementGrammarIdsMap().get(sourceElementId)==null) {
 				Element source = elementDao.findById(sourceElementId);
 				
 				TransformationFunction function = new TransformationFunctionImpl(mappingId, "g" + source.getName());
@@ -56,11 +64,15 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 				grammar.setPassthrough(true);
 				grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 				
-				mappedConcept.getElementGrammarIdsMap().put(sourceElementId, null);
+				mappedConcept.getElementGrammarIdsMap().put(sourceElementId, grammar.getId());
 				
 				addChildReference(addChildReference(refConcept, grammar), function); 
+				
+				needReferenceSave = true;
 			}
-			
+		}
+		
+		if (needReferenceSave) {
 			this.saveRootReference(root);
 			mappedConceptDao.save(mappedConcept, auth.getUserId(), auth.getSessionId());
 		}
