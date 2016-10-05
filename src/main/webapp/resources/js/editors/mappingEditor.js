@@ -366,7 +366,9 @@ MappingEditor.prototype.resetMappingPosition = function(connectionId) {
 
 MappingEditor.prototype.ensureConnectedVisible = function(connectionId) {
 	var mapping = this.graph.getMappingById(connectionId);
-	mapping.from.element.ensureVisible();
+	for (var i=0; i<mapping.from.length; i++) {
+		mapping.from[i].element.ensureVisible();
+	}
 	for (var i=0; i<mapping.to.length; i++) {
 		mapping.to[i].element.ensureVisible();
 	}
