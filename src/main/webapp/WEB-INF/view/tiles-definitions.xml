@@ -137,6 +137,7 @@
 			<add-attribute type="string" value="editors/mappingEditor.js" />
 			<add-attribute type="string" value="editors/grammarEditor.js" />
 			<add-attribute type="string" value="editors/functionEditor.js" />
+			<add-attribute type="string" value="editors/mappedConceptEditor.js" />
 		</put-list-attribute>
 	</definition>
 	

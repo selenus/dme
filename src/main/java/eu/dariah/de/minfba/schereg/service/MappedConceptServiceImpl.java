@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
@@ -52,22 +53,43 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		} else {
 			refConcept = findSubreference(root, mappedConcept.getId());
 		}
-				
+		
+		
+		String functionId = null;
 		for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
 			if (mappedConcept.getElementGrammarIdsMap().get(sourceElementId)==null) {
 				Element source = elementDao.findById(sourceElementId);
 				
-				TransformationFunction function = new TransformationFunctionImpl(mappingId, "g" + source.getName());
-				functionDao.save(function, auth.getUserId(), auth.getSessionId());
-				
-				DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(mappingId, "f" + source.getName());
+				DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(mappingId, "g" + source.getName());
 				grammar.setPassthrough(true);
 				grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 				
 				mappedConcept.getElementGrammarIdsMap().put(sourceElementId, grammar.getId());
 				
-				addChildReference(addChildReference(refConcept, grammar), function); 
+				addChildReference(refConcept, grammar); 
 				
+				needReferenceSave = true;
+			} else if (functionId==null) {
+				Reference refGrammar = findSubreference(root, mappedConcept.getElementGrammarIdsMap().get(sourceElementId));
+				if (refGrammar.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
+					functionId = refGrammar.getChildReferences().get(TransformationFunctionImpl.class.getName())[0].getId();
+				}
+			}
+		}
+		
+		TransformationFunction function;
+		if (functionId==null) {
+			function = new TransformationFunctionImpl(mappingId, "fMapping");
+			functionDao.save(function, auth.getUserId(), auth.getSessionId());
+		} else {
+			function = functionDao.findById(functionId);
+		}
+		for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
+			Reference refGrammar = findSubreference(root, mappedConcept.getElementGrammarIdsMap().get(sourceElementId));
+			if (refGrammar.getChildReferences()==null || 
+					!refGrammar.getChildReferences().containsKey(TransformationFunctionImpl.class.getName()) || 
+					refGrammar.getChildReferences().get(TransformationFunctionImpl.class.getName()).length==0) {
+				addChildReference(refGrammar, function);
 				needReferenceSave = true;
 			}
 		}

@@ -34,4 +34,5 @@ public interface ElementService extends BaseService {
 	public List<Identifiable> getElementTrees(String schemaId, List<String> elementIds);
 	public <T extends Identifiable> List<Label> convertToLabels(List<T> elements);
 	
+	public List<Element> findByIds(List<Object> elementIds);
 }

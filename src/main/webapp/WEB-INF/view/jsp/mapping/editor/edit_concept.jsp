@@ -13,10 +13,10 @@
 			<div class="legend"><strong>1</strong> <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.legend.edit_function" /></div>
 			<div class="form-group">
 				<label id="label-parser-grammar" class="control-label" for="grammarContainer_parserGrammar"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.parser_grammar" />:</label>
-				<div>
-					<c:forEach var="element" items="${concept.sourceElementMap}">
-						${element.key}; ${element.value.grammarName}; ${element.value.transformationFunctions[0].name}  <br />
-					</c:forEach>
+				<div class="row">
+					<div id="mapped-concept-editor-container" class="col-xs-12">
+						<canvas id="mapped-concept-editor"></canvas>
+					</div>
 				</div>
 			</div>	
 			<div class="form-footer">
@@ -25,7 +25,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-md-5" style="border-left: 1px solid #E5E5E5; margin-left: -1px;">
+		<div id="layout-helper-container" class="col-md-5" style="border-left: 1px solid #E5E5E5; margin-left: -1px;">
 			<div class="legend"><strong>2</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.execute" /></div>
 			<div class="non-passthrough-only">
 				<div class="form-group">

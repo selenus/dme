@@ -3,7 +3,7 @@ var ElementTemplate = function(area, options) {
 	this.options = $.extend(true, {
 		key: "",
 		height: 25,
-		font: "bold 10px Verdana",
+		font: "11px Georgia, serif",
 		levelIndent: 25,
 		lineWidth: 2,
 		radius: 0,

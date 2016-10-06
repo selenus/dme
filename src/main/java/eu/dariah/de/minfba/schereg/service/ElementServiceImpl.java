@@ -45,7 +45,12 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	public Element findRootBySchemaId(String schemaId) {
 		return this.findRootBySchemaId(schemaId, false);
 	}
-		
+	
+	@Override
+	public List<Element> findByIds(List<Object> elementIds) {
+		return elementDao.find(Query.query(Criteria.where("_id").in(elementIds)));
+	}
+	
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
 		Reference reference = this.findReferenceById(schemaId);

@@ -284,9 +284,9 @@ MappingEditor.prototype.performTreeAction = function(action, elementId, elementK
 };
 
 MappingEditor.prototype.editConnection = function(connectionId) {
-
 	var form_identifier = "edit-connection-" + connectionId;
-
+	var _this = this;
+	
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "mappedConcept/" + connectionId + "/form/edit",
 		identifier: form_identifier,
@@ -294,6 +294,10 @@ MappingEditor.prototype.editConnection = function(connectionId) {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],     
+		displayCallback: function(modal) { _this.conceptEditor = new MappedConceptEditor(modal, {
+			    			conceptId: connectionId
+			    		}); },
+			    		
 		completeCallback: function() { _this.graph.reselect(); }
 	});
 		

@@ -1,10 +1,14 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,16 +20,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.core.metamodel.mapping.TargetElementGroup;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
+import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
+import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
@@ -34,7 +44,9 @@ import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 public class MappedConceptEditorController extends BaseScheregController {
 	@Autowired protected MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
+	@Autowired private ElementService elementService;
 	
+	@Autowired private ObjectMapper objMapper;
 	
 	public MappedConceptEditorController() {
 		super("mappingEditor");
@@ -78,7 +90,6 @@ public class MappedConceptEditorController extends BaseScheregController {
 			if (c.getTargetElementIds()==null || !c.getTargetElementIds().contains(targetElementId)) {
 				TargetElementGroup g = new TargetElementGroup();
 				g.addTargetElementId(targetElementId);
-				
 				c.addTargetElementGroup(g);
 			}
 		}
@@ -114,9 +125,31 @@ public class MappedConceptEditorController extends BaseScheregController {
 		*/
 		
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
-		
 		model.addAttribute("concept", mc);		
 		
 		return "mappingEditor/form/concept/edit";
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/getRendered")
+	public @ResponseBody String getRenderedHierarchy(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
+		List<Object> sourceElementIds = new ArrayList<Object>();
+		sourceElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
+				
+		// Prepare easier-to-use object-based map
+		List<Element> sourceElements = elementService.findByIds(sourceElementIds);
+		Map<Element, DescriptionGrammarImpl> sourceElementMap = new HashMap<Element, DescriptionGrammarImpl>();
+		for (String sourceId : mc.getSourceElementMap().keySet()) {
+			for (Element sourceElement : sourceElements) {
+				if (sourceId.equals(sourceElement.getId())) {
+					sourceElementMap.put(sourceElement, mc.getSourceElementMap().get(sourceId));
+					break;
+				}
+			}
+		}
+	
+		
+		
+		return objMapper.writeValueAsString(sourceElementMap);
 	}
 }
