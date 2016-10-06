@@ -16,7 +16,30 @@ var MappedConceptEditor = function(container, options) {
 	this.layoutContainer = $(container).find(this.options.layoutContainer);
 	this.editorContainer = $(container).find(this.options.editorContainer);
 
+	this.sourceGrammars = [];
+	this.targetElements = [];
+	this.functionId = "";
+	
 	this.init();
+};
+
+MappedConceptEditor.prototype.getElementContextMenu = function(element) { 
+	var _this = editor.conceptEditor;
+		var items = [
+		    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+		    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+		    _this.graph.createContextMenuSeparator()
+		];
+		if (editor.mappingOwn || editor.mappingWrite) {
+			items.push(_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuSeparator());
+			items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+		} else {
+			items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+		}
+		return items; 
 };
 
 MappedConceptEditor.prototype.init = function() {
@@ -25,6 +48,8 @@ MappedConceptEditor.prototype.init = function() {
 	var commonElementOptions = {
 			visible: true,
 			collapsible: false,
+			isMappable: false,
+			isInteractive: false,
 			getContextMenuItems: _this.getElementContextMenu,
 			hierarchyOutConnector: { positionfunction: function(element) {
 				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
@@ -88,8 +113,10 @@ MappedConceptEditor.prototype.init = function() {
 	this.graph.init();
 	this.resize();
 	
-	this.getElementHierarchy(this.options.sourcePath, this.source, this.processElementHierarchy);
- 	this.getElementHierarchy(this.options.targetPath, this.target, this.processElementHierarchy);
+	this.getElementHierarchy(this.options.sourcePath, this.source, true);
+ 	this.getElementHierarchy(this.options.targetPath, this.target, false);
+ 	
+ 	this.addMapping();
 };
 
 MappedConceptEditor.prototype.resize = function() {
@@ -102,7 +129,7 @@ MappedConceptEditor.prototype.resize = function() {
 	}	
 };
 
-MappedConceptEditor.prototype.getElementHierarchy = function(path, area, callback) {
+MappedConceptEditor.prototype.getElementHierarchy = function(path, area, isSource) {
 	var _this = this;
 	$.ajax({
 	    url: path,
@@ -121,14 +148,14 @@ MappedConceptEditor.prototype.getElementHierarchy = function(path, area, callbac
 	    	wrapper.type = "null";
 	    	wrapper.simpleType = "LogicalRoot";
 	    	
-	    	callback(wrapper, area);
+	    	_this.processElementHierarchy(wrapper, area, isSource);
 	    }
 	});
 };
 
-MappedConceptEditor.prototype.processElementHierarchy = function(data, area) {
+MappedConceptEditor.prototype.processElementHierarchy = function(data, area, isSource) {
 	var root = area.addElement(data.simpleType, null, data.id, this.formatLabel(data.name), null);
-	this.generateTree(area, root, data.childNonterminals, null, data.grammars, true);
+	this.generateTree(area, root, data.childNonterminals, null, data.grammars, isSource);
 	area.elements[0].setExpanded(true);
 	this.graph.update();
 };
@@ -143,7 +170,9 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 				icon = this.options.icons.warning;
 			}
 			var e = area.addElement(nonterminals[i].simpleType, parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
-			
+			if (!isSource) {
+				this.targetElements.push(nonterminals[i].id);
+			}
 			this.generateTree(area, e, nonterminals[i].childNonterminals, null, nonterminals[i].grammars, isSource);
 		}
 	}
@@ -153,38 +182,42 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 			if (grammars[i].error==true) {
 				icon = this.options.icons.error;
 			}
-			var fDesc = area.addElement(grammars[i].simpleType, parent, grammars[i].id, this.formatLabel("g: " + grammars[i].grammarName), icon);
+			var fDesc = area.addElement(grammars[i].simpleType, parent, grammars[i].id, this.formatLabel("g:"), icon);
+			
+			if (isSource) {
+				this.sourceGrammars.push(grammars[i].id);
+			}
 			
 			if (grammars[i].transformationFunctions != null && grammars[i].transformationFunctions instanceof Array) {
-				for (var j=0; j<grammars[i].transformationFunctions.length; j++) {
-					if (grammars[i].transformationFunctions[j].error==true) {
-						icon = this.options.icons.error;
-					}
-					var fOut = area.addElement(grammars[i].transformationFunctions[j].simpleType, fDesc, grammars[i].transformationFunctions[j].id, 
-							this.formatLabel("f: " + grammars[i].transformationFunctions[j].name), icon);
-					
-					if (grammars[i].transformationFunctions[j].outputElements != null && grammars[i].transformationFunctions[j].outputElements instanceof Array) {
-						for (var k=0; k<grammars[i].transformationFunctions[j].outputElements.length; k++) {
-							
-							var e = area.addElement(grammars[i].transformationFunctions[j].outputElements[k].simpleType, fOut, grammars[i].transformationFunctions[j].outputElements[k].id, 
-									this.formatLabel(grammars[i].transformationFunctions[j].outputElements[k].name), null);
-							
-							
-							this.generateTree(area, e, 
-									grammars[i].transformationFunctions[j].outputElements[k].childNonterminals,
-									grammars[i].transformationFunctions[j].outputElements[k].subLabels,
-									grammars[i].transformationFunctions[j].outputElements[k].grammars, isSource);
-						}
-					}
-				}
+				this.functionId = grammars[i].transformationFunctions[0].id;
 			}
+			
 		}
 	}
 	if (subelements!=null && subelements instanceof Array) {
 		for (var i=0; i<subelements.length; i++) {
 			var e = area.addElement(subelements[i].simpleType, parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
+			if (!isSource) {
+				this.targetElements.push(subelements[i].id);
+			}
 			this.generateTree(area, e, null, subelements[i].subLabels, subelements[i].grammars, isSource);
 		}
+	}
+};
+
+MappedConceptEditor.prototype.addMapping = function() {
+	var lhs = [];
+	var rhs = [];
+	
+	for (var i=0; i<this.sourceGrammars.length; i++) {
+		lhs.push(this.source.getElementById(this.sourceGrammars[i]).getConnector("mappings"));
+	}
+
+	for (var j=0; j<this.targetElements.length; j++) {
+		rhs.push(this.target.getElementById(this.targetElements[j]).getConnector("mappings"));	
+	}
+	if (lhs != null && rhs != null) {			
+		this.graph.addMappingConnection(lhs, rhs, this.functionId, true);   			
 	}
 };
 

@@ -45,7 +45,9 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 	var _area = this.area;
 	var _this = this;
 	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
-		name: "parent", type: "Element [in]", description: "Father", isInteractive: false, isMappable: false,
+		name: "parent", type: "Element [in]", description: "Father", 
+		isInteractive: _this.options.isInteractive!==undefined ? _this.options.isInteractive : false, 
+		isMappable: _this.options.isMappable!==undefined ? _this.options.isMappable : false,
 		position: _this.options.hierarchyInConnector.positionfunction===null ? function(element) {
 			if (!_area.isTarget) {
 				return { x: 0, y: Math.floor(element.rectangle.height / 2) };
@@ -56,7 +58,9 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 	}));
 	
 	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
-		name: "children", type: "Element [out] [array]", description: "Child", isInteractive: false, isMappable: false,
+		name: "children", type: "Element [out] [array]", description: "Child", 
+		isInteractive: _this.options.isInteractive!==undefined ? _this.options.isInteractive : false, 
+		isMappable: _this.options.isMappable!==undefined ? _this.options.isMappable : false,
 		position: _this.options.hierarchyOutConnector.positionfunction===null ? function(element) {
 			if (!_area.isTarget) {
 				return { x: 10, y: element.rectangle.height };
@@ -71,7 +75,9 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 			name: "mappings", type: "Mapping [out] [array]", 
 			isOut: true,
 			isArray: true,
-			description: "Mappings out", isInteractive: true, isMappable: true,
+			description: "Mappings out", 
+			isInteractive: _this.options.isInteractive!==undefined ? _this.options.isInteractive : true, 
+			isMappable: _this.options.isMappable!==undefined ? _this.options.isMappable : true,
 			position: _this.options.mappingOutConnector.positionfunction===null ? function(element) {
 				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
 			} : _this.options.mappingOutConnector.positionfunction
@@ -82,7 +88,9 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 			name: "mappings", 
 			isOut: false,
 			isArray: true,
-			type: "Mapping [in] [array]", description: "Mappings in", isInteractive: true, isMappable: true,
+			type: "Mapping [in] [array]", description: "Mappings in", 
+			isInteractive: _this.options.isInteractive!==undefined ? _this.options.isInteractive : true, 
+			isMappable: _this.options.isMappable!==undefined ? _this.options.isMappable : true,
 			position: _this.options.mappingInConnector.positionfunction===null ? function(element) {
 				return { x: 0, y: Math.floor(element.rectangle.height / 2) };
 			} : _this.options.mappingInConnector.positionfunction

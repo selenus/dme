@@ -307,36 +307,23 @@ MappingEditor.prototype.editConnection = function(connectionId) {
 MappingEditor.prototype.editGrammar = function(connectionId) {
 	var _this = this;
 	var form_identifier = "edit-grammar-" + connectionId;
-	
-	
-	$.ajax({
-		url: this.mappingPath + "mappedConcept/" + connectionId + "/async/get",
-	    type: "GET",
-	    success: function(data) {
-	    	if (data===null || data===undefined || data.length==0) {
-	    		return;
-	    	}
-	    	
-	    	var mapping = _this.graph.getMappingById(connectionId);
-	    	
-	    	modalFormHandler = new ModalFormHandler({
-	    		formUrl: "/grammar/" + data.grammars[0].id + "/form/edit",
-	    		identifier: form_identifier,
-	    		additionalModalClasses: "max-modal",
-	    		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-	    		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
-	    		                ],
-	    		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
-	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + connectionId,
-	    			entityId : _this.mappingId,
-	    			grammarId : data.grammars[0].id
-	    		}); },     
-	    		completeCallback: function() { _this.graph.reselect(); }
-	    	});
-	    		
-	    	modalFormHandler.show(form_identifier);
-	    }
+
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/grammar/" + connectionId + "/form/edit",
+		identifier: form_identifier,
+		additionalModalClasses: "max-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],
+		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
+			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + connectionId,
+			entityId : _this.mappingId,
+			grammarId : connectionId
+		}); },     
+		completeCallback: function() { _this.graph.reselect(); }
 	});
+		
+	modalFormHandler.show(form_identifier);
 };
 
 MappingEditor.prototype.editFunction = function(connectionId) {

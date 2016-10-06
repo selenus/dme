@@ -89,7 +89,7 @@ Model.prototype.handleMouseUp = function(e) {
 	}
 };
 
-Model.prototype.addMappingConnection = function (from, to, id) {
+Model.prototype.addMappingConnection = function (from, to, id, silent) {
 	var c = new Connection(this.mappingConnection, from, to, id);
 	
 	var connectionEvent = document.createEvent("Event");
@@ -99,6 +99,11 @@ Model.prototype.addMappingConnection = function (from, to, id) {
 	} else {
 		connectionEvent.initEvent("changeConceptMappingEvent", true, true);
 	}
+	
+	if (silent) {
+		return;
+	}
+	
 	
 	connectionEvent.connection = c;
 	document.dispatchEvent(connectionEvent);
