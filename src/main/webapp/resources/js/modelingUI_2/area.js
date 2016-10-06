@@ -307,12 +307,22 @@ Area.prototype.recalculateElementPositions = function(element, elementList, x, y
 	if (element.isExpanded() && element.children.length > 0) {
 		for (var i=0; i<element.children.length; i++) {
 			var deltaX;
-			if (!this.isTarget) {
-				deltaX = x + this.model.theme.elementPositioningDelta.x;
+			var deltaY;
+			
+			if (element.children[i].template.options.offsetFunction!==undefined) {
+				var delta = element.children[i].template.options.offsetFunction(x, y, element.children[i], element, this.isTarget, this.model.theme.elementPositioningDelta);
+				deltaX = delta.x;
+				deltaY = delta.y;
 			} else {
-				deltaX = x - element.children[i].rectangle.width + element.rectangle.width - this.model.theme.elementPositioningDelta.x;
+				if (!this.isTarget) {
+					deltaX = x + this.model.theme.elementPositioningDelta.x;
+				} else {
+					deltaX = x - element.children[i].rectangle.width + element.rectangle.width - this.model.theme.elementPositioningDelta.x;
+				}
+				
+				deltaY = y + this.model.theme.elementPositioningDelta.y; 
 			}
-			y = this.recalculateElementPositions(element.children[i], elementList, deltaX, y + this.model.theme.elementPositioningDelta.y);
+			y = this.recalculateElementPositions(element.children[i], elementList, deltaX, deltaY);
 		}
 	}
 	this.recalculationRequired = false;

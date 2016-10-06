@@ -10,6 +10,13 @@ var ElementTemplate = function(area, options) {
 		primaryColor: "#e6f1ff",
 		secondaryColor: "#0049a6",
 		
+		visible: true,
+		collapsible: true,
+		
+		hierarchyInConnector: { positionfunction: null },
+		hierarchyOutConnector: { positionfunction: null },
+		mappingInConnector: { positionfunction: null },
+		mappingOutConnector: { positionfunction: null },		
 	}, options);
 	
 	this.connectorTemplates = [];
@@ -17,6 +24,10 @@ var ElementTemplate = function(area, options) {
 }
 
 ElementTemplate.prototype.getExpanderPosition = function(element) {
+	if (this.options.collapsible===false) {
+		return null;
+	}
+	
 	if (!this.area.isTarget) {
 		return new Point(element.rectangle.x + 10, element.rectangle.y + element.rectangle.height/2);
 	} else {
@@ -32,26 +43,27 @@ ElementTemplate.prototype.getContextMenuItems = function(element) {
 
 ElementTemplate.prototype.renderConnectorTemplates = function() {
 	var _area = this.area;
+	var _this = this;
 	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
 		name: "parent", type: "Element [in]", description: "Father", isInteractive: false, isMappable: false,
-		position: function(element) {
+		position: _this.options.hierarchyInConnector.positionfunction===null ? function(element) {
 			if (!_area.isTarget) {
 				return { x: 0, y: Math.floor(element.rectangle.height / 2) };
 			} else {
 				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
 			}
-		}
+		} : _this.options.hierarchyInConnector.positionfunction
 	}));
 	
 	this.connectorTemplates.push(new ConnectorTemplate(this.area, {
 		name: "children", type: "Element [out] [array]", description: "Child", isInteractive: false, isMappable: false,
-		position: function(element) {
+		position: _this.options.hierarchyOutConnector.positionfunction===null ? function(element) {
 			if (!_area.isTarget) {
 				return { x: 10, y: element.rectangle.height };
 			} else {
 				return { x: element.rectangle.width-10, y: element.rectangle.height };
 			}
-		}
+		} : _this.options.hierarchyOutConnector.positionfunction
 	}));
 	
 	if (this.area.isSource) {
@@ -60,9 +72,9 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 			isOut: true,
 			isArray: true,
 			description: "Mappings out", isInteractive: true, isMappable: true,
-			position: function(element) {
+			position: _this.options.mappingOutConnector.positionfunction===null ? function(element) {
 				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
-			}
+			} : _this.options.mappingOutConnector.positionfunction
 		}));
 	}
 	if (this.area.isTarget) {
@@ -71,14 +83,17 @@ ElementTemplate.prototype.renderConnectorTemplates = function() {
 			isOut: false,
 			isArray: true,
 			type: "Mapping [in] [array]", description: "Mappings in", isInteractive: true, isMappable: true,
-			position: function(element) {
+			position: _this.options.mappingInConnector.positionfunction===null ? function(element) {
 				return { x: 0, y: Math.floor(element.rectangle.height / 2) };
-			}
+			} : _this.options.mappingInConnector.positionfunction
 		}));
 	}
 };
 
 ElementTemplate.prototype.paint = function(element, context) {
+	if (this.options.visible===false) {
+		return false;
+	}
 	var rectangle = element.rectangle;
 	
 	if (!this.area.rectangle.contains(new Point(rectangle.x + rectangle.width, rectangle.y)) && 

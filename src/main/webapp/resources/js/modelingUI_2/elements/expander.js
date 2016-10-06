@@ -22,11 +22,19 @@ Expander.prototype.getCursor = function(point) {
 };
 
 Expander.prototype.hitTest = function(point) {
-	return this.getRectangle().contains(point);
+	var rectangle = this.getRectangle();
+	if (rectangle==null) {
+		return false;
+	} else {
+		return rectangle.contains(point);
+	}
 };
 
 Expander.prototype.getRectangle = function() {
 	var point = this.element.template.getExpanderPosition(this.element);
+	if (point===null) {
+		return null;
+	}
 	var rectangle = new Rectangle(point.x, point.y, 0, 0);
 	rectangle.inflate(4, 4);
 	return rectangle;
@@ -43,6 +51,9 @@ Expander.prototype.paint = function(context) {
 		context.strokeStyle = this.element.template.area.theme.expanderBorder;
 	}
 	var rectangle = this.getRectangle();
+	if (rectangle==null) {
+		return;
+	}
 	context.fillRect(rectangle.x - 0.5, rectangle.y - 0.5, rectangle.width, rectangle.height);
 	context.strokeRect(rectangle.x - 0.5, rectangle.y - 0.5, rectangle.width, rectangle.height);
 	context.font = "9px Verdana";

@@ -95,6 +95,10 @@ Element.prototype.setChildrenVisible = function(visible) {
 };
 
 Element.prototype.isExpanded = function() {
+	if (this.template.options.collapsible===false) {
+		return true;
+	}
+	
 	if (this.expander!=null) {
 		return this.expander.expanded;
 	} else {
