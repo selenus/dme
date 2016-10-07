@@ -5,6 +5,7 @@ var Model = function(canvas, options, theme) {
 	
 	this.options = $.extend(true, {
 		readOnly: false,
+		eventId: "",
 		elementTemplateOptions : null,
 		mappingTemplateOptions : null
 	}, options);

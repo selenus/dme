@@ -64,6 +64,8 @@ var FunctionTemplate = function(model, options) {
 		font: "10px Glyphicons Halflings",
 		text: "\uE075", //Forward
 		//text: "\uE019", // Cog
+		vPadding: 2,
+		hPadding: 8,
 		getContextMenuItems: undefined
 	}, options);
 }
@@ -85,7 +87,9 @@ FunctionTemplate.prototype.getAnchor = function(connection) {
 
 FunctionTemplate.prototype.getRectangle = function(func) {
 	var anchor = this.getAnchor(func.connection);
-	return new Rectangle(anchor.x, anchor.y, 0, 0).inflate(this.calculateWidth(func)/2 + 7, 7); 
+	return new Rectangle(anchor.x, anchor.y, 0, 0).inflate(
+			this.options.hPadding + this.calculateWidth(func)/2, 
+			this.options.vPadding + 7); 
 };
 
 FunctionTemplate.prototype.hitTest = function(func, point) {

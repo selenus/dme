@@ -95,9 +95,9 @@ Model.prototype.addMappingConnection = function (from, to, id, silent) {
 	var connectionEvent = document.createEvent("Event");
 	if (!this.mappings.contains(c)) {
 		this.mappings.push(c);
-		connectionEvent.initEvent("newConceptMappingEvent", true, true);
+		connectionEvent.initEvent("newConceptMappingEvent" + this.options.eventId, true, true);
 	} else {
-		connectionEvent.initEvent("changeConceptMappingEvent", true, true);
+		connectionEvent.initEvent("changeConceptMappingEvent" + this.options.eventId, true, true);
 	}
 	
 	if (silent) {
@@ -115,7 +115,7 @@ Model.prototype.addOrComplementMappingConnection = function (cDrawn, to, id) {
 	
 	if (fromConnector.element instanceof Function || toConnector.element instanceof Function) {
 		var connectionEvent = document.createEvent("Event");
-		connectionEvent.initEvent("changeConceptMappingEvent", true, true);
+		connectionEvent.initEvent("changeConceptMappingEvent" + this.options.eventId, true, true);
 		
 		if (fromConnector.element instanceof Function) {
 			var c = fromConnector.addConnection(toConnector);
@@ -242,14 +242,14 @@ Model.prototype.updateActiveObject = function() {
 
 Model.prototype.handleElementDeselected = function(element) {
 	var deselectionEvent = document.createEvent("Event");
-	deselectionEvent.initEvent("deselectionEvent", true, true);
+	deselectionEvent.initEvent("deselectionEvent" + this.options.eventId, true, true);
 	deselectionEvent.element = element;
 	document.dispatchEvent(deselectionEvent);
 };
 
 Model.prototype.handleElementSelected = function(element) {
 	var selectionEvent = document.createEvent("Event");
-	selectionEvent.initEvent("selectionEvent", true, true);	
+	selectionEvent.initEvent("selectionEvent" + this.options.eventId, true, true);	
 	selectionEvent.element = element;
 	document.dispatchEvent(selectionEvent);
 };

@@ -121,7 +121,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 		return "mappingEditor/form/concept/edit";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getSource")
+	@RequestMapping(method = RequestMethod.GET, value = "/source")
 	public @ResponseBody List<Element> getRenderedSource(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
 		List<Object> sourceElementIds = new ArrayList<Object>();
@@ -143,7 +143,16 @@ public class MappedConceptEditorController extends BaseScheregController {
 		return sourceElements;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getTarget")
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.POST, value = "/source/{sourceId}/remove")
+	public @ResponseBody ModelActionPojo removeSource(@PathVariable String mappingId, @PathVariable String mappedConceptId, @PathVariable String sourceId, HttpServletRequest request) throws GenericScheregException {
+		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
+		mc.getElementGrammarIdsMap().remove(sourceId);
+		
+		return new ModelActionPojo(true);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/target")
 	public @ResponseBody List<Element> getRenderedTargets(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
 		
@@ -151,5 +160,27 @@ public class MappedConceptEditorController extends BaseScheregController {
 		targetElementIds.addAll(mc.getTargetElementIds());
 				
 		return elementService.findByIds(targetElementIds);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.POST, value = "/target/{targetId}/remove")
+	public @ResponseBody ModelActionPojo removeTarget(@PathVariable String mappingId, @PathVariable String mappedConceptId, @PathVariable String targetId, HttpServletRequest request) throws GenericScheregException {
+		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
+		List<TargetElementGroup> removeGroups = new ArrayList<TargetElementGroup>();
+		
+		for (TargetElementGroup teg : mc.getTargetElementGroups()) {
+			if (teg.getTargetElementIds().contains(targetId)) {
+				teg.getTargetElementIds().remove(targetId);
+				if (teg.getTargetElementIds().size()==0) {
+					removeGroups.add(teg);
+				}
+			}
+		}
+		
+		if (removeGroups.size()>0) {
+			mc.getTargetElementGroups().removeAll(removeGroups);
+		}
+		
+		return new ModelActionPojo(true);
 	}
 }

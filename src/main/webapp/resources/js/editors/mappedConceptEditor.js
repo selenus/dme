@@ -1,8 +1,8 @@
 var MappedConceptEditor = function(container, options) {
 	this.options = {
 			conceptId: "",
-			sourcePath: "mappedConcept/{0}/async/getSource",
-			targetPath: "mappedConcept/{0}/async/getTarget",
+			sourcePath: "mappedConcept/{0}/source",
+			targetPath: "mappedConcept/{0}/target",
 			layoutContainer: "#layout-helper-container",
 			editorContainer: "#mapped-concept-editor-container",
 			canvasId: "mapped-concept-editor",
@@ -20,26 +20,13 @@ var MappedConceptEditor = function(container, options) {
 	this.targetElements = [];
 	this.functionId = "";
 	
+	__translator.addTranslations([
+		"~eu.dariah.de.minfba.common.link.edit",
+		"~eu.dariah.de.minfba.common.link.delete",
+		"~eu.dariah.de.minfba.common.link.view"]);
+	__translator.getTranslations();
+	
 	this.init();
-};
-
-MappedConceptEditor.prototype.getElementContextMenu = function(element) { 
-	var _this = editor.conceptEditor;
-		var items = [
-		    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-		    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
-		    _this.graph.createContextMenuSeparator()
-		];
-		if (editor.mappingOwn || editor.mappingWrite) {
-			items.push(_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key));
-			items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
-			items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
-			items.push(_this.graph.createContextMenuSeparator());
-			items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
-		} else {
-			items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
-		}
-		return items; 
 };
 
 MappedConceptEditor.prototype.init = function() {
@@ -50,14 +37,14 @@ MappedConceptEditor.prototype.init = function() {
 			collapsible: false,
 			isMappable: false,
 			isInteractive: false,
-			getContextMenuItems: _this.getElementContextMenu,
 			hierarchyOutConnector: { positionfunction: function(element) {
 				return { x: element.rectangle.width, y: Math.floor(element.rectangle.height / 2) };
 			} }	
 	}
 	
 	this.graph = new Model(this.context.canvas, {
-		readOnly: _this.readOnly,
+		readOnly: true,
+		eventId: "_mc",
 		elementTemplateOptions: [
 		                         $.extend(true, {}, commonElementOptions, {
 		                        	 key: "LogicalRoot", 
@@ -67,17 +54,20 @@ MappedConceptEditor.prototype.init = function() {
 		                         $.extend(true, {}, commonElementOptions, {
 		                        	 key: "Nonterminal", 
 		                        	 primaryColor: "#e6f1ff", 
-		                        	 secondaryColor: "#0049a6"	 
+		                        	 secondaryColor: "#0049a6",
+		                        	 getContextMenuItems: _this.getElementContextMenu
 		                         }),
 		                         $.extend(true, {}, commonElementOptions, {
 		                        	 key: "Label", 
 		                        	 primaryColor: "#f3e6ff", 
-		                        	 secondaryColor: "#5700a6"	 
+		                        	 secondaryColor: "#5700a6",
+		                        	 getContextMenuItems: _this.getElementContextMenu
 		                         }),
 		                         $.extend(true, {}, commonElementOptions, {
 		                        	 key: "DescriptionGrammarImpl", 
 		                        	 primaryColor: "#FFE173", 
 		                        	 secondaryColor: "#6d5603",
+		                        	 getContextMenuItems: _this.getGrammarContextMenu,
 		                        	 offsetFunction: function(x, y, element, parentElement, isTarget, elementPositioningDelta) {
 		                        		 var delta = {};
 		                        		 delta.y = y;
@@ -101,14 +91,22 @@ MappedConceptEditor.prototype.init = function() {
 		mappingTemplateOption : {
 			relativeControlPointX : 4, 
 			connectionHoverTolerance : 5,
-			//getContextMenuItems: _this.getConnectionContextMenu,
+			getContextMenuItems: _this.getFunctionContextMenu,
 			functionTemplateOptions : {
-				primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 3
+				primaryColor: "#FFE173", 
+				secondaryColor: "#6d5603", 
+				radius: 3,
+				text: "f:",
+				font: "11px Georgia, serif",
+				vPadding: 5,
+				hPadding: 20,
 			}
 		}
 	});
 	this.source = this.graph.addArea({ getContextMenuItems: _this.getAreaContextMenu });
 	this.target = this.graph.addArea({ getContextMenuItems: _this.getAreaContextMenu });
+	
+	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
 	
 	this.graph.init();
 	this.resize();
@@ -118,6 +116,93 @@ MappedConceptEditor.prototype.init = function() {
  	
  	this.addMapping();
  	this.graph.update();
+ 	
+ 	this.registerEvents();
+};
+
+MappedConceptEditor.prototype.registerEvents = function() {
+	/** TODO: Possibly show sample input when selecting some source */ 
+	//document.addEventListener("selectionEvent_mc", this.selectionHandler, false);
+	//document.addEventListener("deselectionEvent_mc", this.deselectionHandler, false);
+	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
+};
+
+MappedConceptEditor.prototype.handleContextMenuClicked = function(e) {
+	this.performTreeAction(e.key, e.id, e.nodeType);
+};
+
+MappedConceptEditor.prototype.performTreeAction = function(action, elementId, elementKey) {	
+	switch(action) {	 
+	    case "removeSourceGrammar" : return this.removeSourceByGrammar(elementId);
+	    case "removeSource" : return this.removeElement(elementId, true);
+	    case "removeTarget" : return this.removeElement(elementId, false);
+	}  
+};
+
+MappedConceptEditor.prototype.removeSourceByGrammar = function(grammarId) {
+	this.removeElement(this.source.findElementById(this.source.root, grammarId).parent.id, true);
+};
+
+MappedConceptEditor.prototype.removeElement = function(elementId, isSource) {
+	if (!__util.isLoggedIn()) {
+		__util.showLoginNote();
+		return;
+	}
+	
+	var _this = this;
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), conceptMappingId), function(result) {
+		if(result) {
+			$.ajax({
+			    url: (isSource===true ? this.options.sourcePath : this.options.targetPath) + "/" + elementId + "/remove",
+			    type: "POST",
+			    dataType: "json",
+			    success: function(data) {
+			    	// TODO: Remove individually
+			    },
+			    error: __util.processServerError
+			});
+		}
+	});
+};
+
+MappedConceptEditor.prototype.getGrammarContextMenu = function(element) { 
+	var _this = editor.conceptEditor;
+		var items = [
+		];
+		if (editor.mappingOwn || editor.mappingWrite) {
+			items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuSeparator());
+			items.push(_this.graph.createContextMenuItem("removeSourceGrammar", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+		} else {
+			items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+		}
+		return items; 
+};
+
+MappedConceptEditor.prototype.getFunctionContextMenu = function(element) { 
+	var _this = editor.conceptEditor;
+		var items = [
+		];
+		if (editor.mappingOwn || editor.mappingWrite) {
+			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+		} else {
+			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+		}
+		return items; 
+};
+
+MappedConceptEditor.prototype.getElementContextMenu = function(element) { 
+	var _this = editor.conceptEditor;
+		var items = [
+		];
+		if (editor.mappingOwn || editor.mappingWrite) {
+			if (element.template.area.isSource) {
+				items.push(_this.graph.createContextMenuItem("removeSource", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+			} else {
+				items.push(_this.graph.createContextMenuItem("removeTarget", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+			}
+		}
+		return items; 
 };
 
 MappedConceptEditor.prototype.resize = function() {
@@ -167,9 +252,9 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 	if (nonterminals!=null && nonterminals instanceof Array) {
 		for (var i=0; i<nonterminals.length; i++) {
 			var icon = null;
-			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
+			/*if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
 				icon = this.options.icons.warning;
-			}
+			}*/
 			var e = area.addElement(nonterminals[i].simpleType, parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
 			if (!isSource) {
 				this.targetElements.push(nonterminals[i].id);
@@ -180,9 +265,9 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 	if (grammars != null && grammars instanceof Array) {
 		for (var i=0; i<grammars.length; i++) {
 			var icon = null;
-			if (grammars[i].error==true) {
+			/*if (grammars[i].error==true) {
 				icon = this.options.icons.error;
-			}
+			}*/
 			var fDesc = area.addElement(grammars[i].simpleType, parent, grammars[i].id, this.formatLabel("g:"), icon);
 			
 			if (isSource) {

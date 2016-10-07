@@ -278,8 +278,8 @@ MappingEditor.prototype.performTreeAction = function(action, elementId, elementK
 	    case "removeMapping" : return this.removeConceptMapping(elementId);
 	    
 	    
-	    default:
-	        throw new Error("Unknown tree action requested: " + action);
+	    /*default:
+	        throw new Error("Unknown tree action requested: " + action);*/
 	}  
 };
 
@@ -328,39 +328,24 @@ MappingEditor.prototype.editGrammar = function(connectionId) {
 
 MappingEditor.prototype.editFunction = function(connectionId) {
 	var _this = this;	
-	var mapping = _this.graph.getMappingById(connectionId);
-	
-	
-	$.ajax({
-		url: this.mappingPath + "mappedConcept/" + connectionId + "/async/get",
-	    type: "GET",
-	    success: function(data) {
-	    	if (data===null || data===undefined || data.length==0) {
-	    		return;
-	    	}
+	   var form_identifier = "edit-function-" + connectionId;
 	    	
-	    	var mapping = _this.graph.getMappingById(connectionId);
-	    	
-	    	var form_identifier = "edit-function-" + connectionId;
-	    	
-	    	modalFormHandler = new ModalFormHandler({
-	    		formUrl: "/function/" + data.grammars[0].transformationFunctions[0].id + "/form/edit",
-	    		identifier: form_identifier,
-	    		additionalModalClasses: "max-modal",
-	    		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-	    		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
-	    		                ],
-	            setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
-	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.mappingId,
-	    			entityId : _this.mappingId,
-	    			functionId : data.grammars[0].transformationFunctions[0].id
-	    		}); },       
-	    		completeCallback: function() { _this.graph.reselect(); }
-	    	});
-	    		
-	    	modalFormHandler.show(form_identifier);
-	    }
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/function/" + connectionId + "/form/edit",
+		identifier: form_identifier,
+		additionalModalClasses: "max-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],
+        setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
+			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.mappingId,
+			entityId : _this.mappingId,
+			functionId : connectionId
+		}); },       
+		completeCallback: function() { _this.graph.reselect(); }
 	});
+		
+	modalFormHandler.show(form_identifier);
 };
 
 MappingEditor.prototype.resetMappingPosition = function(connectionId) {
