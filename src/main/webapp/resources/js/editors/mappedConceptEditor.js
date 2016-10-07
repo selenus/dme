@@ -117,6 +117,7 @@ MappedConceptEditor.prototype.init = function() {
  	this.getElementHierarchy(this.options.targetPath, this.target, false);
  	
  	this.addMapping();
+ 	this.graph.update();
 };
 
 MappedConceptEditor.prototype.resize = function() {
