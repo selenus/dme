@@ -40,6 +40,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
@@ -54,17 +55,15 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value={"/schema/editor/{schemaId}/function/{functionId}",
-		"/mapping/editor/{schemaId}/function/{functionId}"})
-public class FunctionEditorController extends BaseScheregController {
+@RequestMapping(value={"/schema/editor/{entityId}/function/{functionId}",
+		"/mapping/editor/{entityId}/function/{functionId}"})
+public class FunctionEditorController extends BaseFunctionController {
 	@Autowired private ReferenceService referenceService;
 	@Autowired private FunctionService functionService;
 	@Autowired private GrammarService grammarService;
 	@Autowired private ElementService elementService;
 	
 	@Autowired private SchemaService schemaService;
-	@Autowired private MappingService mappingService;
-	
 	@Autowired private MappedConceptService mappedConceptService;
 	
 	@Autowired private TransformationEngine engine;
@@ -75,38 +74,33 @@ public class FunctionEditorController extends BaseScheregController {
 	}	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody TransformationFunction removeElement(@PathVariable String schemaId, @PathVariable String functionId, HttpServletRequest request) {
-		return functionService.deleteFunctionById(schemaId, functionId, authInfoHelper.getAuth(request));
+	public @ResponseBody TransformationFunction removeElement(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request) {
+		return functionService.deleteFunctionById(entityId, functionId, authInfoHelper.getAuth(request));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
-	public @ResponseBody TransformationFunction getElement(@PathVariable String schemaId, @PathVariable String functionId) {
+	public @ResponseBody TransformationFunction getElement(@PathVariable String entityId, @PathVariable String functionId) {
 		return functionService.findById(functionId);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String schemaId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
+	public String getEditForm(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if (mappingService.findMappingById(schemaId)!=null && mappingService.getHasWriteAccess(schemaId, auth.getUserId())) {
-			model.addAttribute("readonly", false);
-		} else if (schemaService.findSchemaById(schemaId)!=null && schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
-			model.addAttribute("readonly", false);
-		} else {
-			model.addAttribute("readonly", true);
-		}
-		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
+		Identifiable entity = this.getEntity(entityId);
 		
-		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		if (s.getSelectedValueMap()!=null) {
-			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();
-			if (s.getSelectedValueMap().containsKey(elementId)) {
-				model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
-			}
+		List<String> grammarClasses = new ArrayList<String>();
+		grammarClasses.add(DescriptionGrammarImpl.class.getName());
+		grammarClasses.add(DescriptionGrammar.class.getName());
+		
+		String grammarId = referenceService.findReferenceByChildId(entityId, functionId, grammarClasses).getId();
+		if (!grammarId.equals(entityId)) { // Happens for mappings
+			model.addAttribute("grammar", grammarService.findById(grammarId));
 		}
 		
-		model.addAttribute("grammar", grammarService.findById(grammarId));
+		model.addAttribute("elementSample", this.getSampleInputValue(entity, functionId, request.getSession().getId(), auth.getUserId()));
 		model.addAttribute("function", functionService.findById(functionId));
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/function/" + functionId + "/async/save");
+		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
+		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/function/" + functionId + "/async/save");
 		return "schemaEditor/form/function/edit";
 	}
 	
@@ -116,11 +110,11 @@ public class FunctionEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/validate")
-	public @ResponseBody ModelActionPojo validateFunction(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func) {
+	public @ResponseBody ModelActionPojo validateFunction(@PathVariable String entityId, @PathVariable String functionId, @RequestParam String func) {
 		ModelActionPojo result = new ModelActionPojo();
 		
 		try {
-			TransformationFunctionImpl f = new TransformationFunctionImpl(schemaId, functionId);
+			TransformationFunctionImpl f = new TransformationFunctionImpl(entityId, functionId);
 			f.setFunction(func);
 			
 			CompiledTransformationFunction fCompiled = engine.compileOutputFunction(f, true);
@@ -136,7 +130,7 @@ public class FunctionEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String schemaId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String entityId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (!result.isSuccess()) {
 			return result;
@@ -161,7 +155,7 @@ public class FunctionEditorController extends BaseScheregController {
 		
 		
 		if (!fSave.getFunction().trim().isEmpty()) {
-			ModelActionPojo validationResult = this.validateFunction(schemaId, functionId, fSave.getFunction());
+			ModelActionPojo validationResult = this.validateFunction(entityId, functionId, fSave.getFunction());
 			if (validationResult.isSuccess() && !validationResult.hasErrors()) {
 				fSave.setError(false);
 			} else {
@@ -174,16 +168,13 @@ public class FunctionEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String schemaId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample, Locale locale) {
-		String grammarId = referenceService.findReferenceBySchemaAndChildId(schemaId, functionId).getId();
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample, Locale locale) {
+		String grammarId = referenceService.findReferenceBySchemaAndChildId(entityId, functionId).getId();
 		DescriptionGrammar g = grammarService.findById(grammarId);
 		
-		Identifiable entity = schemaService.findSchemaById(schemaId);
-		if (entity==null) {
-			entity=mappingService.findMappingById(schemaId);
-		}
+		Identifiable entity = this.getEntity(entityId);
 
-		TransformationFunctionImpl f = new TransformationFunctionImpl(schemaId, functionId);
+		TransformationFunctionImpl f = new TransformationFunctionImpl(entityId, functionId);
 		f.setFunction(func);
 		f.setId(functionId);
 		
@@ -191,7 +182,7 @@ public class FunctionEditorController extends BaseScheregController {
 		
 		TransformationFunctionImpl fLoaded;
 		if (entity instanceof Schema) {
-			fLoaded = (TransformationFunctionImpl)elementService.getElementSubtree(schemaId, functionId);
+			fLoaded = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
 		} else {
 			fLoaded = f;
 			

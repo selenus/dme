@@ -1,7 +1,9 @@
 package eu.dariah.de.minfba.schereg.dao.interfaces;
 
+import java.util.List;
 import java.util.Map;
 
+import eu.dariah.de.minfba.core.metamodel.BaseIdentifiable;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
@@ -19,4 +21,7 @@ public interface ReferenceDao extends BaseDao<Reference> {
 
 	public Reference findParentByChildId(String rootId, String childId);
 	public Reference findParentByChildId(Reference reference, String childId);
+
+	public Reference findParentByChildId(Reference reference, String childId, List<String> parentClassNames);
+	public Reference findParentByChildId(String rootId, String childId, List<String> parentClassNames);
 }

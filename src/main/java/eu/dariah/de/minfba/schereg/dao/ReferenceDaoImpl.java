@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
+import eu.dariah.de.minfba.core.metamodel.BaseIdentifiable;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.base.Dao;
@@ -32,11 +33,28 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 	
 	@Override
 	public Reference findParentByChildId(String rootId, String childId) {
-		return findParentByChildId(this.findById(rootId), childId);
+		return findParentByChildId(this.findById(rootId), childId, null);
 	}
 	
 	@Override
 	public Reference findParentByChildId(Reference reference, String childId) {
+		return findParentByChildId(reference, childId, null);
+	}
+	
+	@Override
+	public Reference findParentByChildId(String rootId, String childId, List<String> parentClassNames) {
+		return findParentByChildId(this.findById(rootId), childId, parentClassNames);
+	}
+	
+	/**
+	 * Method finds parent for a given childId and specified root reference.
+	 * * In case no parentClassNames are specified, the immediate parent of the childId is returned (if found)
+	 * * In case there are desired class names specified, only matching parents are returned; however,
+	 * 		if no matching parents are found, the specified root reference will be returned irrespective of
+	 * 		the provided filter
+	 */
+	@Override
+	public Reference findParentByChildId(Reference reference, String childId, List<String> parentClassNames) {
 		if (reference.getChildReferences()!=null) {
 			for (String type : reference.getChildReferences().keySet()) {
 				if (reference.getChildReferences().get(type)!=null) {
@@ -44,9 +62,19 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 						if (r.getId().equals(childId)) {
 							return reference; // Returning the parent, not the found element 
 						} else {
-							Reference subR = findParentByChildId(r, childId);
+							Reference subR = findParentByChildId(r, childId, parentClassNames);
 							if (subR!=null) {
-								return subR;
+								if (parentClassNames==null || parentClassNames.size()==0) {
+									return subR; // No filter
+								} else if (subR.equals(r)) {
+									if (parentClassNames.contains(type)) {
+										return subR; // Type matches
+									} else {
+										return reference; // Type does not match, try with next level
+									}
+								} else {
+									return subR; // Type already validated
+								}
 							}
 						}
 					}

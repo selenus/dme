@@ -23,4 +23,6 @@ public interface PersistedSessionService {
 	public void deleteSession(PersistedSession session);
 	public void deleteSessions(List<PersistedSession> sessions);
 	public PersistedSession createAndSaveSession(String entityId, String httpSessionId, String userId, MessageSource messageSource, Locale locale) throws GenericScheregException;	
+
+	public String getSampleInputValue(String functionId, String entityId, String httpSessionId, String userId);
 }

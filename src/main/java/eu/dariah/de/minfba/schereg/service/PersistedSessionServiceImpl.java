@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -11,7 +12,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import eu.dariah.de.minfba.core.metamodel.Label;
+import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.schereg.dao.interfaces.PersistedSessionDao;
+import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
@@ -20,6 +24,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 @Service
 public class PersistedSessionServiceImpl implements PersistedSessionService {
 	@Autowired private PersistedSessionDao sessionDao;
+	@Autowired private ReferenceDao referenceDao;
 
 	@Override
 	public List<PersistedSession> findAllByUser(String entityId, String userId) {
@@ -44,6 +49,18 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 			s = createAndSaveSession(entityId, httpSessionId, userId, messageSource, locale);
 		}
 		return this.saveSession(s);
+	}
+	
+	@Override
+	public String getSampleInputValue(String functionId, String entityId, String httpSessionId, String userId) {
+		PersistedSession s = this.access(entityId, httpSessionId, userId);
+		if (s.getSelectedValueMap()!=null) {
+			
+			if (s.getSelectedValueMap().containsKey(functionId)) {
+				return s.getSelectedValueMap().get(functionId);
+			}
+		}
+		return "";
 	}
 	
 	@Override

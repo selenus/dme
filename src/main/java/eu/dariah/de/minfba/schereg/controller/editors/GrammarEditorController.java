@@ -27,80 +27,79 @@ import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
+import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
+import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.FieldErrorPojo;
+import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
-@RequestMapping(value={"/schema/editor/{schemaId}/grammar/{grammarId}", "/mapping/editor/{schemaId}/grammar/{grammarId}"})
-public class GrammarEditorController extends BaseScheregController {
-	@Autowired private ReferenceService referenceService;
+@RequestMapping(value={"/schema/editor/{entityId}/grammar/{grammarId}", "/mapping/editor/{entityId}/grammar/{grammarId}"})
+public class GrammarEditorController extends BaseFunctionController {
+	
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
 	@Autowired protected TransformationEngine engine;
-	@Autowired protected MappingService mappingService;
 	
-	@Autowired private PersistedSessionService sessionService;
 		
 	public GrammarEditorController() {
 		super("schemaEditor");
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody DescriptionGrammar removeElement(@PathVariable String schemaId, @PathVariable String grammarId, HttpServletRequest request) {
-		return grammarService.deleteGrammarById(schemaId, grammarId, authInfoHelper.getAuth(request));
+	public @ResponseBody DescriptionGrammar removeElement(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request) {
+		return grammarService.deleteGrammarById(entityId, grammarId, authInfoHelper.getAuth(request));
 	}
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/new_function")
-	public String getNewGrammarForm(@PathVariable String schemaId, @PathVariable String grammarId, Model model, Locale locale) {
-		model.addAttribute("function", new TransformationFunctionImpl(schemaId, null));
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/saveNewFunction");
+	public String getNewGrammarForm(@PathVariable String entityId, @PathVariable String grammarId, Model model, Locale locale) {
+		model.addAttribute("function", new TransformationFunctionImpl(entityId, null));
+		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/saveNewFunction");
 		return "schemaEditor/form/function/new";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewFunction")
-	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String grammarId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String entityId, @PathVariable String grammarId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			functionService.createAndAppendFunction(schemaId, grammarId, function.getName(), authInfoHelper.getAuth(request));
+			functionService.createAndAppendFunction(entityId, grammarId, function.getName(), authInfoHelper.getAuth(request));
 		}
 		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
-	public @ResponseBody DescriptionGrammar getElement(@PathVariable String schemaId, @PathVariable String grammarId) {
+	public @ResponseBody DescriptionGrammar getElement(@PathVariable String entityId, @PathVariable String grammarId) {
 		return grammarService.findById(grammarId);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String schemaId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
+	public String getEditForm(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if (mappingService.findMappingById(schemaId)!=null && mappingService.getHasWriteAccess(schemaId, auth.getUserId())) {
-			model.addAttribute("readonly", false);
-		} else if (schemaService.findSchemaById(schemaId)!=null && schemaService.getHasWriteAccess(schemaId, auth.getUserId())) {
-			model.addAttribute("readonly", false);
-		} else {
-			model.addAttribute("readonly", true);
-		}
-		
+		Identifiable entity = this.getEntity(entityId);
+				
 		DescriptionGrammarImpl g;
 		if (grammarId.equals("undefined")) {
-			g = new DescriptionGrammarImpl(schemaId, "");
+			g = new DescriptionGrammarImpl(entityId, "");
 		} else {
 			g = (DescriptionGrammarImpl)grammarService.findById(grammarId);
 		}
@@ -108,16 +107,10 @@ public class GrammarEditorController extends BaseScheregController {
 			g.setGrammarContainer(new GrammarContainer());
 		}
 
-		PersistedSession s = sessionService.access(schemaId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		if (s.getSelectedValueMap()!=null) {
-			String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();			
-			if (s.getSelectedValueMap().containsKey(elementId)) {
-				model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
-			}
-		}
-		
-		model.addAttribute("grammar", g);		
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/grammar/" + grammarId + "/async/save");
+		model.addAttribute("elementSample", this.getSampleInputValue(entity, grammarId, request.getSession().getId(), auth.getUserId()));
+		model.addAttribute("grammar", g);	
+		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
+		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/save");
 		return "schemaEditor/form/grammar/edit";
 	}
 	

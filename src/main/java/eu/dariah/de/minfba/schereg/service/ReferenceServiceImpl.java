@@ -1,5 +1,7 @@
 package eu.dariah.de.minfba.schereg.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +29,15 @@ public class ReferenceServiceImpl implements ReferenceService {
 			return this.findReferenceByChildId(schemaId, childId);
 		}
 		return null;
+	}
+
+	@Override
+	public Reference findReferenceByChildId(String rootElementId, String childId, List<String> parentClassNames) {
+		return referenceDao.findParentByChildId(rootElementId, childId, parentClassNames);
+	}
+
+	@Override
+	public Reference findReferenceByChildId(Reference reference, String childId, List<String> parentClassNames) {
+		return referenceDao.findParentByChildId(reference, childId, parentClassNames);
 	}
 }
