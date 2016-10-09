@@ -13,7 +13,8 @@ var MappedConceptEditor = function(owner, container, modal, options) {
 	this.context = document.getElementById(this.options.canvasId).getContext("2d");;
 	this.layoutContainer = $(container).find(this.options.layoutContainer);
 	this.editorContainer = $(container).find(this.options.editorContainer);
-
+	this.container = container;
+	
 	this.sourceGrammars = [];
 	this.targetElements = [];
 	this.modal = modal;
@@ -199,6 +200,10 @@ MappedConceptEditor.prototype.removeElement = function(elementId, isSource) {
 			    type: "POST",
 			    dataType: "json",
 			    success: function(data) {
+			    	if (isSource) {
+			    		$("#sample-input-" + elementId).remove();
+			    	}
+			    	
 			    	_this.reloadAll();
 			    	_this.owningEditor.reloadAll();
 			    },

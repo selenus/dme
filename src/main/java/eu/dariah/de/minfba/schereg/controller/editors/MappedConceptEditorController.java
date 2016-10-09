@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,6 +33,7 @@ import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
+import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 
 @Controller
 @RequestMapping(value="/mapping/editor/{mappingId}/mappedConcept/{mappedConceptId}")
@@ -38,6 +41,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	@Autowired protected MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private ElementService elementService;
+	@Autowired private PersistedSessionService sessionService;
 	
 	
 	public MappedConceptEditorController() {
@@ -105,18 +109,19 @@ public class MappedConceptEditorController extends BaseScheregController {
 			model.addAttribute("readonly", true);
 		}
 		
-		/*
-		 * This will be required later
-		 
-			if (s.getSelectedValueMap()!=null) {
-				String elementId = referenceService.findReferenceBySchemaAndChildId(schemaId, grammarId).getId();			
-				if (s.getSelectedValueMap().containsKey(elementId)) {
-					model.addAttribute("elementSample", s.getSelectedValueMap().get(elementId));
-				}
-			} 
-		*/
+		
 		
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
+		Map<Element, String> sampleInputs = new HashMap<Element, String>();
+		
+		List<Object> inputElementIds = new ArrayList<Object>();
+		inputElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
+		
+		for (Element e : elementService.findByIds(inputElementIds) ){
+			sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), mappingId, request.getSession().getId(), auth.getUserId()));
+		}
+
+		model.addAttribute("sampleInputMap", sampleInputs);		
 		model.addAttribute("concept", mc);		
 		
 		return "mappingEditor/form/concept/edit";

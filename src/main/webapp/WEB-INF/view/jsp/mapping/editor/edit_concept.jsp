@@ -27,12 +27,20 @@
 		<div id="layout-helper-container" class="col-md-5" style="border-left: 1px solid #E5E5E5; margin-left: -1px;">
 			<div class="legend"><strong>2</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.execute" /></div>
 			<div class="non-passthrough-only">
-				<div class="form-group">
-					<label class="control-label" for="grammar-sample-input"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" />:</label>
-					<div>
-						<textarea id="grammar-sample-input" rows="6" class="form-control codearea">${elementSample}</textarea>
-					</div>
+			
+				<div style="max-height: 300px; overflow: scroll; margin-bottom: 10px;">
+					<c:forEach var="sampleInput" items="${sampleInputMap}">
+					
+						<div id="sample-input-${sampleInput.key.id}" class="form-group">
+							<label class="control-label" for="grammar-sample-input"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /> <em>(${sampleInput.key.name}):</em></label>
+							<div>
+								<textarea id="grammar-sample-input" rows="3" class="form-control codearea">${sampleInput.value}</textarea>
+							</div>
+						</div>
+					
+					</c:forEach>
 				</div>
+				
 				<div class="clearfix">
 					<button id="btn-parse-sample" class="btn btn-warning btn-sm pull-right disabled" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.process_input" /></button>
 				</div>
