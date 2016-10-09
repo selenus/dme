@@ -5,7 +5,7 @@
 
 <div>
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.grammar.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.concept.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
 		
 	</div>
 	<div class="form-content row" style="padding-bottom: 0px;">
