@@ -10,9 +10,8 @@
 	</div>
 	<div class="form-content row" style="padding-bottom: 0px;">
 		<div class="col-md-7" style="border-right: 1px solid #E5E5E5;">
-			<div class="legend"><strong>1</strong> <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.legend.edit_function" /></div>
+			<div class="legend"><strong>1</strong> <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.legend.edit_concept" /></div>
 			<div class="form-group">
-				<label id="label-parser-grammar" class="control-label" for="grammarContainer_parserGrammar"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.parser_grammar" />:</label>
 				<div class="row">
 					<div id="mapped-concept-editor-container" class="col-xs-12">
 						<canvas id="mapped-concept-editor"></canvas>
