@@ -1,16 +1,14 @@
 var MappedConceptEditor = function(container, options) {
 	this.options = {
 			conceptId: "",
-			sourcePath: "mappedConcept/{0}/source",
-			targetPath: "mappedConcept/{0}/target",
+			path: "mappedConcept/{0}",
 			layoutContainer: "#layout-helper-container",
 			editorContainer: "#mapped-concept-editor-container",
 			canvasId: "mapped-concept-editor",
 			readOnly: false
 	};
 	$.extend(true, this.options, options);
-	this.options.sourcePath = String.format(this.options.sourcePath, this.options.conceptId); 
-	this.options.targetPath = String.format(this.options.targetPath, this.options.conceptId);
+	this.options.path = String.format(this.options.path, this.options.conceptId);
 	
 	this.context = document.getElementById(this.options.canvasId).getContext("2d");;
 	this.layoutContainer = $(container).find(this.options.layoutContainer);
@@ -18,7 +16,7 @@ var MappedConceptEditor = function(container, options) {
 
 	this.sourceGrammars = [];
 	this.targetElements = [];
-	this.functionId = "";
+	
 	
 	__translator.addTranslations([
 		"~eu.dariah.de.minfba.common.link.edit",
@@ -111,8 +109,8 @@ MappedConceptEditor.prototype.init = function() {
 	this.graph.init();
 	this.resize();
 	
-	this.getElementHierarchy(this.options.sourcePath, this.source, true);
- 	this.getElementHierarchy(this.options.targetPath, this.target, false);
+	this.getElementHierarchy(this.options.path + "/source", this.source, true);
+ 	this.getElementHierarchy(this.options.path + "/target", this.target, false);
  	
  	this.addMapping();
  	this.graph.update();
@@ -134,9 +132,44 @@ MappedConceptEditor.prototype.handleContextMenuClicked = function(e) {
 MappedConceptEditor.prototype.performTreeAction = function(action, elementId, elementKey) {	
 	switch(action) {	 
 	    case "removeSourceGrammar" : return this.removeSourceByGrammar(elementId);
+	    case "editConceptFunction" : return this.editFunction(elementId);
 	    case "removeSource" : return this.removeElement(elementId, true);
 	    case "removeTarget" : return this.removeElement(elementId, false);
 	}  
+};
+
+
+MappedConceptEditor.prototype.editFunction = function(connectionId) {
+	var _this = this;	
+	
+	$.ajax({
+	    url: _this.options.path + "/function",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	
+	    	var functionId = data.id;
+	    	var form_identifier = "edit-function-" + functionId;
+		   	
+	    	modalFormHandler = new ModalFormHandler({
+	    		formUrl: "/function/" + functionId + "/form/edit",
+	    		identifier: form_identifier,
+	    		additionalModalClasses: "max-modal",
+	    		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+	    		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+	    		                ],
+	            setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
+	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.mappingId,
+	    			entityId : _this.mappingId,
+	    			functionId : connectionId
+	    		}); },       
+	    		completeCallback: function() { _this.graph.reselect(); }
+	    	});
+	    		
+	    	modalFormHandler.show(form_identifier);
+	    },
+	    error: __util.processServerError
+	});
 };
 
 MappedConceptEditor.prototype.removeSourceByGrammar = function(grammarId) {
@@ -150,10 +183,10 @@ MappedConceptEditor.prototype.removeElement = function(elementId, isSource) {
 	}
 	
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), conceptMappingId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), elementId), function(result) {
 		if(result) {
 			$.ajax({
-			    url: (isSource===true ? this.options.sourcePath : this.options.targetPath) + "/" + elementId + "/remove",
+			    url: _this.options.path + (isSource===true ? "/source/" : "/target/") + elementId + "/remove",
 			    type: "POST",
 			    dataType: "json",
 			    success: function(data) {
@@ -184,9 +217,9 @@ MappedConceptEditor.prototype.getFunctionContextMenu = function(element) {
 		var items = [
 		];
 		if (editor.mappingOwn || editor.mappingWrite) {
-			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editConceptFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
 		} else {
-			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editConceptFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
 		}
 		return items; 
 };
@@ -273,11 +306,6 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 			if (isSource) {
 				this.sourceGrammars.push(grammars[i].id);
 			}
-			
-			if (grammars[i].transformationFunctions != null && grammars[i].transformationFunctions instanceof Array) {
-				this.functionId = grammars[i].transformationFunctions[0].id;
-			}
-			
 		}
 	}
 	if (subelements!=null && subelements instanceof Array) {

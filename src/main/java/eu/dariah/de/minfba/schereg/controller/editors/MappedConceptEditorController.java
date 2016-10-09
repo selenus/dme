@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
@@ -121,6 +122,11 @@ public class MappedConceptEditorController extends BaseScheregController {
 		return "mappingEditor/form/concept/edit";
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/function")
+	public @ResponseBody TransformationFunction getConceptFunction(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		return mappedConceptService.getConceptFunction(mappingId, mappedConceptId);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/source")
 	public @ResponseBody List<Element> getRenderedSource(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
@@ -146,9 +152,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/source/{sourceId}/remove")
 	public @ResponseBody ModelActionPojo removeSource(@PathVariable String mappingId, @PathVariable String mappedConceptId, @PathVariable String sourceId, HttpServletRequest request) throws GenericScheregException {
-		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
-		mc.getElementGrammarIdsMap().remove(sourceId);
-		
+		mappedConceptService.removeSourceElementById(authInfoHelper.getAuth(request), mappingId, mappedConceptId, sourceId);
 		return new ModelActionPojo(true);
 	}
 	
@@ -165,6 +169,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/target/{targetId}/remove")
 	public @ResponseBody ModelActionPojo removeTarget(@PathVariable String mappingId, @PathVariable String mappedConceptId, @PathVariable String targetId, HttpServletRequest request) throws GenericScheregException {
+		AuthPojo auth = authInfoHelper.getAuth(request);
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
 		List<TargetElementGroup> removeGroups = new ArrayList<TargetElementGroup>();
 		
@@ -181,6 +186,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 			mc.getTargetElementGroups().removeAll(removeGroups);
 		}
 		
+		mappedConceptService.saveMappedConcept(mc, mappingId, auth);
 		return new ModelActionPojo(true);
 	}
 }

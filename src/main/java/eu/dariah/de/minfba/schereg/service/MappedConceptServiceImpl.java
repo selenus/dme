@@ -43,19 +43,22 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		mappedConcept.setEntityId(mappingId);
 		mappedConceptDao.save(mappedConcept, auth.getUserId(), auth.getSessionId());
 		
-
 		Reference root = this.findReferenceById(mappingId);
 		Reference refConcept;
 		boolean needReferenceSave = false; 
 		
 		if (isNew) {
 			refConcept = this.addChildReference(root, mappedConcept);
+			
+			TransformationFunction function = new TransformationFunctionImpl(mappingId, "fMapping");
+			functionDao.save(function, auth.getUserId(), auth.getSessionId());
+			
+			addChildReference(refConcept, function); 
+			needReferenceSave = true;
 		} else {
 			refConcept = findSubreference(root, mappedConcept.getId());
 		}
-		
-		
-		String functionId = null;
+
 		for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
 			if (mappedConcept.getElementGrammarIdsMap().get(sourceElementId)==null) {
 				Element source = elementDao.findById(sourceElementId);
@@ -69,28 +72,6 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 				addChildReference(refConcept, grammar); 
 				
 				needReferenceSave = true;
-			} else if (functionId==null) {
-				Reference refGrammar = findSubreference(root, mappedConcept.getElementGrammarIdsMap().get(sourceElementId));
-				if (refGrammar.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
-					functionId = refGrammar.getChildReferences().get(TransformationFunctionImpl.class.getName())[0].getId();
-				}
-			}
-		}
-		
-		TransformationFunction function;
-		if (functionId==null) {
-			function = new TransformationFunctionImpl(mappingId, "fMapping");
-			functionDao.save(function, auth.getUserId(), auth.getSessionId());
-		} else {
-			function = functionDao.findById(functionId);
-		}
-		for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
-			Reference refGrammar = findSubreference(root, mappedConcept.getElementGrammarIdsMap().get(sourceElementId));
-			if (refGrammar.getChildReferences()==null || 
-					!refGrammar.getChildReferences().containsKey(TransformationFunctionImpl.class.getName()) || 
-					refGrammar.getChildReferences().get(TransformationFunctionImpl.class.getName()).length==0) {
-				addChildReference(refGrammar, function);
-				needReferenceSave = true;
 			}
 		}
 		
@@ -98,6 +79,20 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			this.saveRootReference(root);
 			mappedConceptDao.save(mappedConcept, auth.getUserId(), auth.getSessionId());
 		}
+	}
+	
+	@Override
+	public TransformationFunction getConceptFunction(String mappingId, String conceptId) {
+		Reference root = this.findReferenceById(mappingId);
+		Reference refConcept = findSubreference(root, conceptId);
+		
+		for (String className : refConcept.getChildReferences().keySet()) {
+			if (className.equals(TransformationFunctionImpl.class.getName()) || 
+					className.equals(TransformationFunction.class.getName())) {
+				return functionDao.findById(refConcept.getChildReferences().get(className)[0].getId());
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -188,6 +183,31 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			logger.error("Failed to remove mapped concept", e);
 		}
 		
+	}
+	
+	@Override
+	public void removeSourceElementById(AuthPojo auth, String mappingId, MappedConcept mc, String sourceId) {
+		if (!mc.getElementGrammarIdsMap().containsKey(sourceId)) {
+			return;
+		}
+		mc.getElementGrammarIdsMap().remove(sourceId);
+		//this.saveMappedConcept(mc, mappingId, auth);
+		
+		Reference rMapping = this.findReferenceById(mappingId);
+		Reference rMc = findSubreference(rMapping, mc.getId());
+		
+		for (String key : rMc.getChildReferences().keySet()) {
+			if (key.equals(DescriptionGrammarImpl.class.getName())) {
+				
+			}
+		}
+		
+		//this.saveRootReference(rMapping);
+	}
+
+	@Override
+	public void removeSourceElementById(AuthPojo auth, String mappingId, String mappedConceptId, String sourceId) {
+		this.removeSourceElementById(auth, mappingId, this.findById(mappedConceptId), sourceId);
 	}
 	
 	private List<Identifiable> getAllElements(String mappingId) {

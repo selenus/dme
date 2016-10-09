@@ -205,7 +205,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 							if (subelem.length==1) {
 								// Remove entry if last entry
 								reference.getChildReferences().remove(subelemClass);
-							} else {
+							} else {								
 								Reference[] newSubelem = new Reference[subelem.length-1];
 								// Copy all subreferences except the removable one
 								int j = 0;
