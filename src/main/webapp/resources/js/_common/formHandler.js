@@ -168,13 +168,13 @@ ModalFormHandler.prototype.setUpForm = function() {
 	
 	if (_this.options.setupCallback != undefined && typeof _this.options.setupCallback == 'function') {
 		$(this.container).on('show.bs.modal', function (e) {
-			_this.options.setupCallback(_this.container);
+			_this.options.setupCallback(_this.container, this);
 		});
 	}	
 
 	if (_this.options.displayCallback != undefined && typeof _this.options.displayCallback == 'function') {
 		$(this.container).on('shown.bs.modal', function (e) {
-			_this.options.displayCallback(_this.container);
+			_this.options.displayCallback(_this.container, _this);
 		});
 	}
 	
@@ -215,6 +215,11 @@ ModalFormHandler.prototype.addMessage = function(type, header, message) {
 	
 	// Show the new alert
 	$(msgContainer).fadeIn(200);
+};
+
+ModalFormHandler.prototype.close = function() {
+	this.formResetted = true;
+	$(this.container).modal('hide');
 };
 
 ModalFormHandler.prototype.submit = function(data) {

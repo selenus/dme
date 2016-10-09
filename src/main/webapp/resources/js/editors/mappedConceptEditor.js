@@ -1,4 +1,4 @@
-var MappedConceptEditor = function(container, options) {
+var MappedConceptEditor = function(owner, container, modal, options) {
 	this.options = {
 			conceptId: "",
 			path: "mappedConcept/{0}",
@@ -16,7 +16,9 @@ var MappedConceptEditor = function(container, options) {
 
 	this.sourceGrammars = [];
 	this.targetElements = [];
+	this.modal = modal;
 	
+	this.owningEditor = owner;
 	
 	__translator.addTranslations([
 		"~eu.dariah.de.minfba.common.link.edit",
@@ -105,17 +107,16 @@ MappedConceptEditor.prototype.init = function() {
 	this.target = this.graph.addArea({ getContextMenuItems: _this.getAreaContextMenu });
 	
 	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
+	this.resizeHandler = this.resize.bind(this);
 	
 	this.graph.init();
 	this.resize();
 	
-	this.getElementHierarchy(this.options.path + "/source", this.source, true);
- 	this.getElementHierarchy(this.options.path + "/target", this.target, false);
- 	
- 	this.addMapping();
- 	this.graph.update();
- 	
- 	this.registerEvents();
+ 	this.reloadAll();
+};
+
+MappedConceptEditor.prototype.dispose = function() {
+	this.deregisterEvents();
 };
 
 MappedConceptEditor.prototype.registerEvents = function() {
@@ -123,6 +124,14 @@ MappedConceptEditor.prototype.registerEvents = function() {
 	//document.addEventListener("selectionEvent_mc", this.selectionHandler, false);
 	//document.addEventListener("deselectionEvent_mc", this.deselectionHandler, false);
 	document.addEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
+	window.addEventListener("resize", this.resizeHandler, false);
+};
+
+MappedConceptEditor.prototype.deregisterEvents = function() {
+	//document.removeEventListener("selectionEvent_mc", this.selectionHandler);
+	//document.removeEventListener("deselectionEvent_mc", this.deselectionHandler);
+	document.removeEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler);
+	window.removeEventListener("resize", this.resizeHandler);
 };
 
 MappedConceptEditor.prototype.handleContextMenuClicked = function(e) {
@@ -190,7 +199,8 @@ MappedConceptEditor.prototype.removeElement = function(elementId, isSource) {
 			    type: "POST",
 			    dataType: "json",
 			    success: function(data) {
-			    	// TODO: Remove individually
+			    	_this.reloadAll();
+			    	_this.owningEditor.reloadAll();
 			    },
 			    error: __util.processServerError
 			});
@@ -248,14 +258,47 @@ MappedConceptEditor.prototype.resize = function() {
 	}	
 };
 
-MappedConceptEditor.prototype.getElementHierarchy = function(path, area, isSource) {
+MappedConceptEditor.prototype.reloadAll = function() {
+	this.deregisterEvents();
+	this.graph.clearMappings();
+	
+	this.targetElements = [];
+	this.sourceGrammars = [];
+	
+	this.getElementHierarchy(this.options.path + "/source", this.source, true);
+	this.getElementHierarchy(this.options.path + "/target", this.target, false);
+	
+	if (this.source.root===undefined || this.source.root===null || 
+			this.target.root===undefined || this.target.root===null) {
+		this.modal.close();
+		return;
+	}
+ 	
+ 	this.addMapping();
+ 	
+ 	this.graph.update();
+ 	this.registerEvents();
+};
+
+MappedConceptEditor.prototype.getElementHierarchy = function(path, area, isSource) {	
 	var _this = this;
 	$.ajax({
 	    url: path,
-	    async: false,
+	    async: false, // This is required in our case
 	    type: "GET",
 	    success: function(data) {
-	    	if (data===null || data===undefined || data.length==0) {
+	    	/* Reloading data while preserving layout */
+	    	var rootX = 0;
+	    	var rootY = 0;
+	    	var reposition = false;
+	    	if (area.root!=null) {
+	    		rootX = area.root.rectangle.x;
+	    		rootY = area.root.rectangle.y;
+	    		reposition = true;
+	    		area.clear();
+	    	}
+	    	
+	    	if (data===null || data===undefined || data==="null" || data.length==0) {
 	    		return;
 	    	}
 	    	
@@ -268,6 +311,11 @@ MappedConceptEditor.prototype.getElementHierarchy = function(path, area, isSourc
 	    	wrapper.simpleType = "LogicalRoot";
 	    	
 	    	_this.processElementHierarchy(wrapper, area, isSource);
+
+	    	if (reposition) {
+	    		area.root.rectangle = new Rectangle(rootX, rootY, area.root.rectangle.width, area.root.rectangle.height);
+	    		area.invalidate();
+	    	}
 	    }
 	});
 };

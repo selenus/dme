@@ -154,6 +154,10 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 				break;
 			}
 		}
+		if (r==null) {
+			return null;
+		}
+		
 		List<Identifiable> elements = new ArrayList<Identifiable>();
 		elements.add(mappedConceptDao.findById(mappedConceptId));
 		elements.addAll(grammarDao.find(Query.query(Criteria.where("_id").in(grammarIds))));
@@ -161,10 +165,6 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
 		for (Identifiable e : elements) {
 			elementMap.put(e.getId(), e);
-		}
-		
-		if (r==null) {
-			return null;
 		}
 		
 		return (MappedConcept)this.fillElement(r, elementMap);
@@ -191,18 +191,20 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			return;
 		}
 		mc.getElementGrammarIdsMap().remove(sourceId);
-		//this.saveMappedConcept(mc, mappingId, auth);
 		
-		Reference rMapping = this.findReferenceById(mappingId);
-		Reference rMc = findSubreference(rMapping, mc.getId());
-		
-		for (String key : rMc.getChildReferences().keySet()) {
-			if (key.equals(DescriptionGrammarImpl.class.getName())) {
-				
+		if (mc.getElementGrammarIdsMap().size()==0) {
+			try {
+				this.removeMappedConcept(mappingId, mc.getId(), auth);
+			} catch (GenericScheregException e) {
+				logger.error("Failed to remove empty mapped concept", e);
 			}
+		} else {
+			this.saveMappedConcept(mc, mappingId, auth);
+			
+			Reference rMapping = this.findReferenceById(mappingId);
+			removeSubreference(rMapping, sourceId);
+			this.saveRootReference(rMapping);
 		}
-		
-		//this.saveRootReference(rMapping);
 	}
 
 	@Override

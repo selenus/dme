@@ -51,6 +51,7 @@ var MappingEditor = function(options) {
 	
 	this.oneDone = false;
 	
+	this.conceptEditor = null;
 	this.logArea = null;
 	
 	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
@@ -101,7 +102,7 @@ MappingEditor.prototype.deregisterEvents = function() {
 	document.removeEventListener("deselectionEvent", this.deselectionHandler);
 	document.removeEventListener("newConceptMappingEvent", this.saveConceptMappingHandler);
 	document.removeEventListener("changeConceptMappingEvent", this.saveConceptMappingHandler);
-	document.removeEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler, false);
+	document.removeEventListener("contextMenuClickEvent", this.contextMenuClickEventHandler);
 };
 
 MappingEditor.prototype.initLayout = function() {
@@ -294,11 +295,12 @@ MappingEditor.prototype.editConnection = function(connectionId) {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],     
-		displayCallback: function(modal) { _this.conceptEditor = new MappedConceptEditor(modal, {
-			    			conceptId: connectionId
-			    		}); },
-			    		
-		completeCallback: function() { _this.graph.reselect(); }
+		displayCallback: function(container, modal) { 
+			if (_this.conceptEditor!==undefined && _this.conceptEditor!==null) {
+				_this.conceptEditor.dispose();
+				_this.conceptEditor = null;
+			}
+			_this.conceptEditor = new MappedConceptEditor(_this, container, modal, { conceptId: connectionId }); }
 	});
 		
 	modalFormHandler.show(form_identifier);

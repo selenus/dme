@@ -130,6 +130,11 @@ public class MappedConceptEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/source")
 	public @ResponseBody List<Element> getRenderedSource(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
+		if (mc==null) {
+			response.getWriter().print("null");
+			return null;
+		}
+		
 		List<Object> sourceElementIds = new ArrayList<Object>();
 		sourceElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
 				
@@ -159,7 +164,10 @@ public class MappedConceptEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/target")
 	public @ResponseBody List<Element> getRenderedTargets(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
-		
+		if (mc==null) {
+			response.getWriter().print("null");
+			return null;
+		}
 		List<Object> targetElementIds = new ArrayList<Object>();
 		targetElementIds.addAll(mc.getTargetElementIds());
 				
@@ -186,7 +194,12 @@ public class MappedConceptEditorController extends BaseScheregController {
 			mc.getTargetElementGroups().removeAll(removeGroups);
 		}
 		
-		mappedConceptService.saveMappedConcept(mc, mappingId, auth);
+		// Delete mapping if there are no remaining targets
+		if (mc.getTargetElementGroups().size()==0) {
+			mappedConceptService.removeMappedConcept(mappingId, mc.getId(), auth);
+		} else {		
+			mappedConceptService.saveMappedConcept(mc, mappingId, auth);
+		}
 		return new ModelActionPojo(true);
 	}
 }
