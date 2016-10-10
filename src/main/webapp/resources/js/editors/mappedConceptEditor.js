@@ -495,12 +495,12 @@ MappedConceptEditor.prototype.showTransformationResults = function(data) {
 	}
 	var list = $("<ul>");
 	this.appendTransformationResults(data.pojo, list);
-	$("#transformation-result").removeClass("hide");
-	$("#transformation-result").html(list);
-	$("#transformation-alerts").html("");
+	$(".transformation-result").removeClass("hide");
+	$(".transformation-result").html(list);
+	$(".transformation-alerts").html("");
 	if (data.objectWarnings!=null && Array.isArray(data.objectWarnings)) {
 		for (var i=0; i<data.objectWarnings.length; i++) {
-			$("#transformation-alerts").append(
+			$(".transformation-alerts").append(
 					"<div class=\"alert alert-sm alert-warning\">" +
 						"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span> " 
 						+ data.objectWarnings[i] + 
