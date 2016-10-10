@@ -69,26 +69,20 @@ BaseEditor.prototype.getElementType = function(originalType) {
 BaseEditor.prototype.processMappedConceptDetails = function(data, callback, container, pathPrefix) {
 	var details = $("<div class=\"clearfix\">");
 	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.source"), data.sourceElementId));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.targets"), data.targetElementIds));
-	
-	details.append("<h5>" + __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar") + "</h5>");
-	container.append(details);
 	
 	var _this = this;
+	var inputIds = [];
 	
 	for (var elementId in data.elementGrammarIdsMap) {
 		if (data.elementGrammarIdsMap.hasOwnProperty(elementId)) {
-			var grammar = data.elementGrammarIdsMap[elementId];
-			if (grammar!=null) {
-				this.getElementDetails(pathPrefix, "DescriptionGrammarImpl", grammar, details, function() {
-					details.append("<br />");
-					//details.append("<h5>" + __translator.translate("~eu.dariah.de.minfba.schereg.model.function.function") + "</h5>");
-					//_this.getElementDetails(pathPrefix, "TransformationFunctionImpl", grammar.id.transformationFunctions[0].id, details);
-				});
-			}
+			inputIds.push(elementId);
 		}
 	}
+	
+	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.source"), inputIds));
+	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.targets"), data.targetElementIds));
+	
+	container.append(details);
 	
 	if (callback!==undefined) {
 		callback(data, container, pathPrefix);
@@ -194,37 +188,36 @@ BaseEditor.prototype.renderContextTabDetail = function(label, data, pre) {
 		} else {
 			detail.append("<div>&nbsp;</div>");
 		}
-		
-		var dataE = "<div class=\"schema-metadata-data\"><pre>";
-		if (data===true) {
-			dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
-		} else if (data===false) {
-			dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
-		} else {
-			dataE += data;
-		}
-		
-		detail.append(dataE + "</pre></div>");
+		detail.append("<div class=\"schema-metadata-data\"><pre>" + this.renderData(data) + "</pre></div>");
 	} else {
 		if (label!=null && label!="") {
 			detail.append("<div class=\"schema-metadata-label col-xs-3 col-md-4\">" + label + ":</div>");
 		} else {
 			detail.append("<div class=\"col-xs-3 col-md-4\">&nbsp;</div>");
 		}
-		
-		var dataE = "<div class=\"schema-metadata-data col-xs-9 col-md-8\">";
-		if (data===true) {
-			dataE += "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
-		} else if (data===false) {
-			dataE += "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
-		} else {
-			dataE += data;
-		}
-		
-		detail.append(dataE + "</div>");
+		detail.append("<div class=\"schema-metadata-data col-xs-9 col-md-8\">" + this.renderData(data) + "</div>");
 	}
 	return detail;
 };
+
+BaseEditor.prototype.renderData = function(data) {
+	if (data===true) {
+		return "<span class=\"glyphicon glyphicon-check\" aria-hidden=\"true\"></span>";
+	} else if (data===false) {
+		return "<span class=\"glyphicon glyphicon-unchecked\" aria-hidden=\"true\"></span>";
+	} else if (data!==undefined && data instanceof Array) {
+		var strArray = "";
+		for (var i=0; i<data.length; i++) {
+			strArray += data[i];
+			if (i<data.length-1) {
+				strArray += ", ";
+			}
+		}
+		return strArray;
+	} else {
+		return data;
+	}
+}
 
 BaseEditor.prototype.loadActivitiesForEntity = function(entityId, container) {
 	var _this = this;

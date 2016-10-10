@@ -3,6 +3,7 @@ package eu.dariah.de.minfba.schereg.controller.editors;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -112,7 +113,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 		
 		
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
-		Map<Element, String> sampleInputs = new HashMap<Element, String>();
+		Map<Element, String> sampleInputs = new LinkedHashMap<Element, String>();
 		
 		List<Object> inputElementIds = new ArrayList<Object>();
 		inputElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
