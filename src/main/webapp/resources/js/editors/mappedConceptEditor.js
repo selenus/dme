@@ -142,12 +142,48 @@ MappedConceptEditor.prototype.handleContextMenuClicked = function(e) {
 MappedConceptEditor.prototype.performTreeAction = function(action, elementId, elementKey) {	
 	switch(action) {	 
 	    case "removeSourceGrammar" : return this.removeSourceByGrammar(elementId);
-	    case "editConceptFunction" : return this.editFunction(elementId);
+	    case "editFunction" : return this.editFunction(elementId);
+	    case "editGrammar" : return this.editGrammar(elementId);
 	    case "removeSource" : return this.removeElement(elementId, true);
 	    case "removeTarget" : return this.removeElement(elementId, false);
 	}  
 };
 
+MappedConceptEditor.prototype.editGrammar = function(grammarId) {
+	var _this = this;
+	var form_identifier = "edit-grammar-" + grammarId;
+
+	var elementId = this.source.findElementById(this.source.root, grammarId).parent.id;
+	var sampleData = "";
+	
+	$(".sample-input").each(function() {
+		if ($(this).find("input[name='elementId']").val()==elementId) {
+			sampleData = $(this).find(".form-control").val();
+		}
+	});
+	
+	modalFormHandler = new ModalFormHandler({
+		method: "POST",
+		formUrl: "/grammar/" + grammarId + "/form/editWdata",
+		data: { sample: sampleData },
+		identifier: form_identifier,
+		additionalModalClasses: "max-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],
+		setupCallback: function(modal) { 
+			grammarEditor = new GrammarEditor(modal, {
+				pathPrefix: __util.getBaseUrl() + "mapping/editor/" + grammarId,
+				entityId : _this.mappingId,
+				grammarId : grammarId
+				}
+			); 
+		},     
+		completeCallback: function() { _this.graph.reselect(); }
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
 
 MappedConceptEditor.prototype.editFunction = function(connectionId) {
 	var _this = this;	
@@ -161,17 +197,27 @@ MappedConceptEditor.prototype.editFunction = function(connectionId) {
 	    	var functionId = data.id;
 	    	var form_identifier = "edit-function-" + functionId;
 		   	
+	    	var elementIds = [];
+	    	var samples = [];
+	    	
+	    	$(".sample-input").each(function() {
+	    		elementIds.push($(this).find("input[name='elementId']").val());
+	    		samples.push($(this).find(".form-control").val());
+	    	});
+	    	
 	    	modalFormHandler = new ModalFormHandler({
-	    		formUrl: "/function/" + functionId + "/form/edit",
+	    		method: "POST",
+	    		data: { elementIds : elementIds, samples: samples },
+	    		formUrl: "/function/" + functionId + "/form/editWdata",
 	    		identifier: form_identifier,
 	    		additionalModalClasses: "max-modal",
 	    		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 	    		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 	    		                ],
 	            setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
-	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.mappingId,
+	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.owningEditor.mappingId,
 	    			entityId : _this.mappingId,
-	    			functionId : connectionId
+	    			functionId : functionId
 	    		}); },       
 	    		completeCallback: function() { _this.graph.reselect(); }
 	    	});
@@ -201,9 +247,12 @@ MappedConceptEditor.prototype.removeElement = function(elementId, isSource) {
 			    dataType: "json",
 			    success: function(data) {
 			    	if (isSource) {
-			    		$("#sample-input-" + elementId).remove();
+			    		$(".sample-input").each(function() {
+			    			if ($(this).find("input[name='elementId']").val()==elementId) {
+			    				$(this).remove();
+			    			}
+				    	});
 			    	}
-			    	
 			    	_this.reloadAll();
 			    	_this.owningEditor.reloadAll();
 			    },
@@ -232,9 +281,9 @@ MappedConceptEditor.prototype.getFunctionContextMenu = function(element) {
 		var items = [
 		];
 		if (editor.mappingOwn || editor.mappingWrite) {
-			items.push(_this.graph.createContextMenuItem("editConceptFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
 		} else {
-			items.push(_this.graph.createContextMenuItem("editConceptFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
 		}
 		return items; 
 };
@@ -394,4 +443,85 @@ MappedConceptEditor.prototype.formatLabel = function(label) {
 	} else {
 		return label;
 	}	
+};
+
+MappedConceptEditor.prototype.performTransformation = function() {
+	var _this = this;	
+	
+	$.ajax({
+	    url: _this.options.path + "/function",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	var f = data.id;
+	    	
+	    	var elementIds = [];
+	    	var samples = [];
+	    	
+	    	$(_this.container).find(".sample-input").each(function() {
+	    		elementIds.push($(this).find("input[name='elementId']").val());
+	    		samples.push($(this).find(".form-control").val());
+	    	});
+	    	
+	    	$.ajax({
+	    	    url: "function/" + f + "/async/parseSample",
+	    	    type: "POST",
+	    	    data: { 
+	    	    	func: f,
+	    	    	elementIds : elementIds, 
+	    	    	samples: samples
+	    	    },
+	    	    dataType: "json",
+	    	    success: function(data) {
+	    	    	if (data.success) {
+	    	    		//$("#transformation-result-container").text(JSON.stringify(data.pojo));
+	    	    		_this.showTransformationResults(data);
+	    	    	} else {
+	    	    		alert("error1");
+	    	    	}
+	    	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	    	__util.processServerError(jqXHR, textStatus, errorThrown);
+	    	    }
+	    	});
+	    },
+	    error: __util.processServerError
+	});
+};
+
+MappedConceptEditor.prototype.showTransformationResults = function(data) {
+	if (data.pojo==null || !Array.isArray(data.pojo)) {
+		alert("no array");
+		return;
+	}
+	var list = $("<ul>");
+	this.appendTransformationResults(data.pojo, list);
+	$("#transformation-result").removeClass("hide");
+	$("#transformation-result").html(list);
+	$("#transformation-alerts").html("");
+	if (data.objectWarnings!=null && Array.isArray(data.objectWarnings)) {
+		for (var i=0; i<data.objectWarnings.length; i++) {
+			$("#transformation-alerts").append(
+					"<div class=\"alert alert-sm alert-warning\">" +
+						"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span> " 
+						+ data.objectWarnings[i] + 
+					"</div>");			
+		}
+	}
+	
+};
+
+MappedConceptEditor.prototype.appendTransformationResults = function(elements, container) {
+	for (var i=0; i<elements.length; i++) {
+		var elem = $("<li>");
+		elem.append("<span class=\"transformation-result-label\">" + elements[i].label + "</span>");
+		if (elements[i].children!=null && Array.isArray(elements[i].children) && elements[i].children.length > 0) {
+			var subelem = $("<ul>");
+			this.appendTransformationResults(elements[i].children, subelem);
+			elem.append(subelem);
+		} else {
+			elem.append(": ");
+			elem.append("<span class=\"transformation-result-value\">" + elements[i].value + "</span>");
+		}
+		container.append(elem);
+	}
 };

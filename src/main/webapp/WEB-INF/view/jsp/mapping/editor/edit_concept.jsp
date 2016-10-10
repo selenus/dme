@@ -28,12 +28,13 @@
 			<div class="legend"><strong>2</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.execute" /></div>
 			<div class="non-passthrough-only">
 			
-				<div style="max-height: 300px; overflow: scroll; margin-bottom: 10px;">
+				<div class="sample-input-container">
 					<c:forEach var="sampleInput" items="${sampleInputMap}">
 					
-						<div id="sample-input-${sampleInput.key.id}" class="form-group">
+						<div class="sample-input form-group">
 							<label class="control-label" for="grammar-sample-input"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /> <em>(${sampleInput.key.name}):</em></label>
 							<div>
+								<input type="hidden" name="elementId" value="${sampleInput.key.id}" />
 								<textarea id="grammar-sample-input" rows="3" class="form-control codearea">${sampleInput.value}</textarea>
 							</div>
 						</div>
@@ -42,25 +43,25 @@
 				</div>
 				
 				<div class="clearfix">
-					<button id="btn-parse-sample" class="btn btn-warning btn-sm pull-right disabled" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.process_input" /></button>
+					<button id="btn-parse-sample" class="btn btn-warning btn-sm pull-right" onclick="editor.conceptEditor.performTransformation(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.process_input" /></button>
 				</div>
 			</div>
 			<div class="passthrough-only">
 			</div>
 			<div class="legend"><strong>3</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.transformation_result" /></div>
-			<div class="non-passthrough-only">
-				<div id="grammar-parse-alerts">
-					<div class="alert alert-sm alert-info"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.notice.hint_sample" /></div>
+			<div class="transformation-result-container">
+				<div class="transformation-alerts">
+					<c:choose>
+						<c:when test="${grammar.error}">
+							<div class="alert alert-sm alert-warning"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.error.error_in_grammar" /></div>
+						</c:when>
+						<c:otherwise>
+							<div class="alert alert-sm alert-info"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.notice.hint_sample" /></div>
+						</c:otherwise>
+					</c:choose>
 				</div>
-				<div id="grammar-sample-svg-embedded" class="outer-svg-container hide">
-					<div class="inner-svg-container"></div>
-					<div class="svg-button-container">
-						<button class="btn btn-link btn-sm btn-svg-zoomin"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
-						<button class="btn btn-link btn-sm btn-svg-zoomout"><span class="glyphicon glyphicon-minus" aria-hidden="true"></span></button>
-						<button class="btn btn-link btn-sm btn-svg-reset"><span class="glyphicon glyphicon-repeat" aria-hidden="true"></span></button>
-						<button class="btn btn-link btn-sm btn-svg-newwindow"><span class="glyphicon glyphicon-new-window" aria-hidden="true"></span></button>
-					</div>
-				</div>
+				<pre class="transformation-result hide">
+				</pre>
 			</div>
 		</div>
 	</div>

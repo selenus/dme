@@ -562,6 +562,15 @@ noscript div {
 }
 
 /*!
+ * Editors common
+ */
+.sample-input-container {
+	max-height: 300px; 
+	overflow: scroll; 
+	margin-bottom: 10px;
+}
+
+/*!
  *  Transformation function editor
  */
 .transformation-result-container ul {

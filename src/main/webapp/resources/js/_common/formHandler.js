@@ -25,7 +25,11 @@ var modalFormHandler = null;
             		 	{placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.body"}
             		 ];*/
 var ModalFormHandler = function(options) {
-	this.options = options;
+	this.options = {
+			method: "GET",
+			data: undefined
+	};
+	$.extend(true, this.options, options);
 
 	this.form = null; 				// contains the form-object
 	this.container = null;			// styled div-container around form
@@ -105,7 +109,8 @@ ModalFormHandler.prototype.init = function() {
 	// Get the actual form to display
 	$.ajax({
         url: url,
-        type: "GET",
+        data: _this.options.data,
+        type: _this.options.method,
         dataType: "html",
         success: function(data) {
         	_this.form = $(jQuery.parseHTML(data));

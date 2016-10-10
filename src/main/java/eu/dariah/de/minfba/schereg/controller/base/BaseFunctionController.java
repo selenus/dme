@@ -21,7 +21,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 public abstract class BaseFunctionController extends BaseScheregController {
 	@Autowired private MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
-	@Autowired private PersistedSessionService sessionService;
+	@Autowired protected PersistedSessionService sessionService;
 	@Autowired private ReferenceService referenceService;
 	
 	public BaseFunctionController(String mainNavId) {

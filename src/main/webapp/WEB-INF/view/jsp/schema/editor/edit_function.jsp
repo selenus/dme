@@ -79,11 +79,18 @@
 		<div class="col-md-5" style="border-left: 1px solid #E5E5E5; margin-left: -1px;">
 			<div class="legend"><strong>2</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.execute" /></div>
 			<div>
-				<div class="form-group">
-					<label class="control-label" for="function-sample-input"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" />:</label>
-					<div>
-						<textarea id="function-sample-input" rows="6" class="form-control codearea">${elementSample}</textarea>
-					</div>
+				<div class="sample-input-container">
+					<c:forEach var="sampleInput" items="${sampleInputMap}">
+					
+						<div class="sample-input form-group">
+							<label class="control-label"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /> <em>(${sampleInput.key.name}):</em></label>
+							<div>
+								<input type="hidden" name="elementId" value="${sampleInput.key.id}" />
+								<textarea rows="3" class="form-control codearea">${sampleInput.value}</textarea>
+							</div>
+						</div>
+					
+					</c:forEach>
 				</div>
 				<div class="clearfix">
 					<c:choose>

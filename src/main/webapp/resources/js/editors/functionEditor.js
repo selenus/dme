@@ -138,15 +138,23 @@ FunctionEditor.prototype.showValidationResult = function(data) {
 
 FunctionEditor.prototype.performTransformation = function() {
 	var _this = this;
-	var f = $("#function_function").val();
-	var s = $("#function-sample-input").val();
-		
+	var f = $(this.modal).find("#function_function").val();
+	
+	var elementIds = [];
+	var samples = [];
+	
+	$(this.modal).find(".sample-input").each(function() {
+		elementIds.push($(this).find("input[name='elementId']").val());
+		samples.push($(this).find(".form-control").val());
+	});
+	
 	$.ajax({
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",
 	    data: { 
 	    	func: f,
-	    	sample: s
+	    	elementIds : elementIds, 
+	    	samples: samples
 	    },
 	    dataType: "json",
 	    success: function(data) {

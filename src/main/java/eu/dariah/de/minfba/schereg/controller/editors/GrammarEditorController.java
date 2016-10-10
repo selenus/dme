@@ -1,5 +1,7 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -92,8 +95,9 @@ public class GrammarEditorController extends BaseFunctionController {
 		return grammarService.findById(grammarId);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
+	@RequestMapping(method = RequestMethod.POST, value = "/form/editWdata")
+	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String grammarId, @RequestParam String sample, HttpServletRequest request, Model model, Locale locale) {
+		
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		Identifiable entity = this.getEntity(entityId);
 				
@@ -107,11 +111,21 @@ public class GrammarEditorController extends BaseFunctionController {
 			g.setGrammarContainer(new GrammarContainer());
 		}
 
-		model.addAttribute("elementSample", this.getSampleInputValue(entity, grammarId, request.getSession().getId(), auth.getUserId()));
+		if (sample==null) {
+			model.addAttribute("elementSample", this.getSampleInputValue(entity, grammarId, request.getSession().getId(), auth.getUserId()));
+		} else {
+			model.addAttribute("elementSample", sample);
+		}
 		model.addAttribute("grammar", g);	
 		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/save");
 		return "schemaEditor/form/grammar/edit";
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
+	public String getEditForm(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
+		return this.getEditFormWithData(entityId, grammarId, null, request, model, locale);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")

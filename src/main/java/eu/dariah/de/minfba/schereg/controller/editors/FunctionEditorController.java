@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,9 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
-import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
@@ -38,19 +37,15 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
+import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
-import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
-import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
-import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
-import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
@@ -67,7 +62,6 @@ public class FunctionEditorController extends BaseFunctionController {
 	@Autowired private MappedConceptService mappedConceptService;
 	
 	@Autowired private TransformationEngine engine;
-	@Autowired private PersistedSessionService sessionService;
 	
 	public FunctionEditorController() {
 		super("schemaEditor");
@@ -83,25 +77,53 @@ public class FunctionEditorController extends BaseFunctionController {
 		return functionService.findById(functionId);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
+	@RequestMapping(method = RequestMethod.POST, value = "/form/editWdata")
+	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String functionId, @RequestParam(value="elementIds[]") List<String> elementIds, @RequestParam(value="samples[]") List<String> samples, HttpServletRequest request, Model model, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		Identifiable entity = this.getEntity(entityId);
 		
-		List<String> grammarClasses = new ArrayList<String>();
-		grammarClasses.add(DescriptionGrammarImpl.class.getName());
-		grammarClasses.add(DescriptionGrammar.class.getName());
+		Map<Element, String> sampleInputs = new LinkedHashMap<Element, String>();
+		List<Object> inputElementIds = new ArrayList<Object>();
 		
-		String grammarId = referenceService.findReferenceByChildId(entityId, functionId, grammarClasses).getId();
-		if (!grammarId.equals(entityId)) { // Happens for mappings
+		if (elementIds!=null && samples!=null) {
+			inputElementIds.addAll(elementIds);
+			List<Element> inputElements = elementService.findByIds(inputElementIds); 
+			for (int i=0; i<inputElementIds.size(); i++) {
+				for (Element e : inputElements) {
+					if (e.getId().equals(elementIds.get(i))) {
+						sampleInputs.put(e, samples.get(i));
+						break;
+					}
+				}
+			}
+		} else if (Schema.class.isAssignableFrom(entity.getClass())) {
+			String grammarId = referenceService.findReferenceByChildId(entityId, functionId).getId();
 			model.addAttribute("grammar", grammarService.findById(grammarId));
+			
+			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
+			Element e = elementService.findById(elementId);
+			
+			sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+		} else { // Mapping
+			Reference parentConceptReference = referenceService.findReferenceByChildId(entity.getId(), functionId);
+			MappedConcept mc = mappedConceptService.findById(parentConceptReference.getId());
+			inputElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
+			
+			for (Element e : elementService.findByIds(inputElementIds) ){
+				sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+			}
 		}
-		
-		model.addAttribute("elementSample", this.getSampleInputValue(entity, functionId, request.getSession().getId(), auth.getUserId()));
+		model.addAttribute("sampleInputMap", sampleInputs);		
 		model.addAttribute("function", functionService.findById(functionId));
 		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/function/" + functionId + "/async/save");
 		return "schemaEditor/form/function/edit";
+		
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
+	public String getEditForm(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
+		return this.getEditFormWithData(entityId, functionId, null, null, request, model, locale);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/process")
@@ -167,41 +189,60 @@ public class FunctionEditorController extends BaseFunctionController {
 		return result;
 	}
 	
+	private String getSampleByElementId(String elementId, List<String> elementIds, List<String> samples) {
+		for (int i=0; i<elementIds.size(); i++) {
+			if (elementIds.get(i).equals(elementId)) {
+				return samples.get(i);
+			}
+		}
+		return "";
+	}
+	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestParam String func, @RequestParam String sample, Locale locale) {
-		String grammarId = referenceService.findReferenceBySchemaAndChildId(entityId, functionId).getId();
-		DescriptionGrammar g = grammarService.findById(grammarId);
-		
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestParam String func, @RequestParam(value="elementIds[]") List<String> elementIds, @RequestParam(value="samples[]") List<String> samples, Locale locale) {
 		Identifiable entity = this.getEntity(entityId);
 
-		TransformationFunctionImpl f = new TransformationFunctionImpl(entityId, functionId);
-		f.setFunction(func);
-		f.setId(functionId);
-		
+		TransformationFunctionImpl f;
 		ModelActionPojo result = new ModelActionPojo();
+
+		List<String> values = new ArrayList<String>();
+		List<DescriptionGrammar> grammars = new ArrayList<DescriptionGrammar>();
 		
-		TransformationFunctionImpl fLoaded;
-		if (entity instanceof Schema) {
-			fLoaded = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
-		} else {
-			fLoaded = f;
+		if (Schema.class.isAssignableFrom(entity.getClass())) {
+			String grammarId = referenceService.findReferenceBySchemaAndChildId(entityId, functionId).getId();
+			DescriptionGrammar g = grammarService.findById(grammarId);
 			
+			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
+			
+			values.add(this.getSampleByElementId(elementId, elementIds, samples));
+			grammars.add(g);
+			
+			f = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
+		} else { // Mappings
 			Mapping m = (Mapping)entity;
 			Schema target = schemaService.findSchemaById(m.getTargetId());
 			
-			Reference rGrammar = referenceService.findReferenceByChildId(m.getId(), functionId);
-			Reference rMappedConcept = referenceService.findReferenceByChildId(m.getId(), rGrammar.getId());
+			Reference parentConceptReference = referenceService.findReferenceByChildId(entity.getId(), functionId);
+			MappedConcept mc = mappedConceptService.findById(parentConceptReference.getId());
+			List<Identifiable> targetElements = elementService.getElementTrees(target.getId(), mc.getTargetElementIds());
 			
-			MappedConcept c = mappedConceptService.findById(rMappedConcept.getId()); 
-			
-			List<Identifiable> targetElements = elementService.getElementTrees(target.getId(), c.getTargetElementIds());
-			
+			for (String elementId : mc.getElementGrammarIdsMap().keySet()) {
+				grammars.add(grammarService.findById(mc.getElementGrammarIdsMap().get(elementId)));
+				values.add(this.getSampleByElementId(elementId, elementIds, samples));
+			}
+
+			f = new TransformationFunctionImpl(entityId, functionId);
+			f.setFunction(func);
+			f.setId(functionId);
 			f.setOutputElements(elementService.convertToLabels(targetElements));
 		}
 		
 		try {
-			engine.checkGrammar(g);
-			List<OutputParam> pResult = engine.process(sample, g, f);
+			for (DescriptionGrammar g : grammars) {
+				engine.checkGrammar(g);
+			}
+
+			List<OutputParam> pResult = engine.process(values, grammars, f);
 			result.setSuccess(true);
 			
 			boolean allMatched = true;
@@ -209,7 +250,7 @@ public class FunctionEditorController extends BaseFunctionController {
 				List<TreeElementPojo> resultPojos = new ArrayList<TreeElementPojo>();
 				MutableBoolean pMatch = new MutableBoolean(true);
 				for(OutputParam p : pResult) {
-					resultPojos.add(this.convertOutputParamToPojo(p, fLoaded.getOutputElements(), pMatch));
+					resultPojos.add(this.convertOutputParamToPojo(p, f.getOutputElements(), pMatch));
 					allMatched = allMatched && pMatch.booleanValue();
 				}
 				result.setPojo(resultPojos);
