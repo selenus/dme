@@ -4,6 +4,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +31,7 @@ import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
+import de.unibamberg.minf.gtf.transformation.processing.params.TransformationParamDefinition;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -285,7 +287,7 @@ public class GrammarEditorController extends BaseFunctionController {
 			}
 			if (engine.checkGrammar(g)!=null) {
 				result.setSuccess(true);
-				result.setPojo(engine.processGrammarToSVG(sample, new ExecutionGroup(g, new ArrayList<CompiledTransformationFunction>())));
+				result.setPojo(engine.processGrammarToSVG(sample, g, new HashMap<String, TransformationParamDefinition>()));
 			} else {
 				// Grammar not on server yet (new or error)
 				result.addObjectWarning(messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.grammar.validation.no_grammar_found", null, locale));

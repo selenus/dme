@@ -24,6 +24,7 @@ import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
+import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
@@ -242,14 +243,14 @@ public class FunctionEditorController extends BaseFunctionController {
 				engine.checkGrammar(g);
 			}
 
-			List<OutputParam> pResult = engine.process(values, grammars, f);
+			FunctionExecutionResult<TransformationFunction> pResult = engine.process(values, grammars, f);
 			result.setSuccess(true);
 			
 			boolean allMatched = true;
-			if (pResult!=null && pResult.size()>0) {
+			if (pResult!=null && pResult.getOutputParams()!=null && pResult.getOutputParams().size()>0) {
 				List<TreeElementPojo> resultPojos = new ArrayList<TreeElementPojo>();
 				MutableBoolean pMatch = new MutableBoolean(true);
-				for(OutputParam p : pResult) {
+				for(OutputParam p : pResult.getOutputParams()) {
 					resultPojos.add(this.convertOutputParamToPojo(p, f.getOutputElements(), pMatch));
 					allMatched = allMatched && pMatch.booleanValue();
 				}
@@ -258,7 +259,7 @@ public class FunctionEditorController extends BaseFunctionController {
 					result.addObjectWarning(messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.function.validation.labels_not_found", null, locale));
 				}
 			}
-		} catch (GrammarProcessingException | DataTransformationException e) {
+		} catch (Exception e) {
 			logger.error("Error performing sample transformation", e);
 		}
 		
