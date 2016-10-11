@@ -14,8 +14,8 @@ var FunctionEditor = function(modal, options) {
 	this.svg = null;
 	
 	this.modified = false;
-	this.error = ($(this.modal).find("#error").val()=="true");
-	this.grammarError = ($(this.modal).find("#grammar_error").val()=="true");
+	this.error = ($(this.modal).find(".error").val()=="true");
+	this.grammarError = ($(this.modal).find(".grammar_error").val()=="true");
 	this.validated = false;
 		
 	__translator.addTranslations(["~eu.dariah.de.minfba.common.link.ok",
@@ -36,7 +36,7 @@ FunctionEditor.prototype.init = function() {
 	 * 
 	 */
 	var _this = this;	
-	$(this.modal).find("#function_function").on('change keyup paste', function() {
+	$(this.modal).find(".function_function").on('change keyup paste', function() {
 		_this.modified = true;
 		_this.updateFunctionState();
 	});
@@ -57,7 +57,7 @@ FunctionEditor.prototype.updateFunctionState = function() {
 	} else {
 		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.ok");
 	}
-	$(this.modal).find("#function_state").html(state);
+	$(this.modal).find(".function_state").html(state);
 };
 
 FunctionEditor.prototype.showHelp = function() {
@@ -68,21 +68,21 @@ FunctionEditor.prototype.processFunction = function() {
 	var _this = this;	
 	var form_identifier = "process-function";
 	
-	modalFormHandler = new ModalFormHandler({
+	this.processFunctionModal = new ModalFormHandler({
 		formUrl: "/function/" + _this.functionId + "/async/process",
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
 		displayCallback: function() { 
-			_this.validateFunction($("#function_function").val(), modalFormHandler.container);
+			_this.validateFunction($(_this.modal).find(".function_function").val());
 		},
 		additionalModalClasses: "wider-modal"
 	});
-	modalFormHandler.show(form_identifier);
+	this.processFunctionModal.show(form_identifier);
 };
 
-FunctionEditor.prototype.validateFunction = function(f, modal) {
+FunctionEditor.prototype.validateFunction = function(f) {
 	var _this = this;
 	
 	if (this.svg!=null) {
@@ -94,26 +94,28 @@ FunctionEditor.prototype.validateFunction = function(f, modal) {
 	    data: { func : f },
 	    dataType: "json",
 	    success: function(data) {
-	    	$("#collapse-function-parsing .panel-body").removeClass("hide");
-	    	$(".function-loading").addClass("hide");
+	    	var container = $(_this.processFunctionModal.container);
+	    	
+	    	container.find(".collapse-function-parsing .panel-body").removeClass("hide");
+	    	container.find(".function-loading").addClass("hide");
 	    	if (data.success) {
 	    		_this.showValidationResult(data);
-	    		$(".function-ok").removeClass("hide");
+	    		container.find(".function-ok").removeClass("hide");
 	    	} else {
-	    		$(".function-error").removeClass("hide");
+	    		container.find(".function-error").removeClass("hide");
 	    	}
 	    	_this.updateFunctionState();
-	    	 $(modal).modal("layout");
+	    	container.modal("layout");
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
-	    	$(".function-loading").addClass("hide");
-	    	$(".function-error").removeClass("hide");
+	    	container.find(".function-loading").addClass("hide");
+	    	container.find(".function-error").removeClass("hide");
 	    }
 	});
 };
 
 FunctionEditor.prototype.showValidationResult = function(data) {
-	this.svg = new SvgViewer("#function-svg", data.pojo);
+	this.svg = new SvgViewer(".function-svg", data.pojo);
 	
 	var alert = $("<div class=\"alert\">");
 	if (data.objectErrors!=null && data.objectErrors.length > 0) {
@@ -133,12 +135,12 @@ FunctionEditor.prototype.showValidationResult = function(data) {
 		this.validated = true;
 		this.modified = false;
 	}
-	$("#function-alerts").html(alert);
+	$(this.processFunctionModal.container).find(".function-alerts").html(alert);
 };
 
 FunctionEditor.prototype.performTransformation = function() {
 	var _this = this;
-	var f = $(this.modal).find("#function_function").val();
+	var f = $(this.modal).find(".function_function").val();
 	
 	var elementIds = [];
 	var samples = [];
@@ -159,7 +161,7 @@ FunctionEditor.prototype.performTransformation = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) {
-	    		//$("#transformation-result-container").text(JSON.stringify(data.pojo));
+	    		//$(_this.modal).find(".transformation-result-container").text(JSON.stringify(data.pojo));
 	    		_this.showTransformationResults(data);
 	    	} else {
 	    		alert("error1");
@@ -172,17 +174,20 @@ FunctionEditor.prototype.performTransformation = function() {
 
 FunctionEditor.prototype.showTransformationResults = function(data) {
 	if (data.pojo==null || !Array.isArray(data.pojo)) {
-		alert("no array");
+		$(this.modal).find(".transformation-result").addClass("hide");
+		$(this.modal).find(".transformation-result").text("");
+		$(this.modal).find(".no-results-alert").removeClass("hide");
 		return;
 	}
+	$(this.modal).find(".no-results-alert").addClass("hide");
 	var list = $("<ul>");
 	this.appendTransformationResults(data.pojo, list);
-	$("#transformation-result").removeClass("hide");
-	$("#transformation-result").html(list);
-	$("#transformation-alerts").html("");
+	$(this.modal).find(".transformation-result").removeClass("hide");
+	$(this.modal).find(".transformation-result").html(list);
+	$(this.modal).find(".transformation-alerts").html("");
 	if (data.objectWarnings!=null && Array.isArray(data.objectWarnings)) {
 		for (var i=0; i<data.objectWarnings.length; i++) {
-			$("#transformation-alerts").append(
+			$(this.modal).find(".transformation-alerts").append(
 					"<div class=\"alert alert-sm alert-warning\">" +
 						"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span> " 
 						+ data.objectWarnings[i] + 

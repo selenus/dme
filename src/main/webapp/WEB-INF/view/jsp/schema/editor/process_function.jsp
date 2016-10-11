@@ -3,12 +3,12 @@
 
 <div class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.process.title" /></h3>	
+		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.process.title" /></h3>	
 	</div>
 	<div class="form-content">
-		<div class="panel-group" id="accordion-validate-function" role="tablist" aria-multiselectable="true">
-			<div id="function-parsing" class="panel panel-default">
-				<div class="panel-heading" role="tab" id="heading-function-parsing">
+		<div class="panel-group accordion-validate-function" role="tablist" aria-multiselectable="true">
+			<div class="function-parsing panel panel-default">
+				<div class="panel-heading heading-function-parsing" role="tab">
 					<h4 class="panel-title"> 
 						<span class="mini-loader function-loading"></span>
 						<span class="glyphicon glyphicon-console function-waiting hide" aria-hidden="true"></span>
@@ -17,10 +17,10 @@
 						 <s:message code="~eu.dariah.de.minfba.schereg.form.function.process.parsing_function" />
 					</h4>
 				</div>
-				<div id="collapse-function-parsing" class="panel-collapse" role="tabpanel" aria-labelledby="heading-function-parsing">
+				<div class="panel-collapse collapse-function-parsing" role="tabpanel" aria-labelledby="heading-function-parsing">
 					<div class="panel-body hide">
-						<div id="function-alerts"></div>
-						<div id="function-svg" class="outer-svg-container" style="height: 350px;">
+						<div class="function-alerts"></div>
+						<div class="function-svg outer-svg-container" style="height: 350px;">
 							<div class="inner-svg-container"></div>
 							<div class="svg-button-container">
 								<button class="btn btn-link btn-sm btn-svg-zoomin"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>

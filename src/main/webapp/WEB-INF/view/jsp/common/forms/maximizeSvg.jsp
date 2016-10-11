@@ -3,10 +3,10 @@
 
 <div class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.show_processed_svg" /></h3>	
+		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.show_processed_svg" /></h3>	
 	</div>
 	<div class="form-content">
-		<div id="maximized-svg-container" class="maximized-svg-container">
+		<div class="maximized-svg-container">
 			<div class="inner-svg-container"></div>
 			<div class="svg-button-container">
 				<button class="btn btn-link btn-sm btn-svg-zoomin"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>

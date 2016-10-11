@@ -2,8 +2,8 @@ var MappedConceptEditor = function(owner, container, modal, options) {
 	this.options = {
 			conceptId: "",
 			path: "mappedConcept/{0}",
-			layoutContainer: "#layout-helper-container",
-			editorContainer: "#mapped-concept-editor-container",
+			layoutContainer: ".layout-helper-container",
+			editorContainer: ".mapped-concept-editor-container",
 			canvasId: "mapped-concept-editor",
 			readOnly: false
 	};
@@ -92,6 +92,7 @@ MappedConceptEditor.prototype.init = function() {
 		mappingTemplateOption : {
 			relativeControlPointX : 4, 
 			connectionHoverTolerance : 5,
+			highlightSelectedConnection : false,
 			getContextMenuItems: _this.getFunctionContextMenu,
 			functionTemplateOptions : {
 				primaryColor: "#FFE173", 
@@ -156,7 +157,7 @@ MappedConceptEditor.prototype.editGrammar = function(grammarId) {
 	var elementId = this.source.findElementById(this.source.root, grammarId).parent.id;
 	var sampleData = "";
 	
-	$(".sample-input").each(function() {
+	$(this.container).find(".sample-input").each(function() {
 		if ($(this).find("input[name='elementId']").val()==elementId) {
 			sampleData = $(this).find(".form-control").val();
 		}
@@ -200,7 +201,7 @@ MappedConceptEditor.prototype.editFunction = function(connectionId) {
 	    	var elementIds = [];
 	    	var samples = [];
 	    	
-	    	$(".sample-input").each(function() {
+	    	$(_this.container).find(".sample-input").each(function() {
 	    		elementIds.push($(this).find("input[name='elementId']").val());
 	    		samples.push($(this).find(".form-control").val());
 	    	});
@@ -247,7 +248,7 @@ MappedConceptEditor.prototype.removeElement = function(elementId, isSource) {
 			    dataType: "json",
 			    success: function(data) {
 			    	if (isSource) {
-			    		$(".sample-input").each(function() {
+			    		$(_this.container).find(".sample-input").each(function() {
 			    			if ($(this).find("input[name='elementId']").val()==elementId) {
 			    				$(this).remove();
 			    			}
@@ -467,14 +468,13 @@ MappedConceptEditor.prototype.performTransformation = function() {
 	    	    url: "function/" + f + "/async/parseSample",
 	    	    type: "POST",
 	    	    data: { 
-	    	    	func: f,
 	    	    	elementIds : elementIds, 
 	    	    	samples: samples
 	    	    },
 	    	    dataType: "json",
 	    	    success: function(data) {
 	    	    	if (data.success) {
-	    	    		//$("#transformation-result-container").text(JSON.stringify(data.pojo));
+	    	    		//$(_this.container).find("#transformation-result-container").text(JSON.stringify(data.pojo));
 	    	    		_this.showTransformationResults(data);
 	    	    	} else {
 	    	    		alert("error1");
@@ -490,17 +490,21 @@ MappedConceptEditor.prototype.performTransformation = function() {
 
 MappedConceptEditor.prototype.showTransformationResults = function(data) {
 	if (data.pojo==null || !Array.isArray(data.pojo)) {
-		alert("no array");
+		$(this.container).find(".transformation-result").addClass("hide");
+		$(this.container).find(".transformation-result").text("");
+		$(this.container).find(".no-results-alert").removeClass("hide");
 		return;
 	}
+	$(this.container).find(".no-results-alert").addClass("hide");
+	
 	var list = $("<ul>");
 	this.appendTransformationResults(data.pojo, list);
-	$(".transformation-result").removeClass("hide");
-	$(".transformation-result").html(list);
-	$(".transformation-alerts").html("");
+	$(this.container).find(".transformation-result").removeClass("hide");
+	$(this.container).find(".transformation-result").html(list);
+	$(this.container).find(".transformation-alerts").html("");
 	if (data.objectWarnings!=null && Array.isArray(data.objectWarnings)) {
 		for (var i=0; i<data.objectWarnings.length; i++) {
-			$(".transformation-alerts").append(
+			$(this.container).find(".transformation-alerts").append(
 					"<div class=\"alert alert-sm alert-warning\">" +
 						"<span class=\"glyphicon glyphicon-exclamation-sign\" aria-hidden=\"true\"></span> " 
 						+ data.objectWarnings[i] + 

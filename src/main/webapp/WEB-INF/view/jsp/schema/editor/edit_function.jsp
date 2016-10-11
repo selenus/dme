@@ -6,13 +6,13 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="function">
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="functionEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
+		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="functionEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
 		<sf:hidden path="id" />
 		<sf:hidden path="error" />
 		<sf:hidden path="entityId" />
-		<input type="hidden" id="grammar_id" name="grammar_id" value="${grammar.id}" />
-		<input type="hidden" id="grammar_name" name="grammar_name" value="${grammar.grammarName}" />
-		<input type="hidden" id="grammar_error" name="grammar_error" value="${grammar.error}" />
+		<input type="hidden" class="grammar_id" name="grammar_id" value="${grammar.id}" />
+		<input type="hidden" class="grammar_name" name="grammar_name" value="${grammar.grammarName}" />
+		<input type="hidden" class="grammar_error" name="grammar_error" value="${grammar.error}" />
 	</div>
 	<div class="form-content row" style="padding-bottom: 0px;">
 		<div class="col-md-7" style="border-right: 1px solid #E5E5E5;">
@@ -22,7 +22,7 @@
 					<fieldset<c:if test="${readonly}"> disabled</c:if>>
 						<label class="control-label" for="function_name"><s:message code="~eu.dariah.de.minfba.schereg.model.function.name" />:</label>
 						<div>
-							<sf:input path="name" class="form-control" id="function_name" />
+							<sf:input path="name" class="form-control function_name" />
 							<sf:errors path="name" cssClass="error" />
 						</div>
 					</fieldset>
@@ -36,12 +36,12 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label"><s:message code="~eu.dariah.de.minfba.schereg.model.function.state" />:</label>
-				<span id="function_state"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.common.link.ok" /> </span>
+				<span class="function_state"><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.common.link.ok" /> </span>
 				<button class="btn btn-info btn-sm pull-right" onclick="functionEditor.processFunction(); return false;"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.common.link.validate" /></button>
 			</div>
 			<div class="form-group">
 				<label class="control-label"><s:message code="~eu.dariah.de.minfba.schereg.model.function.grammar" />:</label>
-				<span>${grammar.grammarName}</span> (<span id="grammar_state">
+				<span>${grammar.grammarName}</span> (<span class="grammar_state">
 					<c:choose>
 						<c:when test="${grammar.passthrough}">
 							<span class="glyphicon glyphicon-forward" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.model.grammar.passthrough" />
@@ -58,7 +58,7 @@
 			<div class="form-group">
 				<label class="control-label" for="function_function"><s:message code="~eu.dariah.de.minfba.schereg.model.function.transformation_function" />:</label>
 				<div>
-					<sf:textarea path="function" rows="12" class="form-control codearea" id="function_function" />
+					<sf:textarea path="function" rows="12" class="form-control codearea function_function" />
 					<sf:errors path="function" cssClass="error" />
 				</div>
 			</div>		
@@ -104,8 +104,8 @@
 				</div>
 			</div>
 			<div class="legend"><strong>3</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.transformation_result" /></div>
-			<div id="transformation-result-container">
-				<div id="transformation-alerts">
+			<div class="transformation-result-container">
+				<div class="transformation-alerts">
 					<c:choose>
 						<c:when test="${grammar.error}">
 							<div class="alert alert-sm alert-warning"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.error.error_in_grammar" /></div>
@@ -115,7 +115,8 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-				<pre id="transformation-result" class="hide">
+				<div class="no-results-alert alert alert-sm alert-warning hide"><s:message code="~eu.dariah.de.minfba.schereg.notification.transformation.no_results" /></div>
+				<pre class="transformation-result hide">
 				</pre>
 			</div>
 		</div>	

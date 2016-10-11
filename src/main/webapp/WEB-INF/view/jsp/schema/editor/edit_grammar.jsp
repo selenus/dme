@@ -6,7 +6,7 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="grammar">
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.grammar.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
+		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.grammar.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
 		<sf:hidden path="id" />
 		<sf:hidden path="passthrough" />
 		<sf:hidden path="error" />
@@ -20,7 +20,7 @@
 					<fieldset<c:if test="${readonly}"> disabled</c:if>>
 						<label class="control-label" for="grammar_name"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.name" />:</label>
 						<div>
-							<sf:input path="grammarName" class="form-control" id="grammar_name" />
+							<sf:input path="grammarName" class="form-control" />
 							<sf:errors path="grammarName" cssClass="error" />
 						</div>
 					</fieldset>
@@ -28,7 +28,7 @@
 				<div class="col-sm-6">
 					<label class="control-label" for="base_method"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.base_rule" />:</label>
 					<div>
-						<sf:input path="baseMethod" class="form-control" id="base_method" />
+						<sf:input path="baseMethod" class="form-control" />
 						<sf:errors path="baseMethod" cssClass="error" />
 					</div>
 				</div>
@@ -38,19 +38,19 @@
 				<div>
 					<div class="radio">
 	  					<label>
-	    					<input type="radio" name="lexer-parser-option" class="lexer-parser-option" id="lexer-parser-option-combined" value="combined" checked>
+	    					<input type="radio" name="lexer-parser-option" class="lexer-parser-option lexer-parser-option-combined" value="combined" checked>
 	    					<s:message code="~eu.dariah.de.minfba.schereg.form.grammar.hint.combined_layout" />
 	  					</label>
 					</div>
 					<div class="radio">
 	  					<label>
-	    					<input type="radio" name="lexer-parser-option" class="lexer-parser-option" id="lexer-parser-option-separate" value="separate">
+	    					<input type="radio" name="lexer-parser-option" class="lexer-parser-option lexer-parser-option-separate" value="separate">
 	    					<s:message code="~eu.dariah.de.minfba.schereg.form.grammar.hint.separate_layout" />
 	  					</label>
 					</div>
 					<div class="radio">
 	  					<label>
-	    					<input type="radio" name="lexer-parser-option" class="lexer-parser-option" id="lexer-parser-option-passthrough" value="passthrough">
+	    					<input type="radio" name="lexer-parser-option" class="lexer-parser-option lexer-parser-option-passthrough" value="passthrough">
 	    					<s:message code="~eu.dariah.de.minfba.schereg.form.grammar.hint.passthrough" />
 	  					</label>
 					</div>
@@ -58,20 +58,20 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.state" />:</label>
-				<span id="grammar_state"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.common.link.ok" /></span>
+				<span class="grammar_state"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.common.link.ok" /></span>
 				<button class="btn btn-info btn-sm pull-right non-passthrough-only" onclick="grammarEditor.validateGrammar(); return false;"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.common.link.validate" /></button>
 			</div>
-			<div class="form-group non-passthrough-only" id="form-group-lexer-grammar">
+			<div class="form-group non-passthrough-only form-group-lexer-grammar">
 				<label class="control-label" for="grammarContainer_lexerGrammar"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.lexer_grammar" />:</label>
 				<div>
-					<sf:textarea path="grammarContainer.lexerGrammar" rows="8" class="form-control codearea" id="grammarContainer_lexerGrammar" />
+					<sf:textarea path="grammarContainer.lexerGrammar" rows="8" class="form-control codearea grammarContainer_lexerGrammar" />
 					<sf:errors path="grammarContainer.lexerGrammar" cssClass="error" />
 				</div>
 			</div>		
 			<div class="form-group non-passthrough-only">
-				<label id="label-parser-grammar" class="control-label" for="grammarContainer_parserGrammar"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.parser_grammar" />:</label>
+				<label class="control-label" for="grammarContainer_parserGrammar"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.parser_grammar" />:</label>
 				<div>
-					<sf:textarea path="grammarContainer.parserGrammar" rows="8" class="form-control codearea" id="grammarContainer_parserGrammar" />
+					<sf:textarea path="grammarContainer.parserGrammar" rows="8" class="form-control codearea grammarContainer_parserGrammar" />
 					<sf:errors path="grammarContainer.parserGrammar" cssClass="error" />
 				</div>
 			</div>	
@@ -95,21 +95,21 @@
 				<div class="form-group">
 					<label class="control-label" for="grammar-sample-input"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" />:</label>
 					<div>
-						<textarea id="grammar-sample-input" rows="6" class="form-control codearea">${elementSample}</textarea>
+						<textarea rows="6" class="grammar-sample-input form-control codearea">${elementSample}</textarea>
 					</div>
 				</div>
 				<div class="clearfix">
-					<button id="btn-parse-sample" class="btn btn-warning btn-sm pull-right disabled" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.process_input" /></button>
+					<button class="btn-parse-sample btn btn-warning btn-sm pull-right disabled" onclick="grammarEditor.parseSample(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.process_input" /></button>
 				</div>
 			</div>
 			<div class="passthrough-only">
 			</div>
 			<div class="legend"><strong>3</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.transformation_result" /></div>
 			<div class="non-passthrough-only">
-				<div id="grammar-parse-alerts">
+				<div class="grammar-parse-alerts">
 					<div class="alert alert-sm alert-info"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.notice.hint_sample" /></div>
 				</div>
-				<div id="grammar-sample-svg-embedded" class="outer-svg-container hide">
+				<div class="grammar-sample-svg-embedded outer-svg-container hide">
 					<div class="inner-svg-container"></div>
 					<div class="svg-button-container">
 						<button class="btn btn-link btn-sm btn-svg-zoomin"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>

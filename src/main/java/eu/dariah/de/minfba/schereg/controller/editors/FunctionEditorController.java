@@ -192,7 +192,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	
 	private String getSampleByElementId(String elementId, List<String> elementIds, List<String> samples) {
 		for (int i=0; i<elementIds.size(); i++) {
-			if (elementIds.get(i).equals(elementId)) {
+			if (elementIds.get(i).equals(elementId) && i<samples.size()) {
 				return samples.get(i);
 			}
 		}
@@ -200,7 +200,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestParam String func, @RequestParam(value="elementIds[]") List<String> elementIds, @RequestParam(value="samples[]") List<String> samples, Locale locale) {
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestParam(required=false) String func, @RequestParam(value="elementIds[]") List<String> elementIds, @RequestParam(value="samples[]") List<String> samples, Locale locale) {
 		Identifiable entity = this.getEntity(entityId);
 
 		TransformationFunctionImpl f;
@@ -232,10 +232,14 @@ public class FunctionEditorController extends BaseFunctionController {
 				values.add(this.getSampleByElementId(elementId, elementIds, samples));
 			}
 
-			f = new TransformationFunctionImpl(entityId, functionId);
-			f.setFunction(func);
-			f.setId(functionId);
+			f = (TransformationFunctionImpl)functionService.findById(functionId);
+			
+			//f = new TransformationFunctionImpl(entityId, functionId);
 			f.setOutputElements(elementService.convertToLabels(targetElements));
+		}
+		
+		if (func!=null) {
+			f.setFunction(func);
 		}
 		
 		try {

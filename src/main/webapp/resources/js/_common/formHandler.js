@@ -184,7 +184,9 @@ ModalFormHandler.prototype.setUpForm = function() {
 	}
 	
 	$(this.container).on('shown.bs.modal', function (e) {
-		$(_this.form).find('.form-control')[0].focus();
+		if ($(_this.form).find('.form-control').length>0) {
+			$(_this.form).find('.form-control')[0].focus();
+		}
 	});
 	
 	$(this.container).modal();

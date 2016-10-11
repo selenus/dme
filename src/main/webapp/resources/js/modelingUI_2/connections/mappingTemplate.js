@@ -2,7 +2,8 @@ var MappingTemplate = function(model, options) {
 	this.model = model;
 	this.options = $.extend(true, {
 		relativeControlPointX : 4,
-		connectionHoverTolerance : 5
+		connectionHoverTolerance : 5,
+		highlightSelectedConnection : true
 	}, options);
 	
 	this.functionTemplate = new FunctionTemplate(this.model, this.options.functionTemplateOptions);
@@ -78,7 +79,7 @@ MappingTemplate.prototype.paint = function(connection, context) {
 	var fromParents = [];
 	
 	
-	if (connection.active || connection.isSelected()) {
+	if (( connection.active || connection.isSelected() ) && this.options.highlightSelectedConnection) {
 		context.lineWidth = 2;
 		strokeStyle = this.model.theme.mappingConnectionSelected;
 	}

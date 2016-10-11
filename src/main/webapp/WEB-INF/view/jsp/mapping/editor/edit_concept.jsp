@@ -5,7 +5,7 @@
 
 <div>
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.concept.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
+		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.concept.edit" /> <small><span class="glyphicon glyphicon-info-sign help-sign" onclick="grammarEditor.showHelp(); return false;" aria-hidden="true"></span></small></h3>	
 		
 	</div>
 	<div class="form-content row" style="padding-bottom: 0px;">
@@ -13,7 +13,7 @@
 			<div class="legend"><strong>1</strong> <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.legend.edit_concept" /></div>
 			<div class="form-group">
 				<div class="row">
-					<div id="mapped-concept-editor-container" class="col-xs-12">
+					<div class="mapped-concept-editor-container col-xs-12">
 						<canvas id="mapped-concept-editor"></canvas>
 					</div>
 				</div>
@@ -24,7 +24,7 @@
 				</div>
 			</div>
 		</div>
-		<div id="layout-helper-container" class="col-md-5" style="border-left: 1px solid #E5E5E5; margin-left: -1px;">
+		<div class="layout-helper-container col-md-5" style="border-left: 1px solid #E5E5E5; margin-left: -1px;">
 			<div class="legend"><strong>2</strong> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.execute" /></div>
 			<div class="non-passthrough-only">
 			
@@ -35,7 +35,7 @@
 							<label class="control-label" for="grammar-sample-input"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /> <em>(${sampleInput.key.name}):</em></label>
 							<div>
 								<input type="hidden" name="elementId" value="${sampleInput.key.id}" />
-								<textarea id="grammar-sample-input" rows="3" class="form-control codearea">${sampleInput.value}</textarea>
+								<textarea rows="3" class="form-control codearea">${sampleInput.value}</textarea>
 							</div>
 						</div>
 					
@@ -43,7 +43,7 @@
 				</div>
 				
 				<div class="clearfix">
-					<button id="btn-parse-sample" class="btn btn-warning btn-sm pull-right" onclick="editor.conceptEditor.performTransformation(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.process_input" /></button>
+					<button class="btn-parse-sample btn btn-warning btn-sm pull-right" onclick="editor.conceptEditor.performTransformation(); return false;"><span class="glyphicon glyphicon-play" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.process_input" /></button>
 				</div>
 			</div>
 			<div class="passthrough-only">
@@ -60,6 +60,7 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
+				<div class="no-results-alert alert alert-sm alert-warning hide"><s:message code="~eu.dariah.de.minfba.schereg.notification.transformation.no_results" /></div>
 				<pre class="transformation-result hide">
 				</pre>
 			</div>

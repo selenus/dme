@@ -14,7 +14,7 @@ var SvgViewer = function(container, content) {
 	this.maximizeSvgPath = __util.getBaseUrl() + "common/forms/maximizeSvg";
 	
 	this.maximizedHeight = $(window).height() - 300;
-	this.maximizedSvgContainerSelector = "#maximized-svg-container";
+	this.maximizedSvgContainerSelector = ".maximized-svg-container";
 
 	this.init();
 };

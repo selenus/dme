@@ -13,7 +13,7 @@ var GrammarEditor = function(modal, options) {
 	this.originalModeModified = false;
 	this.grammarModified = false;
 	this.validated = false;
-	this.error = $(this.modal).find("#error").val()=="true";
+	this.error = $(this.modal).find(".error").val()=="true";
 	this.schemaId = this.options.entityId;
 	this.grammarId = this.options.grammarId;
 	this.pathname = this.options.pathPrefix + "/grammar/" + this.grammarId;
@@ -36,7 +36,7 @@ var GrammarEditor = function(modal, options) {
 
 GrammarEditor.prototype.updateGrammarState = function() {
 	var state = "";
-	if ($(this.modal).find("#passthrough").val()=="true") {
+	if ($(this.modal).find(".passthrough").val()=="true") {
 		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.passthrough");
 		this.setSampleParseFunctionality(false);
 	} else if (this.originalModeModified || this.grammarModified) {
@@ -52,50 +52,50 @@ GrammarEditor.prototype.updateGrammarState = function() {
 		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.ok");
 		this.setSampleParseFunctionality(true);
 	}
-	$(this.modal).find("#grammar_state").html(state);
+	$(this.modal).find(".grammar_state").html(state);
 };
 
 GrammarEditor.prototype.setSampleParseFunctionality = function(enabled) {
 	if (enabled) {
-		$(this.modal).find("#btn-parse-sample").removeClass("disabled");
-		$(this.modal).find("#btn-parse-sample").removeClass("btn-warning");
-		$(this.modal).find("#btn-parse-sample").addClass("btn-info");
+		$(this.modal).find(".btn-parse-sample").removeClass("disabled");
+		$(this.modal).find(".btn-parse-sample").removeClass("btn-warning");
+		$(this.modal).find(".btn-parse-sample").addClass("btn-info");
 	} else {
-		$(this.modal).find("#btn-parse-sample").addClass("disabled");
-		$(this.modal).find("#btn-parse-sample").addClass("btn-warning");
-		$(this.modal).find("#btn-parse-sample").removeClass("btn-info");
+		$(this.modal).find(".btn-parse-sample").addClass("disabled");
+		$(this.modal).find(".btn-parse-sample").addClass("btn-warning");
+		$(this.modal).find(".btn-parse-sample").removeClass("btn-info");
 	}
 };
 
 GrammarEditor.prototype.init = function() {
 	var _this = this;
 	
-	if ($(_this.modal).find("#passthrough").val()=="true") {
+	if ($(this.modal).find(".passthrough").val()=="true") {
 		this.originalMode = "passthrough";
 		this.setLexerParserPassthrough();
-		$(_this.modal).find("#lexer-parser-option-passthrough").prop("checked", "checked");
-	} else if ($(_this.modal).find("#grammarContainer_lexerGrammar").val()!==null && $(_this.modal).find("#grammarContainer_lexerGrammar").val()!=="") {
+		$(this.modal).find(".lexer-parser-option-passthrough").prop("checked", "checked");
+	} else if ($(this.modal).find(".grammarContainer_lexerGrammar").val()!==null && $(this.modal).find(".grammarContainer_lexerGrammar").val()!=="") {
 		this.originalMode = "separate";
 		this.setLexerParserSeparate();
-		$(_this.modal).find("#lexer-parser-option-separate").prop("checked", "checked");
+		$(this.modal).find(".lexer-parser-option-separate").prop("checked", "checked");
 	} else {
 		this.originalMode = "combined";
 		this.setLexerParserCombined();
-		$(_this.modal).find("#lexer-parser-option-combined").prop("checked", "checked");
+		$(this.modal).find(".lexer-parser-option-combined").prop("checked", "checked");
 	}
 	
 	this.updateGrammarState();
 	
-	$(_this.modal).find("#grammarContainer_lexerGrammar").on('change keyup paste', function() {
+	$(this.modal).find(".grammarContainer_lexerGrammar").on('change keyup paste', function() {
 		_this.grammarModified = true;
 		_this.updateGrammarState();
 	});
-	$(_this.modal).find("#grammarContainer_parserGrammar").on('change keyup paste', function() {
+	$(this.modal).find(".grammarContainer_parserGrammar").on('change keyup paste', function() {
 		_this.grammarModified = true;
 		_this.updateGrammarState();
 	});
 	
-	$(_this.modal).find(".lexer-parser-option").change(function() {
+	$(this.modal).find(".lexer-parser-option").change(function() {
 		  if($(this).val()=="combined") {
 			  _this.setLexerParserCombined();
 		  } else if($(this).val()=="passthrough") {
@@ -126,9 +126,9 @@ GrammarEditor.prototype.showHelp = function() {
 GrammarEditor.prototype.setLexerParserCombined = function() {	
 	$(this.modal).find(".non-passthrough-only").removeClass("hide");
 	$(this.modal).find(".passthrough-only").addClass("hide");
-	$(this.modal).find("#passthrough").val("false");
+	$(this.modal).find(".passthrough").val("false");
 	
-	$(this.modal).find("#form-group-lexer-grammar").addClass("hide");	
+	$(this.modal).find(".form-group-lexer-grammar").addClass("hide");	
 		
 	this.combinedGrammar = true;
 	
@@ -142,9 +142,9 @@ GrammarEditor.prototype.setLexerParserCombined = function() {
 GrammarEditor.prototype.setLexerParserSeparate = function() {	
 	$(this.modal).find(".non-passthrough-only").removeClass("hide");
 	$(this.modal).find(".passthrough-only").addClass("hide");	
-	$(this.modal).find("#passthrough").val("false");
+	$(this.modal).find(".passthrough").val("false");
 	
-	$(this.modal).find("#form-group-lexer-grammar").removeClass("hide");
+	$(this.modal).find(".form-group-lexer-grammar").removeClass("hide");
 	
 	this.combinedGrammar = false;
 	
@@ -158,7 +158,7 @@ GrammarEditor.prototype.setLexerParserSeparate = function() {
 GrammarEditor.prototype.setLexerParserPassthrough = function() {
 	$(this.modal).find(".non-passthrough-only").addClass("hide");
 	$(this.modal).find(".passthrough-only").removeClass("hide");
-	$(this.modal).find("#passthrough").val("true");
+	$(this.modal).find(".passthrough").val("true");
 	
 	this.combinedGrammar = false;
 	
@@ -199,9 +199,9 @@ GrammarEditor.prototype.uploadGrammar = function() {
 	    url: _this.pathname + "/async/upload",
 	    type: "POST",
 	    data: {
-	    	combined : this.combinedGrammar,
-	    	lexerGrammar : this.combinedGrammar ? null : $("#grammarContainer_lexerGrammar").val(),
-	    	parserGrammar : $("#grammarContainer_parserGrammar").val()
+	    	combined : _this.combinedGrammar,
+	    	lexerGrammar : _this.combinedGrammar ? null : $(_this.modal).find(".grammarContainer_lexerGrammar").val(),
+	    	parserGrammar : $(_this.modal).find(".grammarContainer_parserGrammar").val()
 	    },
 	    dataType: "json",
 	    success: function(data) {
@@ -279,7 +279,7 @@ GrammarEditor.prototype.sandboxGrammar = function() {
 	$.ajax({
 	    url: _this.pathname + "/async/sandbox",
 	    type: "GET",
-	    data: { baseMethod: $("#base_method").val() },
+	    data: { baseMethod: $(_this.modal).find("#baseMethod").val() },
 	    success: function(data) {
 	    	if (data.success) {
 	    		_this.setGrammarProcessingPanelStatus("grammar-sandboxing", "success");
@@ -301,19 +301,21 @@ GrammarEditor.prototype.sandboxGrammar = function() {
 	});
 };
 
-GrammarEditor.prototype.setGrammarProcessingPanelErrors = function(id, objectErrors, fieldErrors) {	
-	$("#" + id + " .panel-body").html();
-	$("#" + id + " .panel-body").removeClass("hide");
+GrammarEditor.prototype.setGrammarProcessingPanelErrors = function(id, objectErrors, fieldErrors) {
+	var panel = $(this.processGrammarModal.container).find("." + id);
 	
-	$("#accordion-validate-grammar .panel-collapse").removeClass("in");
-	$("#" + id + " .panel-collapse").addClass("in");
+	panel.find(".panel-body").html();
+	panel.find(".panel-body").removeClass("hide");
+	
+	$(this.processGrammarModal.container).find(".accordion-validate-grammar .panel-collapse").removeClass("in");
+	panel.find(".panel-collapse").addClass("in");
 	
 	if (objectErrors!=null && objectErrors.length > 0) {
 		var errorList = $("<ul>");
 		for (var i=0; i<objectErrors.length; i++) {
 			errorList.append("<li>" + objectErrors[i] + "</li>");
 		}
-		$("#" + id + " .panel-body").append(errorList);
+		panel.find(".panel-body").append(errorList);
 	}
 	
 	if (fieldErrors!=null && fieldErrors.length > 0) {
@@ -322,48 +324,52 @@ GrammarEditor.prototype.setGrammarProcessingPanelErrors = function(id, objectErr
 			for (var j=0; j<fieldErrors[i].errors.length; j++) {
 				errorList.append("<li>" + fieldErrors[i].errors[j] + "</li>");
 			}
-			$("#" + id + " .panel-body").append("<h4>" + fieldErrors[i].field + "</h4>");
-			$("#" + id + " .panel-body").append(errorList);
+			panel.find(".panel-body").append("<h4>" + fieldErrors[i].field + "</h4>");
+			panel.find(".panel-body").append(errorList);
 		}
 	}
 }
 
 GrammarEditor.prototype.setGrammarProcessingPanelStatus = function(id, state) {
+	var panel = $(this.processGrammarModal.container).find("." + id);
+	
 	if (state==="loading") {
-		$("#" + id + " .grammar-waiting").addClass("hide");
-		$("#" + id + " .grammar-loading").removeClass("hide");
+		panel.find(".grammar-waiting").addClass("hide");
+		panel.find(".grammar-loading").removeClass("hide");
 	} else if (state==="success") {
-		$("#" + id).removeClass("panel-default");
-		$("#" + id).addClass("panel-success");
-		$("#" + id + " .grammar-loading").addClass("hide");
-		$("#" + id + " .grammar-ok").removeClass("hide");
+		panel.removeClass("panel-default");
+		panel.addClass("panel-success");
+		panel.find(".grammar-loading").addClass("hide");
+		panel.find(".grammar-ok").removeClass("hide");
 	} else if (state==="error") {
-		$("#" + id).removeClass("panel-default");
-		$("#" + id).addClass("panel-danger");
-		$("#" + id + " .grammar-loading").addClass("hide");
-		$("#" + id + " .grammar-error").removeClass("hide");
+		panel.removeClass("panel-default");
+		panel.addClass("panel-danger");
+		panel.find(".grammar-loading").addClass("hide");
+		panel.find(".grammar-error").removeClass("hide");
 		this.error = true;
 	} 
 };
 
 GrammarEditor.prototype.setGrammarProcessingPanelSuccessFiles = function(id, files) {
-	$("#" + id + " .panel-body").html();
-	$("#" + id + " .panel-body").removeClass("hide");
+	var panel = $(this.processGrammarModal.container).find("." + id);
 	
-	//$("#accordion-validate-grammar .panel-collapse").removeClass("in");
-	$("#" + id + " .panel-collapse").addClass("in");
+	panel.find(".panel-body").html();
+	panel.find(".panel-body").removeClass("hide");
+	
+	//$(this.modal).find(".accordion-validate-grammar .panel-collapse").removeClass("in");
+	panel.find(".panel-collapse").addClass("in");
 	
 	var fileList = $("<ul>");
 	for (var i=0; i<files.length; i++) {
 		fileList.append("<li>" + files[i] + "</li>");
 	}
-	$("#" + id + " .panel-body").append(fileList);
+	panel.find(".panel-body").append(fileList);
 };
 
 GrammarEditor.prototype.parseSample = function() {
 	var _this = this;
 	
-	$("#grammar-parse-alerts").html("");
+	$(this.modal).find(".grammar-parse-alerts").html("");
 	if (this.svg!=null) {
 		this.svg.destroy();
 	}
@@ -372,8 +378,8 @@ GrammarEditor.prototype.parseSample = function() {
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",
 	    data: { 
-	    	sample : $("#grammar-sample-input").val(),
-	    	initRule : $("#base_method").val(),
+	    	sample : $(this.modal).find(".grammar-sample-input").val(),
+	    	initRule : $(this.modal).find("#baseMethod").val(),
 	    	temporary : _this.originalModeModified || _this.grammarModified || _this.validated
 	    },
 	    dataType: "json",
@@ -402,7 +408,7 @@ GrammarEditor.prototype.showParseSampleResult = function(svg, errors, warnings) 
 			"</div>");
 		
 		$(alerts).append(list)
-		$("#grammar-parse-alerts").append(alerts);
+		$(this.modal).find(".grammar-parse-alerts").append(alerts);
 	}
 	if (warnings!=null && Array.isArray(warnings) && warnings.length > 0) {
 		var list = $("<ul>");
@@ -416,11 +422,11 @@ GrammarEditor.prototype.showParseSampleResult = function(svg, errors, warnings) 
 			"</div>");
 		
 		$(alerts).append(list)
-		$("#grammar-parse-alerts").append(alerts);
+		$(this.modal).find(".grammar-parse-alerts").append(alerts);
 	}
 	if (svg != null) {
-		var svgContainer = "#grammar-sample-svg-embedded";	
-		$("#grammar-sample-svg-embedded").removeClass("hide");
+		var svgContainer = ".grammar-sample-svg-embedded";	
+		$(this.modal).find(".grammar-sample-svg-embedded").removeClass("hide");
 		this.svg = new SvgViewer(svgContainer, svg)
 	}
 };
