@@ -85,6 +85,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		
 		Map<Element, String> sampleInputs = new LinkedHashMap<Element, String>();
 		List<Object> inputElementIds = new ArrayList<Object>();
+		List<Object> inputGrammarIds = new ArrayList<Object>();
 		
 		if (elementIds!=null && samples!=null) {
 			inputElementIds.addAll(elementIds);
@@ -104,16 +105,30 @@ public class FunctionEditorController extends BaseFunctionController {
 			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
 			Element e = elementService.findById(elementId);
 			
+			inputGrammarIds.add(grammarId);
 			sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
 		} else { // Mapping
 			Reference parentConceptReference = referenceService.findReferenceByChildId(entity.getId(), functionId);
 			MappedConcept mc = mappedConceptService.findById(parentConceptReference.getId());
-			inputElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
+			
+			for (String elementId : mc.getElementGrammarIdsMap().keySet()) {
+				inputElementIds.add(elementId);
+				inputGrammarIds.add(mc.getElementGrammarIdsMap().get(elementId));
+			}
 			
 			for (Element e : elementService.findByIds(inputElementIds) ){
 				sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
 			}
 		}
+		
+		List<DescriptionGrammar> grammars = grammarService.findByIds(inputGrammarIds);
+		List<String> availableRules = new ArrayList<String>();
+		for (DescriptionGrammar g : grammars) {
+			
+		}
+		
+		model.addAttribute("availableRules", availableRules);
+		
 		model.addAttribute("sampleInputMap", sampleInputs);		
 		model.addAttribute("function", functionService.findById(functionId));
 		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));

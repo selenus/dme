@@ -29,4 +29,6 @@ public interface GrammarService extends BaseService {
 	public void clearGrammar(DescriptionGrammar g);
 
 	public List<DescriptionGrammar> findByEntityId(String entityId, boolean includeSources);
+
+	public List<DescriptionGrammar> findByIds(List<Object> grammarIds);
 }

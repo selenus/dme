@@ -222,4 +222,9 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		}
 	}
 
+	@Override
+	public List<DescriptionGrammar> findByIds(List<Object> grammarIds) {
+		return grammarDao.find(Query.query(Criteria.where("_id").in(grammarIds)));
+	}
+
 }
