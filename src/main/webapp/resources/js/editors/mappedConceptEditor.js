@@ -404,7 +404,7 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 			/*if (grammars[i].error==true) {
 				icon = this.options.icons.error;
 			}*/
-			var fDesc = area.addElement(grammars[i].simpleType, parent, grammars[i].id, this.formatLabel("g:"), icon);
+			var fDesc = area.addElement(grammars[i].simpleType, parent, grammars[i].id, grammars[i].grammarName, icon);
 			
 			if (isSource) {
 				this.sourceGrammars.push(grammars[i].id);
