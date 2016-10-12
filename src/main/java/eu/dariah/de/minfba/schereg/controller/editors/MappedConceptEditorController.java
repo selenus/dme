@@ -144,9 +144,11 @@ public class MappedConceptEditorController extends BaseScheregController {
 		List<Object> sourceElementIds = new ArrayList<Object>();
 		sourceElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
 				
+		
+		// TODO: Will not work anymore
 		// Prepare easier-to-use object-based map
 		List<Element> sourceElements = elementService.findByIds(sourceElementIds);
-		for (String sourceId : mc.getSourceElementMap().keySet()) {
+		/*for (String sourceId : mc.getSourceElementMap().keySet()) {
 			for (Element sourceElement : sourceElements) {
 				if (sourceId.equals(sourceElement.getId())) {
 					sourceElement.setGrammars(new ArrayList<DescriptionGrammarImpl>());
@@ -155,7 +157,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 					break;
 				}
 			}
-		}
+		}*/
 
 		return sourceElements;
 	}

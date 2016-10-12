@@ -270,7 +270,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 				}	
 			}
 			
-			if (e instanceof MappedConceptImpl && r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
+			/*if (e instanceof MappedConceptImpl && r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
 				MappedConceptImpl c = (MappedConceptImpl)e;
 				if (c.getElementGrammarIdsMap().size()>0) {
 					c.setSourceElementMap(new HashMap<String, DescriptionGrammarImpl>());
@@ -286,7 +286,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 					}
 				}
 
-			}
+			}*/
 		}
 		return e;		
 	}
