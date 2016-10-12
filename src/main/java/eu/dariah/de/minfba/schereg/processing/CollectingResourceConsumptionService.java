@@ -24,10 +24,10 @@ public class CollectingResourceConsumptionService implements ResourceConsumption
 	}
 	
 	@Override
-	public void init(Schema config) { }
-
-	@Override
 	public int commit() {
 		return 0;
+	}
+	@Override
+	public void init(String schemaId) {
 	}
 }
