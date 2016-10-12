@@ -24,7 +24,7 @@
     	</property>
     </bean>
 
-    <bean id="gtfElementProcessor" class="eu.dariah.de.minfba.processing.gtf.GtfElementProcessor">
+    <bean id="gtfElementProcessor" class="eu.dariah.de.minfba.gtf.GtfElementProcessor">
 		<property name="transformationEngine" ref="transformationEngine" />
 	</bean>
 	
