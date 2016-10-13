@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
-import de.unibamberg.minf.gtf.TransformationEngine;
+import de.unibamberg.minf.gtf.DescriptionEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
@@ -62,7 +62,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	@Autowired private SchemaService schemaService;
 	@Autowired private MappedConceptService mappedConceptService;
 	
-	@Autowired private TransformationEngine engine;
+	@Autowired private DescriptionEngine engine;
 	
 	public FunctionEditorController() {
 		super("schemaEditor");
@@ -259,7 +259,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		
 		try {
 			for (DescriptionGrammar g : grammars) {
-				engine.checkGrammar(g);
+				engine.checkAndLoadGrammar(g);
 			}
 
 			FunctionExecutionResult<TransformationFunction> pResult = engine.process(values, grammars, f);

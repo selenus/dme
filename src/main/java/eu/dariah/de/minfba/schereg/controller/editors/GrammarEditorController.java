@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
-import de.unibamberg.minf.gtf.TransformationEngine;
+import de.unibamberg.minf.gtf.DescriptionEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
@@ -63,7 +63,7 @@ public class GrammarEditorController extends BaseFunctionController {
 	
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
-	@Autowired protected TransformationEngine engine;
+	@Autowired protected DescriptionEngine engine;
 	
 		
 	public GrammarEditorController() {
@@ -285,7 +285,7 @@ public class GrammarEditorController extends BaseFunctionController {
 					return result;
 				}
 			}
-			if (engine.checkGrammar(g)!=null) {
+			if (engine.checkAndLoadGrammar(g)!=null) {
 				result.setSuccess(true);
 				result.setPojo(engine.processGrammarToSVG(sample, g, new HashMap<String, TransformationParamDefinition>()));
 			} else {
