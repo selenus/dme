@@ -236,7 +236,7 @@ public class FunctionEditorController extends BaseFunctionController {
 
 		List<String> values = new ArrayList<String>();
 		List<DescriptionGrammar> grammars = new ArrayList<DescriptionGrammar>();
-		
+				
 		if (Schema.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceBySchemaAndChildId(entityId, functionId).getId();
 			DescriptionGrammar g = grammarService.findById(grammarId);

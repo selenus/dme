@@ -13,7 +13,7 @@ var GrammarEditor = function(modal, options) {
 	this.originalModeModified = false;
 	this.grammarModified = false;
 	this.validated = false;
-	this.error = $(this.modal).find(".error").val()=="true";
+	this.error = $(this.modal).find("#error").val()=="true";
 	this.schemaId = this.options.entityId;
 	this.grammarId = this.options.grammarId;
 	this.pathname = this.options.pathPrefix + "/grammar/" + this.grammarId;
@@ -36,7 +36,7 @@ var GrammarEditor = function(modal, options) {
 
 GrammarEditor.prototype.updateGrammarState = function() {
 	var state = "";
-	if ($(this.modal).find(".passthrough").val()=="true") {
+	if ($(this.modal).find("#passthrough").val()=="true") {
 		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.passthrough");
 		this.setSampleParseFunctionality(false);
 	} else if (this.originalModeModified || this.grammarModified) {
@@ -70,7 +70,7 @@ GrammarEditor.prototype.setSampleParseFunctionality = function(enabled) {
 GrammarEditor.prototype.init = function() {
 	var _this = this;
 	
-	if ($(this.modal).find(".passthrough").val()=="true") {
+	if ($(this.modal).find("#passthrough").val()=="true") {
 		this.originalMode = "passthrough";
 		this.setLexerParserPassthrough();
 		$(this.modal).find(".lexer-parser-option-passthrough").prop("checked", "checked");
@@ -126,7 +126,7 @@ GrammarEditor.prototype.showHelp = function() {
 GrammarEditor.prototype.setLexerParserCombined = function() {	
 	$(this.modal).find(".non-passthrough-only").removeClass("hide");
 	$(this.modal).find(".passthrough-only").addClass("hide");
-	$(this.modal).find(".passthrough").val("false");
+	$(this.modal).find("#passthrough").val("false");
 	
 	$(this.modal).find(".form-group-lexer-grammar").addClass("hide");	
 		
@@ -142,7 +142,7 @@ GrammarEditor.prototype.setLexerParserCombined = function() {
 GrammarEditor.prototype.setLexerParserSeparate = function() {	
 	$(this.modal).find(".non-passthrough-only").removeClass("hide");
 	$(this.modal).find(".passthrough-only").addClass("hide");	
-	$(this.modal).find(".passthrough").val("false");
+	$(this.modal).find("#passthrough").val("false");
 	
 	$(this.modal).find(".form-group-lexer-grammar").removeClass("hide");
 	
@@ -158,7 +158,7 @@ GrammarEditor.prototype.setLexerParserSeparate = function() {
 GrammarEditor.prototype.setLexerParserPassthrough = function() {
 	$(this.modal).find(".non-passthrough-only").addClass("hide");
 	$(this.modal).find(".passthrough-only").removeClass("hide");
-	$(this.modal).find(".passthrough").val("true");
+	$(this.modal).find("#passthrough").val("true");
 	
 	this.combinedGrammar = false;
 	

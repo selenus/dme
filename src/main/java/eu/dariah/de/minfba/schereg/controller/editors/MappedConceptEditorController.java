@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
@@ -32,6 +33,7 @@ import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
@@ -42,6 +44,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	@Autowired protected MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private ElementService elementService;
+	@Autowired private GrammarService grammarService;
 	@Autowired private PersistedSessionService sessionService;
 	
 	
@@ -141,23 +144,21 @@ public class MappedConceptEditorController extends BaseScheregController {
 			return null;
 		}
 		
-		List<Object> sourceElementIds = new ArrayList<Object>();
-		sourceElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
-				
+		List<Object> loadIds = new ArrayList<Object>();
+		loadIds.addAll(mc.getElementGrammarIdsMap().keySet());
 		
-		// TODO: Will not work anymore
-		// Prepare easier-to-use object-based map
-		List<Element> sourceElements = elementService.findByIds(sourceElementIds);
-		/*for (String sourceId : mc.getSourceElementMap().keySet()) {
+		List<Element> sourceElements = elementService.findByIds(loadIds);
+
+		for (String sourceId : mc.getElementGrammarIdsMap().keySet()) {
 			for (Element sourceElement : sourceElements) {
 				if (sourceId.equals(sourceElement.getId())) {
 					sourceElement.setGrammars(new ArrayList<DescriptionGrammarImpl>());
-					sourceElement.getGrammars().add(mc.getSourceElementMap().get(sourceId));
+					sourceElement.getGrammars().add((DescriptionGrammarImpl) grammarService.findById(mc.getElementGrammarIdsMap().get(sourceId)));
 					
 					break;
 				}
 			}
-		}*/
+		}
 
 		return sourceElements;
 	}

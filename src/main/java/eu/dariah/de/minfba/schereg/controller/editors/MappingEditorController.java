@@ -1,5 +1,8 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -20,6 +23,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.mapping.TargetElementGroup;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -111,9 +115,11 @@ public class MappingEditorController extends BaseMainEditorController {
 			mapExecGroup.addGrammar(g);
 		}
 		
-		for (MappedConcept c : concepts) {
+		for (MappedConcept c : concepts) {			
 			mapExecGroup.addMappedConcept(c, mappedConceptService.getConceptFunction(c.getEntityId(), c.getId()));
 		}
+		
+		
 		
 		
 		mappingExecService.init(mapExecGroup, inputResources);
