@@ -64,14 +64,9 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	
 	@Override
 	public void clearGrammar(DescriptionGrammar g) {
-		File dirPath = new File(getGrammarDirectory(g.getIdentifier(), g.isTemporary()));
-		try {
-			logger.info(String.format("Clearing %s grammar %s", g.isTemporary() ? "temporary" : "persistent", g.getIdentifier()));
-			engine.unloadGrammar(g, dirPath);
-			FileUtils.deleteDirectory(dirPath);
-		} catch (IOException | GrammarProcessingException e) {
-			logger.error(String.format("Could not delete temporary grammar directory", dirPath.getAbsolutePath()), e);
-		}
+		logger.info(String.format("Clearing %s grammar %s", g.isTemporary() ? "temporary" : "persistent", g.getIdentifier()));
+		engine.unloadGrammar(g.getIdentifier());
+		engine.deleteGrammar(g.getIdentifier());
 	}
 	
 	@Override

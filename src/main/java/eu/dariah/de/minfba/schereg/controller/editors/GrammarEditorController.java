@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.DescriptionEngine;
+import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
@@ -63,7 +64,8 @@ public class GrammarEditorController extends BaseFunctionController {
 	
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
-	@Autowired protected DescriptionEngine engine;
+	
+	@Autowired private MainEngine mainEngine;
 	
 		
 	public GrammarEditorController() {
@@ -285,9 +287,9 @@ public class GrammarEditorController extends BaseFunctionController {
 					return result;
 				}
 			}
-			if (engine.checkAndLoadGrammar(g)!=null) {
+			if (mainEngine.getDescriptionEngine().checkAndLoadGrammar(g)!=null) {
 				result.setSuccess(true);
-				result.setPojo(engine.processGrammarToSVG(sample, g, new HashMap<String, TransformationParamDefinition>()));
+				result.setPojo(mainEngine.getDescriptionEngine().processDescriptionGrammarToSVG(sample, g, new HashMap<String, TransformationParamDefinition>()));
 			} else {
 				// Grammar not on server yet (new or error)
 				result.addObjectWarning(messageSource.getMessage("~eu.dariah.de.minfba.schereg.model.grammar.validation.no_grammar_found", null, locale));

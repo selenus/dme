@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.DescriptionEngine;
+import de.unibamberg.minf.gtf.MainEngine;
+import de.unibamberg.minf.gtf.TransformationEngine;
 import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
@@ -40,6 +42,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.processing.ElementProcessor;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -62,7 +65,8 @@ public class FunctionEditorController extends BaseFunctionController {
 	@Autowired private SchemaService schemaService;
 	@Autowired private MappedConceptService mappedConceptService;
 	
-	@Autowired private DescriptionEngine engine;
+	@Autowired private MainEngine mainEngine;
+
 	
 	public FunctionEditorController() {
 		super("schemaEditor");
@@ -155,9 +159,8 @@ public class FunctionEditorController extends BaseFunctionController {
 			TransformationFunctionImpl f = new TransformationFunctionImpl(entityId, functionId);
 			f.setFunction(func);
 			
-			CompiledTransformationFunction fCompiled = engine.compileOutputFunction(f, true);
-			
-			if (fCompiled instanceof CompiledTransformationFunctionImpl) {
+			CompiledTransformationFunction fCompiled = mainEngine.getTransformationEngine().compileOutputFunction(f, true);
+			if (!fCompiled.isEmpty()) {
 				result.setPojo(((CompiledTransformationFunctionImpl)fCompiled).getSvg());
 				result.setObjectErrors(((CompiledTransformationFunctionImpl)fCompiled).getErrors());
 			}
@@ -258,11 +261,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		}
 		
 		try {
-			for (DescriptionGrammar g : grammars) {
-				engine.checkAndLoadGrammar(g);
-			}
-
-			FunctionExecutionResult<TransformationFunction> pResult = engine.process(values, grammars, f);
+			FunctionExecutionResult pResult = mainEngine.processValues(values, grammars, f);
 			result.setSuccess(true);
 			
 			boolean allMatched = true;

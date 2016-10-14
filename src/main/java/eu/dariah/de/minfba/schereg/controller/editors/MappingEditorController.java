@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
@@ -22,6 +23,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.mapping.model.MappingExecGroup;
 import eu.dariah.de.minfba.mapping.service.MappingExecutionService;
 import eu.dariah.de.minfba.mapping.service.MappingExecutionServiceImpl;
 import eu.dariah.de.minfba.processing.exception.ProcessingConfigException;
@@ -36,6 +38,7 @@ import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
@@ -45,6 +48,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 @RequestMapping(value="/mapping/editor/{entityId}/")
 public class MappingEditorController extends BaseMainEditorController {
 	@Autowired private SchemaService schemaService;
+	@Autowired private GrammarService grammarService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private PersistedSessionService sessionService;
@@ -88,40 +92,50 @@ public class MappingEditorController extends BaseMainEditorController {
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 
 		Mapping m = mappingService.findMappingById(entityId);
-		Schema sTarget = schemaService.findSchemaById(m.getTargetId());
 		List<Resource> inputResources = session.getSampleOutput();
-		Element r = elementService.findRootBySchemaId(sTarget.getId(), true);
+		Element r = elementService.findRootBySchemaId(m.getTargetId(), true);
 		List<MappedConcept> concepts = mappedConceptService.findAllByMappingId(m.getId(), true);
 				
 		MappingExecutionService mappingExecService = appContext.getBean(MappingExecutionService.class);
 		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
 		
-		try {
-			mappingExecService.init(m, sTarget, inputResources, r, concepts);
-			mappingExecService.addConsumptionService(consumptionService);
-			
-			mappingExecService.run();
-			
-			session.setSampleMapped(consumptionService.getResources());
+		// TODO Cache mapping execution group -> in ScheReg
 		
-			if (session.getSampleMapped()!=null && session.getSampleMapped().size()>0) {
-				result.setPojo(session.getSampleMapped().size());
-				
-				if (session.getSampleOutput().size()==1) {
-					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_1_results", new Object[]{sw.getElapsedTime()}, locale));
-				} else {
-					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_n_results", new Object[]{sw.getElapsedTime(), consumptionService.getResources().size()}, locale));	
-				}
-			} else {
-				session.addLogEntry(LogType.WARNING, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_no_results", null, locale));
-			}
-			
-			sessionService.saveSession(session);
-			
-		} catch (ProcessingConfigException e) {
-			result.setSuccess(false);
-			result.addObjectError(e.getMessage());
+		MappingExecGroup mapExecGroup = new MappingExecGroup();
+		mapExecGroup.setMapping(m);
+		mapExecGroup.setTargetElementTree(r);
+		mapExecGroup.setTargetSchemaId(m.getTargetId());
+		
+		// TODO: Sources really needed?
+		for (DescriptionGrammar g : grammarService.findByEntityId(m.getEntityId(), true)) {
+			mapExecGroup.addGrammar(g);
 		}
+		
+		for (MappedConcept c : concepts) {
+			mapExecGroup.addMappedConcept(c, mappedConceptService.getConceptFunction(c.getEntityId(), c.getId()));
+		}
+		
+		
+		mappingExecService.init(mapExecGroup, inputResources);
+		mappingExecService.addConsumptionService(consumptionService);
+		
+		mappingExecService.run();
+		
+		session.setSampleMapped(consumptionService.getResources());
+
+		if (session.getSampleMapped()!=null && session.getSampleMapped().size()>0) {
+			result.setPojo(session.getSampleMapped().size());
+			
+			if (session.getSampleOutput().size()==1) {
+				session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_1_results", new Object[]{sw.getElapsedTime()}, locale));
+			} else {
+				session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_n_results", new Object[]{sw.getElapsedTime(), consumptionService.getResources().size()}, locale));	
+			}
+		} else {
+			session.addLogEntry(LogType.WARNING, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.translated_no_results", null, locale));
+		}
+		
+		sessionService.saveSession(session);
 		return result;
 	}
 }

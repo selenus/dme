@@ -25,21 +25,27 @@
     </bean>
 
     <bean id="gtfElementProcessor" class="eu.dariah.de.minfba.gtf.GtfElementProcessor">
-		<property name="transformationEngine" ref="transformationEngine" />
+		<property name="mainEngine" ref="mainEngine" />
 	</bean>
 	
 	
 	<bean id="gtfMappingProcessor" class="eu.dariah.de.minfba.gtf.GtfMappingProcessor">
-		<property name="transformationEngine" ref="transformationEngine" />
+		<property name="mainEngine" ref="mainEngine" />
 	</bean>
-
-	<bean id="transformationEngine" class="de.unibamberg.minf.gtf.TransformationEngine">
-		<property name="autoCompile" value="true" />
-		<property name="forceRecompilation" value="true" />
-		<property name="commandDispatcher" ref="commandDispatcher" />
-		<property name="grammarsRoot" value="${paths.grammars}" />
-		<property name="parseErrorDumpPath" value="/tmp/wikitest_errors" />
-		<property name="objMapper" ref="objectMapper" />
+	
+	<bean id="mainEngine" class="de.unibamberg.minf.gtf.MainEngineImpl">
+		<property name="descriptionEngine">
+			<bean class="de.unibamberg.minf.gtf.DescriptionEngineImpl">
+				<property name="grammarsRoot" value="${paths.grammars}" />
+				<property name="parseErrorDumpPath" value="/tmp/schereg_parse_errors" />
+			</bean>
+		</property>
+		<property name="transformationEngine">
+			<bean class="de.unibamberg.minf.gtf.TransformationEngineImpl">
+				<property name="commandDispatcher" ref="commandDispatcher" />		
+				<property name="objMapper" ref="objectMapper" />
+			</bean>
+		</property>
 	</bean>
 	
 	<bean id="vocabularyEngine" class="de.unibamberg.minf.gtf.vocabulary.VocabularyEngine">
