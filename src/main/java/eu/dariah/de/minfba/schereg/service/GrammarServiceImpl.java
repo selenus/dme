@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.DescriptionEngine;
+import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -33,7 +34,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 public class GrammarServiceImpl extends BaseReferenceServiceImpl implements GrammarService {
 		
 	@Autowired private GrammarDao grammarDao;
-	@Autowired private DescriptionEngine engine;
+	@Autowired private MainEngine engine;
 
 	@Value(value="${paths.grammars}")
 	private String grammarsRootPath;
@@ -65,8 +66,8 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	@Override
 	public void clearGrammar(DescriptionGrammar g) {
 		logger.info(String.format("Clearing %s grammar %s", g.isTemporary() ? "temporary" : "persistent", g.getIdentifier()));
-		engine.unloadGrammar(g.getIdentifier());
-		engine.deleteGrammar(g.getIdentifier());
+		engine.getDescriptionEngine().unloadGrammar(g.getIdentifier());
+		engine.getDescriptionEngine().deleteGrammar(g.getIdentifier());
 	}
 	
 	@Override

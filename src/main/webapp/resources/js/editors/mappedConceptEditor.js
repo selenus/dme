@@ -467,10 +467,11 @@ MappedConceptEditor.prototype.performTransformation = function() {
 	    	$.ajax({
 	    	    url: "function/" + f + "/async/parseSample",
 	    	    type: "POST",
-	    	    data: { 
+	    	    data: JSON.stringify ({ 
 	    	    	elementIds : elementIds, 
 	    	    	samples: samples
-	    	    },
+	    	    }),
+	    	    contentType: 'application/json',
 	    	    dataType: "json",
 	    	    success: function(data) {
 	    	    	if (data.success) {

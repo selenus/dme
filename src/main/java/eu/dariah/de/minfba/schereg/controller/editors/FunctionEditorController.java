@@ -15,10 +15,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.DescriptionEngine;
@@ -30,6 +34,7 @@ import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
+import edu.stanford.nlp.ling.CoreAnnotations.ForcedSentenceEndAnnotation;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
@@ -208,17 +213,22 @@ public class FunctionEditorController extends BaseFunctionController {
 		return result;
 	}
 	
-	private String getSampleByElementId(String elementId, List<String> elementIds, List<String> samples) {
+	private String getSampleByElementId(String elementId, ArrayNode elementIds, ArrayNode samples) {
 		for (int i=0; i<elementIds.size(); i++) {
-			if (elementIds.get(i).equals(elementId) && i<samples.size()) {
-				return samples.get(i);
+			if (elementIds.get(i).textValue().equals(elementId) && i<samples.size()) {
+				return samples.get(i).textValue();
 			}
 		}
 		return "";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
-	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestParam(required=false) String func, @RequestParam(value="elementIds[]") List<String> elementIds, @RequestParam(value="samples[]") List<String> samples, Locale locale) {
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestBody JsonNode jsonNode, Locale locale) {
+	
+		String func = jsonNode.path("func").textValue(); 
+		ArrayNode elementIds = (ArrayNode)jsonNode.path("elementIds");
+		ArrayNode samples = (ArrayNode)jsonNode.path("samples");
+		
 		Identifiable entity = this.getEntity(entityId);
 
 		TransformationFunctionImpl f;

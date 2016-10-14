@@ -153,12 +153,13 @@ FunctionEditor.prototype.performTransformation = function() {
 	$.ajax({
 	    url: _this.pathname + "/async/parseSample",
 	    type: "POST",
-	    data: { 
+	    data: JSON.stringify ({ 
 	    	func: f,
 	    	elementIds : elementIds, 
 	    	samples: samples
-	    },
-	    dataType: "json",
+	    }),
+	    contentType: 'application/json',
+        dataType: 'json',
 	    success: function(data) {
 	    	if (data.success) {
 	    		//$(_this.modal).find(".transformation-result-container").text(JSON.stringify(data.pojo));
