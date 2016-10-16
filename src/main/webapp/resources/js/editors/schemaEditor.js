@@ -449,7 +449,9 @@ SchemaEditor.prototype.triggerUploadFile = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		completeCallback: function() {_this.reloadElementHierarchy();}
+		completeCallback: function() { 
+			_this.reloadElementHierarchy(); 
+		}
 	});
 	
 	modalFormHandler.fileUploadElements.push({

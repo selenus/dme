@@ -150,6 +150,10 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	}  
 };
 
+SchemaEditor.prototype.checkSchemaState = function() {
+	// TODO: Implement here
+};
+
 SchemaEditor.prototype.loadElementHierarchy = function() {
 	var _this = this;
 	$.ajax({
