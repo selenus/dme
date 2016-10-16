@@ -399,20 +399,20 @@ noscript div {
 	text-align: right;
 }
 
-#schema-editor-sample-container {
+.editor-sample-container {
 	padding-top: 10px;
 }
 
-#schema-editor-sample-pane {
+.ui-layout-pane.editor-sample-pane {
 	background: transparent url("../img/loader.gif") center center no-repeat;
 }
 
-#schema-editor-sample-pane .ui-pane-subcontainer,
-#schema-editor-sample-container {
+.editor-sample-pane .ui-pane-subcontainer,
+.editor-sample-container {
 	background: #FFF;
 }
 
-#schema-sample-textarea {
+.sample-textarea {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 	font-size: 90%;
 	resize: none;
@@ -434,18 +434,18 @@ noscript div {
 }
 
 
-#schema-sample-output-container {
+#sample-output-container {
 	border: 1px solid #DDD;
 	border-top: none;
 }
 
-#schema-sample-output-container .button-bar {
+#sample-output-container .button-bar {
 	text-align: right;
 	padding-top: 10px;
 }
 
-#schema-sample-output-resource, 
-#schema-sample-transformed-resource {
+.sample-output-resource, 
+.sample-transformed-resource {
 	font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
 	font-size: 90%;
 	overflow: auto;
@@ -455,14 +455,14 @@ noscript div {
 }
 
 
-#schema-sample-output-resource ul,
-#schema-sample-transformed-resource ul {
+.sample-output-resource ul,
+.sample-transformed-resource ul {
 	padding-left: 20px;
 	list-style-type: none;
 	text-indent: -1.5em;
 }
 
-.schema-sample-output-key {
+.sample-output-key {
 	font-style: italic;
 	font-weight: bold;
 }
@@ -483,7 +483,7 @@ noscript div {
 	text-align: right;
 }
 
-.schema-sample-output-counter {
+.sample-output-counter {
     font-size: 95%;
     padding: 10px;
 }

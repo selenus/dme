@@ -1,11 +1,13 @@
 package eu.dariah.de.minfba.schereg.controller.base;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +54,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 		
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getSampleResource")
-	public @ResponseBody Resource getSampleResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, Locale locale) {
+	public @ResponseBody Resource getSampleResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		
 		if (s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
@@ -82,11 +84,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				return s.getSampleOutput().get(index);
 			} 
 		}
+		response.getWriter().print("null");
 		return null;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTransformedResource")
-	public @ResponseBody Resource getTransformedResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, Locale locale) {
+	public @ResponseBody Resource getTransformedResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s.getSampleMapped()!=null && s.getSampleMapped().size()>0) {
 			
@@ -102,6 +105,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				return s.getSampleMapped().get(index);
 			} 
 		}
+		response.getWriter().print("null");
 		return null;
 	}
 	

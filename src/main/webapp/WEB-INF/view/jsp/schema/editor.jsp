@@ -70,7 +70,7 @@
 							</div>
 							
 							<!-- West: Sample transformation -->
-							<div id="schema-editor-sample-pane" class="layout-west layout-pane">
+							<div class="layout-west layout-pane editor-sample-pane">
 								<c:set var="currentSampleCount" value="${session.sampleOutput==null ? 0 : fn:length(session.sampleOutput)}"/>
 								<input type="hidden" id="currentSampleCount" value="${currentSampleCount}">
 								<input type="hidden" id="currentSampleIndex" value="${session.selectedOutputIndex==null ? 0 : session.selectedOutputIndex}">
@@ -80,48 +80,50 @@
 										<span class="pull-right"><span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="top" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.sessions" />" aria-hidden="true"></span></span>
 									</h4>
 								</div>
-								<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sessions" /></h5>									
+								<div>
+									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sessions" /></h5>
+								</div>									
 								<div class="ui-pane-subcontainer button-bar">
 									<button type="button" onclick="sessions.saveSession(editor.schema.id);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></button>
 									<button type="button" onclick="sessions.loadSession(editor.schema.id);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></button>
 									<button type="button" onclick="editor.resetSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
 								</div>
-								<div id="schema-editor-sample-container">
+								<div class="editor-sample-container">
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.data" /></h5>
 									<button type="button" onclick="editor.applyAndExecuteSample(); return false;" class="pull-right btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
 									<ul class="nav nav-tabs" role="tablist">
 										<li role="presentation"<c:if test="${currentSampleCount==0}"> class="active"</c:if>>
-											<a href="#schema-sample-input-container" aria-controls="schema-sample-input-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /></a>
+											<a href="#sample-input-container" aria-controls="sample-input-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /></a>
 										</li>
 										<c:choose>
 											<c:when test="${currentSampleCount>0}">
-												<li role="presentation" class="active"><a href="#schema-sample-output-container" aria-controls="schema-sample-output-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.output" /><span class="badge-c"> <span class="badge">${currentSampleCount}</span></span></a></li>
+												<li role="presentation" class="active"><a href="#sample-output-container" aria-controls="sample-output-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.output" /><span class="badge-c"> <span class="badge">${currentSampleCount}</span></span></a></li>
 											</c:when>
 											<c:otherwise>
-												<li role="presentation" class="disabled"><a href="#schema-sample-output-container" aria-controls="schema-sample-output-container" role="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.output" /></a></li>
+												<li role="presentation" class="disabled"><a href="#sample-output-container" aria-controls="sample-output-container" role="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.output" /></a></li>
 											</c:otherwise>
 										</c:choose>
 									</ul>
 									<div class="tab-content">
-										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount==0}"> active</c:if>" id="schema-sample-input-container">
+										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount==0}"> active</c:if>" id="sample-input-container">
 											<c:choose>
 												<c:when test="${session.sampleInput!=null && session.sampleInput!=''}">
 													<input type="hidden" id="sample-set" value="true">
-													<textarea id="schema-sample-textarea" class="form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" />" rows="3"></textarea>
+													<textarea class="sample-textarea form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" />" rows="3"></textarea>
 												</c:when>
 												<c:otherwise>
 													<input type="hidden" id="sample-set" value="false">
-													<textarea id="schema-sample-textarea" class="form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" />" rows="3"></textarea>
+													<textarea class="sample-textarea form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" />" rows="3"></textarea>
 												</c:otherwise>
 											</c:choose>
 										</div>
-										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="schema-sample-output-container">
+										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="sample-output-container">
 											<div class="button-bar">
-												<span class="schema-sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
+												<span class="sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
 												<button type="button" onclick="editor.getPrevSampleResource(); return false;" class="btn-sample-prev-resource btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 												<button type="button" onclick="editor.getNextSampleResource(); return false;" class="btn-sample-next-resource btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 											</div>
-											<div id="schema-sample-output-resource" class="height-sized-element">
+											<div class="sample-output-resource height-sized-element">
 											
 											</div>
 										</div>

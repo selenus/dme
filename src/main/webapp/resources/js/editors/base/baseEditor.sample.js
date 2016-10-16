@@ -3,8 +3,11 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId) {
 	
 	this.samplePath = samplePath;
 	this.sampleEntityId = sampleEntityId;
-	this.sampleTextbox = $("#schema-sample-textarea");  //schema-editor-outer-east-container, schema-editor-detail-pane
-	this.samplePane = $("#schema-editor-sample-pane");
+	this.sampleTextbox = $(".sample-textarea");  //schema-editor-outer-east-container, schema-editor-detail-pane
+	this.samplePane = $(".editor-sample-pane");
+	this.sampleContainer = $(".editor-sample-container");
+	this.sampleOutputContainer = $("#sample-output-container");
+	
 	this.sampleModified = !$("#sample-set").val();
 	this.currentSampleIndex = parseInt(Number($("#currentSampleIndex").val()));
 	this.sampleResourceCount = parseInt(Number($("#currentSampleCount").val()));
@@ -20,7 +23,7 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId) {
 
 BaseEditor.prototype.applyAndExecuteSample = function() {
 	var _this = this;
-	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").hide();
+	this.samplePane.children("div:not(.ui-pane-title)").hide();
 	
 	if (this.sampleModified) {
 		this.applySample(function() {
@@ -36,7 +39,7 @@ BaseEditor.prototype.applySample = function(callback) {
 	$.ajax({
 	    url: this.samplePath + "async/applySample",
 	    type: "POST",
-	    data: { sample : $("#schema-sample-textarea").val() },
+	    data: { sample : _this.sampleTextbox.val() },
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) { 
@@ -54,23 +57,23 @@ BaseEditor.prototype.executeSample = function() {
 	$.ajax({
 	    url: this.samplePath + "async/executeSample",
 	    type: "GET",
-	    //data: { sample : $("#schema-sample-textarea").val() },
+	    //data: { sample : _this.sampleTextbox.val() },
 	    dataType: "json",
+	    async: false,
 	    success: function(data) {
+	    	if (data.success==true && data.pojo>0 && _this.mappingId!==undefined && _this instanceof MappingEditor) {
+	    		_this.executeSampleMapping();
+	    	}
 	    	if (data.success) {
 	    		_this.processSampleExecutionResult(data.pojo);
 	    	}
 	    	_this.currentSampleIndex = 0;
 	    	_this.logArea.refresh();
-	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
-	    	
-	    	if (data.success==true && data.pojo>0 && _this.mappingId!==undefined && _this instanceof MappingEditor) {
-	    		_this.executeSampleMapping();
-	    	}
+	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) {
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
-	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
+	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }
 	});
@@ -81,14 +84,15 @@ BaseEditor.prototype.executeSampleMapping = function() {
 	$.ajax({
 	    url: this.samplePath + "async/executeSampleMapping",
 	    type: "GET",
-	    //data: { sample : $("#schema-sample-textarea").val() },
+	    //data: { sample : _this.sampleTextbox.val() },
 	    dataType: "json",
+	    async: false,
 	    success: function(data) {
-	    	console.log("return exec sample")
+	    	
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) {
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
-	    	$("#schema-editor-sample-pane").children("div:not(.ui-pane-title)").show();
+	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }
 	});
@@ -99,11 +103,11 @@ BaseEditor.prototype.executeMapping = function() {
 };
 
 BaseEditor.prototype.processSampleExecutionResult = function(count) {
-	var navTab = $("#schema-editor-sample-container a[href='#schema-sample-output-container']");
+	var navTab = $(this.sampleContainer).find("a[href='#sample-output-container']");
 	var enabled = false;
 	
 	$(navTab).find(".badge-c").remove();
-	$("#schema-sample-output-resource").text("");
+	$(".sample-output-resource").text("");
 	
 	this.sampleResourceCount = 0;
 	if (!isNaN(count) && parseInt(Number(count))==count && !isNaN(parseInt(count, 10))) {
@@ -121,7 +125,7 @@ BaseEditor.prototype.processSampleExecutionResult = function(count) {
 	} else {
 		$(navTab).parent().addClass("disabled");
 		$(navTab).removeAttr("data-toggle");
-		$("#schema-editor-sample-container a[href='#schema-sample-input-container']").tab('show');
+		$(this.sampleContainer).find("a[href='#sample-input-container']").tab('show');
 	}
 	this.getSampleResource();
 };
@@ -134,15 +138,22 @@ BaseEditor.prototype.getSampleResource = function() {
 	    data: { index : _this.currentSampleIndex },
 	    dataType: "json",
 	    success: function(data) {
-	    	var result = $("<ul>");
-	    	result.append(_this.buildSampleResource(data));
-	    	$("#schema-sample-output-resource").html(result);
+	    	if (data!=null && data!=undefined) {
+	    		var result = $("<ul>");
+	    		result.append(_this.buildSampleResource(data));
+	    		$(".sample-output-resource").html(result);
+	    	} else {
+	    		$(".sample-output-resource").text("");
+	    	}
 	    	_this.setSampleNavigationBar();
 	    	if (_this.mappingId!==undefined && _this instanceof MappingEditor) {
 	    		_this.getTransformedResource();
 	    	}
-	    }/*,
-	    error: __util.processServerError*/
+	    },
+	    error: function() {
+	    	$(".sample-output-resource").text("");
+	    	$(".sample-transformed-resource").text("");
+	    }
 	});
 };
 
@@ -154,18 +165,25 @@ BaseEditor.prototype.getTransformedResource = function() {
 	    data: { index : _this.currentSampleIndex },
 	    dataType: "json",
 	    success: function(data) {
-	    	var result = $("<ul>");
-	    	result.append(_this.buildSampleResource(data));
-	    	$("#schema-sample-transformed-resource").html(result);
+	    	if (data!=null && data!=undefined) {
+	    		var result = $("<ul>");
+		    	result.append(_this.buildSampleResource(data));
+		    	$(".sample-transformed-resource").html(result);
+	    	} else {
+	    		$(".sample-transformed-resource").text("");
+	    	}
+	    	
 	    	_this.setSampleNavigationBar();
-	    }/*,
-	    error: __util.processServerError*/
+	    },
+	    error: function() {
+	    	$(".sample-transformed-resource").text("");
+	    }
 	});
 };
 
 
 BaseEditor.prototype.setSampleNavigationBar = function() {
-	$(".schema-sample-output-counter").text("" + (this.currentSampleIndex+1) + " / " + this.sampleResourceCount);
+	$(".sample-output-counter").text("" + (this.currentSampleIndex+1) + " / " + this.sampleResourceCount);
 	
 	if (this.currentSampleIndex > 0) {
 		$(".btn-sample-prev-resource").removeClass("disabled");
@@ -182,6 +200,7 @@ BaseEditor.prototype.setSampleNavigationBar = function() {
 BaseEditor.prototype.getPrevSampleResource = function() {
 	if (this.currentSampleIndex > 0) {
 		this.currentSampleIndex--;
+		$("#currentSampleIndex").val(this.currentSampleIndex);
 		this.getSampleResource();
 	}
 };
@@ -189,18 +208,19 @@ BaseEditor.prototype.getPrevSampleResource = function() {
 BaseEditor.prototype.getNextSampleResource = function() {
 	if (this.currentSampleIndex < this.sampleResourceCount-1) {
 		this.currentSampleIndex++;
+		$("#currentSampleIndex").val(this.currentSampleIndex);
 		this.getSampleResource();
 	}
 };
 
 BaseEditor.prototype.showSampleResourceTarget = function() {
-	$("#schema-sample-output-resource").addClass("hide");
-	$("#schema-sample-transformed-resource").removeClass("hide");
+	$(".sample-output-resource").addClass("hide");
+	$(".sample-transformed-resource").removeClass("hide");
 }
 
 BaseEditor.prototype.showSampleResourceSource = function() {
-	$("#schema-sample-output-resource").removeClass("hide");
-	$("#schema-sample-transformed-resource").addClass("hide");
+	$(".sample-output-resource").removeClass("hide");
+	$(".sample-transformed-resource").addClass("hide");
 }
 
 BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
@@ -209,7 +229,7 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 		var key = Object.getOwnPropertyNames(resource)[i];
 		
 		if (key==="") {
-			parentItem.append(": <span class=\"schema-sample-output-value\">" + resource[key] + "</span>");
+			parentItem.append(": <span class=\"sample-output-value\">" + resource[key] + "</span>");
 			continue;
 		}
 		
@@ -228,7 +248,7 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 BaseEditor.prototype.buildSampleResourceItem = function(key, resource) {
 	
 	var item = $("<li>");
-	item.append("&#8594; <span class=\"schema-sample-output-key\">" + key + "</span>");
+	item.append("&#8594; <span class=\"sample-output-key\">" + key + "</span>");
 	
 	var subItems = this.buildSampleResource(resource, item);
 	if (subItems.length > 0) {
@@ -242,7 +262,7 @@ BaseEditor.prototype.buildSampleResourceItem = function(key, resource) {
 BaseEditor.prototype.buildSampleResourceValue = function(resource, parentItem, subItems) {
 	var key = Object.getOwnPropertyNames(resource)[0];
 	if (key==="") {
-		parentItem.append(": <span class=\"schema-sample-output-value\">" + resource[key] + "</span>");
+		parentItem.append(": <span class=\"sample-output-value\">" + resource[key] + "</span>");
 		return 0;
 	} else {
 		subItems.append(this.buildSampleResource(resource));
