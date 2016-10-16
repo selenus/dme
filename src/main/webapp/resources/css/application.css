@@ -502,7 +502,7 @@ noscript div {
 /*!
  *	Grammar Editor
  */
-#accordion-validate-grammar .panel-body ul {
+.accordion-validate-grammar .panel-body ul {
 	list-style: none;
 	font-size: 90%;
 	max-height: 150px;
@@ -585,16 +585,33 @@ noscript div {
 	font-style: italic;
 }
 
-#function-alerts ul {
+.function-alerts ul {
 	list-style: circle;
 }
 
-#transformation-result {
+.transformation-result {
 	height: 150px;
 }
 
-#transformation-result ul {
+.transformation-result ul {
 	padding-left: 15px;
+}
+
+.available-input-container {
+	border: 1px solid #ccc;
+    height: 245px;
+    overflow: scroll;
+    padding: 6px;
+}
+
+.available-input-container ul {
+	font-size: 90%;
+	list-style: none;
+	padding-left: 15px;
+}
+
+.function_function {
+	height: 240px;
 }
 
 /*!

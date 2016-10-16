@@ -1,6 +1,7 @@
 <%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <s:url value="${actionPath}" var="saveUrl" />
 
@@ -56,10 +57,35 @@
 				</span>)
 			</div>
 			<div class="form-group">
-				<label class="control-label" for="function_function"><s:message code="~eu.dariah.de.minfba.schereg.model.function.transformation_function" />:</label>
-				<div>
-					<sf:textarea path="function" rows="12" class="form-control codearea function_function" />
-					<sf:errors path="function" cssClass="error" />
+				<div class="row">
+					<div class="col-sm-8">
+						<label class="control-label" for="function_function"><s:message code="~eu.dariah.de.minfba.schereg.model.function.transformation_function" />:</label>
+						<div>
+							<sf:textarea path="function" rows="12" class="form-control codearea function_function" />
+							<sf:errors path="function" cssClass="error" />
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<label class="control-label"><s:message code="~eu.dariah.de.minfba.schereg.notification.transformation.available_inputs" />:</label>
+						<div class='available-input-container'>
+							<c:if test="${availablePassthroughGrammars!=null && fn:length(availablePassthroughGrammars)>0}">
+								<em><s:message code="~eu.dariah.de.minfba.schereg.notification.transformation.available_passthrough_grammars" /></em>
+								<ul>
+									<c:forEach items="${availablePassthroughGrammars}" var="availablePassthroughGrammar">
+										<li>${availablePassthroughGrammar}</li>
+									</c:forEach>
+								</ul>
+							</c:if>
+							<c:if test="${availableRules!=null && fn:length(availableRules)>0}">
+								<em><s:message code="~eu.dariah.de.minfba.schereg.notification.transformation.available_parser_rules" /></em>
+								<ul>
+									<c:forEach items="${availableRules}" var="availableRule">
+										<li>${availableRule}</li>
+									</c:forEach>
+								</ul>
+							</c:if>
+						</div>
+					</div>
 				</div>
 			</div>		
 			<div class="form-footer">

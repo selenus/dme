@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -107,7 +108,9 @@ public class FunctionEditorController extends BaseFunctionController {
 					}
 				}
 			}
-		} else if (Schema.class.isAssignableFrom(entity.getClass())) {
+		} 
+		
+		if (Schema.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceByChildId(entityId, functionId).getId();
 			model.addAttribute("grammar", grammarService.findById(grammarId));
 			
@@ -132,11 +135,27 @@ public class FunctionEditorController extends BaseFunctionController {
 		
 		List<DescriptionGrammar> grammars = grammarService.findByIds(inputGrammarIds);
 		List<String> availableRules = new ArrayList<String>();
+		List<String> availablePassthroughGrammars = new ArrayList<String>();
 		for (DescriptionGrammar g : grammars) {
-			
+			if (g.isPassthrough()) {
+				availablePassthroughGrammars.add("@" + g.getGrammarName());
+			} else {
+				try {
+					for (String rule : mainEngine.getDescriptionEngine().getParserRuleNames(g)) {
+						if (!availableRules.contains("@" + rule)) {
+							availableRules.add("@" + rule);
+						}
+					}
+				} catch (GrammarProcessingException e) {
+					logger.error(String.format("Failed to retrieve parser rules for grammar %s", g.getIdentifier()), e);
+				}
+			}
 		}
 		
+		Collections.sort(availableRules);
+		
 		model.addAttribute("availableRules", availableRules);
+		model.addAttribute("availablePassthroughGrammars", availablePassthroughGrammars);
 		
 		model.addAttribute("sampleInputMap", sampleInputs);		
 		model.addAttribute("function", functionService.findById(functionId));
