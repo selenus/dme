@@ -63,7 +63,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			if (mappedConcept.getElementGrammarIdsMap().get(sourceElementId)==null) {
 				Element source = elementDao.findById(sourceElementId);
 				
-				DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(mappingId, "g" + source.getName());
+				DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(mappingId, source.getName());
 				grammar.setPassthrough(true);
 				grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 				
