@@ -121,6 +121,28 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		return result;
 	}
 	
+	@RequestMapping(method=GET, value={"/state"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo getSchemaState(@PathVariable String entityId, HttpServletRequest request) {
+		ModelActionPojo result;
+		if (entityId!=null && !entityId.isEmpty()) {
+			result = new ModelActionPojo(true);
+		} else {
+			result = new ModelActionPojo(false);
+		}		
+		ObjectNode jsonState = objectMapper.createObjectNode();
+		if (importWorker.isBeingProcessed(entityId)) {
+			jsonState.put("processing", true);
+			jsonState.put("ready", false);
+		} else {
+			jsonState.put("processing", false);
+			jsonState.put("ready", true);
+		}
+		jsonState.put("error", false);
+		result.setPojo(jsonState);
+		
+		return result;
+	}
+	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/import"})
 	public String getImportForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {

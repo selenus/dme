@@ -150,25 +150,65 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	}  
 };
 
-SchemaEditor.prototype.checkSchemaState = function() {
-	// TODO: Implement here
-};
-
 SchemaEditor.prototype.loadElementHierarchy = function() {
 	var _this = this;
+	
+	if (this.checkSchemaState()===true) {
+		
+		$.ajax({
+		    url: this.pathname + "/async/getHierarchy",
+		    type: "GET",
+		    success: function(data) {
+		    	if (data===null || data===undefined || data.length==0) {
+		    		return;
+		    	}
+		    	_this.processElementHierarchy(data);
+		    	_this.updateGraph();
+		    },
+		    error: __util.processServerError
+		});
+	} else {
+		setTimeout(function() { _this.loadElementHierarchy() }, 2000);
+	}
+};
+
+SchemaEditor.prototype.checkSchemaState = function() {
+	var _this = this;
+	var result = false;
+	
 	$.ajax({
-	    url: this.pathname + "/async/getHierarchy",
+	    url: this.pathname + "/state",
 	    type: "GET",
+	    async: false,
 	    success: function(data) {
 	    	if (data===null || data===undefined || data.length==0) {
 	    		return;
 	    	}
-	    	_this.processElementHierarchy(data);
-	    	_this.updateGraph();
+	    	if (data.pojo.processing) {
+	    		_this.stateNotificationId = __notifications.showTranslatedMessage(NOTIFICATION_TYPES.INFO, 
+	    				"~eu.dariah.de.minfba.schereg.notification.import_processing.head", 
+	    				"~eu.dariah.de.minfba.schereg.notification.import_processing.body", 
+	    				_this.stateNotificationId, false);
+	    		$("#schema-editor-canvas").addClass("hide");
+	    	} else {
+	    		if (data.pojo.error) {
+		    		_this.stateNotificationId = __notifications.showTranslatedMessage(NOTIFICATION_TYPES.ERROR, 
+		    				"~eu.dariah.de.minfba.schereg.notification.import_error.head", 
+		    				"~eu.dariah.de.minfba.schereg.notification.import_error.body", 
+		    				_this.stateNotificationId, false);
+		    	} else if (data.pojo.ready) {
+		    		__notifications.quitMessage(_this.stateNotificationId);
+		    		_this.stateNotificationId = undefined;
+		    	}
+	    		result = true;
+	    		$("#schema-editor-canvas").removeClass("hide");
+	    	}	
 	    },
 	    error: __util.processServerError
 	});
+	return result;
 };
+
 
 SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 	if (editor.area.root==null) {
@@ -176,6 +216,7 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 		return;
 	}
 	
+	var _this = this;
 	var rootX = this.area.root.rectangle.x;
 	var rootY = this.area.root.rectangle.y;
 	var expandedItemIds = this.area.getExpandedElementIds(this.area.root);
@@ -186,32 +227,36 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 		selectedItemIds.push(this.graph.selectedItems[i].id);
 	}
 	
-	var _this = this;
-	$.ajax({
-	    url: this.pathname + "/async/getHierarchy",
-	    type: "GET",
-	    dataType: "json",
-	    success: function(data) {
-	    	if (data===null || data===undefined || data.length==0) {
-	    		return;
-	    	}
-	    	_this.area.clear();
-	    	_this.processElementHierarchy(data);	    	
-	    	_this.area.root.rectangle = new Rectangle(rootX, rootY, _this.area.root.rectangle.width, _this.area.root.rectangle.height);
-	    			
-	    	_this.area.selectElementsByIds(_this.area.root, selectedItemIds);    		
-	    	_this.area.expandElementsByIds(_this.area.root, expandedItemIds);
-	    	if (callback!==undefined) {
-	    		callback();
-	    	}
-	    	_this.area.invalidate();
-	    	_this.graph.paint();
-	    },
-	    error: function(jqXHR, textStatus, errorThrown) {
-	    	__util.processServerError(jqXHR, textStatus, errorThrown);
-	    	_this.initGraph();
-	    }
-	});	
+	if (this.checkSchemaState()===true) {
+		var _this = this;
+		$.ajax({
+		    url: this.pathname + "/async/getHierarchy",
+		    type: "GET",
+		    dataType: "json",
+		    success: function(data) {
+		    	if (data===null || data===undefined || data.length==0) {
+		    		return;
+		    	}
+		    	_this.area.clear();
+		    	_this.processElementHierarchy(data);	    	
+		    	_this.area.root.rectangle = new Rectangle(rootX, rootY, _this.area.root.rectangle.width, _this.area.root.rectangle.height);
+		    			
+		    	_this.area.selectElementsByIds(_this.area.root, selectedItemIds);    		
+		    	_this.area.expandElementsByIds(_this.area.root, expandedItemIds);
+		    	if (callback!==undefined) {
+		    		callback();
+		    	}
+		    	_this.area.invalidate();
+		    	_this.graph.paint();
+		    },
+		    error: function(jqXHR, textStatus, errorThrown) {
+		    	__util.processServerError(jqXHR, textStatus, errorThrown);
+		    	_this.initGraph();
+		    }
+		});	
+	} else {
+		setTimeout(function() { _this.reloadElementHierarchy(callback) }, 2000);
+	}
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {

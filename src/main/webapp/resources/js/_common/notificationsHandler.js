@@ -17,13 +17,23 @@ var NotificationsHandler = function() {
 	this.fadeSpeed = __properties.notificationsFadeSpeed;
 };
 
-NotificationsHandler.prototype.showTranslatedMessage = function(notificationType, headerKey, messageKey) {
-	this.showMessage(notificationType, __translator.translate(headerKey), __translator.translate(messageKey));
+NotificationsHandler.prototype.showTranslatedMessage = function(notificationType, headerKey, messageKey, id, autoquit) {
+	return this.showMessage(notificationType, __translator.translate(headerKey), __translator.translate(messageKey), id, autoquit);
 };
 
-NotificationsHandler.prototype.showMessage = function(notificationType, header, message) {
+NotificationsHandler.prototype.showMessage = function(notificationType, header, message, id, autoquit) {
 	var _this = this;
-	var notification = $("<div>", {"class": "alert pull-right alert-dismissable " + notificationType.cssClass});
+	if (id===undefined) {
+		id = randomnumber=Math.floor(Math.random()*1001);
+	} 
+	
+	$(this.container).find("#notification-" + id).remove();
+	
+	var notification = $("<div>", {
+		"class": "alert pull-right alert-dismissable " + notificationType.cssClass,
+		"id" : "notification-" + id
+		});
+	
 	notification.append($("<button>", {	"type": "button", 
 										"class": "close", 
 										"data-dismiss": "alert", 
@@ -36,8 +46,18 @@ NotificationsHandler.prototype.showMessage = function(notificationType, header, 
 	var notificationContainer = $("<div>", {"class": "clearfix"});
 	notificationContainer.append(notification);
 	
-	// Autoquit notification
-	setTimeout(function() {$(notificationContainer.fadeOut(_this.fadeSpeed, function() {$(this).remove();}));}, _this.timeoutMs);
-	
+	if (autoquit!==false) {
+		// Autoquit notification
+		setTimeout(function() {$(notificationContainer.fadeOut(_this.fadeSpeed, function() {$(this).remove();}));}, _this.timeoutMs);
+	}
 	$(this.container).append(notificationContainer);
+	
+	return id;
 };
+
+NotificationsHandler.prototype.quitMessage = function(id) {
+	if (id!==undefined && id!==null) {
+		$(this.container).find("#notification-" + id).remove();
+	}
+}
+;

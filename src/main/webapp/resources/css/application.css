@@ -370,6 +370,7 @@ noscript div {
 	border: none;
 	padding: 0;
 	min-height: 100px;
+	background: transparent url("../img/loader.gif") no-repeat scroll center center
 }
 
 .button-bar {

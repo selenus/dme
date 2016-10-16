@@ -40,6 +40,7 @@ var SchemaEditor = function(options) {
 	this.elementActivitiesContainer = $("#schema-element-context-activities");
 	
 	this.logArea = null;
+	this.stateNotificationId = undefined;
 	
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
@@ -77,7 +78,12 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.common.link.reset_view",
 	                              "~eu.dariah.de.minfba.schereg.button.export",
 	                              "~eu.dariah.de.minfba.schereg.button.import",
-	                              "~eu.dariah.de.minfba.schereg.button.create_root"]);
+	                              "~eu.dariah.de.minfba.schereg.button.create_root",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.notification.import_error.head",
+	                              "~eu.dariah.de.minfba.schereg.notification.import_error.body",
+	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.head",
+	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.body"]);
 	__translator.getTranslations();
 	
 	this.init();

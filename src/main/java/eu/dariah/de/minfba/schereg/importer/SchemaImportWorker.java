@@ -42,6 +42,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	
 	private ApplicationContext appContext;
 	
+	private List<String> processingSchemaIds = new ArrayList<String>();
 	
 	@Override
 	public void setApplicationContext(ApplicationContext appContext) throws BeansException {
@@ -58,6 +59,10 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
 		importer.setSchemaFilePath(filePath);
 		return importer.getPossibleRootTerminals();
+	}
+	
+	public boolean isBeingProcessed(String schemaId) {
+		return schemaId!=null && this.processingSchemaIds.contains(schemaId);
 	}
 	
 	public void importSchema(String filePath, String schemaId, Integer rootTerminalIndex, AuthPojo auth) throws SchemaImportException {
@@ -81,6 +86,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			s.setDescription(tmpS.getDescription());
 		}
 		
+		if (!this.processingSchemaIds.contains(schemaId)) {
+			this.processingSchemaIds.add(schemaId);
+		}
 		
 		if (filePath==null || !(new File(filePath).exists())) {
 			logger.error("Schema import file not set or accessible [{}]", filePath);
@@ -108,6 +116,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		if (root!=null) {
 			elementService.clearElementTree(schema.getId(), auth);
 		}
+		if (this.processingSchemaIds.contains(schema.getId())) {
+			this.processingSchemaIds.remove(schema.getId());
+		}
 		Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
 		
 		schemaService.saveSchema(schema, rootNonterminal, auth);
@@ -115,6 +126,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 
 	@Override 
 	public synchronized void registerImportFailed(Schema schema) { 
+		if (this.processingSchemaIds.contains(schema.getId())) {
+			this.processingSchemaIds.remove(schema.getId());
+		}
 		logger.warn("Schema import failed");
 	}
 }

@@ -212,7 +212,7 @@ ModalFormHandler.prototype.addMessage = function(type, header, message) {
 		if ($(existing).length > 0) {
 			
 			$(_this.form).find(".form-content").prepend(msgContainer);
-			$(existing).delay(2000).fadeOut(400, function() {$(this).remove();});
+			//$(existing).delay(2000).fadeOut(400, function() {$(this).remove();});
 		} else {
 			$(_this.form).find(".form-content").prepend(msgContainer);
 		}
