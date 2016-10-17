@@ -17,6 +17,10 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId) {
 	if (this.getSampleResourceCount()>0) {
 		this.getSampleResource();
 	}
+	
+	$('.editor-sample-container a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+		_this.resize();
+	})
 };
 
 BaseEditor.prototype.applyAndExecuteSample = function() {

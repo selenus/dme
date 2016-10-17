@@ -80,7 +80,7 @@
 										<span class="pull-right"><span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="top" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.sessions" />" aria-hidden="true"></span></span>
 									</h4>
 								</div>
-								<div>
+								<div style="background-color: white; overflow: hidden;">
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sessions" /></h5>
 								</div>									
 								<div class="ui-pane-subcontainer button-bar">
