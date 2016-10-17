@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
@@ -24,7 +22,6 @@ import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
-import eu.dariah.de.minfba.schereg.service.base.BaseServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
@@ -49,7 +46,7 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 	}
 	
 	@Override
-	public void saveSchema(Schema schema, Reference rootNonterminal, AuthPojo auth) {
+	public void saveSchema(Schema schema, List<Reference> rootNonterminals, AuthPojo auth) {
 		this.innerSaveSchema(schema, null, null, auth.getUserId(), auth.getSessionId());
 		
 		Reference root = this.findReferenceById(schema.getId());
@@ -57,8 +54,10 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 		if (root.getChildReferences()==null) {
 			root.setChildReferences(new HashMap<String, Reference[]>());
 		}
-		Reference[] childArray = new Reference[1];
-		childArray[0] = rootNonterminal;		
+		Reference[] childArray = new Reference[rootNonterminals.size()];
+		for (int i=0; i<rootNonterminals.size(); i++) {
+			childArray[i] = rootNonterminals.get(i);
+		}		
 		root.getChildReferences().put(Nonterminal.class.getName(), childArray);
 		this.saveRootReference(root);
 	}

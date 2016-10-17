@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.mongodb.WriteResult;
+
 import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeImpl;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
@@ -19,7 +21,7 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.ChangeSetDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 
 public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> implements TrackedEntityDao<T> {
-	@Autowired private ChangeSetDao changeSetDao;
+	@Autowired protected ChangeSetDao changeSetDao;
 	
 	public TrackedEntityDaoImpl(Class<?> clazz) {
 		super(clazz);
@@ -83,26 +85,17 @@ public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> im
 	
 	@Override
 	public int delete(Collection<String> id, String userId, String sessionId) {
-		List<T> delete = mongoTemplate.find(Query.query(Criteria.where(ID_FIELD).in(id)), this.clazz, this.getCollectionName());
+		/*List<T> delete = mongoTemplate.find(Query.query(Criteria.where(ID_FIELD).in(id)), this.clazz, this.getCollectionName());
 		
 		int count = 0;
 		for (T del : delete) {
 			this.delete(del, userId, sessionId);
 			count++;
 		}
-		return count;
+		return count;*/
 		
-		/*List<T> deleted = mongoTemplate.findAllAndRemove(Query.query(Criteria.where(ID_FIELD).in(id)), this.getCollectionName());
-		if (deleted!=null) {
-			for (T d : deleted) {
-				d.flush();
-				d.addChange(ChangeType.DELETE_OBJECT, this.getCollectionName(), d.getId(), null);
-				List<Change> changes = d.flush();
-				this.createAndSaveChangeSet(changes, d.getId(), d.getEntityId(), userId, sessionId);
-			}
-			return deleted.size();
-		}
-		return 0;*/
+		WriteResult result = mongoTemplate.remove(Query.query(Criteria.where(ID_FIELD).in(id)), this.getCollectionName());
+		return result.getN();
 	}
 	
 	@Override

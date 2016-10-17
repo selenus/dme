@@ -22,6 +22,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
+import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
@@ -58,7 +59,16 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		if (reference.getChildReferences()!=null) {
 			if (reference.getChildReferences().containsKey(Nonterminal.class.getName()) &&
 					reference.getChildReferences().get(Nonterminal.class.getName()).length>0 ) {
-				rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[0];
+				if (reference.getChildReferences().get(Nonterminal.class.getName()).length==1) {
+					rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[0];
+				} else {
+					for (int i=0; i<reference.getChildReferences().get(Nonterminal.class.getName()).length; i++) {
+						if (reference.getChildReferences().get(Nonterminal.class.getName())[i].isRoot()) {
+							rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[i];
+							break;
+						}
+					}
+				}
 			} else if (reference.getChildReferences().containsKey(MappedConceptImpl.class.getName()) &&
 					reference.getChildReferences().get(MappedConceptImpl.class.getName()).length>0 ) {
 				rootElementReference = reference.getChildReferences().get(MappedConceptImpl.class.getName())[0];
@@ -196,7 +206,12 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public Reference saveElementHierarchy(Element e, AuthPojo auth) {
-		return this.saveElementsInHierarchy(e, auth);
+		List<Element> saveElements = new ArrayList<Element>();	
+		Reference r = this.saveElementsInHierarchy(e, saveElements);
+		
+		elementDao.saveNew(saveElements, auth.getUserId(), auth.getSessionId());
+		
+		return r;
 	}
 	
 	@Override
@@ -221,7 +236,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		return e;
 	}
 	
-	private Reference saveElementsInHierarchy(Element e, AuthPojo auth) {
+	private Reference saveElementsInHierarchy(Element e, List<Element> saveElements) {
 		
 		/*
 		 *	TODO: What if the element e is not root but exists as node in another 
@@ -235,12 +250,17 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		List<? extends Element> subelements;
 		Class<? extends Element> subelementClass;
 		
+		if (e.getId()==null) {
+			e.setId(DaoImpl.createNewObjectId());
+		}
+		
 		if (e instanceof Nonterminal) {
 			Nonterminal n = ((Nonterminal)e);
 			n.setName(getNormalizedName(n.getName()));
 			subelements = n.getChildNonterminals();
 			n.setChildNonterminals(null);
-			elementDao.save(e, auth.getUserId(), auth.getSessionId());
+			//elementDao.save(e, auth.getUserId(), auth.getSessionId());
+			saveElements.add(e);
 			
 			n.setChildNonterminals((List<Nonterminal>)subelements);
 			subelementClass = Nonterminal.class;
@@ -249,7 +269,8 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			l.setName(getNormalizedName(l.getName()));
 			subelements = l.getSubLabels();
 			l.setSubLabels(null);
-			elementDao.save(e, auth.getUserId(), auth.getSessionId());
+			//elementDao.save(e, auth.getUserId(), auth.getSessionId());
+			saveElements.add(e);
 			
 			l.setSubLabels((List<Label>)subelements);			
 			subelementClass = Label.class;
@@ -260,7 +281,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			
 			Reference[] subreferences = new Reference[subelements.size()];
 			for (int i=0; i<subreferences.length; i++) {
-				subreferences[i] = saveElementsInHierarchy(subelements.get(i), auth);
+				subreferences[i] = saveElementsInHierarchy(subelements.get(i), saveElements);
 			}
 			r.getChildReferences().put(subelementClass.getName(), subreferences);
 		}

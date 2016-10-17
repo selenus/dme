@@ -3,13 +3,9 @@ package eu.dariah.de.minfba.schereg.service.interfaces;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
-
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -34,7 +30,7 @@ public interface SchemaService extends BaseService {
 	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId);
 	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId);
 	public List<ChangeSet> getChangeSetForAllSchemas();
-	public void saveSchema(Schema schema, Reference rootNonterminal, AuthPojo auth);
+	public void saveSchema(Schema schema, List<Reference> rootNonterminals, AuthPojo auth);
 
 	
 }

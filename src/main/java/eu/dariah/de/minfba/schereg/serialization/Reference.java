@@ -9,6 +9,7 @@ public class Reference implements Identifiable {
 	
 	private String id;
 	private Map<String, Reference[]> childReferences;
+	private boolean root;
 	
 	public Reference() {}
 	public Reference(String id) {
@@ -20,4 +21,7 @@ public class Reference implements Identifiable {
 	
 	public Map<String, Reference[]> getChildReferences() { return childReferences; }
 	public void setChildReferences(Map<String, Reference[]> childReferences) { this.childReferences = childReferences; }
+	
+	public boolean isRoot() { return root; }
+	public void setRoot(boolean root) { this.root = root; }	
 }

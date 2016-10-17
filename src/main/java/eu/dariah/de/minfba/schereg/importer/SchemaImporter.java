@@ -15,6 +15,7 @@ public interface SchemaImporter<T extends Schema> extends Runnable {
 	
 	public String[] getNamespaces();
 	public Nonterminal getRootNonterminal();
+	public List<Nonterminal> getAdditionalRootElements();
 	public void setListener(SchemaImportListener importWorker);
 	public List<? extends Terminal> getPossibleRootTerminals();
 	public void setRootElementNs(String rootElementNs);

@@ -112,14 +112,24 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(Schema schema, Nonterminal root, AuthPojo auth) {
+	public synchronized void registerImportFinished(Schema schema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
 			elementService.clearElementTree(schema.getId(), auth);
 		}
 		
-		Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
 		
-		schemaService.saveSchema(schema, rootNonterminal, auth);
+		List<Reference> rootNonterminals = new ArrayList<Reference>();
+		Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
+		rootNonterminal.setRoot(true);
+		
+		rootNonterminals.add(rootNonterminal);
+		if (additionalRootElements!=null && additionalRootElements.size()>0) {
+			for (Nonterminal addRoot : additionalRootElements) {
+				rootNonterminals.add(elementService.saveElementHierarchy(addRoot, auth));
+			}
+		}
+		
+		schemaService.saveSchema(schema, rootNonterminals, auth);
 		
 		if (this.processingSchemaIds.contains(schema.getId())) {
 			this.processingSchemaIds.remove(schema.getId());

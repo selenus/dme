@@ -9,5 +9,5 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 
 public interface SchemaImportListener {
 	public void registerImportFailed(Schema schema);
-	public void registerImportFinished(Schema schema, Nonterminal root, AuthPojo auth);
+	public void registerImportFinished(Schema schema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth);
 }

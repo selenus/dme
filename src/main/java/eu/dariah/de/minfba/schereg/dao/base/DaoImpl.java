@@ -1,5 +1,7 @@
 package eu.dariah.de.minfba.schereg.dao.base;
 
+import org.bson.BSON;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,10 @@ public abstract class DaoImpl<T extends Identifiable> implements Dao {
 	
 	public static boolean isNewId(String id) {
 		return id==null || id.equals("") || id.equals("undefined");
+	}
+	
+	public static String createNewObjectId() {
+		return new ObjectId().toString();
 	}
 	
 	public DaoImpl(Class<?> clazz) {
