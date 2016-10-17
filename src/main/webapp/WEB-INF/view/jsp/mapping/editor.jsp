@@ -120,10 +120,10 @@
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="sample-output-container">
 											<div class="button-bar">
 												<div class="pull-left">
-													<button type="button" onclick="editor.showSampleResourceSource(); return false;" class="btn btn-default btn-sample-source btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.source" /></button>
+													<button type="button" onclick="editor.showSampleResourceSource(); return false;" class="btn btn-info btn-sample-source btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.source" /></button>
 													<button type="button" onclick="editor.showSampleResourceTarget(); return false;" class="btn btn-default btn-sample-target btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.target" /></button>
 												</div>
-												<span class="sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
+												<span class="sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex + 1} / ${currentSampleCount}</c:if></span>
 												<button type="button" onclick="editor.getPrevSampleResource(); return false;" class="btn btn-default btn-sample-prev-resource btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 												<button type="button" onclick="editor.getNextSampleResource(); return false;" class="btn btn-default btn-sample-next-resource btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 											</div>

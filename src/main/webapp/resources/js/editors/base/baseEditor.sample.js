@@ -236,11 +236,21 @@ BaseEditor.prototype.getNextSampleResource = function() {
 BaseEditor.prototype.showSampleResourceTarget = function() {
 	$(".sample-output-resource").addClass("hide");
 	$(".sample-transformed-resource").removeClass("hide");
+	
+	$(".btn-sample-source").addClass("btn-default");
+	$(".btn-sample-source").removeClass("btn-info");
+	$(".btn-sample-target").addClass("btn-info");
+	$(".btn-sample-target").removeClass("btn-default");
 }
 
 BaseEditor.prototype.showSampleResourceSource = function() {
 	$(".sample-output-resource").removeClass("hide");
 	$(".sample-transformed-resource").addClass("hide");
+	
+	$(".btn-sample-source").addClass("btn-info");
+	$(".btn-sample-source").removeClass("btn-default");
+	$(".btn-sample-target").addClass("btn-default");
+	$(".btn-sample-target").removeClass("btn-info");
 }
 
 BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
