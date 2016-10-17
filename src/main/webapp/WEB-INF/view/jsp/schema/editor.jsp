@@ -119,7 +119,7 @@
 										</div>
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="sample-output-container">
 											<div class="button-bar">
-												<span class="sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex} / ${currentSampleCount}</c:if></span>
+												<span class="sample-output-counter"><c:if test="${currentSampleCount>0}">${session.selectedOutputIndex + 1} / ${currentSampleCount}</c:if></span>
 												<button type="button" onclick="editor.getPrevSampleResource(); return false;" class="btn-sample-prev-resource btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></button>
 												<button type="button" onclick="editor.getNextSampleResource(); return false;" class="btn-sample-next-resource btn btn-default btn-sm<c:if test="${currentSampleCount>0}"> disabled</c:if>"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></button>
 											</div>

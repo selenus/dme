@@ -9,14 +9,12 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId) {
 	this.sampleOutputContainer = $("#sample-output-container");
 	
 	this.sampleModified = !$("#sample-set").val();
-	this.currentSampleIndex = parseInt(Number($("#currentSampleIndex").val()));
-	this.sampleResourceCount = parseInt(Number($("#currentSampleCount").val()));
 	
 	$(this.sampleTextbox).on('change keyup paste', function() {
 		_this.sampleModified = true;
 	});
 		
-	if (this.sampleResourceCount>0) {
+	if (this.getSampleResourceCount()>0) {
 		this.getSampleResource();
 	}
 };
@@ -67,7 +65,7 @@ BaseEditor.prototype.executeSample = function() {
 	    	if (data.success) {
 	    		_this.processSampleExecutionResult(data.pojo);
 	    	}
-	    	_this.currentSampleIndex = 0;
+	    	//_this.currentSampleIndex = 0;
 	    	_this.logArea.refresh();
 	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
 	    }, 
@@ -78,6 +76,23 @@ BaseEditor.prototype.executeSample = function() {
 	    }
 	});
 };
+
+BaseEditor.prototype.setCurrentSampleIndex = function(index) {
+	$("#currentSampleIndex").val(index);
+};
+
+BaseEditor.prototype.getCurrentSampleIndex = function() {
+	return parseInt(Number($("#currentSampleIndex").val()));
+};
+
+BaseEditor.prototype.setSampleResourceCount = function(count) {
+	$("#currentSampleCount").val(count);
+};
+
+BaseEditor.prototype.getSampleResourceCount = function() {
+	return parseInt(Number($("#currentSampleCount").val()));
+};
+
 
 BaseEditor.prototype.executeSampleMapping = function() {
 	var _this = this;
@@ -108,15 +123,20 @@ BaseEditor.prototype.processSampleExecutionResult = function(count) {
 	
 	$(navTab).find(".badge-c").remove();
 	$(".sample-output-resource").text("");
-	
-	this.sampleResourceCount = 0;
+		
+	var resCount = 0;
 	if (!isNaN(count) && parseInt(Number(count))==count && !isNaN(parseInt(count, 10))) {
-		this.sampleResourceCount = count;
+		resCount = count;
 	}
-	if (this.sampleResourceCount > 0) {
+	if (this.getSampleResourceCount()>resCount) {
+		this.setCurrentSampleIndex(0);
+	}
+	this.setSampleResourceCount(resCount);
+	
+	if (this.getSampleResourceCount() > 0) {
 		enabled = true;
 	}
-	$(navTab).append("<span class=\"badge-c\"> <span class=\"badge\">" + this.sampleResourceCount + "</span></span>");
+	$(navTab).append("<span class=\"badge-c\"> <span class=\"badge\">" + this.getSampleResourceCount() + "</span></span>");
 		
 	if (enabled) {
 		$(navTab).parent().removeClass("disabled");
@@ -135,7 +155,7 @@ BaseEditor.prototype.getSampleResource = function() {
 	$.ajax({
 	    url: this.samplePath + "async/getSampleResource",
 	    type: "GET",
-	    data: { index : _this.currentSampleIndex },
+	    data: { index : _this.getCurrentSampleIndex() },
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data!=null && data!=undefined) {
@@ -162,7 +182,7 @@ BaseEditor.prototype.getTransformedResource = function() {
 	$.ajax({
 	    url: this.samplePath + "async/getTransformedResource",
 	    type: "GET",
-	    data: { index : _this.currentSampleIndex },
+	    data: { index : _this.getCurrentSampleIndex() },
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data!=null && data!=undefined) {
@@ -183,14 +203,14 @@ BaseEditor.prototype.getTransformedResource = function() {
 
 
 BaseEditor.prototype.setSampleNavigationBar = function() {
-	$(".sample-output-counter").text("" + (this.currentSampleIndex+1) + " / " + this.sampleResourceCount);
+	$(".sample-output-counter").text("" + (this.getCurrentSampleIndex()+1) + " / " + this.getSampleResourceCount());
 	
-	if (this.currentSampleIndex > 0) {
+	if (this.getCurrentSampleIndex() > 0) {
 		$(".btn-sample-prev-resource").removeClass("disabled");
 	} else {
 		$(".btn-sample-prev-resource").addClass("disabled");
 	}
-	if (this.currentSampleIndex < this.sampleResourceCount-1) {
+	if (this.getCurrentSampleIndex() < this.getSampleResourceCount()-1) {
 		$(".btn-sample-next-resource").removeClass("disabled");
 	} else {
 		$(".btn-sample-next-resource").addClass("disabled");
@@ -198,17 +218,17 @@ BaseEditor.prototype.setSampleNavigationBar = function() {
 };
 
 BaseEditor.prototype.getPrevSampleResource = function() {
-	if (this.currentSampleIndex > 0) {
-		this.currentSampleIndex--;
-		$("#currentSampleIndex").val(this.currentSampleIndex);
+	var index = this.getCurrentSampleIndex();
+	if (index > 0) {
+		this.setCurrentSampleIndex(index-1);
 		this.getSampleResource();
 	}
 };
 
 BaseEditor.prototype.getNextSampleResource = function() {
-	if (this.currentSampleIndex < this.sampleResourceCount-1) {
-		this.currentSampleIndex++;
-		$("#currentSampleIndex").val(this.currentSampleIndex);
+	var index = this.getCurrentSampleIndex();
+	if (index < this.getSampleResourceCount()-1) {
+		this.setCurrentSampleIndex(index+1);
 		this.getSampleResource();
 	}
 };
