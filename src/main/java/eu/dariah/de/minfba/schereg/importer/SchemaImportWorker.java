@@ -116,12 +116,14 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		if (root!=null) {
 			elementService.clearElementTree(schema.getId(), auth);
 		}
-		if (this.processingSchemaIds.contains(schema.getId())) {
-			this.processingSchemaIds.remove(schema.getId());
-		}
+		
 		Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
 		
 		schemaService.saveSchema(schema, rootNonterminal, auth);
+		
+		if (this.processingSchemaIds.contains(schema.getId())) {
+			this.processingSchemaIds.remove(schema.getId());
+		}
 	}
 
 	@Override 
