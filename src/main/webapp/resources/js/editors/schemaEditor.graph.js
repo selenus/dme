@@ -16,9 +16,12 @@ SchemaEditor.prototype.initGraph = function() {
 				    _this.graph.createContextMenuSeparator()
 				];
 				if (_this.schema.owned || _this.schema.write) {
+					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
+					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
@@ -36,9 +39,12 @@ SchemaEditor.prototype.initGraph = function() {
 				    _this.graph.createContextMenuSeparator()
 				];
 				if (_this.schema.owned || _this.schema.write) {
+					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
+					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
@@ -133,6 +139,7 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "editElement" : return this.editElement(elementId);
 	    case "editGrammar" : return this.editGrammar(elementId);
 	    case "editFunction" : return this.editFunction(elementId);
+	    case "assignChild" : return this.assignChild(elementId);
 	    
 	    case "removeElement" :  return this.removeElement(elementType, elementId);
 	    

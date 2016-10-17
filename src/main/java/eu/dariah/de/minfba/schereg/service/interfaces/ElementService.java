@@ -35,4 +35,6 @@ public interface ElementService extends BaseService {
 	public <T extends Identifiable> List<Label> convertToLabels(List<T> elements);
 	
 	public List<Element> findByIds(List<Object> elementIds);
+	public List<Element> findBySchemaId(String schemaId);
+	public List<Element> findByNameAndSchemaId(String query, String schemaId);
 }

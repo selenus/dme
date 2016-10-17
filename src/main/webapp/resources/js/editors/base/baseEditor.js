@@ -16,6 +16,7 @@ function BaseEditor() {
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout",
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.separate",
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.combined"]);
+	this.vocabularySources = new Array();
 };
 
 BaseEditor.prototype.createActionButtons = function(container, contextMenuItems) {
@@ -33,6 +34,67 @@ BaseEditor.prototype.createActionButtons = function(container, contextMenuItems)
 				 "</button> ";
 		container.append(button);
 	}
+};
+
+BaseEditor.prototype.addVocabularySource = function(name, urlSuffix, params) {
+	this.vocabularySources[name] = new Bloodhound({
+		  datumTokenizer: Bloodhound.tokenizers.whitespace,
+		  queryTokenizer: Bloodhound.tokenizers.whitespace,
+		  remote: {
+			  url: urlSuffix + "%QUERY" + (params!==undefined ? "?" + params : ""),
+			  wildcard: '%QUERY'
+		  }
+	});
+};
+
+BaseEditor.prototype.registerTypeahead = function(element, datasource, displayAttr, limit, suggestionCallback, selectionCallback, changeCallback) {
+	var _this = this;
+	element.typeahead(null, {
+		name: datasource,
+		hint: false,
+		display: displayAttr,
+		source: _this.vocabularySources[datasource],
+		limit: limit,
+		templates: {
+			empty: ['<div class="tt-empty-message">',
+			        	__translator.translate("~eu.dariah.de.colreg.common.labels.no_match_found"),
+			        '</div>'].join('\n'),
+			suggestion: function(data) { return suggestionCallback(data); }
+		}
+	});
+	
+	// Executed when a suggestion has been accepted by the user
+	if (selectionCallback!==undefined && selectionCallback!==null && typeof selectionCallback==='function') {
+		element.bind('typeahead:select typeahead:autocomplete', function(ev, suggestion) {
+			selectionCallback(this, suggestion);
+		});
+	}
+	
+	// Executed on custom input -> typically needs some validation
+	if (changeCallback!==undefined && changeCallback!==null && typeof changeCallback==='function') {
+		element.bind('change', function() {
+			changeCallback(this, $(this).val());
+		});
+	}
+};
+
+BaseEditor.prototype.validateInput = function(element, urlPrefix, value) {
+	var _this = this;
+	$.ajax({
+        url: urlPrefix + value,
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+        	$(element).closest(".form-group").removeClass("has-error");
+        },
+        error: function(textStatus) { 
+        	$(element).closest(".form-group").addClass("has-error");
+        }
+	});
+};
+
+BaseEditor.prototype.deregisterTypeahead = function(element) {
+	typeahead.typeahead('destroy');
 };
 
 BaseEditor.prototype.getElementDetails = function(pathPrefix, type, id, container, callback) {

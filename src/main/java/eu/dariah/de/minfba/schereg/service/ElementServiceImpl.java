@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -50,6 +51,29 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Override
 	public List<Element> findByIds(List<Object> elementIds) {
 		return elementDao.find(Query.query(Criteria.where("_id").in(elementIds)));
+	}
+	
+	@Override
+	public List<Element> findBySchemaId(String schemaId) {
+		return elementDao.find(Query.query(Criteria.where("entityId").is(schemaId)));
+	}
+	
+	@Override
+	public List<Element> findByNameAndSchemaId(String query, String schemaId) {
+	/*
+		Criteria[] queryCriteria = new Criteria[] {
+				// Name starts with
+				Criteria.where("name").regex(Pattern.compile("^" + query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)),
+				
+				// Name likeness
+				Criteria.where("name").regex(Pattern.compile(query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE))
+		};*/
+		
+
+		return elementDao.find(Query.query((new Criteria()).andOperator(
+				Criteria.where("entityId").is(schemaId),
+				Criteria.where("name").regex(Pattern.compile(query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)))));
+		
 	}
 	
 	@Override

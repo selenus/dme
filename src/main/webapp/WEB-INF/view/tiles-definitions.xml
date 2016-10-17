@@ -98,6 +98,7 @@
 			<add-attribute type="string" value="jquery/jquery.ui.widget.js" />
 			<add-attribute type="string" value="jquery/jquery.contextMenu.js" />
 			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
+			<add-attribute type="string" value="jquery/typeahead.bundle.min.js" />
 			<add-attribute type="string" value="lib/svg-pan-zoom.js" />
 			<add-attribute type="string" value="lib/fileSaver.js" />
 			<add-attribute type="string" value="lib/blob.js" />
@@ -156,6 +157,7 @@
 			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
 			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
 			<add-attribute type="string" value="jquery/jquery.contextMenu.js" />
+			<add-attribute type="string" value="jquery/typeahead.bundle.min.js" />
 			<add-attribute type="string" value="lib/svg-pan-zoom.js" />
 			<add-attribute type="string" value="lib/fileSaver.js" />
 			<add-attribute type="string" value="lib/blob.js" />
@@ -203,6 +205,8 @@
 	<definition name="schemaEditor/form/element/edit_nonterminal" template="/WEB-INF/view/jsp/schema/editor/edit_nonterminal.jsp" />
 	<definition name="schemaEditor/form/element/edit_label" template="/WEB-INF/view/jsp/schema/editor/edit_label.jsp" />
 	<definition name="schemaEditor/form/element/edit_terminal" template="/WEB-INF/view/jsp/schema/editor/edit_terminal.jsp" />
+	<definition name="schemaEditor/form/element/assign_child" template="/WEB-INF/view/jsp/schema/editor/assign_child.jsp" />
+	
 	
 	<definition name="schemaEditor/form/grammar/edit" template="/WEB-INF/view/jsp/schema/editor/edit_grammar.jsp" />
 	<definition name="schemaEditor/form/grammar/new" template="/WEB-INF/view/jsp/schema/editor/new_grammar.jsp" />

@@ -1,6 +1,7 @@
 package eu.dariah.de.minfba.schereg.dao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -55,4 +56,5 @@ public class ElementDaoImpl extends TrackedEntityDaoImpl<Element> implements Ele
 		mongoTemplate.insert(saveElements, this.getCollectionName());
 		mongoTemplate.insert(changeSets, changeSetDao.getCollectionName());
 	}
+
 }

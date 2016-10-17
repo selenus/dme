@@ -20,7 +20,7 @@ import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ChangeSetDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 
-public class TrackedEntityDaoImpl<T extends TrackedEntity> extends DaoImpl<T> implements TrackedEntityDao<T> {
+public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends BaseDaoImpl<T> implements TrackedEntityDao<T> {
 	@Autowired protected ChangeSetDao changeSetDao;
 	
 	public TrackedEntityDaoImpl(Class<?> clazz) {

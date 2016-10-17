@@ -83,7 +83,8 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.notification.import_error.head",
 	                              "~eu.dariah.de.minfba.schereg.notification.import_error.body",
 	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.head",
-	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.body"]);
+	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.body",
+	                              "~eu.dariah.de.minfba.schereg.button.assign_child"]);
 	__translator.getTranslations();
 	
 	this.init();
@@ -98,6 +99,8 @@ SchemaEditor.prototype.init = function() {
 	this.loadElementHierarchy();
 	this.initSample(this.pathname, this.schema.id);
 	this.loadActivitiesForEntity(this.schema.id, this.schemaActivitiesContainer);
+	
+	this.addVocabularySource("elements", "element/0/query/");
 	
 	var _this = this;
 	this.logArea = new LogArea({
@@ -311,11 +314,13 @@ SchemaEditor.prototype.editGrammar = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-		setupCallback: function(modal) { grammarEditor = new GrammarEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
-			entityId : _this.schema.id,
-			grammarId : _this.graph.selectedItems[0].id
-		}); },       
+		setupCallback: function(modal) { 
+			grammarEditor = new GrammarEditor(modal, {
+				pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
+				entityId : _this.schema.id,
+				grammarId : _this.graph.selectedItems[0].id
+			}); 
+		},       
 		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
 		
@@ -334,15 +339,57 @@ SchemaEditor.prototype.editFunction = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
-        setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
-			pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
-			entityId : _this.schema.id,
-			functionId : _this.graph.selectedItems[0].id
-		}); },       
+        setupCallback: function(modal) { 
+        	functionEditor = new FunctionEditor(modal, {
+				pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
+				entityId : _this.schema.id,
+				functionId : _this.graph.selectedItems[0].id
+			}); 
+        },       
 		completeCallback: function() { _this.reloadElementHierarchy(); }
 	});
 		
 	modalFormHandler.show(form_identifier);
+};
+
+
+SchemaEditor.prototype.assignChild = function(elementId) {
+	var _this = this;
+	var form_identifier = "edit-function-" + elementId;//this.graph.selectedItems[0].id;
+	
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "/element/" + elementId + "/form/assignChild",
+		identifier: form_identifier,
+		additionalModalClasses: "wide-modal",
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		                ],      
+		displayCallback: function(modal) { 
+			_this.registerElementTypeahead($(modal).find("#child-element"));
+		},
+		completeCallback: function(data, modal) { 
+			_this.reloadElementHierarchy(); 
+			_this.deregisterTypeahead($(modal).find("#child-element"));
+		},
+		cancelCallback: function(modal) {
+			_this.deregisterTypeahead($(modal).find("#child-element"));
+		}
+	});
+		
+	modalFormHandler.show(form_identifier);
+};
+
+SchemaEditor.prototype.registerElementTypeahead = function(typeahead) {
+	var _this = this;
+	this.registerTypeahead(typeahead, "elements", "code", 8, 
+			function(data) { return '<p><strong>' + data.name + '</strong></p>'; },
+			function(t, suggestion) { 
+				$(t).closest(".form-group").removeClass("has-error"); 
+				$(t).closest(".form-content").find("#element-id").val(suggestion.id);
+				$(t).closest(".form-content").find("#element-name").val(suggestion.name);
+			},
+			null
+	);
 };
 
 SchemaEditor.prototype.removeElement = function(type, id) { 

@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
 
-public interface TrackedEntityDao<T extends TrackedEntity> {
+public interface TrackedEntityDao<T extends TrackedEntity> extends BaseDao<T> {
 	public List<T> findAll();
 	public List<T> findAll(Sort sort);
 	public T findById(String id);

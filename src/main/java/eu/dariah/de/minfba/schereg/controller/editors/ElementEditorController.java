@@ -1,5 +1,6 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
@@ -43,7 +45,23 @@ public class ElementEditorController extends BaseScheregController {
 	public ElementEditorController() {
 		super("schemaEditor");
 	}
-		
+	
+	@RequestMapping(value="/query/{query}", method=RequestMethod.GET)
+	public @ResponseBody List<Element> queryElements(@PathVariable String schemaId, @PathVariable String elementId, @PathVariable String query) {
+		return elementService.findByNameAndSchemaId(query, schemaId);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value = "/assignChild")
+	public @ResponseBody ModelActionPojo assignChild(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam(value="element-id") String childId, Model model, Locale locale, HttpServletRequest request) {		
+		return new ModelActionPojo(true);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/form/assignChild")
+	public String getAssignChildForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale, HttpServletRequest request) {		
+		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/assignChild");
+		return "schemaEditor/form/element/assign_child";
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/element")
 	public String getEditElementForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale, HttpServletRequest request) {		
 		Element elem = elementService.findById(elementId);

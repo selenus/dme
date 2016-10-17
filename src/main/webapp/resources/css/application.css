@@ -7,6 +7,47 @@
 
 
 /*!
+ *	Typeahead
+ */
+.twitter-typeahead {
+	width: 100%;
+}
+ 
+.tt-query {
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+}
+.tt-hint {
+    color: #999;
+}
+.tt-menu {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    margin: 6px 0;
+    padding: 8px 0;
+    width: 400px;
+}
+.tt-suggestion,
+.tt-empty-message {
+    font-size: 14px;
+    line-height: 16px;
+    padding: 3px 20px;
+}
+.tt-suggestion:hover {
+    background-color: #0097cf;
+    color: #fff;
+    cursor: pointer;
+}
+.tt-suggestion.tt-cursor {
+    background-color: #0097cf;
+    color: #fff;
+}
+p.tt-suggestion {
+    margin: 0;
+}
+
+/*!
  *	Data Tables
  */
 .data-table-filter, 
@@ -641,6 +682,11 @@ noscript div {
 /*!
  *	Modals
  */
+body.modal-open .modal { /* Mainly for typeahead */
+	overflow-x:	visible;
+	overflow-y:	visible;
+}
+ 
 body .modal.wide-modal {
 	width: 650px;
 	margin-left: -300px;

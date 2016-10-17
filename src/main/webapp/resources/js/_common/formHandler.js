@@ -158,7 +158,7 @@ ModalFormHandler.prototype.setUpForm = function() {
         	_this.container = null;
         	_this.form = null;
         	if (_this.options.cancelCallback != undefined && typeof _this.options.cancelCallback == 'function') {
-        		_this.options.cancelCallback();
+        		_this.options.cancelCallback(_this.container);
         	}
         }
     });
@@ -255,7 +255,7 @@ ModalFormHandler.prototype.submit = function(data) {
 		
 	} else {
 		if (_this.options.completeCallback != undefined && typeof _this.options.completeCallback == 'function') {
-			_this.options.completeCallback($(data).serialize());
+			_this.options.completeCallback($(data).serialize(), _this.container);
 		}
 		this.formResetted = true;
 		$(this.container).modal('hide');
