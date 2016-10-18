@@ -73,7 +73,10 @@ var MappingEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible",
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.reset_position",
 	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_connection",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_connection"]);
+	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_connection",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_publish",
+	                              "~eu.dariah.de.minfba.schereg.model.mapping.validation.no_pub_schema_drafts"]);
 	__translator.getTranslations();
 	
 	this.initLayout();

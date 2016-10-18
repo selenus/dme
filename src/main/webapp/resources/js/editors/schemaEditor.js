@@ -84,7 +84,9 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.notification.import_error.body",
 	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.head",
 	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.body",
-	                              "~eu.dariah.de.minfba.schereg.button.assign_child"]);
+	                              "~eu.dariah.de.minfba.schereg.button.assign_child",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_publish"]);
 	__translator.getTranslations();
 	
 	this.init();

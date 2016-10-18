@@ -6,19 +6,19 @@
 
 <form method="POST" action="${saveUrl}" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.label.edit" /></h3>	
+		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.element.assign_child.title" /></h3>	
 		<input type="hidden" id="child-element-id" />
 	</div>
 	<div class="form-content">
 		<fieldset>
 			<div class="form-group">
-				<label class="col-sm-4 control-label" for="child-element">~Element suchen:</label>
+				<label class="col-sm-4 control-label" for="child-element"><s:message code="~eu.dariah.de.minfba.schereg.form.element.assign_child.search_element" />:</label>
 				<div class="col-sm-8">
 					<input type="text" class="form-control typeahead" id="child-element" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-4 control-label" for="child-element">~Assigned element:</label>
+				<label class="col-sm-4 control-label" for="child-element"><s:message code="~eu.dariah.de.minfba.schereg.form.element.assign_child.chosen_element" />:</label>
 				<div class="col-sm-8">
 					<input type="text" class="form-control" disabled id="element-name" />
 				</div>

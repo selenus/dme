@@ -166,7 +166,7 @@ public class MappingController extends BaseScheregController {
 				RightsContainer<Schema> target = schemaService.findByIdAndAuth(existMapping.getElement().getTargetId(), auth);
 				
 				if (source.isDraft() || target.isDraft()) {
-					result.setMessage(new MessagePojo("error", "~eu.dariah.de.minfba.schereg.model.mapping.validation.no_pub_schema_drafts", "Either source, target or both are drafts, so mapping cannot be published either"));
+					result.setMessage(new MessagePojo("error", "~eu.dariah.de.minfba.schereg.model.mapping.validation.no_pub_schema_drafts", ""));
 					return result;
 				}
 				

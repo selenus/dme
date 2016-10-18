@@ -91,7 +91,7 @@ public class MappingEditorController extends BaseMainEditorController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSampleMapping")
 	public @ResponseBody ModelActionPojo executeSampleMapping(@PathVariable String entityId, HttpServletRequest request, Locale locale) {
-		Stopwatch sw = new Stopwatch();
+		Stopwatch sw = new Stopwatch().start();
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(0);
 		
