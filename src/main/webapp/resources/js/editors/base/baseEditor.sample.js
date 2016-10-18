@@ -71,7 +71,9 @@ BaseEditor.prototype.executeSample = function() {
 	    	}
 	    	//_this.currentSampleIndex = 0;
 	    	_this.logArea.refresh();
+	    	
 	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
+	    	_this.resize();
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) {
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);

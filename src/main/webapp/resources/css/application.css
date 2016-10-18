@@ -399,6 +399,10 @@ noscript div {
 	overflow: hidden;
 }
 
+textarea.height-sized-element {
+	overflow: scroll;
+}
+
 .height-sized-element > div {
 	height: 100%;
 }

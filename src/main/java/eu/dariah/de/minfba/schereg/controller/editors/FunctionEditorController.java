@@ -96,11 +96,13 @@ public class FunctionEditorController extends BaseFunctionController {
 		Identifiable entity = this.getEntity(entityId);
 		
 		Map<String, String> providedSamples = new HashMap<String, String>();
-		ArrayNode samples = (ArrayNode)jsonNode.path("samples");
-		for (JsonNode n : samples) {
-			String text = n.path("text").textValue();
-			if (text!=null) {
-				providedSamples.put(n.path("elementId").textValue(), text);
+		if (jsonNode!=null) {
+			ArrayNode samples = (ArrayNode)jsonNode.path("samples");
+			for (JsonNode n : samples) {
+				String text = n.path("text").textValue();
+				if (text!=null) {
+					providedSamples.put(n.path("elementId").textValue(), text);
+				}
 			}
 		}
 		
