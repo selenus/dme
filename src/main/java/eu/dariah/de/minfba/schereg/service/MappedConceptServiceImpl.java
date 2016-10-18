@@ -53,6 +53,8 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			TransformationFunction function = new TransformationFunctionImpl(mappingId, "fMapping");
 			functionDao.save(function, auth.getUserId(), auth.getSessionId());
 			
+			mappedConcept.setFunctionId(function.getId());
+			
 			addChildReference(refConcept, function); 
 			needReferenceSave = true;
 		} else {
@@ -81,19 +83,6 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		}
 	}
 	
-	@Override
-	public TransformationFunction getConceptFunction(String mappingId, String conceptId) {
-		Reference root = this.findReferenceById(mappingId);
-		Reference refConcept = findSubreference(root, conceptId);
-		
-		for (String className : refConcept.getChildReferences().keySet()) {
-			if (className.equals(TransformationFunctionImpl.class.getName()) || 
-					className.equals(TransformationFunction.class.getName())) {
-				return functionDao.findById(refConcept.getChildReferences().get(className)[0].getId());
-			}
-		}
-		return null;
-	}
 	
 	@Override
 	public List<MappedConcept> findAllByMappingId(String mappingId) {

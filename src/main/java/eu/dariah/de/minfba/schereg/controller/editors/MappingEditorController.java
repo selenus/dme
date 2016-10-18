@@ -42,6 +42,7 @@ import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
@@ -53,6 +54,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 public class MappingEditorController extends BaseMainEditorController {
 	@Autowired private SchemaService schemaService;
 	@Autowired private GrammarService grammarService;
+	@Autowired private FunctionService functionService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private PersistedSessionService sessionService;
@@ -116,7 +118,7 @@ public class MappingEditorController extends BaseMainEditorController {
 		}
 		
 		for (MappedConcept c : concepts) {			
-			mapExecGroup.addMappedConcept(c, mappedConceptService.getConceptFunction(c.getEntityId(), c.getId()));
+			mapExecGroup.addMappedConcept(c, functionService.findById(c.getFunctionId()));
 		}
 		
 		

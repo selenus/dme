@@ -132,8 +132,8 @@ public class MappedConceptEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/function")
-	public @ResponseBody TransformationFunction getConceptFunction(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
-		return mappedConceptService.getConceptFunction(mappingId, mappedConceptId);
+	public @ResponseBody String getConceptFunction(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		return mappedConceptService.findById(mappingId, mappedConceptId, false).getFunctionId();
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/source")

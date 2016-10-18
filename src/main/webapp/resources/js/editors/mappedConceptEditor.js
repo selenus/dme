@@ -192,10 +192,10 @@ MappedConceptEditor.prototype.editFunction = function(connectionId) {
 	$.ajax({
 	    url: _this.options.path + "/function",
 	    type: "GET",
-	    dataType: "json",
+	    dataType: "text",
 	    success: function(data) {
 	    	
-	    	var functionId = data.id;
+	    	var functionId = data;
 	    	var form_identifier = "edit-function-" + functionId;
 		   	
 	    	var elementIds = [];
@@ -452,9 +452,9 @@ MappedConceptEditor.prototype.performTransformation = function() {
 	$.ajax({
 	    url: _this.options.path + "/function",
 	    type: "GET",
-	    dataType: "json",
+	    dataType: "text",
 	    success: function(data) {
-	    	var f = data.id;
+	    	var f = data;
 	    	
 	    	var elementIds = [];
 	    	var samples = [];

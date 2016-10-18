@@ -1,7 +1,9 @@
 package eu.dariah.de.minfba.schereg.controller.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,10 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableMappingContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
+import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
@@ -32,7 +36,7 @@ public class MappingApiController extends BaseApiController {
 	
 	@Autowired private MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
-	
+	@Autowired private FunctionService functionService;
 	
 	@RequestMapping(method = RequestMethod.GET, value = "")
 	public @ResponseBody List<SerializableMappingContainer> getMappings(HttpServletRequest request) {
@@ -66,13 +70,13 @@ public class MappingApiController extends BaseApiController {
 	@RequestMapping(method = RequestMethod.GET, value = "/by-source-and-target/{sourceId}/{targetId}")
 	public @ResponseBody SerializableMappingContainer getMappingBySourceAndTarget(@PathVariable String sourceId, @PathVariable String targetId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		return this.processMapping(mappingService.findByAuthAndSourceAndTargetId(auth, sourceId, targetId));
+		return this.processMappingWithDetails(mappingService.findByAuthAndSourceAndTargetId(auth, sourceId, targetId));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/{entityId}")
 	public @ResponseBody SerializableMappingContainer getMapping(@PathVariable String entityId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		return this.processMapping(mappingService.findByIdAndAuth(entityId, auth));
+		return this.processMappingWithDetails(mappingService.findByIdAndAuth(entityId, auth));
 	}
 	
 	
@@ -97,7 +101,7 @@ public class MappingApiController extends BaseApiController {
 		return result;
 	}
 	
-	private SerializableMappingContainer processMapping(RightsContainer<Mapping> mapping) {
+	private SerializableMappingContainer processMappingWithDetails(RightsContainer<Mapping> mapping) {
 		if (mapping!=null) {
 			SerializableMappingContainer result = new SerializableMappingContainer();
 			result.setMapping(mapping.getElement()); 
@@ -111,7 +115,17 @@ public class MappingApiController extends BaseApiController {
 			
 			mapping.getElement().flush();
 			
-			result.setGrammars(this.serializeGrammarSources(mapping.getId()));			
+			result.setGrammars(this.serializeGrammarSources(mapping.getId()));		
+			
+			Map<String, String> serializedFunctions = new HashMap<String, String>();
+			
+			List<TransformationFunction> functions = functionService.findByEntityId(mapping.getId());
+			for (TransformationFunction f : functions) {
+				serializedFunctions.put(f.getId(), f.getFunction());
+			}
+			
+			result.setFunctions(serializedFunctions);
+			
 			return result;
 		}
 		return null;

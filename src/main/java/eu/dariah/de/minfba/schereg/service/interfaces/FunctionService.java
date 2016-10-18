@@ -1,5 +1,7 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
+import java.util.List;
+
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
@@ -16,4 +18,6 @@ public interface FunctionService extends BaseService {
 	public void saveFunction(TransformationFunctionImpl function, AuthPojo auth);
 
 	public TransformationFunction deleteFunctionById(String schemaId, String id, AuthPojo auth);
+
+	public List<TransformationFunction> findByEntityId(String entityId);
 }

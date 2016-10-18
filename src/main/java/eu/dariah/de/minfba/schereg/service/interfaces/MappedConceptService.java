@@ -17,5 +17,4 @@ public interface MappedConceptService {
 	public void saveMappedConcept(MappedConcept mappedConcept, String mappingId, AuthPojo auth);
 	public void removeSourceElementById(AuthPojo auth, String mappingId, MappedConcept mc, String sourceId);
 	public void removeSourceElementById(AuthPojo auth, String mappingId, String mappedConceptId, String sourceId);
-	public TransformationFunction getConceptFunction(String mappingId, String conceptId);	
 }

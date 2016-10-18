@@ -73,4 +73,9 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 		function.setExternalInputElements(extElements);
 		function.setOutputElements(outputElements);
 	}
+
+	@Override
+	public List<TransformationFunction> findByEntityId(String entityId) {
+		return functionDao.findByEntityId(entityId);
+	}
 }
