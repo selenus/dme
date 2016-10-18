@@ -48,6 +48,13 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		return childReference;
 	}
 	
+	protected void addChildReference(Reference parentReference, Reference childReference) {
+		Identifiable child = referenceDao.findIdentifiableById(childReference.getId());
+		if (child!=null) {
+			this.addChildReference(parentReference, childReference, child.getClass().getName());
+		}
+	}
+	
 	protected void addChildReference(Reference parentReference, Reference childReference, String childClass) {
 		if (parentReference.getChildReferences()==null) {
 			parentReference.setChildReferences(new HashMap<String, Reference[]>());

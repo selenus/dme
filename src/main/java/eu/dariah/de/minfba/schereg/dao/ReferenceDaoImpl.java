@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import eu.dariah.de.minfba.core.metamodel.BaseIdentifiable;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.base.Dao;
@@ -116,6 +117,22 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 				logger.info("Removed {} {} entities in consequence of a delete cascade", result, clazz.getSimpleName());
 			}
 		}
+	}
+	
+	@Override
+	public Identifiable findIdentifiableById(String id) {
+		Map<String, Dao> daos = appContext.getBeansOfType(Dao.class);
+		Identifiable result = null;
+		for (String key : daos.keySet()) {
+			Dao dao = daos.get(key);
+			if (dao instanceof BaseDao) {
+				result = ((BaseDao<?>)dao).findById(id);
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+		return null;
 	}
 	
 	private Dao getMatchingDao(Class<?> entityType) {

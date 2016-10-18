@@ -46,12 +46,7 @@ public class ElementEditorController extends BaseScheregController {
 	public ElementEditorController() {
 		super("schemaEditor");
 	}
-	
-	@RequestMapping(value="/query/{query}", method=RequestMethod.GET)
-	public @ResponseBody List<Element> queryElements(@PathVariable String schemaId, @PathVariable String elementId, @PathVariable String query) {
-		return elementService.findByNameAndSchemaId(query, schemaId);
-	}
-	
+		
 	@RequestMapping(method = RequestMethod.POST, value = "/assignChild")
 	public @ResponseBody ModelActionPojo assignChild(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam(value="element-id") String childId, Model model, Locale locale, HttpServletRequest request) {		
 		Reference parentReference = elementService.assignChildTreeToParent(schemaId, elementId, childId);		

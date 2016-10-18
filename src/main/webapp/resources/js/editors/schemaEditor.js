@@ -100,7 +100,7 @@ SchemaEditor.prototype.init = function() {
 	this.initSample(this.pathname, this.schema.id);
 	this.loadActivitiesForEntity(this.schema.id, this.schemaActivitiesContainer);
 	
-	this.addVocabularySource("elements", "element/0/query/");
+	this.addVocabularySource("elements", "query/");
 	
 	var _this = this;
 	this.logArea = new LogArea({
@@ -378,15 +378,33 @@ SchemaEditor.prototype.assignChild = function(elementId) {
 SchemaEditor.prototype.registerElementTypeahead = function(typeahead) {
 	var _this = this;
 	this.registerTypeahead(typeahead, "elements", "code", 8, 
-			function(data) { return '<p><strong>' + data.name + '</strong></p>'; },
+			function(data) { return _this.showTypeaheadFoundResult(data); },
 			function(t, suggestion) { 
 				$(t).closest(".form-group").removeClass("has-error"); 
 				$(t).closest(".form-content").find("#element-id").val(suggestion.id);
 				$(t).closest(".form-content").find("#element-id-display").val(suggestion.id);
-				$(t).closest(".form-content").find("#element-name").val(suggestion.name);
+				$(t).closest(".form-content").find("#element-name").val(suggestion.name!==undefined ? suggestion.name : suggestion.grammarName);
 			},
 			null
 	);
+};
+
+SchemaEditor.prototype.showTypeaheadFoundResult = function(data) {
+	var result = '<p>' +
+					'<strong>' + (data.name!==undefined ? data.name : data.grammarName) + '</strong>' +
+					'<br/ >';
+	
+	if (data.simpleType==='Nonterminal') {
+		result += 	 	'Nonterminal: ';
+	} else if (data.simpleType==='Label') {
+		result += 	 	'Label: ';
+	} else if (data.simpleType==='DescriptionGrammarImpl') {
+		result += 	 	'Grammar: ';
+	} else if (data.simpleType==='TransformationFunctionImpl') {
+		result += 	 	'Function: ';
+	}
+	result += 	 data.id + '<p>';
+	return result;
 };
 
 SchemaEditor.prototype.removeElement = function(type, id) { 

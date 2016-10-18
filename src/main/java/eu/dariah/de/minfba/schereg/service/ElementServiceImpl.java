@@ -58,60 +58,32 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	public List<Element> findBySchemaId(String schemaId) {
 		return elementDao.find(Query.query(Criteria.where("entityId").is(schemaId)));
 	}
-	
-	@Override
-	public List<Element> findByNameAndSchemaId(String query, String schemaId) {
-	/*
-		Criteria[] queryCriteria = new Criteria[] {
-				// Name starts with
-				Criteria.where("name").regex(Pattern.compile("^" + query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)),
-				
-				// Name likeness
-				Criteria.where("name").regex(Pattern.compile(query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE))
-		};*/
 		
-
-		return elementDao.find(Query.query((new Criteria()).andOperator(
-				Criteria.where("entityId").is(schemaId),
-				Criteria.where("name").regex(Pattern.compile(query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE)))));
-		
-	}
-	
 	@Override
 	public Reference assignChildTreeToParent(String entityId, String elementId, String childId) {
 		Reference rootRef = this.findReferenceById(entityId);
 		if (rootRef.getChildReferences()==null) {
 			return null;
 		}
-		
-		Map<String, Reference[]> rootElementReferences = new HashMap<String, Reference[]>();		
-		if (rootRef.getChildReferences().containsKey(Nonterminal.class.getName()) && 
-				rootRef.getChildReferences().get(Nonterminal.class.getName()).length>0) {
-			rootElementReferences.put(Nonterminal.class.getName(), rootRef.getChildReferences().get(Nonterminal.class.getName()));
-		} 
-		// Possible if deleted element references land as available root trees
-		if (rootRef.getChildReferences().containsKey(Label.class.getName()) && 
-				rootRef.getChildReferences().get(Label.class.getName()).length>0) {
-			rootElementReferences.put(Label.class.getName(), rootRef.getChildReferences().get(Label.class.getName()));
-		}
-		if (rootElementReferences.isEmpty()) {
-			return null;
-		}
-		
+				
 		Reference parent = null;
 		Reference child = null;
-		String childClass = null;
-		for (String className : rootElementReferences.keySet()) {
-			for (Reference ref : rootElementReferences.get(className)) {
+		Reference[] references;
+		
+		for (String className : rootRef.getChildReferences().keySet()) {
+			references = rootRef.getChildReferences().get(className);
+			if (references==null) {
+				continue;
+			}
+			for (Reference ref : references) {
 				if (parent==null) {
 					parent = findSubreference(ref, elementId);
 				}
 				if (child==null) {
 					child = findSubreference(ref, childId);
-					childClass = className;
 				}
 				if (child!=null && parent!=null) {
-					addChildReference(parent, child, childClass);
+					addChildReference(parent, child);
 					saveRootReference(rootRef);
 					return parent;
 				}

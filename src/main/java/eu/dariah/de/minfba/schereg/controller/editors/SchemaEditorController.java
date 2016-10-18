@@ -40,7 +40,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
@@ -58,6 +60,7 @@ import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
 @Controller
@@ -68,6 +71,8 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private MappingService mappingService;
+	
+	@Autowired private IdentifiableService identifiableService;
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	private String tmpUploadDirPath;
@@ -80,6 +85,11 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	public void afterPropertiesSet() throws Exception {
 		super.afterPropertiesSet();
 		Files.createDirectories(Paths.get(tmpUploadDirPath));
+	}
+	
+	@RequestMapping(value="/query/{query}", method=RequestMethod.GET)
+	public @ResponseBody List<Identifiable> queryElements(@PathVariable String entityId, @PathVariable String query) {
+		return identifiableService.findByNameAndSchemaId(query, entityId, new Class<?>[] { Nonterminal.class, DescriptionGrammarImpl.class });
 	}
 	
 	@RequestMapping(method=GET, value="")
