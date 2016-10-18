@@ -47,6 +47,7 @@
         </put-list-attribute>
     </definition>
     <definition name="template_editors" extends="template_simple">
+    	<put-attribute name="fluidLayout" cascade="true" value="true" />
 		<put-list-attribute name="styles" inherit="true">
 			<add-attribute type="string" value="jquery/jquery.ui.layout.css" />
 			<add-attribute type="string" value="jquery/jquery.contextMenu.css" />
