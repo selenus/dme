@@ -94,32 +94,32 @@
 			<add-attribute type="string" value="logArea.js" />
 			<add-attribute type="string" value="sessions.js" />
 						
-			<add-attribute type="string" value="modelingUI_2/_util/Array.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/CanvasRenderingContext2D.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/Cursors.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/Point.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/Rectangle.js" />
+			<add-attribute type="string" value="modelingUI/_util/Array.js" />
+			<add-attribute type="string" value="modelingUI/_util/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="modelingUI/_util/Cursors.js" />
+			<add-attribute type="string" value="modelingUI/_util/Point.js" />
+			<add-attribute type="string" value="modelingUI/_util/Rectangle.js" />
 
-			<add-attribute type="string" value="modelingUI_2/connections/connection.js" />
-			<add-attribute type="string" value="modelingUI_2/connections/hierarchyTemplate.js" />
-			<add-attribute type="string" value="modelingUI_2/connections/mappingTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connections/connection.js" />
+			<add-attribute type="string" value="modelingUI/connections/hierarchyTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connections/mappingTemplate.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/connectors/connector.js" />
-			<add-attribute type="string" value="modelingUI_2/connectors/connectorTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connectors/connector.js" />
+			<add-attribute type="string" value="modelingUI/connectors/connectorTemplate.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/elements/element.js" />
-			<add-attribute type="string" value="modelingUI_2/elements/elementTemplate.js" />
-			<add-attribute type="string" value="modelingUI_2/elements/expander.js" />
+			<add-attribute type="string" value="modelingUI/elements/element.js" />
+			<add-attribute type="string" value="modelingUI/elements/elementTemplate.js" />
+			<add-attribute type="string" value="modelingUI/elements/expander.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/functions/function.js" />
-			<add-attribute type="string" value="modelingUI_2/functions/functionTemplate.js" />
+			<add-attribute type="string" value="modelingUI/functions/function.js" />
+			<add-attribute type="string" value="modelingUI/functions/functionTemplate.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/area.js" />
-			<add-attribute type="string" value="modelingUI_2/verticalScroll.js" />
-			<add-attribute type="string" value="modelingUI_2/model.js" />
-			<add-attribute type="string" value="modelingUI_2/model.events.js" />
-			<add-attribute type="string" value="modelingUI_2/model.contextmenu.js" />
-			<add-attribute type="string" value="modelingUI_2/theme.js" />
+			<add-attribute type="string" value="modelingUI/area.js" />
+			<add-attribute type="string" value="modelingUI/verticalScroll.js" />
+			<add-attribute type="string" value="modelingUI/model.js" />
+			<add-attribute type="string" value="modelingUI/model.events.js" />
+			<add-attribute type="string" value="modelingUI/model.contextmenu.js" />
+			<add-attribute type="string" value="modelingUI/theme.js" />
 			
 			<add-attribute type="string" value="editors/base/baseEditor.js" />
 			<add-attribute type="string" value="editors/base/baseEditor.sample.js" />
@@ -160,32 +160,32 @@
 			<add-attribute type="string" value="editors/grammarEditor.js" />
 			<add-attribute type="string" value="editors/functionEditor.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/_util/Array.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/CanvasRenderingContext2D.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/Cursors.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/Point.js" />
-			<add-attribute type="string" value="modelingUI_2/_util/Rectangle.js" />
+			<add-attribute type="string" value="modelingUI/_util/Array.js" />
+			<add-attribute type="string" value="modelingUI/_util/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="modelingUI/_util/Cursors.js" />
+			<add-attribute type="string" value="modelingUI/_util/Point.js" />
+			<add-attribute type="string" value="modelingUI/_util/Rectangle.js" />
 
-			<add-attribute type="string" value="modelingUI_2/connections/connection.js" />
-			<add-attribute type="string" value="modelingUI_2/connections/hierarchyTemplate.js" />
-			<add-attribute type="string" value="modelingUI_2/connections/mappingTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connections/connection.js" />
+			<add-attribute type="string" value="modelingUI/connections/hierarchyTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connections/mappingTemplate.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/connectors/connector.js" />
-			<add-attribute type="string" value="modelingUI_2/connectors/connectorTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connectors/connector.js" />
+			<add-attribute type="string" value="modelingUI/connectors/connectorTemplate.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/elements/element.js" />
-			<add-attribute type="string" value="modelingUI_2/elements/elementTemplate.js" />
-			<add-attribute type="string" value="modelingUI_2/elements/expander.js" />
+			<add-attribute type="string" value="modelingUI/elements/element.js" />
+			<add-attribute type="string" value="modelingUI/elements/elementTemplate.js" />
+			<add-attribute type="string" value="modelingUI/elements/expander.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/functions/function.js" />
-			<add-attribute type="string" value="modelingUI_2/functions/functionTemplate.js" />
+			<add-attribute type="string" value="modelingUI/functions/function.js" />
+			<add-attribute type="string" value="modelingUI/functions/functionTemplate.js" />
 			
-			<add-attribute type="string" value="modelingUI_2/area.js" />
-			<add-attribute type="string" value="modelingUI_2/verticalScroll.js" />
-			<add-attribute type="string" value="modelingUI_2/model.js" />
-			<add-attribute type="string" value="modelingUI_2/model.events.js" />
-			<add-attribute type="string" value="modelingUI_2/model.contextmenu.js" />
-			<add-attribute type="string" value="modelingUI_2/theme.js" />
+			<add-attribute type="string" value="modelingUI/area.js" />
+			<add-attribute type="string" value="modelingUI/verticalScroll.js" />
+			<add-attribute type="string" value="modelingUI/model.js" />
+			<add-attribute type="string" value="modelingUI/model.events.js" />
+			<add-attribute type="string" value="modelingUI/model.contextmenu.js" />
+			<add-attribute type="string" value="modelingUI/theme.js" />
 		</put-list-attribute>
 	</definition>
 	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
