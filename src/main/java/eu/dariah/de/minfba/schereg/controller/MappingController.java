@@ -52,11 +52,6 @@ public class MappingController extends BaseScheregController {
 		super("mapping");
 	}
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
-	public String getList(Model model) {
-		return "mapping/home";
-	}
-	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
 	public @ResponseBody DataTableList<AuthWrappedPojo<Mapping>> getData(Model model, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);

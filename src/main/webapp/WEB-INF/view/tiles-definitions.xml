@@ -57,22 +57,10 @@
 	</definition>
 		
 	<!-- Mapping -->
-	<definition name="mapping/home" extends="template_tables">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/home.jsp" />
-		<put-list-attribute name="scripts" inherit="true">
-			<add-attribute type="string" value="mapping.js" />
-		</put-list-attribute>
-	</definition>
 	<definition name="mapping/form/edit" template="/WEB-INF/view/jsp/mapping/forms/edit.jsp" />
 		
 	
 	<!-- Schema -->
-	<definition name="schema/home" extends="template_tables">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/home.jsp" />
-		<put-list-attribute name="scripts" inherit="true">
-			<add-attribute type="string" value="schema.js" />
-		</put-list-attribute>
-	</definition>
 	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
 	
 	<!-- Vocabulary -->

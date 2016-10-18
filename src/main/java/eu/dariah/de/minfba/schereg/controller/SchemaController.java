@@ -50,10 +50,6 @@ public class SchemaController extends BaseScheregController {
 		super("schema");
 	}
 
-	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
-	public String getList(Model model) {
-		return "schema/home";
-	}
 	
 	@RequestMapping(value = "/editor", method = RequestMethod.GET)
 	public String getEditorRedirect(HttpServletResponse response) throws IOException {
