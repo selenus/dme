@@ -5,6 +5,11 @@ var MappedConceptEditor = function(owner, container, modal, options) {
 			layoutContainer: ".layout-helper-container",
 			editorContainer: ".mapped-concept-editor-container",
 			canvasId: "mapped-concept-editor",
+			icons: {
+				warning: __util.getBaseUrl() + "resources/img/warning.png",
+				error: __util.getBaseUrl() + "resources/img/error.png"
+			},
+			
 			readOnly: false
 	};
 	$.extend(true, this.options, options);
@@ -387,11 +392,7 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 
 	if (nonterminals!=null && nonterminals instanceof Array) {
 		for (var i=0; i<nonterminals.length; i++) {
-			var icon = null;
-			/*if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
-				icon = this.options.icons.warning;
-			}*/
-			var e = area.addElement(nonterminals[i].simpleType, parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
+			var e = area.addElement(nonterminals[i].simpleType, parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), null);
 			if (!isSource) {
 				this.targetElements.push(nonterminals[i].id);
 			}
@@ -409,15 +410,6 @@ MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals
 			if (isSource) {
 				this.sourceGrammars.push(grammars[i].id);
 			}
-		}
-	}
-	if (subelements!=null && subelements instanceof Array) {
-		for (var i=0; i<subelements.length; i++) {
-			var e = area.addElement(subelements[i].simpleType, parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
-			if (!isSource) {
-				this.targetElements.push(subelements[i].id);
-			}
-			this.generateTree(area, e, null, subelements[i].subLabels, subelements[i].grammars, isSource);
 		}
 	}
 };
