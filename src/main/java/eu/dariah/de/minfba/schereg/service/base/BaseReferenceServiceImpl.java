@@ -44,24 +44,26 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		Assert.isTrue(BaseDaoImpl.isValidObjectId(child.getId()), "Element must be saved when reference is created.");
 		
 		Reference childReference = new Reference(child.getId());
-		
+		addChildReference(parentReference, childReference, child.getClass().getName());
+		return childReference;
+	}
+	
+	protected void addChildReference(Reference parentReference, Reference childReference, String childClass) {
 		if (parentReference.getChildReferences()==null) {
 			parentReference.setChildReferences(new HashMap<String, Reference[]>());
-			parentReference.getChildReferences().put(child.getClass().getName(), new Reference[]{ childReference });
-		} else if (!parentReference.getChildReferences().containsKey(child.getClass().getName())) {
-			parentReference.getChildReferences().put(child.getClass().getName(), new Reference[]{ childReference });
+			parentReference.getChildReferences().put(childClass, new Reference[]{ childReference });
+		} else if (!parentReference.getChildReferences().containsKey(childClass)) {
+			parentReference.getChildReferences().put(childClass, new Reference[]{ childReference });
 		} else {
-			Reference[] subRefs = parentReference.getChildReferences().get(child.getClass().getName());
+			Reference[] subRefs = parentReference.getChildReferences().get(childClass);
 			Reference[] newRefs = new Reference[subRefs.length + 1];
 			int i = 0;
 			while (i<subRefs.length) {
 				newRefs[i] = subRefs[i++];
 			}
 			newRefs[i] = childReference;
-			parentReference.getChildReferences().put(child.getClass().getName(), newRefs);
+			parentReference.getChildReferences().put(childClass, newRefs);
 		}
-		
-		return childReference;
 	}
 	
 	

@@ -25,7 +25,8 @@
 			</div>
 			<div class="form-group">
 				<div class="col-sm-8 col-sm-offset-4">
-					<input type="text" class="form-control" disabled id="element-id" />
+					<input type="text" class="form-control" disabled id="element-id-display" />
+					<input type="hidden" id="element-id" name="element-id" />
 				</div>
 			</div>		
 		</fieldset>

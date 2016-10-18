@@ -30,6 +30,7 @@ import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.CommonController;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
@@ -53,7 +54,12 @@ public class ElementEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/assignChild")
 	public @ResponseBody ModelActionPojo assignChild(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam(value="element-id") String childId, Model model, Locale locale, HttpServletRequest request) {		
-		return new ModelActionPojo(true);
+		Reference parentReference = elementService.assignChildTreeToParent(schemaId, elementId, childId);		
+		if (parentReference!=null) {
+			return new ModelActionPojo(true);
+		} else {
+			return new ModelActionPojo(false);
+		}
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/assignChild")

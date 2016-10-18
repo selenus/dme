@@ -369,10 +369,6 @@ SchemaEditor.prototype.assignChild = function(elementId) {
 		},
 		completeCallback: function(data, modal) { 
 			_this.reloadElementHierarchy(); 
-			_this.deregisterTypeahead($(modal).find("#child-element"));
-		},
-		cancelCallback: function(modal) {
-			_this.deregisterTypeahead($(modal).find("#child-element"));
 		}
 	});
 		
@@ -386,6 +382,7 @@ SchemaEditor.prototype.registerElementTypeahead = function(typeahead) {
 			function(t, suggestion) { 
 				$(t).closest(".form-group").removeClass("has-error"); 
 				$(t).closest(".form-content").find("#element-id").val(suggestion.id);
+				$(t).closest(".form-content").find("#element-id-display").val(suggestion.id);
 				$(t).closest(".form-content").find("#element-name").val(suggestion.name);
 			},
 			null

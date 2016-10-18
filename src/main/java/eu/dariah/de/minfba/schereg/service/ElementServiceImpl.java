@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import ch.qos.logback.classic.pattern.RootCauseFirstThrowableProxyConverter;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.BaseElement;
 import eu.dariah.de.minfba.core.metamodel.Label;
@@ -76,6 +77,49 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		
 	}
 	
+	@Override
+	public Reference assignChildTreeToParent(String entityId, String elementId, String childId) {
+		Reference rootRef = this.findReferenceById(entityId);
+		if (rootRef.getChildReferences()==null) {
+			return null;
+		}
+		
+		Map<String, Reference[]> rootElementReferences = new HashMap<String, Reference[]>();		
+		if (rootRef.getChildReferences().containsKey(Nonterminal.class.getName()) && 
+				rootRef.getChildReferences().get(Nonterminal.class.getName()).length>0) {
+			rootElementReferences.put(Nonterminal.class.getName(), rootRef.getChildReferences().get(Nonterminal.class.getName()));
+		} 
+		// Possible if deleted element references land as available root trees
+		if (rootRef.getChildReferences().containsKey(Label.class.getName()) && 
+				rootRef.getChildReferences().get(Label.class.getName()).length>0) {
+			rootElementReferences.put(Label.class.getName(), rootRef.getChildReferences().get(Label.class.getName()));
+		}
+		if (rootElementReferences.isEmpty()) {
+			return null;
+		}
+		
+		Reference parent = null;
+		Reference child = null;
+		String childClass = null;
+		for (String className : rootElementReferences.keySet()) {
+			for (Reference ref : rootElementReferences.get(className)) {
+				if (parent==null) {
+					parent = findSubreference(ref, elementId);
+				}
+				if (child==null) {
+					child = findSubreference(ref, childId);
+					childClass = className;
+				}
+				if (child!=null && parent!=null) {
+					addChildReference(parent, child, childClass);
+					saveRootReference(rootRef);
+					return parent;
+				}
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
 		Reference reference = this.findReferenceById(schemaId);

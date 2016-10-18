@@ -37,4 +37,6 @@ public interface ElementService extends BaseService {
 	public List<Element> findByIds(List<Object> elementIds);
 	public List<Element> findBySchemaId(String schemaId);
 	public List<Element> findByNameAndSchemaId(String query, String schemaId);
+	
+	public Reference assignChildTreeToParent(String entityId, String elementId, String childId);
 }
