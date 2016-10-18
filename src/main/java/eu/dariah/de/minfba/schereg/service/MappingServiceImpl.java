@@ -51,7 +51,8 @@ public class MappingServiceImpl extends BaseReferenceServiceImpl implements Mapp
 	
 	@Override
 	public boolean getHasWriteAccess(RightsContainer<Mapping> m, String userId) {
-		if (m!=null && ( m.getOwnerId().equals(userId) || ( m.getWriteIds()!=null && m.getWriteIds().contains(userId)) ) ) {
+		if (m!=null && ( m.getOwnerId().equals(userId) || 
+				( m.getWriteIds()==null || ( m.getWriteIds()!=null && m.getWriteIds().contains(userId)) ) ) ){
 			return true;
 		}
 		return false;

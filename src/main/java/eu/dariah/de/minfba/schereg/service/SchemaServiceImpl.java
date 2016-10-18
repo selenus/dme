@@ -162,7 +162,10 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 	
 	@Override
 	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId) {
-		if (s!=null && ( s.getOwnerId().equals(userId) || ( s.getWriteIds()!=null && s.getWriteIds().contains(userId)) ) ) {
+		if (s!=null && ( 
+				s.getOwnerId().equals(userId) || 
+				( s.getWriteIds()==null || ( s.getWriteIds()!=null && s.getWriteIds().contains(userId)) ) ) 
+			) {
 			return true;
 		}
 		return false;
@@ -176,7 +179,9 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 	
 	@Override
 	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId) {
-		if (s!=null && ( s.getOwnerId().equals(userId) || ( s.getShareIds()!=null && s.getShareIds().contains(userId)) ) ) {
+		if (s!=null && ( 
+				s.getOwnerId().equals(userId) || 
+				(s.getShareIds()==null || ( s.getShareIds()!=null && s.getShareIds().contains(userId)) ) )) {
 			return true;
 		}
 		return false;

@@ -22,8 +22,8 @@ public class AuthWrappedPojoConverter {
 		result.setReadOnly(element.isReadOnly());
 		if (userId!=null) {
 			result.setOwn(element.getOwnerId().equals(userId));
-			result.setWrite(element.getWriteIds()!=null && element.getWriteIds().contains(userId));
-			result.setShare(element.getShareIds()!=null && element.getShareIds().contains(userId));
+			result.setWrite(element.getWriteIds()==null || (element.getWriteIds()!=null && element.getWriteIds().contains(userId)));
+			result.setShare(element.getShareIds()==null || (element.getShareIds()!=null && element.getShareIds().contains(userId)));
 		}
 		return result;
 	}

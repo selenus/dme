@@ -84,17 +84,7 @@ public class SchemaController extends BaseScheregController {
 		model.addAttribute("actionPath", "/schema/async/save");
 		return "schema/form/edit";
 	}
-	
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method=GET, value={"/forms/edit/{id}"})
-	public String getEditForm(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
-		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(id, authInfoHelper.getAuth(request));
-		model.addAttribute("actionPath", "/schema/async/save");
-		model.addAttribute("schema", schema.getElement());
-		return "schema/form/edit";
-	}
-
-	
+		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
