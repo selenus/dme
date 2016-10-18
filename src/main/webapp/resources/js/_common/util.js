@@ -115,12 +115,12 @@ Util.prototype.processServerError = function(jqXHR, textStatus, errorThrown) {
 	
 	if (jqXHR!=null && jqXHR.status!=null) {
 		if (jqXHR.status===403) {
-			/*if (this.isLoggedIn()) {
+			if (this.isLoggedIn()) {
 				this.showErrorAlert("~eu.dariah.de.minfba.common.error.insufficient_rights.head",
 						"~eu.dariah.de.minfba.common.error.insufficient_rights.body", $(errorContainer).html());
-			} else {*/
+			} else {
 				this.showLoginNote();
-			/*}*/
+			}
 			return;
 		}
 	}
