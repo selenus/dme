@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+	"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">        
+<tiles-definitions>  
+	<definition name="template_simple" template="/WEB-INF/view/jsp/templates/simple.jsp">
+		<put-attribute name="title" cascade="true" value="DARIAH-DE Schema Registry" />
+		<put-attribute name="navbarInverse" cascade="true" value="false" />
+		<put-attribute name="sideNav" cascade="true" value="false" />
+		<put-attribute name="fluidLayout" cascade="true" value="false" />
+		<put-list-attribute name="styles">
+			<add-attribute type="string" value="bootstrap/bootstrap.min.css" />
+			<add-attribute type="string" value="bootstrap/bootstrap-theme.min.css" />
+			<add-attribute type="string" value="bootstrap/bootstrap-customization.css" />
+			<add-attribute type="string" value="bootstrap/bootstrap-modal-bs3patch.css" />
+			<add-attribute type="string" value="bootstrap/bootstrap-modal.css" />
+			<add-attribute type="string" value="application.css" />
+        </put-list-attribute>
+		<put-list-attribute name="scripts">
+			<add-attribute type="string" value="jquery/jquery.js" />
+			<add-attribute type="string" value="bootstrap/bootstrap.js" />
+			<add-attribute type="string" value="bootstrap/bootbox.min.js" />
+			<add-attribute type="string" value="bootstrap/bootbox-init.js" />
+			<add-attribute type="string" value="bootstrap/bootstrap-modalmanager.js" />
+			<add-attribute type="string" value="bootstrap/bootstrap-modal.js" />
+			<add-attribute type="string" value="_common/appProperties.js" />
+			<add-attribute type="string" value="_common/notificationsHandler.js" />
+			<add-attribute type="string" value="_common/translator.js" />
+			<add-attribute type="string" value="_common/util.js" />
+			<add-attribute type="string" value="_common/formHandler.js" />
+        </put-list-attribute>
+	</definition>
+	<definition name="template_main" extends="template_simple" template="/WEB-INF/view/jsp/templates/main.jsp">
+		<put-attribute name="navbarInverse" cascade="true" value="true" />
+		<put-attribute name="sideNav" cascade="true" value="true" />
+		<put-attribute name="fluidLayout" cascade="true" value="true" />
+	</definition>
+	<definition name="template_tables" extends="template_simple">
+		<put-attribute name="fluidLayout" cascade="true" value="true" />
+		<put-list-attribute name="styles" inherit="true">
+			<add-attribute type="string" value="dataTables/datatables.css" />
+        </put-list-attribute>
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="dataTables/dataTables.js" />
+			<add-attribute type="string" value="dataTables/dataTables.fnReloadAjax.js" />
+			<add-attribute type="string" value="dataTables/dataTables.i18n.js" />
+			<add-attribute type="string" value="_common/baseTable.js" />
+        </put-list-attribute>
+    </definition>
+    <definition name="template_editors" extends="template_simple">
+		<put-list-attribute name="styles" inherit="true">
+			<add-attribute type="string" value="jquery/jquery.ui.layout.css" />
+			<add-attribute type="string" value="jquery/jquery.contextMenu.css" />
+        </put-list-attribute>
+        <put-list-attribute name="scripts" inherit="true">
+        	<add-attribute type="string" value="jquery/jquery.ui.js" />
+			<add-attribute type="string" value="jquery/jquery.ui.layout.js" />
+			<add-attribute type="string" value="jquery/jquery.ui.widget.js" />
+			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
+			<add-attribute type="string" value="jquery/jquery.contextMenu.js" />
+			<add-attribute type="string" value="jquery/typeahead.bundle.min.js" />
+			
+			<add-attribute type="string" value="lib/svg-pan-zoom.js" />
+			<add-attribute type="string" value="lib/fileSaver.js" />
+			<add-attribute type="string" value="lib/blob.js" />
+			
+			<add-attribute type="string" value="_common/svgviewer.js" />
+			<add-attribute type="string" value="logArea.js" />
+			<add-attribute type="string" value="sessions.js" />
+			
+			<add-attribute type="string" value="modelingUI/_util/Array.js" />
+			<add-attribute type="string" value="modelingUI/_util/CanvasRenderingContext2D.js" />
+			<add-attribute type="string" value="modelingUI/_util/Cursors.js" />
+			<add-attribute type="string" value="modelingUI/_util/Point.js" />
+			<add-attribute type="string" value="modelingUI/_util/Rectangle.js" />
+			<add-attribute type="string" value="modelingUI/connections/connection.js" />
+			<add-attribute type="string" value="modelingUI/connections/hierarchyTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connections/mappingTemplate.js" />
+			<add-attribute type="string" value="modelingUI/connectors/connector.js" />
+			<add-attribute type="string" value="modelingUI/connectors/connectorTemplate.js" />
+			<add-attribute type="string" value="modelingUI/elements/element.js" />
+			<add-attribute type="string" value="modelingUI/elements/elementTemplate.js" />
+			<add-attribute type="string" value="modelingUI/elements/expander.js" />
+			<add-attribute type="string" value="modelingUI/functions/function.js" />
+			<add-attribute type="string" value="modelingUI/functions/functionTemplate.js" />
+			<add-attribute type="string" value="modelingUI/area.js" />
+			<add-attribute type="string" value="modelingUI/verticalScroll.js" />
+			<add-attribute type="string" value="modelingUI/model.js" />
+			<add-attribute type="string" value="modelingUI/model.events.js" />
+			<add-attribute type="string" value="modelingUI/model.contextmenu.js" />
+			<add-attribute type="string" value="modelingUI/theme.js" />
+			
+			<add-attribute type="string" value="editors/base/baseEditor.js" />
+			<add-attribute type="string" value="editors/base/baseEditor.sample.js" />
+			<add-attribute type="string" value="editors/grammarEditor.js" />
+			<add-attribute type="string" value="editors/functionEditor.js" />
+		</put-list-attribute>
+	</definition>
+</tiles-definitions>

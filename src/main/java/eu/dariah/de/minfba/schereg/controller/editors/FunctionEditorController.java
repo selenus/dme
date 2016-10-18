@@ -168,7 +168,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		model.addAttribute("function", functionService.findById(functionId));
 		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/function/" + functionId + "/async/save");
-		return "schemaEditor/form/function/edit";
+		return "functionEditor/form/edit";
 		
 	}
 	
@@ -179,7 +179,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/process")
 	public String validateFunction(Model model, Locale locale) {		
-		return "schemaEditor/form/function/process";
+		return "functionEditor/form/process";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/validate")

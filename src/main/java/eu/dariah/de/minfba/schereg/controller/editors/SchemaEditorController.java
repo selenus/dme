@@ -183,7 +183,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		model.addAttribute("element", new Nonterminal());
 		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(entityId));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/saveNewRoot");
-		return "schemaEditor/form/element/edit_nonterminal";
+		return "elementEditor/form/edit_nonterminal";
 	}
 	
 	@PreAuthorize("isAuthenticated()")

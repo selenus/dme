@@ -128,7 +128,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 		model.addAttribute("sampleInputMap", sampleInputs);		
 		model.addAttribute("concept", mc);		
 		
-		return "mappingEditor/form/concept/edit";
+		return "conceptEditor/form/edit";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/function")

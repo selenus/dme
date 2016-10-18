@@ -82,7 +82,7 @@ public class TerminalEditorController extends BaseScheregController {
 		}
 		model.addAttribute("availableNamespaces", availableNamespaces);
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/terminal/" + terminal.getId() + "/async/saveTerminal");
-		return "schemaEditor/form/element/edit_terminal";
+		return "elementEditor/form/edit_terminal";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveTerminal")

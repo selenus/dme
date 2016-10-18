@@ -60,7 +60,7 @@ public class ElementEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/form/assignChild")
 	public String getAssignChildForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale, HttpServletRequest request) {		
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/assignChild");
-		return "schemaEditor/form/element/assign_child";
+		return "elementEditor/form/assign_child";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/element")
@@ -76,10 +76,10 @@ public class ElementEditorController extends BaseScheregController {
 		if (elem instanceof Nonterminal) {
 			model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
 			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");
-			return "schemaEditor/form/element/edit_nonterminal";
+			return "elementEditor/form/edit_nonterminal";
 		} else {
 			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveLabel");
-			return "schemaEditor/form/element/edit_label";
+			return "elementEditor/form/edit_label";
 		}
 	}
 	
@@ -88,21 +88,21 @@ public class ElementEditorController extends BaseScheregController {
 		model.addAttribute("element", new Nonterminal(schemaId, null));
 		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewNonterminal");
-		return "schemaEditor/form/element/edit_nonterminal";
+		return "elementEditor/form/edit_nonterminal";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/new_label")
 	public String getNewLabelForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
 		model.addAttribute("element", new Label(schemaId, null));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewLabel");
-		return "schemaEditor/form/element/edit_label";
+		return "elementEditor/form/edit_label";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/new_grammar")
 	public String getNewGrammarForm(@PathVariable String schemaId, @PathVariable String elementId, Model model, Locale locale) {
 		model.addAttribute("grammar", new DescriptionGrammarImpl(schemaId, null));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewGrammar");
-		return "schemaEditor/form/grammar/new";
+		return "grammarEditor/form/new";
 	}
 	
 	

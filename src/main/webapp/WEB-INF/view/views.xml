@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" 
+	"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">        
+<tiles-definitions> 
+ 
+	<!-- Schema and Mapping Registry -->
+	<definition name="registry/home" extends="template_tables">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/registry/home.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="registry/schema.js" />
+			<add-attribute type="string" value="registry/mapping.js" />
+		</put-list-attribute>
+	</definition>
+	<definition name="mapping/form/edit" template="/WEB-INF/view/jsp/mapping/forms/edit.jsp" />
+	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
+	
+	<!-- Vocabulary -->
+	<definition name="vocabulary/home" extends="template_tables">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/vocabulary/home.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="vocabulary.js" />
+		</put-list-attribute>
+	</definition>
+	<definition name="vocabulary/form/edit" template="/WEB-INF/view/jsp/vocabulary/forms/edit.jsp" />
+	<definition name="vocabulary/form/edit_item" template="/WEB-INF/view/jsp/vocabulary/forms/edit_item.jsp" />
+	
+	<!-- Schema Editor -->
+	<definition name="schemaEditor" extends="template_editors">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/editor.jsp" />
+		
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
+
+			<add-attribute type="string" value="editors/schemaEditor.js" />
+			<add-attribute type="string" value="editors/schemaEditor.graph.js" />	
+		</put-list-attribute>
+	</definition>
+	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
+			
+	<!-- Mapping Editor -->
+	<definition name="mappingEditor" extends="template_editors">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/editor.jsp" />
+		<put-list-attribute name="scripts" inherit="true">
+			<add-attribute type="string" value="editors/mappingEditor.js" />
+			<add-attribute type="string" value="editors/mappedConceptEditor.js" />
+		</put-list-attribute>
+	</definition>
+	
+	<!-- Element/concept editors -->
+	<definition name="elementEditor/form/edit_nonterminal" template="/WEB-INF/view/jsp/editor/element/edit_nonterminal.jsp" />
+	<definition name="elementEditor/form/edit_label" template="/WEB-INF/view/jsp/editor/element/edit_label.jsp" />
+	<definition name="elementEditor/form/edit_terminal" template="/WEB-INF/view/jsp/editor/element/edit_terminal.jsp" />
+	<definition name="elementEditor/form/assign_child" template="/WEB-INF/view/jsp/editor/element/assign_child.jsp" />
+	
+	<definition name="grammarEditor/form/edit" template="/WEB-INF/view/jsp/editor/grammar/edit_grammar.jsp" />
+	<definition name="grammarEditor/form/new" template="/WEB-INF/view/jsp/editor/grammar/new_grammar.jsp" />
+	<definition name="grammarEditor/form/process" template="/WEB-INF/view/jsp/editor/grammar/process_grammar.jsp" />
+
+	<definition name="functionEditor/form/edit" template="/WEB-INF/view/jsp/editor/function/edit_function.jsp" />
+	<definition name="functionEditor/form/process" template="/WEB-INF/view/jsp/editor/function/process_function.jsp" />
+	<definition name="functionEditor/form/new" template="/WEB-INF/view/jsp/editor/function/new_function.jsp" />
+	
+	<definition name="conceptEditor/form/edit" template="/WEB-INF/view/jsp/editor/concept/edit_concept.jsp" />
+	
+	<!-- Sessions -->
+	<definition name="session/forms/load" template="/WEB-INF/view/jsp/session/forms/load.jsp" />
+	<definition name="session/forms/save" template="/WEB-INF/view/jsp/session/forms/save.jsp" />
+
+	<!-- Help views -->
+	<definition name="schemaEditor/help/grammar/editGrammar" template="/WEB-INF/view/jsp/help/help_edit_grammar.jsp" />	
+	
+	<!-- Common views -->
+	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
+	<definition name="common/forms/maximizeSvg" template="/WEB-INF/view/jsp/common/forms/maximizeSvg.jsp" />
+</tiles-definitions>

@@ -82,7 +82,7 @@ public class GrammarEditorController extends BaseFunctionController {
 	public String getNewGrammarForm(@PathVariable String entityId, @PathVariable String grammarId, Model model, Locale locale) {
 		model.addAttribute("function", new TransformationFunctionImpl(entityId, null));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/saveNewFunction");
-		return "schemaEditor/form/function/new";
+		return "functionEditor/form/new";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewFunction")
@@ -123,7 +123,7 @@ public class GrammarEditorController extends BaseFunctionController {
 		model.addAttribute("grammar", g);	
 		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/save");
-		return "schemaEditor/form/grammar/edit";
+		return "grammarEditor/form/edit";
 		
 	}
 	
@@ -176,7 +176,7 @@ public class GrammarEditorController extends BaseFunctionController {
 			g.setGrammarContainer(new GrammarContainer());
 		}
 		model.addAttribute("grammar", g);		
-		return "schemaEditor/form/grammar/process";
+		return "grammarEditor/form/process";
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/help/editGrammar")
