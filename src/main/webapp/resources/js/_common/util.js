@@ -65,7 +65,9 @@ var Util = function() {
                                       "~eu.dariah.de.minfba.common.link.yes",
                                       "~eu.dariah.de.minfba.common.link.no",
                                       "~eu.dariah.de.minfba.common.view.forms.servererror.head",
-                                      "~eu.dariah.de.minfba.common.view.forms.servererror.body"])
+                                      "~eu.dariah.de.minfba.common.view.forms.servererror.body",
+                                      "~eu.dariah.de.minfba.common.error.insufficient_rights.head",
+                                      "~eu.dariah.de.minfba.common.error.insufficient_rights.body"])
         // We depend on the view's main js for this call
     //__translator.getTranslations();
         this.entityMap = {
@@ -87,62 +89,80 @@ Util.prototype.escapeHtml = function(string) {
 };
 
 Util.prototype.showLoginNote = function() {
-        var _this = this;
+	var _this = this;
 
-        bootbox.dialog({
-                message : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.body"),
-                title : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.head"),
-                buttons : {
-                        no : {
-                                label : __translator.translate("~eu.dariah.de.minfba.common.link.no"),
-                                className : "btn-default"
-                        },
-                        yes : {
-                                label : __translator.translate("~eu.dariah.de.minfba.common.link.yes"),
-                                className : "btn-primary",
-                                callback : function() {
-                                        window.location = $("#login a").prop("href");
-                                }
-                        }
-                }
-        });
+    bootbox.dialog({
+            message : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.body"),
+            title : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.head"),
+            buttons : {
+                    no : {
+                            label : __translator.translate("~eu.dariah.de.minfba.common.link.no"),
+                            className : "btn-default"
+                    },
+                    yes : {
+                            label : __translator.translate("~eu.dariah.de.minfba.common.link.yes"),
+                            className : "btn-primary",
+                            callback : function() {
+                                    window.location = $("#login a").prop("href");
+                            }
+                    }
+            }
+    });
 };
 
 Util.prototype.processServerError = function(jqXHR, textStatus, errorThrown) {
 	var errorContainer = $("<div>");
+	
+	if (jqXHR!=null && jqXHR.status!=null) {
+		if (jqXHR.status===403) {
+			/*if (this.isLoggedIn()) {
+				this.showErrorAlert("~eu.dariah.de.minfba.common.error.insufficient_rights.head",
+						"~eu.dariah.de.minfba.common.error.insufficient_rights.body", $(errorContainer).html());
+			} else {*/
+				this.showLoginNote();
+			/*}*/
+			return;
+		}
+	}
+	
+	// Generic server error
 	if (jqXHR.reponseText!==null && jqXHR.reponseText!==undefined) {
 		var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
 		$(errorContainer).append(error);
 	}
-	
+	this.showErrorAlert("~eu.dariah.de.minfba.common.view.forms.servererror.head",
+			"~eu.dariah.de.minfba.common.view.forms.servererror.body", $(errorContainer).html());
+};
+
+Util.prototype.showErrorAlert = function(titleCode, messageCode, payload) {
 	bootbox.alert({
-		  title: __translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"),
+		  title: __translator.translate(titleCode),
 		  size: "large",
-		  message: "<p>" + __translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body") + "</p>" + $(errorContainer).html()
+		  message: "<p>" + __translator.translate(messageCode) + "</p>" + payload
 	});
 };
 
 Util.prototype.isLoggedIn = function() {
-        var loggedIn = false;
-        $.ajax({
-        url: __util.getBaseUrl() + "async/isAuthenticated",
-        type: "GET",
-        async: false,
-        encoding: "UTF-8",
-        dataType: "text",
-        success: function(data) {
-                loggedIn = (data=="true");
-        }
-        });
-       
-        if (loggedIn) {
-                $("#login").css("display", "none");
-                $("#logout").css("display", "block");
-        } else {
-                $("#login").css("display", "block");
-                $("#logout").css("display", "none");
-        }
-        return loggedIn;       
+    var loggedIn = false;
+    $.ajax({
+    	url: __util.getBaseUrl() + "async/isAuthenticated",
+    	type: "GET",
+    	async: false,
+    	encoding: "UTF-8",
+    	dataType: "text",
+    	success: function(data) {
+    		loggedIn = (data=="true");
+    	}
+    });
+   
+    if (loggedIn) {
+            $("#login").css("display", "none");
+            $("#logout").css("display", "block");
+    } else {
+            $("#login").css("display", "block");
+            $("#logout").css("display", "none");
+    }
+    return loggedIn;       
 };
 
 Util.prototype.getBaseUrl = function() {

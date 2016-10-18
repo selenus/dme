@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
@@ -27,6 +28,14 @@ public class HomeController {
 		return null;
 	}
 		
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String getLogin(@RequestParam(value = "error", required = false) String error, HttpServletResponse response, Model model) throws IOException  {
+		if (error != null) {
+			model.addAttribute("error", true);
+		}
+		return "common/login";
+	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/isAuthenticated")
 	public @ResponseBody boolean getIsLoggedIn(HttpServletRequest request) {
 		return authInfoHelper.getAuth(request).isAuth();

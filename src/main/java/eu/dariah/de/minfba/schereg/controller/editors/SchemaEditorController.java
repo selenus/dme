@@ -175,15 +175,15 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/form/createRoot")
 	public String getNewNonterminalForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
-		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getHasWriteAccess(entityId, auth.getUserId())) {
+		/*AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getHasWriteAccess(entityId, auth.getUserId())) {*/
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
-		}
+		/*}
 		model.addAttribute("element", new Nonterminal());
 		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(entityId));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/saveNewRoot");
-		return "elementEditor/form/edit_nonterminal";
+		return "elementEditor/form/edit_nonterminal";*/
 	}
 	
 	@PreAuthorize("isAuthenticated()")

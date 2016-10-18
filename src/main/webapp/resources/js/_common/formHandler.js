@@ -117,10 +117,11 @@ ModalFormHandler.prototype.init = function() {
         	_this.form = $(jQuery.parseHTML(data));
         	_this.setUpForm();
         },
-        error: function(textStatus) { 
+        error: function(jqXHR, textStatus, errorThrown) { 
         	_this.formResetted==true;
         	$(_this).hide();
-        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, _this.translate("~*servererror.head"), _this.translate("~*servererror.body"));
+        	
+        	__util.processServerError(jqXHR, textStatus, errorThrown);
         }
 	});
 };
@@ -246,8 +247,8 @@ ModalFormHandler.prototype.submit = function(data) {
 		        success: function(data) { 
 		        	_this.processSubmitResponse(data); 
 		        },
-		        error: function(textStatus) { 
-		        	_this.addMessage("danger", _this.translate("~*servererror.head"), _this.translate("~*servererror.body")); 
+		        error: function(jqXHR, textStatus, errorThrown) { 
+		        	__util.processServerError(jqXHR, textStatus, errorThrown); 
 		        }
 			});
 		} catch (e) {
@@ -344,11 +345,12 @@ var SchemaSourceSelector = function(owner, container, modelId, options) {
         type: "GET",
         dataType: "html",
         success: function(data) { _this.displayForm(data); },
-        error: function(textStatus) { 
+        error: function(jqXHR, textStatus, errorThrown) { 
         	_this.owner.formResetted==true;
         	$(_this.owner).hide();
-        	_this.owner.addMessage("danger", _this.owner.translate("~*file.servererror.head"), 
-            		_this.owner.translate("~*file.servererror.body"));
+
+
+        	__util.processServerError(jqXHR, textStatus, errorThrown);
         }
 	});
 };
@@ -434,9 +436,8 @@ SchemaSourceSelector.prototype.handleDone = function(e, data) {
 			        		_this.options.elementChangeCallback(data);
 			        	}
 			        },
-			        error: function(textStatus) { 
-			        	_this.owner.addMessage("danger", _this.owner.translate("~*file.servererror.head"), 
-			            		_this.owner.translate("~*file.servererror.body"));
+			        error: function(jqXHR, textStatus, errorThrown) { 
+			        	__util.processServerError(jqXHR, textStatus, errorThrown);
 			        }
 				});
 	    		
@@ -500,9 +501,8 @@ SchemaSourceSelector.prototype.handleDelete = function(deleteLink, fileContainer
         		_this.options.elementChangeCallback(null);
         	}
         },
-        error: function(textStatus) { 
-        	_this.owner.addMessage("danger", _this.owner.translate("~*file.servererror.head"), 
-            		_this.owner.translate("~*file.servererror.body"));
+        error: function(jqXHR, textStatus, errorThrown) { 
+        	__util.processServerError(jqXHR, textStatus, errorThrown);
         }
 	});
 };

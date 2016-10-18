@@ -11,9 +11,17 @@
 	
 	<http security="none" pattern="/resources/**"/>
 		
-	<http disable-url-rewriting="true" auto-config="true" use-expressions="false" access-decision-manager-ref="accessDecisionManager" >
+	<http disable-url-rewriting="true" auto-config="true" use-expressions="false" entry-point-ref="ajaxEntryPoint" access-decision-manager-ref="accessDecisionManager" >
 		<csrf disabled="true"/>
 		<intercept-url pattern="/test/jumboFluid" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
+		<form-login 
+			login-page="/login" 
+			always-use-default-target="true" 
+			default-target-url="/" 
+			authentication-failure-url="/login?error"
+			username-parameter="username"
+			password-parameter="password"
+			/>
 		<logout invalidate-session="true" logout-url="/logout" logout-success-url="/" />
 	</http>
 		

@@ -72,4 +72,9 @@
 	<!-- Common views -->
 	<definition name="common/fileupload" template="/WEB-INF/view/jsp/common/forms/upload.jsp" />
 	<definition name="common/forms/maximizeSvg" template="/WEB-INF/view/jsp/common/forms/maximizeSvg.jsp" />
+	
+	<definition name="common/login" extends="template_simple">
+		<put-attribute name="content" value="/WEB-INF/view/jsp/common/login.jsp" />
+	</definition>
+	
 </tiles-definitions>
