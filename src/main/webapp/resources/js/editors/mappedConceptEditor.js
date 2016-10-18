@@ -203,17 +203,18 @@ MappedConceptEditor.prototype.editFunction = function(connectionId) {
 	    	var functionId = data;
 	    	var form_identifier = "edit-function-" + functionId;
 		   	
-	    	var elementIds = [];
 	    	var samples = [];
-	    	
 	    	$(_this.container).find(".sample-input").each(function() {
-	    		elementIds.push($(this).find("input[name='elementId']").val());
-	    		samples.push($(this).find(".form-control").val());
+	    		samples.push({
+	    			elementId : $(this).find("input[name='elementId']").val(),
+	    			text: $(this).find(".form-control").val()
+	    		});
 	    	});
 	    	
 	    	modalFormHandler = new ModalFormHandler({
 	    		method: "POST",
-	    		data: { elementIds : elementIds, samples: samples },
+	    		data: JSON.stringify ({ samples: samples }),
+	    		contentType: 'application/json',
 	    		formUrl: "/function/" + functionId + "/form/editWdata",
 	    		identifier: form_identifier,
 	    		additionalModalClasses: "max-modal",
@@ -448,21 +449,18 @@ MappedConceptEditor.prototype.performTransformation = function() {
 	    success: function(data) {
 	    	var f = data;
 	    	
-	    	var elementIds = [];
-	    	var samples = [];
-	    	
+	       	var samples = [];
 	    	$(_this.container).find(".sample-input").each(function() {
-	    		elementIds.push($(this).find("input[name='elementId']").val());
-	    		samples.push($(this).find(".form-control").val());
+	    		samples.push({
+	    			elementId : $(this).find("input[name='elementId']").val(),
+	    			text: $(this).find(".form-control").val()
+	    		});
 	    	});
 	    	
 	    	$.ajax({
 	    	    url: "function/" + f + "/async/parseSample",
 	    	    type: "POST",
-	    	    data: JSON.stringify ({ 
-	    	    	elementIds : elementIds, 
-	    	    	samples: samples
-	    	    }),
+	    	    data: JSON.stringify ({ samples: samples }),
 	    	    contentType: 'application/json',
 	    	    dataType: "json",
 	    	    success: function(data) {

@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.controller.editors;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.DescriptionEngine;
@@ -89,26 +91,22 @@ public class FunctionEditorController extends BaseFunctionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/form/editWdata")
-	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String functionId, @RequestParam(value="elementIds[]") List<String> elementIds, @RequestParam(value="samples[]") List<String> samples, HttpServletRequest request, Model model, Locale locale) {
+	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String functionId, @RequestBody JsonNode jsonNode, HttpServletRequest request, Model model, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		Identifiable entity = this.getEntity(entityId);
+		
+		Map<String, String> providedSamples = new HashMap<String, String>();
+		ArrayNode samples = (ArrayNode)jsonNode.path("samples");
+		for (JsonNode n : samples) {
+			String text = n.path("text").textValue();
+			if (text!=null) {
+				providedSamples.put(n.path("elementId").textValue(), text);
+			}
+		}
 		
 		Map<Element, String> sampleInputs = new LinkedHashMap<Element, String>();
 		List<Object> inputElementIds = new ArrayList<Object>();
 		List<Object> inputGrammarIds = new ArrayList<Object>();
-		
-		if (elementIds!=null && samples!=null) {
-			inputElementIds.addAll(elementIds);
-			List<Element> inputElements = elementService.findByIds(inputElementIds); 
-			for (int i=0; i<inputElementIds.size(); i++) {
-				for (Element e : inputElements) {
-					if (e.getId().equals(elementIds.get(i))) {
-						sampleInputs.put(e, samples.get(i));
-						break;
-					}
-				}
-			}
-		} 
 		
 		if (Schema.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceByChildId(entityId, functionId).getId();
@@ -118,7 +116,12 @@ public class FunctionEditorController extends BaseFunctionController {
 			Element e = elementService.findById(elementId);
 			
 			inputGrammarIds.add(grammarId);
-			sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+			if (providedSamples.containsKey(e.getId())) {
+				sampleInputs.put(e, providedSamples.get(e.getId()));
+			} else {
+				sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+			}
+			
 		} else { // Mapping
 			Reference parentConceptReference = referenceService.findReferenceByChildId(entity.getId(), functionId);
 			MappedConcept mc = mappedConceptService.findById(parentConceptReference.getId());
@@ -129,7 +132,11 @@ public class FunctionEditorController extends BaseFunctionController {
 			}
 			
 			for (Element e : elementService.findByIds(inputElementIds) ){
-				sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+				if (providedSamples.containsKey(e.getId())) {
+					sampleInputs.put(e, providedSamples.get(e.getId()));
+				} else {
+					sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+				}
 			}
 		}
 		
@@ -167,7 +174,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getEditForm(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
-		return this.getEditFormWithData(entityId, functionId, null, null, request, model, locale);
+		return this.getEditFormWithData(entityId, functionId, null, request, model, locale);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/process")
@@ -244,9 +251,17 @@ public class FunctionEditorController extends BaseFunctionController {
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
 	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String functionId, @RequestBody JsonNode jsonNode, Locale locale) {
 	
-		String func = jsonNode.path("func").textValue(); 
-		ArrayNode elementIds = (ArrayNode)jsonNode.path("elementIds");
+		Map<String, String> providedSamples = new HashMap<String, String>();
+		
+		String func = jsonNode.path("func").textValue();
+		
 		ArrayNode samples = (ArrayNode)jsonNode.path("samples");
+		for (JsonNode n : samples) {
+			String text = n.path("text").textValue();
+			if (text!=null && !text.isEmpty()) {
+				providedSamples.put(n.path("elementId").textValue(), text);
+			}
+		}
 		
 		Identifiable entity = this.getEntity(entityId);
 
@@ -262,7 +277,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			
 			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
 			
-			values.add(this.getSampleByElementId(elementId, elementIds, samples));
+			values.add(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null);
 			grammars.add(g);
 			
 			f = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
@@ -276,7 +291,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			
 			for (String elementId : mc.getElementGrammarIdsMap().keySet()) {
 				grammars.add(grammarService.findById(mc.getElementGrammarIdsMap().get(elementId)));
-				values.add(this.getSampleByElementId(elementId, elementIds, samples));
+				values.add(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null);
 			}
 
 			f = (TransformationFunctionImpl)functionService.findById(functionId);
@@ -284,8 +299,8 @@ public class FunctionEditorController extends BaseFunctionController {
 			//f = new TransformationFunctionImpl(entityId, functionId);
 			f.setOutputElements(elementService.convertToLabels(targetElements));
 		}
-		
-		if (func!=null) {
+				
+		if (func != null) {
 			f.setFunction(func);
 		}
 		

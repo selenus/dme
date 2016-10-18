@@ -142,12 +142,12 @@ FunctionEditor.prototype.performTransformation = function() {
 	var _this = this;
 	var f = $(this.modal).find(".function_function").val();
 	
-	var elementIds = [];
 	var samples = [];
-	
 	$(this.modal).find(".sample-input").each(function() {
-		elementIds.push($(this).find("input[name='elementId']").val());
-		samples.push($(this).find(".form-control").val());
+		samples.push({
+			elementId : $(this).find("input[name='elementId']").val(),
+			text: $(this).find(".form-control").val()
+		});
 	});
 	
 	$.ajax({
@@ -155,7 +155,6 @@ FunctionEditor.prototype.performTransformation = function() {
 	    type: "POST",
 	    data: JSON.stringify ({ 
 	    	func: f,
-	    	elementIds : elementIds, 
 	    	samples: samples
 	    }),
 	    contentType: 'application/json',

@@ -110,6 +110,7 @@ ModalFormHandler.prototype.init = function() {
 	$.ajax({
         url: url,
         data: _this.options.data,
+        contentType: _this.options.contentType, // Could be undefined, no problem
         type: _this.options.method,
         dataType: "html",
         success: function(data) {
