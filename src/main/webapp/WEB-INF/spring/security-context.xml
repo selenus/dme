@@ -15,15 +15,19 @@
 		<csrf disabled="true"/>
 		<intercept-url pattern="/test/jumboFluid" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
 		<form-login 
+			authentication-success-handler-ref="simpleUrlAuthenticationSuccessHandler"
 			login-page="/login" 
-			always-use-default-target="true" 
-			default-target-url="/" 
 			authentication-failure-url="/login?error"
 			username-parameter="username"
 			password-parameter="password"
 			/>
 		<logout invalidate-session="true" logout-url="/logout" logout-success-url="/" />
 	</http>
+	
+	<beans:bean id="simpleUrlAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+		<beans:property name="defaultTargetUrl" value="/"/>
+		<beans:property name="targetUrlParameter" value="redirectUrl"/>
+	</beans:bean>
 		
 	<global-method-security pre-post-annotations="enabled" secured-annotations="enabled" />
 	

@@ -34,6 +34,7 @@
 				</c:if>
 				
 				<form name='loginForm' class="form-horizontal" action="<c:url value='/login' />" method='POST'>
+					<input type="hidden" name="redirectUrl" id="redirectUrl" value="${redirectUrl}" />
 					<div class="form-group">
 						<label for="username" class="col-sm-2 control-label"><s:message code="~eu.dariah.de.minfba.common.local_login.username" /></label>
 					    <div class="col-sm-4">
