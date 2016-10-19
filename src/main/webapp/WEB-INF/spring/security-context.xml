@@ -45,6 +45,10 @@
 		<user name="tgradl_user" password="hairad" authorities="" />
 		<user name="ahenrich" password="hairad" authorities="ROLE_CONTRIBUTOR" />
 		
+		<user name="nutzer_hab" password="augusT66" authorities="ROLE_CONTRIBUTOR" />
+        <user name="nutzer_ksw" password="goEthe49" authorities="ROLE_CONTRIBUTOR" />
+		
+		
 		<user name="workshop1" password="dariah41" authorities="" />
 		<user name="workshop2" password="dariah52" authorities="" />
 		<user name="workshop3" password="dariah11" authorities="" />

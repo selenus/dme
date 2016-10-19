@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
@@ -39,15 +42,20 @@ public class TerminalEditorController extends BaseScheregController {
 	}
 	
 	
-	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody Terminal removeElement(@PathVariable String schemaId, @PathVariable String terminalId, HttpServletRequest request) {
+	public @ResponseBody Terminal removeElement(@PathVariable String schemaId, @PathVariable String terminalId, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		return elementService.removeTerminal(schemaId, terminalId, authInfoHelper.getAuth(request));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
 	public String getElement(@PathVariable String schemaId, @PathVariable String terminalId, Model model, Locale locale, HttpServletRequest request) {
-		if (!schemaService.getHasWriteAccess(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
 			model.addAttribute("readonly", true);
 		} else {
 			model.addAttribute("readonly", false);
@@ -85,8 +93,14 @@ public class TerminalEditorController extends BaseScheregController {
 		return "elementEditor/form/edit_terminal";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveTerminal")
-	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String schemaId, @Valid XmlTerminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String schemaId, @Valid XmlTerminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {	
 			if (element.getId().isEmpty() || element.getId().trim().equals("-1")) {

@@ -21,14 +21,14 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseEntityServiceImpl;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Service
-public class SchemaServiceImpl extends BaseReferenceServiceImpl implements SchemaService {
+public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaService {
 	@Autowired private ElementService elementService;
-	@Autowired private SchemaDao schemaDao;
 	
 	@Override
 	public List<Schema> findAllSchemas() {
@@ -100,7 +100,7 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 	public void deleteSchemaById(String id, AuthPojo auth) {
 		RightsContainer<Schema> s = schemaDao.findById(id);
 		if (s != null) {
-			if (this.getHasWriteAccess(s, auth.getUserId())) {
+			if (this.getUserCanWriteEntity(s, auth.getUserId())) {
 				Reference r = this.findReferenceById(s.getId());
 				if (r.getChildReferences()!=null && r.getChildReferences().size()>0) {
 					String rootNonterminalId = r.getChildReferences().get(Nonterminal.class.getName())[0].getId();
@@ -149,44 +149,7 @@ public class SchemaServiceImpl extends BaseReferenceServiceImpl implements Schem
 	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth) {
 		return schemaDao.findByIdAndUserId(schemaId, auth.getUserId());
 	}
-
-	@Override
-	public boolean getHasWriteAccess(String id, String userId) {
-		/* User is logged in (has an ID) and creates a new schema (no ID) */
-		if ( (id==null || id.isEmpty()) && (userId!=null && !userId.isEmpty()) ) {
-			return true;
-		}
-		RightsContainer<Schema> s = schemaDao.findByIdAndUserId(id, userId, true);
-		return this.getHasWriteAccess(s, userId);
-	}
 	
-	@Override
-	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId) {
-		if (s!=null && ( 
-				s.getOwnerId().equals(userId) || 
-				( s.getWriteIds()==null || ( s.getWriteIds()!=null && s.getWriteIds().contains(userId)) ) ) 
-			) {
-			return true;
-		}
-		return false;
-	}
-		
-	@Override
-	public boolean getHasShareAccess(String id, String userId) {
-		RightsContainer<Schema> s = schemaDao.findByIdAndUserId(id, userId, true);
-		return this.getHasShareAccess(s, userId);
-	}
-	
-	@Override
-	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId) {
-		if (s!=null && ( 
-				s.getOwnerId().equals(userId) || 
-				(s.getShareIds()==null || ( s.getShareIds()!=null && s.getShareIds().contains(userId)) ) )) {
-			return true;
-		}
-		return false;
-	}
-
 	@Override
 	public List<ChangeSet> getChangeSetForAllSchemas() {
 		Query q = new Query();

@@ -113,7 +113,10 @@ ModalFormHandler.prototype.init = function() {
         contentType: _this.options.contentType, // Could be undefined, no problem
         type: _this.options.method,
         dataType: "html",
-        success: function(data) {
+        success: function(data, textStatus, jqXHR) {
+        	if (jqXHR.status==203) {
+        		__util.processServerError(jqXHR, textStatus);
+        	}
         	_this.form = $(jQuery.parseHTML(data));
         	_this.setUpForm();
         },
@@ -121,7 +124,7 @@ ModalFormHandler.prototype.init = function() {
         	_this.formResetted==true;
         	$(_this).hide();
         	
-        	__util.processServerError(jqXHR, textStatus, errorThrown);
+        	__util.processServerError(jqXHR, textStatus);
         }
 	});
 };

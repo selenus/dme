@@ -77,7 +77,7 @@ public class SchemaController extends BaseScheregController {
 		return schemaService.findSchemaById(id);
 	}
 	
-	@Secured("IS_AUTHENTICATED_FULLY")
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {		
 		model.addAttribute("schema", new BaseSchema<BaseTerminal>());
@@ -89,7 +89,7 @@ public class SchemaController extends BaseScheregController {
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getHasWriteAccess(schema.getId(), auth.getUserId())) {
+		if(!schemaService.getUserCanWriteEntity(schema.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
@@ -116,10 +116,15 @@ public class SchemaController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/delete/{id}"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String id, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo deleteSchema(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);		
+		if(!schemaService.getUserCanWriteEntity(id, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
 		ModelActionPojo result;
 		if (id!=null && !id.isEmpty()) {
-			schemaService.deleteSchemaById(id, authInfoHelper.getAuth(request));
+			schemaService.deleteSchemaById(id, auth);
 			result = new ModelActionPojo(true);
 		} else {
 			result = new ModelActionPojo(false);
@@ -129,10 +134,14 @@ public class SchemaController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/publish/{id}"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo publishSchema(@PathVariable String id, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo publishSchema(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		if (id!=null && !id.isEmpty()) {
-			AuthPojo auth = authInfoHelper.getAuth(request);			
+			AuthPojo auth = authInfoHelper.getAuth(request);		
+			if(!schemaService.getUserCanWriteEntity(id, auth.getUserId())) {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return new ModelActionPojo(false);
+			}			
 			RightsContainer<Schema> existSchema = schemaService.findByIdAndAuth(id, auth);
 			if (existSchema!=null) {
 				existSchema.setDraft(false);

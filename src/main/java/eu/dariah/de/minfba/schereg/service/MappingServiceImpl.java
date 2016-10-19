@@ -21,13 +21,12 @@ import eu.dariah.de.minfba.schereg.model.MappingWithSchemasImpl;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseEntityServiceImpl;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
 @Service
-public class MappingServiceImpl extends BaseReferenceServiceImpl implements MappingService {
-	@Autowired private MappingDao mappingDao;
-	@Autowired private SchemaDao schemaDao;
+public class MappingServiceImpl extends BaseEntityServiceImpl implements MappingService {
 
 	@Override
 	public List<RightsContainer<Mapping>> findAllByAuth(AuthPojo auth) {
@@ -37,25 +36,6 @@ public class MappingServiceImpl extends BaseReferenceServiceImpl implements Mapp
 	@Override
 	public RightsContainer<Mapping> findByIdAndAuth(String id, AuthPojo auth) {
 		return mappingDao.findByIdAndUserId(id, auth.getUserId());
-	}
-
-	@Override
-	public boolean getHasWriteAccess(String id, String userId) {
-		/* User is logged in (has an ID) and creates a new mapping (no ID) */
-		if (DaoImpl.isNewId(id)) {
-			return true;
-		}
-		RightsContainer<Mapping> m = mappingDao.findByIdAndUserId(id, userId, true);
-		return this.getHasWriteAccess(m, userId);
-	}
-	
-	@Override
-	public boolean getHasWriteAccess(RightsContainer<Mapping> m, String userId) {
-		if (m!=null && ( m.getOwnerId().equals(userId) || 
-				( m.getWriteIds()==null || ( m.getWriteIds()!=null && m.getWriteIds().contains(userId)) ) ) ){
-			return true;
-		}
-		return false;
 	}
 
 	@Override
@@ -87,7 +67,7 @@ public class MappingServiceImpl extends BaseReferenceServiceImpl implements Mapp
 	public void deleteMappingById(String id, AuthPojo auth) {
 		RightsContainer<Mapping> s = mappingDao.findById(id);
 		if (s != null) {
-			if (this.getHasWriteAccess(s, auth.getUserId())) {
+			if (this.getUserCanWriteEntity(s, auth.getUserId())) {
 				mappingDao.delete(s, auth.getUserId(), auth.getSessionId());
 			}
 		}

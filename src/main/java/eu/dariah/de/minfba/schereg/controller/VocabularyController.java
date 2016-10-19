@@ -54,7 +54,7 @@ public class VocabularyController extends BaseTranslationController {
 		return new DataTableList<PersistedVocabulary>(vocabularies);
 	}
 	
-	@Secured("IS_AUTHENTICATED_FULLY")
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {		
 		model.addAttribute("vocabulary", new PersistedVocabulary());
@@ -109,7 +109,7 @@ public class VocabularyController extends BaseTranslationController {
 		return new DataTableList<PersistedVocabularyItem>(resultItems);
 	}
 	
-	@Secured("IS_AUTHENTICATED_FULLY")
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"{vocabularyId}/forms/add"})
 	public String getItemAddForm(@PathVariable String vocabularyId, Model model, Locale locale) {		
 		model.addAttribute("vocabularyItem", new PersistedVocabularyItem());

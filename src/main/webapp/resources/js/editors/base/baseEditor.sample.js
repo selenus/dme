@@ -76,7 +76,6 @@ BaseEditor.prototype.executeSample = function() {
 	    	_this.resize();
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) {
-	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }
@@ -112,7 +111,6 @@ BaseEditor.prototype.executeSampleMapping = function() {
 	    	
 	    }, 
 	    error: function(jqXHR, textStatus, errorThrown ) {
-	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }

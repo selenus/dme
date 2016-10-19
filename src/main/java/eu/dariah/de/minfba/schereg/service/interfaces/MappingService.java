@@ -7,14 +7,15 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
+import eu.dariah.de.minfba.schereg.service.base.BaseEntityService;
 
-public interface MappingService {
+public interface MappingService extends BaseEntityService {
 	public List<RightsContainer<Mapping>> findAllByAuth(AuthPojo auth);
 	public RightsContainer<Mapping> findByIdAndAuth(String id, AuthPojo auth);
-	public boolean getHasWriteAccess(String id, String userId);
+	
 	public Mapping findMappingById(String id);
 	public void saveMapping(AuthWrappedPojo<Mapping> authWrappedPojo, AuthPojo auth);
-	boolean getHasWriteAccess(RightsContainer<Mapping> m, String userId);
+	
 	public void deleteMappingById(String id, AuthPojo auth);
 	public List<RightsContainer<Mapping>> findAllByAuth(AuthPojo auth, boolean view);
 	public List<RightsContainer<Mapping>> getMappings(String entityId);

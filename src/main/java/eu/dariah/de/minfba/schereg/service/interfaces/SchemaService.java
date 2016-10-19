@@ -9,9 +9,10 @@ import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseEntityService;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
 
-public interface SchemaService extends BaseService {
+public interface SchemaService extends BaseEntityService {
 	public List<Schema> findAllSchemas();
 	public Schema findSchemaById(String id);
 	public void deleteSchemaById(String id, AuthPojo auth);
@@ -25,10 +26,7 @@ public interface SchemaService extends BaseService {
 	
 	public List<RightsContainer<Schema>> findAllByAuth(AuthPojo auth);
 	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth);
-	public boolean getHasWriteAccess(String id, String userId);
-	public boolean getHasShareAccess(String id, String userId);
-	public boolean getHasWriteAccess(RightsContainer<Schema> s, String userId);
-	public boolean getHasShareAccess(RightsContainer<Schema> s, String userId);
+	
 	public List<ChangeSet> getChangeSetForAllSchemas();
 	public void saveSchema(Schema schema, List<Reference> rootNonterminals, AuthPojo auth);
 

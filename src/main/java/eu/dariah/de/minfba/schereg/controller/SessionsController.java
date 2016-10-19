@@ -42,14 +42,24 @@ public class SessionsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/deleteSession")
-	public @ResponseBody ModelActionPojo deleteSession(@RequestParam String entityId, HttpServletRequest request, Locale locale) {
+	public @ResponseBody ModelActionPojo deleteSession(@RequestParam String entityId, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+		PersistedSession sCurrent = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (sCurrent==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 		sessionService.deleteSession(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		return new ModelActionPojo(true);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/loadSession")
-	public String getFormLoadSession(@RequestParam String entityId, Model model, HttpServletRequest request, Locale locale) {
+	public String getFormLoadSession(@RequestParam String entityId, Model model, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		PersistedSession sCurrent = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (sCurrent==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
+		
 		List<PersistedSession> userSessions = sessionService.findAllByUser(entityId, authInfoHelper.getUserId(request));
 		List<PersistedSession> savedSessions = new ArrayList<PersistedSession>();
 		List<PersistedSession> transientSessions = new ArrayList<PersistedSession>();
@@ -76,8 +86,12 @@ public class SessionsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/saveSession")
-	public String getFormSaveSession(@RequestParam String entityId, Model model, HttpServletRequest request, Locale locale) {
+	public String getFormSaveSession(@RequestParam String entityId, Model model, HttpServletRequest request, Locale locale, HttpServletResponse response) {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 		
 		model.addAttribute("session", s);
 		model.addAttribute("actionPath", "/sessions/async/saveSession");
@@ -85,7 +99,7 @@ public class SessionsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveSession")
-	public @ResponseBody ModelActionPojo saveSession(@Valid PersistedSession session, HttpServletRequest request, Locale locale) {
+	public @ResponseBody ModelActionPojo saveSession(@Valid PersistedSession session, HttpServletRequest request, Locale locale, HttpServletResponse response) {
 		PersistedSession saveSession = sessionService.access(session.getEntityId(), request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (saveSession!=null) {
 			saveSession.setLabel(session.getLabel());
@@ -93,19 +107,27 @@ public class SessionsController {
 			sessionService.saveSession(saveSession);
 			return new ModelActionPojo(true);
 		}
+		response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 		return new ModelActionPojo(false);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/loadSession")
-	public @ResponseBody ModelActionPojo loadSession(@RequestParam String sessionId, HttpServletRequest request, Locale locale) {
-		sessionService.reassignPersistedSession(request.getSession().getId(), authInfoHelper.getUserId(request), sessionId);
-		
+	public @ResponseBody ModelActionPojo loadSession(@RequestParam String sessionId, HttpServletRequest request, Locale locale, HttpServletResponse response) {
+		PersistedSession s = sessionService.reassignPersistedSession(request.getSession().getId(), authInfoHelper.getUserId(request), sessionId);
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return new ModelActionPojo(false);
+		}
 		return new ModelActionPojo(true);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getLog")
-	public @ResponseBody Collection<LogEntryPojo> getLog(@RequestParam String entityId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, HttpServletRequest request) {
+	public @ResponseBody Collection<LogEntryPojo> getLog(@RequestParam String entityId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, HttpServletRequest request, HttpServletResponse response) {
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (session==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 		List<LogEntryPojo> log = session.getSortedSessionLog();
 		if (tsMin!=null && log.size()>0 && log.get(0).getNumericTimestamp()<=tsMin) {
 			return new ArrayList<LogEntryPojo>();

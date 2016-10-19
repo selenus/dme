@@ -67,7 +67,9 @@ var Util = function() {
                                       "~eu.dariah.de.minfba.common.view.forms.servererror.head",
                                       "~eu.dariah.de.minfba.common.view.forms.servererror.body",
                                       "~eu.dariah.de.minfba.common.error.insufficient_rights.head",
-                                      "~eu.dariah.de.minfba.common.error.insufficient_rights.body"])
+                                      "~eu.dariah.de.minfba.common.error.insufficient_rights.body",
+                                      "~eu.dariah.de.minfba.common.error.page_reload_required.head",
+                                      "~eu.dariah.de.minfba.common.error.page_reload_required.body"])
         // We depend on the view's main js for this call
     //__translator.getTranslations();
         this.entityMap = {
@@ -110,17 +112,28 @@ Util.prototype.showLoginNote = function() {
     });
 };
 
-Util.prototype.processServerError = function(jqXHR, textStatus, errorThrown) {
+Util.prototype.processServerError = function(jqXHR, textStatus) {
 	var errorContainer = $("<div>");
+	var _this = __util;
 	
 	if (jqXHR!=null && jqXHR.status!=null) {
+		if (jqXHR.status===200) {
+			// Just a unnecessary call to this function;
+			return;
+		}
 		if (jqXHR.status===403) {
-			if (this.isLoggedIn()) {
-				this.showErrorAlert("~eu.dariah.de.minfba.common.error.insufficient_rights.head",
+			if (_this.isLoggedIn()) {
+				_this.showErrorAlert("~eu.dariah.de.minfba.common.error.insufficient_rights.head",
 						"~eu.dariah.de.minfba.common.error.insufficient_rights.body", $(errorContainer).html());
 			} else {
-				this.showLoginNote();
+				_this.showLoginNote();
 			}
+			return;
+		}
+		if (jqXHR.status===205) {
+			_this.showErrorAlert("~eu.dariah.de.minfba.common.error.page_reload_required.head",
+					"~eu.dariah.de.minfba.common.error.page_reload_required.body", $(errorContainer).html(),
+					function() { location.reload(true); });
 			return;
 		}
 	}
@@ -130,16 +143,15 @@ Util.prototype.processServerError = function(jqXHR, textStatus, errorThrown) {
 		var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
 		$(errorContainer).append(error);
 	}
-	this.showErrorAlert("~eu.dariah.de.minfba.common.view.forms.servererror.head",
+	_this.showErrorAlert("~eu.dariah.de.minfba.common.view.forms.servererror.head",
 			"~eu.dariah.de.minfba.common.view.forms.servererror.body", $(errorContainer).html());
 };
 
-Util.prototype.showErrorAlert = function(titleCode, messageCode, payload) {
-	bootbox.alert({
-		  title: __translator.translate(titleCode),
-		  size: "large",
-		  message: "<p>" + __translator.translate(messageCode) + "</p>" + payload
-	});
+Util.prototype.showErrorAlert = function(titleCode, messageCode, payload, callback) {	
+	bootbox.alert(
+			"<h3>" + __translator.translate(titleCode) + "</h3>" +
+			"<p>" + __translator.translate(messageCode) + "</p>" + ( payload!==undefined ? payload : "")
+		, callback);
 };
 
 Util.prototype.isLoggedIn = function() {

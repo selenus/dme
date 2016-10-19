@@ -66,7 +66,7 @@ public class MappingController extends BaseScheregController {
 		return authPojoConverter.convert(mappingService.findByIdAndAuth(id, auth), auth.getUserId());
 	}
 	
-	@Secured("IS_AUTHENTICATED_FULLY")
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value="forms/add")
 	public String getAddForm(Model model, Locale locale, HttpServletRequest request) {
 		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
@@ -85,7 +85,11 @@ public class MappingController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value="forms/edit/{id}")
-	public String getEditForm(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
+	public String getEditForm(@PathVariable String id, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		if (!mappingService.getUserCanWriteEntity(id, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		RightsContainer<Mapping> mapping = mappingService.findByIdAndAuth(id, auth);
 		
@@ -106,7 +110,7 @@ public class MappingController extends BaseScheregController {
 	@RequestMapping(method=POST, value="async/save")
 	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!mappingService.getHasWriteAccess(mapping.getId(), auth.getUserId())) {
+		if(!mappingService.getUserCanWriteEntity(mapping.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}		
@@ -119,6 +123,11 @@ public class MappingController extends BaseScheregController {
 		Mapping saveMapping = existMapping==null ? null : existMapping.getElement();
 		boolean draft = existMapping==null ? true : existMapping.isDraft();
 
+		if (!mappingService.getUserCanWriteEntity(saveMapping.getId(), authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+		
 		if (saveMapping==null) {
 			saveMapping = mapping;
 		} else {
@@ -142,7 +151,11 @@ public class MappingController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/delete/{id}"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo deleteMapping(@PathVariable String id, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo deleteMapping(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
+		if (!mappingService.getUserCanWriteEntity(id, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		ModelActionPojo result;
 		if (id!=null && !id.isEmpty()) {
 			mappingService.deleteMappingById(id, authInfoHelper.getAuth(request));
@@ -156,9 +169,13 @@ public class MappingController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/publish/{id}"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo publishMapping(@PathVariable String id, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo publishMapping(@PathVariable String id, HttpServletRequest request, HttpServletResponse response) {
 		ModelActionPojo result = new ModelActionPojo(false);
 		if (id!=null && !id.isEmpty()) {
+			if (!mappingService.getUserCanWriteEntity(id, authInfoHelper.getAuth(request).getUserId())) {
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				return null;
+			}
 			AuthPojo auth = authInfoHelper.getAuth(request);			
 			RightsContainer<Mapping> existMapping = mappingService.findByIdAndAuth(id, auth);
 			if (existMapping!=null) {

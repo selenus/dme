@@ -43,8 +43,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/async/applySample")
-	public @ResponseBody ModelActionPojo applySample(@PathVariable String entityId, @RequestParam String sample, HttpServletRequest request, Locale locale) {
+	public @ResponseBody ModelActionPojo applySample(@PathVariable String entityId, @RequestParam String sample, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return new ModelActionPojo(false);
+		}
 		s.setSampleInput(sample);
 		s.addLogEntry(LogType.INFO, messageSource.getMessage("~eu.dariah.de.minfba.schereg.editor.sample.log.session_sample_set", null, locale));
 		
@@ -56,7 +60,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getSampleResource")
 	public @ResponseBody Resource getSampleResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 		if (s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
 			
 			if (s.getSampleOutput().size()>index) {
@@ -91,6 +98,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTransformedResource")
 	public @ResponseBody Resource getTransformedResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 		if (s.getSampleMapped()!=null && s.getSampleMapped().size()>0) {
 			
 			if (s.getSampleMapped().size()>index) {
@@ -110,12 +121,16 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
-	public @ResponseBody ModelActionPojo executeSample(@PathVariable String entityId, HttpServletRequest request, Locale locale) {
+	public @ResponseBody ModelActionPojo executeSample(@PathVariable String entityId, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		Stopwatch sw = new Stopwatch();
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(0);
 		
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		//if (session==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		/*}
 		
 		XmlSchema s = (XmlSchema)schemaService.findSchemaById(entityId);
 		if (s==null) {
@@ -158,7 +173,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			logger.error("Error parsing XML string", e);
 		}
 		
-		return result;
+		return result;*/
 	}
 	
 	

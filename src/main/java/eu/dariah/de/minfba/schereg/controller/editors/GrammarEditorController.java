@@ -1,62 +1,38 @@
 package eu.dariah.de.minfba.schereg.controller.editors;
 
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.antlr.v4.tool.ANTLRMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
-
-import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
 import de.dariah.samlsp.model.pojo.AuthPojo;
-import de.unibamberg.minf.gtf.DescriptionEngine;
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
-import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
-import de.unibamberg.minf.gtf.transformation.processing.ExecutionGroup;
 import de.unibamberg.minf.gtf.transformation.processing.params.TransformationParamDefinition;
-import eu.dariah.de.minfba.core.metamodel.Label;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
-import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.core.web.pojo.FieldErrorPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
-import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
-import eu.dariah.de.minfba.schereg.serialization.Reference;
-import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
-import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
-import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
-import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
-import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
 @RequestMapping(value={"/schema/editor/{entityId}/grammar/{grammarId}", "/mapping/editor/{entityId}/grammar/{grammarId}"})
@@ -72,21 +48,38 @@ public class GrammarEditorController extends BaseFunctionController {
 		super("schemaEditor");
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody DescriptionGrammar removeElement(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request) {
+	public @ResponseBody DescriptionGrammar removeElement(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		return grammarService.deleteGrammarById(entityId, grammarId, authInfoHelper.getAuth(request));
 	}
 	
-	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/form/new_function")
-	public String getNewGrammarForm(@PathVariable String entityId, @PathVariable String grammarId, Model model, Locale locale) {
+	public String getNewGrammarForm(@PathVariable String entityId, @PathVariable String grammarId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		model.addAttribute("function", new TransformationFunctionImpl(entityId, null));
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/saveNewFunction");
 		return "functionEditor/form/new";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewFunction")
-	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String entityId, @PathVariable String grammarId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String entityId, @PathVariable String grammarId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
 			functionService.createAndAppendFunction(entityId, grammarId, function.getName(), authInfoHelper.getAuth(request));
@@ -100,10 +93,15 @@ public class GrammarEditorController extends BaseFunctionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/form/editWdata")
-	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String grammarId, @RequestParam String sample, HttpServletRequest request, Model model, Locale locale) {
-		
+	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String grammarId, @RequestParam String sample, HttpServletRequest request, HttpServletResponse response, Model model, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		Identifiable entity = this.getEntity(entityId);
+		
+		PersistedSession s = sessionService.access(entityId, auth.getSessionId(), auth.getUserId());
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 				
 		DescriptionGrammarImpl g;
 		if (grammarId.equals("undefined")) {
@@ -116,7 +114,7 @@ public class GrammarEditorController extends BaseFunctionController {
 		}
 
 		if (sample==null) {
-			model.addAttribute("elementSample", this.getSampleInputValue(entity, grammarId, request.getSession().getId(), auth.getUserId()));
+			model.addAttribute("elementSample", this.getSampleInputValue(entity, grammarId, request.getSession().getId(), auth.getUserId(), response));
 		} else {
 			model.addAttribute("elementSample", sample);
 		}
@@ -128,13 +126,20 @@ public class GrammarEditorController extends BaseFunctionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request, Model model, Locale locale) {
-		return this.getEditFormWithData(entityId, grammarId, null, request, model, locale);
+	public String getEditForm(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request, HttpServletResponse response, Model model, Locale locale) {
+		return this.getEditFormWithData(entityId, grammarId, null, request, response, model, locale);
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveGrammar(@Valid DescriptionGrammarImpl grammar, 
-			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveGrammar(@PathVariable String entityId, @Valid DescriptionGrammarImpl grammar, 
+			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (!result.isSuccess()) {
 			return result;
@@ -160,7 +165,6 @@ public class GrammarEditorController extends BaseFunctionController {
 			gSave = grammar;
 		}
 
-		AuthPojo auth = authInfoHelper.getAuth(request);
 		DescriptionGrammar gTmp = this.getTemporaryGrammar(gSave.getId(), auth.getUserId());
 		grammarService.clearGrammar(gTmp);
 		

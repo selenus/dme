@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,9 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 	@Override
 	public PersistedSession access(String entityId, String httpSessionId, String userId) {
 		PersistedSession s = sessionDao.findOne(Query.query(Criteria.where("httpSessionId").is(httpSessionId).and("entityId").is(entityId)));
+		if (s==null) {
+			return null;
+		}
 		return this.saveSession(s);
 	}
 	
@@ -52,8 +57,7 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 	}
 	
 	@Override
-	public String getSampleInputValue(String functionId, String entityId, String httpSessionId, String userId) {
-		PersistedSession s = this.access(entityId, httpSessionId, userId);
+	public String getSampleInputValue(PersistedSession s, String functionId) {
 		if (s.getSelectedValueMap()!=null) {
 			
 			if (s.getSelectedValueMap().containsKey(functionId)) {

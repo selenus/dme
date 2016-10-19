@@ -3,6 +3,8 @@ package eu.dariah.de.minfba.schereg.controller.base;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import eu.dariah.de.minfba.core.metamodel.Label;
@@ -12,6 +14,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
+import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
@@ -37,14 +40,11 @@ public abstract class BaseFunctionController extends BaseScheregController {
 	}
 	
 	protected boolean getIsReadOnly(Identifiable entity, String userId) {
-		if (Schema.class.isAssignableFrom(entity.getClass())) {
-			return !schemaService.getHasWriteAccess(entity.getId(), userId);
-		} else {
-			return !mappingService.getHasWriteAccess(entity.getId(), userId);
-		}
+		// Checks both entity types
+		return !mappingService.getUserCanWriteEntity(entity.getId(), userId);
 	}
 	
-	protected String getSampleInputValue(Identifiable entity, String executableId, String httpSessionId, String userId) {
+	protected String getSampleInputValue(Identifiable entity, String executableId, String httpSessionId, String userId, HttpServletResponse response) {
 		List<String> parentClasses = new ArrayList<String>();
 
 		String inputElementId = null;
@@ -67,7 +67,12 @@ public abstract class BaseFunctionController extends BaseScheregController {
 			
 			inputElementId = referenceService.findReferenceByChildId(entity.getId(), executableId, parentClasses).getId();	
 		}
+		PersistedSession session = sessionService.access(entity.getId(), httpSessionId, userId);
+		if (session==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 		
-		return sessionService.getSampleInputValue(inputElementId, entity.getId(), httpSessionId, userId);
+		return sessionService.getSampleInputValue(session, userId);
 	}
 }

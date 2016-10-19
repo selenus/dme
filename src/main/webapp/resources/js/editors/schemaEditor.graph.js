@@ -213,7 +213,10 @@ SchemaEditor.prototype.checkSchemaState = function() {
 	    		$("#schema-editor-canvas").removeClass("hide");
 	    	}	
 	    },
-	    error: __util.processServerError
+	    error: function(jqXHR, textStatus, errorThrown) {
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
+	    	result = true;
+	    }
 	});
 	return result;
 };

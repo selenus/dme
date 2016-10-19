@@ -9,10 +9,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -52,6 +54,7 @@ import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.processing.ElementProcessor;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
+import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -80,8 +83,14 @@ public class FunctionEditorController extends BaseFunctionController {
 		super("schemaEditor");
 	}	
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody TransformationFunction removeElement(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request) {
+	public @ResponseBody TransformationFunction removeElement(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		return functionService.deleteFunctionById(entityId, functionId, authInfoHelper.getAuth(request));
 	}
 	
@@ -91,9 +100,15 @@ public class FunctionEditorController extends BaseFunctionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/form/editWdata")
-	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String functionId, @RequestBody JsonNode jsonNode, HttpServletRequest request, Model model, Locale locale) {
+	public String getEditFormWithData(@PathVariable String entityId, @PathVariable String functionId, @RequestBody JsonNode jsonNode, HttpServletRequest request, HttpServletResponse response, Model model, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		Identifiable entity = this.getEntity(entityId);
+		
+		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
 		
 		Map<String, String> providedSamples = new HashMap<String, String>();
 		if (jsonNode!=null) {
@@ -121,7 +136,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			if (providedSamples.containsKey(e.getId())) {
 				sampleInputs.put(e, providedSamples.get(e.getId()));
 			} else {
-				sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+				sampleInputs.put(e, sessionService.getSampleInputValue(s, auth.getUserId()));
 			}
 			
 		} else { // Mapping
@@ -137,7 +152,7 @@ public class FunctionEditorController extends BaseFunctionController {
 				if (providedSamples.containsKey(e.getId())) {
 					sampleInputs.put(e, providedSamples.get(e.getId()));
 				} else {
-					sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), entityId, request.getSession().getId(), auth.getUserId()));
+					sampleInputs.put(e, sessionService.getSampleInputValue(s, auth.getUserId()));
 				}
 			}
 		}
@@ -175,8 +190,8 @@ public class FunctionEditorController extends BaseFunctionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, Model model, Locale locale) {
-		return this.getEditFormWithData(entityId, functionId, null, request, model, locale);
+	public String getEditForm(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, HttpServletResponse response, Model model, Locale locale) {
+		return this.getEditFormWithData(entityId, functionId, null, request, response, model, locale);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/process")
@@ -203,8 +218,15 @@ public class FunctionEditorController extends BaseFunctionController {
 		return result;
 	}
 	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String entityId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String entityId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+		
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (!result.isSuccess()) {
 			return result;
@@ -239,15 +261,6 @@ public class FunctionEditorController extends BaseFunctionController {
 		
 		functionService.saveFunction((TransformationFunctionImpl)fSave, authInfoHelper.getAuth(request));
 		return result;
-	}
-	
-	private String getSampleByElementId(String elementId, ArrayNode elementIds, ArrayNode samples) {
-		for (int i=0; i<elementIds.size(); i++) {
-			if (elementIds.get(i).textValue().equals(elementId) && i<samples.size()) {
-				return samples.get(i).textValue();
-			}
-		}
-		return "";
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")

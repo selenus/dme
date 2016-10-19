@@ -36,17 +36,19 @@
 	   					<sf:options cssClass="schema-terminal" items="${availableTerminals}" />
 					</sf:select>
 					<sf:errors path="terminalId" cssClass="error" />
-					<div class="clearfix tab-buttons">
-						<button type="button" onclick="editor.editTerminal(); return false;" class="btn btn-default btn-sm">
-							<span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" />
-						</button>
-						<button type="button" onclick="editor.addTerminal(); return false;" class="btn btn-default btn-sm">
-							<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.common.link.add" />
-						</button> 
-						<button type="button" onclick="editor.removeTerminal(); return false;" class="btn btn-danger btn-sm">
-							<span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" />
-						</button>
-					</div>
+					<c:if test="${!readonly}">
+						<div class="clearfix tab-buttons">
+							<button type="button" onclick="editor.editTerminal(); return false;" class="btn btn-default btn-sm">
+								<span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" />
+							</button>
+							<button type="button" onclick="editor.addTerminal(); return false;" class="btn btn-default btn-sm">
+								<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.common.link.add" />
+							</button> 
+							<button type="button" onclick="editor.removeTerminal(); return false;" class="btn btn-danger btn-sm">
+								<span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" />
+							</button>
+						</div>
+					</c:if>
 				</div>
 			</div>
 		</fieldset>

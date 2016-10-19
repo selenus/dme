@@ -32,6 +32,7 @@ import eu.dariah.de.minfba.core.metamodel.mapping.TargetElementGroup;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
+import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
@@ -60,15 +61,24 @@ public class MappedConceptEditorController extends BaseScheregController {
 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/remove")
-	public @ResponseBody ModelActionPojo removeConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, HttpServletRequest request) throws GenericScheregException {
+	public @ResponseBody ModelActionPojo removeConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, HttpServletRequest request, HttpServletResponse response) throws GenericScheregException {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!mappingService.getUserCanWriteEntity(mappingId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
 		mappedConceptService.removeMappedConcept(mappingId, mappedConceptId, authInfoHelper.getAuth(request));
 		return new ModelActionPojo(true);
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, @RequestParam(value="sourceElementId[]") List<String> sourceElementId, @RequestParam(value="targetElementId[]") List<String> targetElementIds,  HttpServletRequest request) {
+	public @ResponseBody ModelActionPojo saveConcept(@PathVariable String mappingId, @PathVariable String mappedConceptId, @RequestParam(value="sourceElementId[]") List<String> sourceElementId, @RequestParam(value="targetElementId[]") List<String> targetElementIds,  HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!mappingService.getUserCanWriteEntity(mappingId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
 		
 		MappedConcept c = null;
 		if (mappedConceptId!=null && !mappedConceptId.equals("") && !mappedConceptId.equals("undefined")) {
@@ -103,11 +113,16 @@ public class MappedConceptEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getEditForm(@PathVariable String mappingId, @PathVariable String mappedConceptId, HttpServletRequest request, Model model, Locale locale) {
+	public String getEditForm(@PathVariable String mappingId, @PathVariable String mappedConceptId, HttpServletRequest request, HttpServletResponse response, Model model, Locale locale) {
+		PersistedSession s = sessionService.access(mappingId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
+				
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if (mappingService.findMappingById(mappingId)!=null && mappingService.getHasWriteAccess(mappingId, auth.getUserId())) {
-			model.addAttribute("readonly", false);
-		} else if (schemaService.findSchemaById(mappingId)!=null && schemaService.getHasWriteAccess(mappingId, auth.getUserId())) {
+		// Checks both entity types
+		if (schemaService.getUserCanWriteEntity(mappingId, auth.getUserId())) {
 			model.addAttribute("readonly", false);
 		} else {
 			model.addAttribute("readonly", true);
@@ -122,7 +137,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 		inputElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
 		
 		for (Element e : elementService.findByIds(inputElementIds) ){
-			sampleInputs.put(e, sessionService.getSampleInputValue(e.getId(), mappingId, request.getSession().getId(), auth.getUserId()));
+			sampleInputs.put(e, sessionService.getSampleInputValue(s, auth.getUserId()));
 		}
 
 		model.addAttribute("sampleInputMap", sampleInputs);		
@@ -185,8 +200,12 @@ public class MappedConceptEditorController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/target/{targetId}/remove")
-	public @ResponseBody ModelActionPojo removeTarget(@PathVariable String mappingId, @PathVariable String mappedConceptId, @PathVariable String targetId, HttpServletRequest request) throws GenericScheregException {
+	public @ResponseBody ModelActionPojo removeTarget(@PathVariable String mappingId, @PathVariable String mappedConceptId, @PathVariable String targetId, HttpServletRequest request, HttpServletResponse response) throws GenericScheregException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!mappingService.getUserCanWriteEntity(mappingId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
 		List<TargetElementGroup> removeGroups = new ArrayList<TargetElementGroup>();
 		

@@ -3,6 +3,8 @@ package eu.dariah.de.minfba.schereg.service.interfaces;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.joda.time.DateTime;
 import org.springframework.context.MessageSource;
 
@@ -24,5 +26,5 @@ public interface PersistedSessionService {
 	public void deleteSessions(List<PersistedSession> sessions);
 	public PersistedSession createAndSaveSession(String entityId, String httpSessionId, String userId, MessageSource messageSource, Locale locale) throws GenericScheregException;	
 
-	public String getSampleInputValue(String functionId, String entityId, String httpSessionId, String userId);
+	public String getSampleInputValue(PersistedSession s, String functionId);
 }
