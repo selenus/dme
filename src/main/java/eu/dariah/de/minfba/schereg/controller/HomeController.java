@@ -32,8 +32,8 @@ public class HomeController {
 	public String getLogin(@RequestParam(value = "error", required = false) String error, @RequestParam(value = "url", defaultValue = "/") String url, HttpServletResponse response, Model model) throws IOException  {
 		if (error != null) {
 			model.addAttribute("error", true);
-			model.addAttribute("redirectUrl", url);
 		}
+		model.addAttribute("redirectUrl", url);
 		return "common/login";
 	}
 	
