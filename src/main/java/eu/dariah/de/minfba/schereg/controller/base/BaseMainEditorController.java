@@ -127,10 +127,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		result.setPojo(0);
 		
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
-		//if (session==null) {
+		if (session==null) {
 			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 			return null;
-		/*}
+		}
 		
 		XmlSchema s = (XmlSchema)schemaService.findSchemaById(entityId);
 		if (s==null) {
@@ -173,7 +173,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			logger.error("Error parsing XML string", e);
 		}
 		
-		return result;*/
+		return result;
 	}
 	
 	
