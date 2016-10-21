@@ -123,7 +123,7 @@ public class MappingController extends BaseScheregController {
 		Mapping saveMapping = existMapping==null ? null : existMapping.getElement();
 		boolean draft = existMapping==null ? true : existMapping.isDraft();
 
-		if (!mappingService.getUserCanWriteEntity(saveMapping.getId(), authInfoHelper.getAuth(request).getUserId())) {
+		if (!mappingService.getUserCanWriteEntity(saveMapping==null ? mapping.getId() : saveMapping.getId(), authInfoHelper.getAuth(request).getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
