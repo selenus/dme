@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.controller;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,12 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.aai.javasp.web.helper.AuthInfoHelper;
-import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 
 @Controller
 @RequestMapping(value="")
 public class HomeController {
 	@Autowired protected AuthInfoHelper authInfoHelper;
+	
+	@Autowired private ServletContext servletContext;
 	
 	/* For now...redirect; in the future a dash-board is intended */
 	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
@@ -33,6 +35,12 @@ public class HomeController {
 		if (error != null) {
 			model.addAttribute("error", true);
 		}
+		
+		String ctx = servletContext.getContextPath();
+		if (url.startsWith(ctx)) {
+			url = url.substring(ctx.length());
+		}
+
 		model.addAttribute("redirectUrl", url);
 		return "common/login";
 	}

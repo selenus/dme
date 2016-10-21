@@ -305,7 +305,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo importSchemaElements(@RequestParam String entityId, @RequestParam(value="file.id") String fileId, 
+	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, 
 			@RequestParam(value="schema_root") Integer schemaRoot, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
