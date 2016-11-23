@@ -291,12 +291,12 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 		XSTerm contentModel = particle.getTerm();
 
 		if (contentModel.getType()==XSConstants.ELEMENT_DECLARATION) {
-			this.processElement(parentNonterminal, (XSElementDecl)contentModel, processedTerminalQNs);
+			this.processElement(parentNonterminal, (XSElementDecl)contentModel, new ArrayList<String>(processedTerminalQNs));
 		} else if (contentModel.getType()==XSConstants.MODEL_GROUP) {
 			XSModelGroup modelGroup = (XSModelGroup) contentModel;
 			XSObjectList groupElements = modelGroup.getParticles();
 			for (int i=0; i<groupElements.getLength(); i++) {
-				this.processContentModel(parentNonterminal, (XSParticle)groupElements.get(i), processedTerminalQNs);
+				this.processContentModel(parentNonterminal, (XSParticle)groupElements.get(i), new ArrayList<String>(processedTerminalQNs));
 			}
 		}
 	}

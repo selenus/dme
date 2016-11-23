@@ -49,6 +49,8 @@
 		<user name="tgradl_user" password="hairad" authorities="" />
 		<user name="ahenrich" password="hairad" authorities="ROLE_CONTRIBUTOR" />
 		
+		<user name="teckart" password="niralc" authorities="ROLE_CONTRIBUTOR" />
+		
 		<user name="nutzer_hab" password="augusT66" authorities="ROLE_CONTRIBUTOR" />
         <user name="nutzer_ksw" password="goEthe49" authorities="ROLE_CONTRIBUTOR" />
 		
