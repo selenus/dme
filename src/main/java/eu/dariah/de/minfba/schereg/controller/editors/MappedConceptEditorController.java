@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
@@ -137,7 +135,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 		inputElementIds.addAll(mc.getElementGrammarIdsMap().keySet());
 		
 		for (Element e : elementService.findByIds(inputElementIds) ){
-			sampleInputs.put(e, sessionService.getSampleInputValue(s, auth.getUserId()));
+			sampleInputs.put(e, sessionService.getSampleInputValue(s, e.getId()));
 		}
 
 		model.addAttribute("sampleInputMap", sampleInputs);		

@@ -12,7 +12,6 @@ import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -73,6 +72,6 @@ public abstract class BaseFunctionController extends BaseScheregController {
 			return null;
 		}
 		
-		return sessionService.getSampleInputValue(session, userId);
+		return sessionService.getSampleInputValue(session, inputElementId);
 	}
 }

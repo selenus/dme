@@ -34,6 +34,13 @@
 		<constructor-arg name="validator" ref="validator" />
 	</bean>
 	
+	<!-- i18n -->
+	<bean id="messageSource" class="eu.dariah.de.minfba.core.web.localization.MessageSource">
+	    <property name="basename" value="classpath:i18n/messages" />
+	    <property name="loggingMode" value="true" />
+	    <property name="cacheSeconds" value="-1" />
+	</bean>
+	
 	<bean class="eu.dariah.de.minfba.schereg.sessions.SessionCleanerService">
 		<property name="defaultExpirationMins" value="4320" />
 		<property name="intervalMins" value="720" />

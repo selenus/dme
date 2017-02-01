@@ -27,21 +27,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import de.dariah.samlsp.model.pojo.AuthPojo;
-import de.unibamberg.minf.gtf.DescriptionEngine;
 import de.unibamberg.minf.gtf.MainEngine;
-import de.unibamberg.minf.gtf.TransformationEngine;
-import de.unibamberg.minf.gtf.exception.DataTransformationException;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
-import edu.stanford.nlp.ling.CoreAnnotations.ForcedSentenceEndAnnotation;
 import eu.dariah.de.minfba.core.metamodel.Label;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
@@ -50,9 +43,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
-import eu.dariah.de.minfba.processing.ElementProcessor;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.TreeElementPojo;
@@ -136,7 +127,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			if (providedSamples.containsKey(e.getId())) {
 				sampleInputs.put(e, providedSamples.get(e.getId()));
 			} else {
-				sampleInputs.put(e, sessionService.getSampleInputValue(s, auth.getUserId()));
+				sampleInputs.put(e, sessionService.getSampleInputValue(s, elementId));
 			}
 			
 		} else { // Mapping
@@ -152,7 +143,7 @@ public class FunctionEditorController extends BaseFunctionController {
 				if (providedSamples.containsKey(e.getId())) {
 					sampleInputs.put(e, providedSamples.get(e.getId()));
 				} else {
-					sampleInputs.put(e, sessionService.getSampleInputValue(s, auth.getUserId()));
+					sampleInputs.put(e, sessionService.getSampleInputValue(s, e.getId()));
 				}
 			}
 		}
