@@ -262,7 +262,7 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 	for (var i=0; i<Object.getOwnPropertyNames(resource).length; i++) {
 		var key = Object.getOwnPropertyNames(resource)[i];
 		
-		if (key==="") {
+		if (key==="~") {
 			parentItem.append(": <span class=\"sample-output-value\">" + resource[key] + "</span>");
 			continue;
 		}
