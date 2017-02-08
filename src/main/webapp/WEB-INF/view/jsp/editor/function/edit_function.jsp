@@ -31,7 +31,7 @@
 				<div class="col-sm-4">
 					<label class="control-label" for="base_method"><s:message code="~eu.dariah.de.minfba.schereg.model.function.language_version" />:</label>
 					<div>
-						<select class="form-control"><option>v1.2</option></select>
+						<select class="form-control"><option>v1.3</option><option>v1.2</option></select>
 					</div>
 				</div>
 			</div>
