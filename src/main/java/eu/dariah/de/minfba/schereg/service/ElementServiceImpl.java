@@ -359,7 +359,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		if (eRemove != null) {
 			try {
 				this.removeReference(schemaId, elementId, auth);
-				elementDao.delete(eRemove, auth.getUserId(), auth.getSessionId());
+				//elementDao.delete(eRemove, auth.getUserId(), auth.getSessionId());
 			} catch (Exception e) {
 				logger.warn("An error occurred while deleting an element or its references. "
 						+ "The owning schema {} might be in an inconsistent state", schemaId, e);

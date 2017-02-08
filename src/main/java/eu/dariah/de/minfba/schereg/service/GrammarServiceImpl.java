@@ -130,7 +130,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		if (grammar != null) {
 			try {
 				this.removeReference(schemaId, id, auth);
-				grammarDao.delete(grammar, auth.getUserId(), auth.getSessionId());
+				//grammarDao.delete(grammar, auth.getUserId(), auth.getSessionId());
 				return grammar;
 			} catch (Exception e) {
 				logger.warn("An error occurred while deleting an element or its references. "

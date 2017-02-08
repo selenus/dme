@@ -90,11 +90,15 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		Reference removeReference = removeSubreference(entityReference, removeId);
 		if (removeReference!=null) {
 			// Also delete all elements that are referenced in the deleted subtree
-			Map<String, Reference[]> subordinateReferenceMap = new HashMap<String, Reference[]>();
+			
+			/** TODO: This requires some rework since elements could be referenced multiply 
+			 *  		also in inherited schemata 
+			 */
+			/*Map<String, Reference[]> subordinateReferenceMap = new HashMap<String, Reference[]>();
 			getAllSubordinateReferences(removeReference, subordinateReferenceMap);
 			
 			referenceDao.deleteAll(subordinateReferenceMap, auth.getUserId(), auth.getSessionId());
-			
+			*/
 			// Delete the removable element from the tree
 			referenceDao.save(entityReference);
 		}

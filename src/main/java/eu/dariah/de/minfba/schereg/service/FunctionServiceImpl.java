@@ -44,7 +44,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 		if (function != null) {
 			try {
 				this.removeReference(schemaId, id, auth);
-				functionDao.delete(function, auth.getUserId(), auth.getSessionId());
+				//functionDao.delete(function, auth.getUserId(), auth.getSessionId());
 				return function;
 			} catch (Exception e) {
 				logger.warn("An error occurred while deleting an element or its references. "
