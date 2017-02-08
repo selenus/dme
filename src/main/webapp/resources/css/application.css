@@ -6,6 +6,32 @@
 }
 
 
+.btn.sample-output-value-expanded,
+.btn.sample-output-value-collapsed {
+	color: #2AABD2;
+}
+
+.btn.sample-output-value-expanded:hover,
+.btn.sample-output-value-collapsed:hover,
+.btn.sample-output-value-expanded:active,
+.btn.sample-output-value-collapsed:active,
+.btn.sample-output-value-expanded:focus,
+.btn.sample-output-value-collapsed:focus {
+	outline: 0;
+	text-decoration: none;
+}
+
+.sample-output-value-expanded .fa-plus-square,
+.sample-output-value-collapsed .fa-minus-square-o {
+	display: none;
+}
+
+.sample-output-value-expanded .fa-minus-square-o,
+.sample-output-value-collapsed .fa-plus-square {
+	display: inline;
+}
+
+
 /*!
  *	Typeahead
  */

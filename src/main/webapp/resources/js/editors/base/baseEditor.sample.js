@@ -263,7 +263,12 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 		var key = Object.getOwnPropertyNames(resource)[i];
 		
 		if (key==="~") {
-			parentItem.append(": <span class=\"sample-output-value\">" + resource[key] + "</span>");
+			parentItem.append("<button onclick=\"editor.toggleSampleOutputValue(this);\" class=\"btn btn-link btn-xs sample-output-value-expanded\">" +
+								"<i class=\"fa fa-minus-square-o\" aria-hidden=\"true\"></i>" +
+								"<i class=\"fa fa-plus-square\" aria-hidden=\"true\"></i>" +
+							  "</button>");
+			parentItem.append("<span class=\"sample-output-value\">" + resource[key] + "</span>");
+			parentItem.append("<span class=\"sample-output-value-placeholder\" style=\"display: none;\">...</span>");
 			continue;
 		}
 		
@@ -277,6 +282,24 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 		}
 	}
 	return items;
+};
+
+BaseEditor.prototype.toggleSampleOutputValue = function(button) {
+	if ($(button).hasClass("sample-output-value-expanded")) {
+		$(button).addClass("sample-output-value-collapsed");
+		$(button).removeClass("sample-output-value-expanded");
+		
+		$(button).siblings(".sample-output-value").hide();
+		$(button).siblings(".sample-output-value-placeholder").show();
+	} else {
+		$(button).addClass("sample-output-value-expanded");
+		$(button).removeClass("sample-output-value-collapsed");
+		
+		$(button).siblings(".sample-output-value").show();
+		$(button).siblings(".sample-output-value-placeholder").hide();
+	}
+	
+	
 };
 
 BaseEditor.prototype.buildSampleResourceItem = function(key, resource) {

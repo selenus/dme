@@ -13,6 +13,7 @@
 			<add-attribute type="string" value="bootstrap/bootstrap-customization.css" />
 			<add-attribute type="string" value="bootstrap/bootstrap-modal-bs3patch.css" />
 			<add-attribute type="string" value="bootstrap/bootstrap-modal.css" />
+			<add-attribute type="string" value="bootstrap/font-awesome.min.css" />
 			<add-attribute type="string" value="application.css" />
         </put-list-attribute>
 		<put-list-attribute name="scripts">
