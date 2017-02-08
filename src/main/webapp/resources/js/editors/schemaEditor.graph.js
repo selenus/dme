@@ -22,8 +22,8 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
-					//items.push(_this.graph.createContextMenuSeparator());
-					//items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
+					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
 					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
 				}
@@ -45,8 +45,8 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
-					//items.push(_this.graph.createContextMenuSeparator());
-					//items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
+					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
 					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
 				}
@@ -65,9 +65,9 @@ SchemaEditor.prototype.initGraph = function() {
 				if (_this.schema.owned || _this.schema.write) {
 					items.push(
 							_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
-							_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key)
-							//_this.graph.createContextMenuSeparator(),
-							//_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key)
+							_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+							_this.graph.createContextMenuSeparator(),
+							_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key)
 					);
 				} else {
 					items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
@@ -86,9 +86,9 @@ SchemaEditor.prototype.initGraph = function() {
 				if (_this.schema.owned || _this.schema.write) {
 					items.push(
 							_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key),
-							_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key)
-							//_this.graph.createContextMenuSeparator(),
-							//_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key)
+							_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+							_this.graph.createContextMenuSeparator(),
+							_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key)
 					);
 				} else {
 					items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
@@ -292,6 +292,12 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			this.generateTree(area, e, nonterminals[i].childNonterminals, null, nonterminals[i].grammars, isSource);
 		}
 	}
+	if (subelements!=null && subelements instanceof Array) {
+		for (var i=0; i<subelements.length; i++) {
+			var e = this.area.addElement(subelements[i].simpleType, parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
+			this.generateTree(area, e, null, subelements[i].subLabels, subelements[i].grammars, isSource);
+		}
+	}
 	if (grammars != null && grammars instanceof Array) {
 		for (var i=0; i<grammars.length; i++) {
 			var icon = null;
@@ -325,12 +331,7 @@ SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subel
 			}
 		}
 	}
-	if (subelements!=null && subelements instanceof Array) {
-		for (var i=0; i<subelements.length; i++) {
-			var e = this.area.addElement(subelements[i].simpleType, parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
-			this.generateTree(area, e, null, subelements[i].subLabels, subelements[i].grammars, isSource);
-		}
-	}
+	
 };
 
 SchemaEditor.prototype.formatLabel = function(label) {
