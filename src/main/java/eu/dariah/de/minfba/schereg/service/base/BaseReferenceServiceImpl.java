@@ -23,7 +23,7 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
 public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
-	@Autowired private ReferenceDao referenceDao;
+	@Autowired protected ReferenceDao referenceDao;
 	
 	protected Reference findReferenceById(String schemaId) {
 		return referenceDao.findById(schemaId);

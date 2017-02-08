@@ -87,6 +87,8 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(
 							_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key),
 							_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
+							_this.graph.createContextMenuItem("moveUpGrammar", "~eu.dariah.de.minfba.common.link.move_up", "arrow-up", element.id, element.template.options.key),
+							_this.graph.createContextMenuItem("moveDownGrammar", "~eu.dariah.de.minfba.common.link.move_down", "arrow-down", element.id, element.template.options.key),
 							_this.graph.createContextMenuSeparator(),
 							_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key)
 					);
@@ -142,6 +144,9 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "editGrammar" : return this.editGrammar(elementId);
 	    case "editFunction" : return this.editFunction(elementId);
 	    case "assignChild" : return this.assignChild(elementId);
+	    
+	    case "moveUpGrammar" : return this.moveGrammar(1);
+	    case "moveDownGrammar" : return this.moveGrammar(-1);
 	    
 	    case "removeElement" :  return this.removeElement(elementType, elementId);
 	    

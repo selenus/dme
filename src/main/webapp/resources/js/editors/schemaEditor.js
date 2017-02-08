@@ -53,6 +53,8 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.common.link.edit",
 	                              "~eu.dariah.de.minfba.common.link.view",
 	                              "~eu.dariah.de.minfba.common.link.delete",
+	                              "~eu.dariah.de.minfba.common.link.move_down",
+	                              "~eu.dariah.de.minfba.common.link.move_up",
 	                              "~eu.dariah.de.minfba.schereg.button.add_nonterminal",
 	                              "~eu.dariah.de.minfba.schereg.button.add_label", 
 	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
@@ -303,6 +305,20 @@ SchemaEditor.prototype.editElement = function(id) {
 	});
 		
 	modalFormHandler.show(form_identifier);
+};
+
+SchemaEditor.prototype.moveGrammar = function(delta) {
+	var _this = this;
+	
+	$.ajax({
+	    url: _this.pathname + "/grammar/" + this.graph.selectedItems[0].id + "/move?delta=" + delta,
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	_this.reloadElementHierarchy();
+	    },
+	    error: __util.processServerError
+	});
 };
 
 SchemaEditor.prototype.editGrammar = function() {

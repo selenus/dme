@@ -31,4 +31,6 @@ public interface GrammarService extends BaseService {
 	public List<DescriptionGrammar> findByEntityId(String entityId, boolean includeSources);
 
 	public List<DescriptionGrammar> findByIds(List<Object> grammarIds);
+
+	public void moveGrammar(String entityId, String grammarId, int delta, AuthPojo auth);
 }

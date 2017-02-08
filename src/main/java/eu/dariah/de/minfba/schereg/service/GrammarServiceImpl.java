@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.DescriptionEngine;
@@ -141,6 +142,39 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 
 	@Override
+	public void moveGrammar(String entityId, String grammarId, int delta, AuthPojo auth) {
+		Reference entityReference = referenceDao.findById(entityId);
+		Assert.notNull(entityReference);
+		
+		Reference parentReference = referenceDao.findParentByChildId(entityReference, grammarId);
+		Assert.notNull(parentReference);
+		
+		Reference[] gRefs = parentReference.getChildReferences().get(DescriptionGrammarImpl.class.getName());
+		for (int i=0; i<gRefs.length; i++) {
+			if (gRefs[i].getId().equals(grammarId)) {
+				boolean change = false;				
+				if (i>0 && delta==1) {
+					Reference gTmp = gRefs[i-1];
+					gRefs[i-1] = gRefs[i];
+					gRefs[i] = gTmp;
+					change = true;
+				} else if (i<gRefs.length-1 && delta==-1) {
+					Reference gTmp = gRefs[i+1];
+					gRefs[i+1] = gRefs[i];
+					gRefs[i] = gTmp;
+					change = true;
+				}
+				
+				if (change) {
+					parentReference.getChildReferences().put(DescriptionGrammarImpl.class.getName(), gRefs);
+					referenceDao.save(entityReference);
+				}
+				return;
+			}
+		}
+	}
+	
+	@Override
 	public DescriptionGrammar findById(String grammarId) {
 		return grammarDao.findById(grammarId);
 	}
@@ -222,5 +256,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public List<DescriptionGrammar> findByIds(List<Object> grammarIds) {
 		return grammarDao.find(Query.query(Criteria.where("_id").in(grammarIds)));
 	}
+
+	
 
 }

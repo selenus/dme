@@ -266,9 +266,6 @@ public class GrammarEditorController extends BaseFunctionController {
 		return result;
 	}
 	
-	
-	
-	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/parseSample")
 	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String grammarId, @RequestParam String initRule, @RequestParam String sample, @RequestParam(defaultValue="true") Boolean temporary, HttpServletRequest request, Locale locale) {
 		ModelActionPojo result = new ModelActionPojo(false);
@@ -303,6 +300,18 @@ public class GrammarEditorController extends BaseFunctionController {
 			logger.error("Transformation error", e);
 		}
 		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/move")
+	public @ResponseBody ModelActionPojo parseSampleInput(@PathVariable String entityId, @PathVariable String grammarId, @RequestParam int delta, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+		grammarService.moveGrammar(entityId, grammarId, delta, authInfoHelper.getAuth(request));
+		
+		return new ModelActionPojo(true);
 	}
 	
 	private DescriptionGrammar getTemporaryGrammar(String id, String userId) {
