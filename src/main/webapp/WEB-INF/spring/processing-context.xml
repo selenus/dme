@@ -112,6 +112,11 @@
 			<map>
 				<entry key="CORE"><bean class="de.unibamberg.minf.gtf.transformation.commands.CoreCommandsDispatcher" /></entry>
 				<entry key="WIKI"><bean class="de.unibamberg.minf.gtf.extensions.wiki.commands.WikiCommandsDispatcher" /></entry>
+				<entry key="PERSON">
+					<bean class="de.unibamberg.minf.gtf.extensions.person.commands.PersonCommandsDispatcher">
+						<property name="restTemplate" ref="restTemplate" />
+					</bean>
+				</entry>
 				<entry key="VOCABULARY"><bean class="de.unibamberg.minf.gtf.extensions.vocabulary.commands.VocabularyCommandsDispatcher" /></entry>
 				<entry key="GEO">
 					<bean class="de.unibamberg.minf.gtf.extensions.geo.commands.GeoCommandsDispatcher">
