@@ -2,12 +2,13 @@ package eu.dariah.de.minfba.schereg.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
@@ -19,11 +20,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
-import de.unibamberg.minf.gtf.DescriptionEngine;
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
@@ -257,6 +258,23 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		return grammarDao.find(Query.query(Criteria.where("_id").in(grammarIds)));
 	}
 
-	
+	@Override
+	public Map<String, GrammarContainer> serializeGrammarSources(String entityId) {
+		Map<String, GrammarContainer> containers = new HashMap<String, GrammarContainer>();
+		List<DescriptionGrammar> grammars = this.findByEntityId(entityId, true);
+
+		if (grammars!=null) {
+			for (DescriptionGrammar g : grammars) {
+				if (g.isPassthrough() || g.isError() || g.isTemporary()) {
+					continue;
+				}
+				
+				if (DescriptionGrammarImpl.class.isAssignableFrom(g.getClass())) {
+					containers.put(g.getId(), ((DescriptionGrammarImpl)g).getGrammarContainer());
+				}
+			}
+		}
+		return containers;
+	}
 
 }

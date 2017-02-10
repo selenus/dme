@@ -3,10 +3,12 @@ package eu.dariah.de.minfba.schereg.service.interfaces;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
 
@@ -33,4 +35,6 @@ public interface GrammarService extends BaseService {
 	public List<DescriptionGrammar> findByIds(List<Object> grammarIds);
 
 	public void moveGrammar(String entityId, String grammarId, int delta, AuthPojo auth);
+	
+	public Map<String, GrammarContainer> serializeGrammarSources(String entityId);
 }

@@ -519,7 +519,7 @@ SchemaEditor.prototype.exportSchema = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	blob = new Blob([JSON.stringify(data.pojo)], {type: "application/json; charset=utf-8"});
-	    	saveAs(blob, "schema_" + _this.schemaId + ".json");
+	    	saveAs(blob, "schema_" + _this.schema.id + ".json");
 	    },
 	    error: __util.processServerError
 	});

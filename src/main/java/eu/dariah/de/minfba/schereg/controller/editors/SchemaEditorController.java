@@ -3,9 +3,11 @@ package eu.dariah.de.minfba.schereg.controller.editors;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +36,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -47,19 +51,19 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
+import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseMainEditorController;
-import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
 import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
-import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 
@@ -71,6 +75,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private MappingService mappingService;
+	@Autowired private GrammarService grammarService;
 	
 	@Autowired private IdentifiableService identifiableService;
 	
@@ -256,7 +261,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		
 		ObjectNode result = objectMapper.createObjectNode();
 		result.put("success", true);
-		result.put("files", filesNode);
+		result.set("files", filesNode);
 		
 		return result;
 	}
@@ -283,14 +288,28 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			return new ModelActionPojo(false);
 		}		
 		if (temporaryFilesMap.containsKey(fileId)) {
-			List<? extends Terminal> rootTerminals = importWorker.getPossibleRootTerminals(temporaryFilesMap.get(fileId));
-			if (rootTerminals!=null) {
+			if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
+				result.setPojo(importWorker.getPossibleRootTerminals(temporaryFilesMap.get(fileId)));
+			} else {
+				try {
+					SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
+				
+					List<Element> rootElements = new ArrayList<Element>();
+					rootElements.add(s.getRoot());
+					
+					result.setPojo(rootElements);
+				} catch (Exception e) {
+					logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);
+				}	
+			}
+			
+			if (result.getPojo()!=null) {
 				result.setSuccess(true);
 				MessagePojo msg = new MessagePojo("success", 
 						messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.head", null, locale), 
 						messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationsucceeded.body", null, locale));
 				result.setMessage(msg);
-				result.setPojo(rootTerminals);
+				
 				return result;
 			}
 		}
@@ -315,7 +334,21 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		ModelActionPojo result = new ModelActionPojo();
 		try {
 			if (temporaryFilesMap.containsKey(fileId)) {
-				importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
+				
+				if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
+					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
+				} else {
+					try {
+						SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
+					
+						List<Element> rootElements = new ArrayList<Element>();
+						rootElements.add(s.getRoot());
+						
+						//result.setPojo(rootElements);
+					} catch (Exception e) {
+						logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);
+					}	
+				}
 				result.setSuccess(true);
 				return result;
 			}
@@ -338,12 +371,16 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		sp.setSchema(s);
 		sp.setRoot(r);
 		
+		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
+		if (ch!=null) {
+			s.setVersionId(ch.getId());
+		}
+		
+		sp.setRoot(r);
+		sp.setGrammars(grammarService.serializeGrammarSources(entityId));
+		
 		ModelActionPojo result = new ModelActionPojo(true);
-		/*try {
-			result.setPojo(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(sp));
-		} catch (JsonProcessingException e) {*/
-			result.setPojo(sp);
-		/*}*/
+		result.setPojo(sp);
 		return result;
 	}
 	
