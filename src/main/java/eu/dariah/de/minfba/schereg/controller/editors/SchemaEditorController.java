@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -295,7 +296,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 					SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
 				
 					List<Element> rootElements = new ArrayList<Element>();
-					rootElements.add(s.getRoot());
+					rootElements.addAll(elementService.extractAllNonterminals((Nonterminal)s.getRoot()));
 					
 					result.setPojo(rootElements);
 				} catch (Exception e) {
@@ -342,9 +343,22 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 						SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
 					
 						List<Element> rootElements = new ArrayList<Element>();
-						rootElements.add(s.getRoot());
+						rootElements.addAll(elementService.extractAllNonterminals((Nonterminal)s.getRoot()));
 						
-						//result.setPojo(rootElements);
+						// TODO: We might want to move this import logic to a (dedicated) service
+						RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, auth);
+						
+						((XmlSchema)schema.getElement()).setNamespaces(((XmlSchema)s.getSchema()).getNamespaces());
+						
+						Map<String, String> terminalIdMap = elementService.regenerateIds(entityId, s.getSchema().getTerminals());
+
+						((XmlSchema)schema.getElement()).setTerminals(((XmlSchema)s.getSchema()).getTerminals());
+						
+						elementService.regenerateIds(entityId, rootElements.get(schemaRoot), terminalIdMap, s.getGrammars());
+
+						schemaService.saveSchema(schema.getElement(), auth);
+						elementService.saveOrReplaceRoot(entityId, (Nonterminal)rootElements.get(schemaRoot), auth);
+						
 					} catch (Exception e) {
 						logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);
 					}	

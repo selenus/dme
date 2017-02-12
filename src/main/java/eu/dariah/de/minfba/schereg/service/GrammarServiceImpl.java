@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,6 +28,7 @@ import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
@@ -187,7 +189,12 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		grammar.setLocked(true);
 		grammar.setTemporary(false);
 		grammar.setGrammarName(getNormalizedName(grammar.getGrammarName()));
-		grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
+		if (auth!=null) {
+			grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
+		} else {
+			grammarDao.save(grammar);
+		}
+		
 		grammar.setTransformationFunctions(transformationFunctions);
 		
 		if (grammar.isPassthrough()) {
@@ -217,7 +224,12 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		}
 		
 		grammar.setLocked(false);
-		grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
+		if (auth!=null) {
+			grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
+		} else {
+			grammarDao.save(grammar);
+		}
+		
 	}
 
 
@@ -276,5 +288,4 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		}
 		return containers;
 	}
-
 }

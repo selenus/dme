@@ -64,7 +64,11 @@ public abstract class BaseFunctionController extends BaseScheregController {
 			parentClasses.add(Nonterminal.class.getName());
 			parentClasses.add(Label.class.getName());
 			
-			inputElementId = referenceService.findReferenceByChildId(entity.getId(), executableId, parentClasses).getId();	
+			Reference r = referenceService.findReferenceByChildId(entity.getId(), executableId, parentClasses);
+			
+			if (r!=null) {
+				inputElementId = r.getId();
+			}
 		}
 		PersistedSession session = sessionService.access(entity.getId(), httpSessionId, userId);
 		if (session==null) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,6 +19,7 @@ import eu.dariah.de.minfba.core.metamodel.BaseElement;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
@@ -35,6 +37,7 @@ import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 
 @Service
 public class ElementServiceImpl extends BaseReferenceServiceImpl implements ElementService {
@@ -43,6 +46,9 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private FunctionDao functionDao;
 	@Autowired private MappedConceptDao mappedConceptDao;
+	
+	// TODO Get rid of this once we have a dedicated importer for json
+	@Autowired private GrammarService grammarService;
 	
 	@Override
 	public Element findRootBySchemaId(String schemaId) {
@@ -315,9 +321,51 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			l.setSubLabels((List<Label>)subelements);			
 			subelementClass = Label.class;
 		}
+		
+		// TODO: Collect grammars and functions just like elements to batch save?
+		if (e.getGrammars()!=null) {
+			Reference[] gSubrefs = new Reference[e.getGrammars().size()];
+			DescriptionGrammarImpl g;
+			for (int i=0; i<e.getGrammars().size(); i++) {
+				g = e.getGrammars().get(i);
+				grammarService.saveGrammar(g, null);
+				gSubrefs[i] = new Reference(g.getId());
+				if (g.getTransformationFunctions()!=null) {
+					
+					Reference[] fSubrefs = new Reference[g.getTransformationFunctions().size()];
+					TransformationFunctionImpl f;
+					for (int j=0; j<g.getTransformationFunctions().size(); j++) {
+						f = g.getTransformationFunctions().get(j);
+						functionDao.save(f);
+						fSubrefs[j] = new Reference(f.getId());
+						
+						if (f.getOutputElements()!=null) {
+							Reference[] labelReferences = new Reference[f.getOutputElements().size()];
+							for (int k=0; k<f.getOutputElements().size(); k++) {
+								labelReferences[k] = this.saveElementsInHierarchy(f.getOutputElements().get(k), saveElements);
+							}
+							fSubrefs[j].setChildReferences(new HashMap<String, Reference[]>());
+							fSubrefs[j].getChildReferences().put(Label.class.getName(), labelReferences);
+						}
+						gSubrefs[i].setChildReferences(new HashMap<String, Reference[]>());
+						gSubrefs[i].getChildReferences().put(TransformationFunctionImpl.class.getName(), fSubrefs);
+					}
+					
+				}
+				if (r.getChildReferences()==null) {
+					r.setChildReferences(new HashMap<String, Reference[]>());
+				}
+				r.getChildReferences().put(DescriptionGrammarImpl.class.getName(), gSubrefs);
+			}
+			
+			
+			
+		}
 				
 		if (subelements!=null && subelements.size()>0) {
-			r.setChildReferences(new HashMap<String, Reference[]>());
+			if (r.getChildReferences()==null) {
+				r.setChildReferences(new HashMap<String, Reference[]>());
+			}
 			
 			Reference[] subreferences = new Reference[subelements.size()];
 			for (int i=0; i<subreferences.length; i++) {
@@ -326,7 +374,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			r.getChildReferences().put(subelementClass.getName(), subreferences);
 		}
 		
-		// TODO Functions
 		
 		r.setId(e.getId());		
 		return r;
@@ -430,5 +477,67 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		elements.addAll(functionDao.findByEntityId(schemaId));
 		elements.addAll(mappedConceptDao.findByEntityId(schemaId));
 		return elements;
+	}
+
+	@Override
+	public List<Nonterminal> extractAllNonterminals(Nonterminal root) {
+		List<Nonterminal> result = new ArrayList<Nonterminal>();
+		if (root!=null) {
+			result.add(root);
+			if (root.getChildNonterminals()!=null) {
+				for (Nonterminal childN : root.getChildNonterminals()) {
+					result.addAll(this.extractAllNonterminals(childN));
+				}
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public void regenerateIds(String entityId, Element element, Map<String, String> terminalIdMap, Map<String, GrammarContainer> grammarContainerMap) {
+		element.setEntityId(entityId);
+		element.setId(null);
+		if (element instanceof Nonterminal) {
+			((Nonterminal)element).setTerminalId(terminalIdMap.get(((Nonterminal)element).getTerminalId()));
+		}
+		List<Element> children = element.getAllChildElements();
+		if (children!=null) {
+			for (Element child : children) {
+				this.regenerateIds(entityId, child, terminalIdMap, grammarContainerMap);
+			}
+		}
+		if (element.getGrammars()!=null) {
+			for (DescriptionGrammarImpl g : element.getGrammars()) {
+				g.setEntityId(entityId);
+				
+				if (grammarContainerMap!=null && grammarContainerMap.containsKey(g.getId())) {
+					g.setGrammarContainer(grammarContainerMap.get(g.getId()));
+				}
+				g.setId(null);
+				
+				
+				if (g.getTransformationFunctions()!=null) {
+					for (TransformationFunctionImpl f : g.getTransformationFunctions()) {
+						f.setEntityId(entityId);
+						f.setId(null);
+					}
+				}
+			}
+		}
+	}
+
+	@Override
+	public Map<String, String> regenerateIds(String entityId, List<? extends Terminal> terminals) {
+		if (terminals==null) {
+			return null;
+		}
+		Map<String, String> terminalIdMap = new HashMap<String, String>();
+		String idOld;
+		for (Terminal xt : terminals) {
+			idOld = xt.getId();
+			xt.setId(new ObjectId().toString());
+			terminalIdMap.put(idOld, xt.getId());
+		}
+		return terminalIdMap;
 	}
 }
