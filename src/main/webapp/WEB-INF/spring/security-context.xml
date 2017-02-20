@@ -54,7 +54,7 @@
 		<user name="nutzer_hab" password="augusT66" authorities="ROLE_CONTRIBUTOR" />
         <user name="nutzer_ksw" password="goEthe49" authorities="ROLE_CONTRIBUTOR" />
 		
-		
+		<!-- 
 		<user name="workshop1" password="dariah411" authorities="" />
 		<user name="workshop2" password="dariah532" authorities="" />
 		<user name="workshop3" password="dariah141" authorities="" />
@@ -94,7 +94,7 @@
 		<user name="workshop37" password="dariah446" authorities="" />
 		<user name="workshop38" password="dariah727" authorities="" />
 		<user name="workshop39" password="dariah228" authorities="" />
-		<user name="workshop40" password="dariah189" authorities="" />
+		<user name="workshop40" password="dariah189" authorities="" /> -->
     </user-service>
 
 	
