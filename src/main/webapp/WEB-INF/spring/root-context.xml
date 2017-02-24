@@ -10,8 +10,8 @@
 
 	<import resource="common-config.xml"/>
 	
-	<mongo:mongo host="${db.host}" port="${db.port}" />
-	<mongo:db-factory dbname="${db.database}" />
+	<mongo:mongo id="mongod" host="${db.host}" port="${db.port}" />
+	<mongo:db-factory dbname="${db.database}" mongo-ref="mongod" />
  
  
 	<bean id="mongoMoxydomainConverter" class="org.springframework.data.mongodb.core.convert.MappingMongoConverter">
