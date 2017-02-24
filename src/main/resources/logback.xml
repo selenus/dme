@@ -4,7 +4,7 @@
 	
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d %-5level [%thread] %logger{32}: %msg%n</pattern>
+			<pattern>%d %-5level [%thread] %logger{32}\(%line\): %msg%n</pattern>
 		</encoder>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
 			<level>TRACE</level>
@@ -20,7 +20,7 @@
 			<maxHistory>30</maxHistory>
 		</rollingPolicy>
 		<encoder>
-			<pattern>%d %-5level [%thread] %logger{32}: %msg%n</pattern>
+			<pattern>%d %-5level [%thread] %logger{32}\(%line\): %msg%n</pattern>
 		</encoder>
 	</appender>
 		
