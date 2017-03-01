@@ -97,6 +97,11 @@
 								<property name="sutimeLangPath" value="${paths.models}/sutime/DE.sutime.txt" />
 							</bean>
 						</property>
+						<property name="tempTagDispatcher">
+							<bean class="de.unibamberg.minf.gtf.extensions.nlp.commands.TemporalTaggingDispatcher">
+								<property name="language" value="german" />
+							</bean>
+						</property>
 					</bean>
 				</entry>
 			</map>
