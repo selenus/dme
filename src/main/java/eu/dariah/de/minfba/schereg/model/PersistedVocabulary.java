@@ -1,7 +1,7 @@
 package eu.dariah.de.minfba.schereg.model;
 
-import de.unibamberg.minf.gtf.vocabulary.Vocabulary;
-import de.unibamberg.minf.gtf.vocabulary.VocabularyItem;
+import de.unibamberg.minf.gtf.model.vocabulary.Vocabulary;
+import de.unibamberg.minf.gtf.model.vocabulary.VocabularyItem;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
 public class PersistedVocabulary extends Vocabulary implements Identifiable {

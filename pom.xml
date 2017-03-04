@@ -17,7 +17,7 @@
 		<eu.dariah.de.minfba.core-web.version>1.4.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
 		<eu.dariah.de.minfba.core-metamodel.version>3.3.0-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
 		<eu.dariah.de.minfba.processing.version>2.6.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
-		<de.unibamberg.minf.gtf-version>0.7.0-SNAPSHOT</de.unibamberg.minf.gtf-version>
+		<de.unibamberg.minf.gtf-version>0.8.0-SNAPSHOT</de.unibamberg.minf.gtf-version>
 
 		<org.springframework-version>4.3.6.RELEASE</org.springframework-version>
 		<org.springsecurity-version>4.2.1.RELEASE</org.springsecurity-version>
@@ -99,12 +99,12 @@
 		
 		<dependency>
 			<groupId>de.unibamberg.minf.gtf</groupId>
-			<artifactId>gtf-core</artifactId>
+			<artifactId>gtf-base</artifactId>
 			<version>${de.unibamberg.minf.gtf-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.unibamberg.minf.gtf</groupId>
-			<artifactId>gtf-commands</artifactId>
+			<artifactId>gtf-core</artifactId>
 			<version>${de.unibamberg.minf.gtf-version}</version>
 		</dependency>
 		<dependency>

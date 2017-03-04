@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
-import de.unibamberg.minf.gtf.exception.GrammarProcessingException;
+import de.unibamberg.minf.gtf.exceptions.GrammarProcessingException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;

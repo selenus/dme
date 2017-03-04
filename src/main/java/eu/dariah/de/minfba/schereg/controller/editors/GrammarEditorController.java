@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import de.dariah.samlsp.model.pojo.AuthPojo;
 import de.unibamberg.minf.gtf.MainEngine;
-import de.unibamberg.minf.gtf.exception.GrammarGenerationException;
+import de.unibamberg.minf.gtf.exceptions.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.processing.params.TransformationParamDefinition;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;

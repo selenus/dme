@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.dariah.samlsp.model.pojo.AuthPojo;
-import de.unibamberg.minf.gtf.vocabulary.VocabularyItem;
+import de.unibamberg.minf.gtf.model.vocabulary.VocabularyItem;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
