@@ -100,6 +100,14 @@
 						<property name="tempTagDispatcher">
 							<bean class="de.unibamberg.minf.gtf.extensions.nlp.commands.TemporalTaggingDispatcher">
 								<property name="language" value="german" />
+								<property name="executionContexts">
+									<map>
+										<entry key="NARRATIVES" value-ref="de_temporalTagger"></entry>
+										<entry key="NEWS" value-ref="de_temporalTagger"></entry>
+										<entry key="COLLOQUIAL" value-ref="de_temporalTagger"></entry>
+										<entry key="SCIENTIFIC" value-ref="de_temporalTagger"></entry>
+									</map>
+								</property>
 							</bean>
 						</property>
 					</bean>
@@ -107,6 +115,17 @@
 			</map>
 		</property>
 	</bean>
+	
+	<bean id="de_temporalTagger" class="de.unibamberg.minf.gtf.extensions.nlp.temporal.TemporalTaggingProcessorImpl" scope="prototype">
+		<property name="tagger" ref="de_taggerWrapper" />
+	</bean>
+	
+	
+	<bean id="de_taggerWrapper" class="de.unibamberg.minf.gtf.extensions.nlp.stanford.MaxentTaggerWrapper">
+		<property name="maxentTaggerModelPath" value="${paths.models}/stanford/pos/DE.tagger" />
+		<property name="autoInit" value="false" />
+	</bean>
+
 	
 	<bean id="correlationDetector" class="de.unibamberg.minf.gtf.extensions.nlp.processing.CorrelationDetectorImpl" />
 	<bean id="claimsInferencer" class="de.unibamberg.minf.gtf.extensions.nlp.processing.BiographicalClaimsInferencerImpl" />

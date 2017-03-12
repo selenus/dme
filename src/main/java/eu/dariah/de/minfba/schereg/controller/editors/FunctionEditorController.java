@@ -286,7 +286,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
 			Element e = elementService.findById(elementId);
 			
-			NonterminalSyntaxTreeNode n = new NonterminalSyntaxTreeNode(e.getName(), null);
+			NonterminalSyntaxTreeNode n = new NonterminalSyntaxTreeNode(g.getGrammarName(), null);
 			n.addChildNode(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, n));
 			
 			values.add(n);
