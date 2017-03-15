@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	
+	<bean id="correlationDetector" class="de.unibamberg.minf.gtf.extensions.nlp.processing.CorrelationDetectorImpl" />
+	<bean id="claimsInferencer" class="de.unibamberg.minf.gtf.extensions.nlp.processing.BiographicalClaimsInferencerImpl" />
+	
+	<bean id="nlpMainDispatcher" class="de.unibamberg.minf.gtf.extensions.nlp.commands.NlpMainDispatcher">
+		<property name="correlationDetector" ref="correlationDetector" />
+		<property name="claimsInferencer" ref="claimsInferencer" />
+		<property name="languageDispatchers">
+			<map>
+				<entry key="DE" value-ref="de_languageDispatcher" />
+			</map>
+		</property>
+	</bean>
+	
+	<!-- DE: German language handling as template for other languages -->
+	<bean id="de_languageDispatcher" class="de.unibamberg.minf.gtf.extensions.nlp.commands.LanguageDispatcher">
+		<property name="sentenceDetector">
+			<bean class="de.unibamberg.minf.gtf.extensions.nlp.sentences.OpenNlpSentenceDetectorImpl">
+				<property name="sentenceModelPath" value="${paths.models}/openNLP/DE-sent.bin" />	
+			</bean>	
+		</property>
+		<property name="processors">
+			<map>
+				<entry key="Stanford">
+					<bean class="de.unibamberg.minf.gtf.extensions.nlp.stanford.StanfordProcessor">
+						<property name="tagger" ref="de_taggerWrapper" />
+						<property name="nerClassifier" ref="de_classifierWrapper" />
+						<property name="lexParser" ref="de_lexParserWrapper" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+		<property name="tempTagDispatcher">
+			<bean class="de.unibamberg.minf.gtf.extensions.nlp.commands.TemporalTaggingDispatcher">
+				<property name="language" value="german" />
+				<property name="executionContexts">
+					<map>
+						<entry key="NARRATIVES" value-ref="de_temporalTagger"></entry>
+						<entry key="NEWS" value-ref="de_temporalTagger"></entry>
+						<entry key="COLLOQUIAL" value-ref="de_temporalTagger"></entry>
+						<entry key="SCIENTIFIC" value-ref="de_temporalTagger"></entry>
+					</map>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="de_taggerWrapper" class="de.unibamberg.minf.gtf.extensions.nlp.stanford.MaxentTaggerWrapper">
+		<property name="maxentTaggerModelPath" value="${paths.models}/stanford/pos/DE.tagger" />
+		<property name="autoInit" value="false" />
+	</bean>
+	
+	<bean id="de_classifierWrapper" class="de.unibamberg.minf.gtf.extensions.nlp.stanford.NerClassifierWrapper">
+		<property name="nerModelPath" value="${paths.models}/stanford/ner/DE.crf.ser.gz" />
+		<property name="autoInit" value="false" />
+		<property name="tagger" ref="de_taggerWrapper" />
+	</bean>
+
+	<bean id="de_lexParserWrapper" class="de.unibamberg.minf.gtf.extensions.nlp.stanford.LexicalizedParserWrapper">
+		<property name="lexModelPath" value="${paths.models}/stanford/lex/DE.ser.gz" />
+		<property name="autoInit" value="false" />
+		<property name="tagger" ref="de_taggerWrapper" />
+		<property name="nerClassifier" ref="de_classifierWrapper" />
+	</bean>
+	
+	<bean id="de_temporalTagger" class="de.unibamberg.minf.gtf.extensions.nlp.temporal.TemporalTaggingProcessorImpl" scope="prototype">
+		<property name="tagger" ref="de_taggerWrapper" />
+	</bean>
+</beans>

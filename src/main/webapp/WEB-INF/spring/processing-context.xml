@@ -47,11 +47,7 @@
 			</bean>
 		</property>
 	</bean>
-	
-	<bean id="vocabularyEngine" class="de.unibamberg.minf.gtf.vocabulary.VocabularyEngine">
-	
-	</bean>
-	
+
 	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
 		<property name="messageConverters">
 	        <list>
@@ -73,63 +69,6 @@
             </bean>
     	</property>
 	</bean>
-	
-	<bean id="nlpMainDispatcher" class="de.unibamberg.minf.gtf.extensions.nlp.commands.NlpMainDispatcher">
-		<property name="correlationDetector" ref="correlationDetector" />
-		<property name="claimsInferencer" ref="claimsInferencer" />
-		<property name="languageDispatchers">
-			<map>
-				<entry key="DE">
-					<bean class="de.unibamberg.minf.gtf.extensions.nlp.commands.LanguageDispatcher">
-						<property name="sentenceDetector">
-							<bean class="de.unibamberg.minf.gtf.extensions.nlp.sentences.OpenNlpSentenceDetectorImpl">
-								<property name="sentenceModelPath" value="${paths.models}/openNLP/DE-sent.bin" />	
-							</bean>
-						</property>
-						<property name="nlpProcessor">
-							<bean class="de.unibamberg.minf.gtf.extensions.nlp.processing.SimpleStanfordProcessor">
-								<property name="lang" value="de" />
-								<property name="lexParserModelPath" value="${paths.models}/stanford/lex/DE.ser.gz" />
-								<property name="maxentTaggerModelPath" value="${paths.models}/stanford/pos/DE.tagger" />
-								<property name="nerCombinerModelPath" value="${paths.models}/stanford/ner/DE.crf.ser.gz" />
-								<property name="sutimeDefsPath" value="${paths.models}/sutime/defs.sutime.txt" />
-								<property name="sutimeLangHolidaysPath" value="${paths.models}/sutime/DE.holidays.sutime.txt" />
-								<property name="sutimeLangPath" value="${paths.models}/sutime/DE.sutime.txt" />
-							</bean>
-						</property>
-						<property name="tempTagDispatcher">
-							<bean class="de.unibamberg.minf.gtf.extensions.nlp.commands.TemporalTaggingDispatcher">
-								<property name="language" value="german" />
-								<property name="executionContexts">
-									<map>
-										<entry key="NARRATIVES" value-ref="de_temporalTagger"></entry>
-										<entry key="NEWS" value-ref="de_temporalTagger"></entry>
-										<entry key="COLLOQUIAL" value-ref="de_temporalTagger"></entry>
-										<entry key="SCIENTIFIC" value-ref="de_temporalTagger"></entry>
-									</map>
-								</property>
-							</bean>
-						</property>
-					</bean>
-				</entry>
-			</map>
-		</property>
-	</bean>
-	
-	<bean id="de_temporalTagger" class="de.unibamberg.minf.gtf.extensions.nlp.temporal.TemporalTaggingProcessorImpl" scope="prototype">
-		<property name="tagger" ref="de_taggerWrapper" />
-	</bean>
-	
-	
-	<bean id="de_taggerWrapper" class="de.unibamberg.minf.gtf.extensions.nlp.stanford.MaxentTaggerWrapper">
-		<property name="maxentTaggerModelPath" value="${paths.models}/stanford/pos/DE.tagger" />
-		<property name="autoInit" value="false" />
-	</bean>
-
-	
-	<bean id="correlationDetector" class="de.unibamberg.minf.gtf.extensions.nlp.processing.CorrelationDetectorImpl" />
-	<bean id="claimsInferencer" class="de.unibamberg.minf.gtf.extensions.nlp.processing.BiographicalClaimsInferencerImpl" />
-	
 	
 	<bean id="commandDispatcher" class="de.unibamberg.minf.gtf.transformation.processing.GlobalCommandDispatcher">
 		<property name="commandDispatchers">
@@ -154,5 +93,8 @@
 				<entry key="NLP" value-ref="nlpMainDispatcher" />
 			</map>
 		</property>
-	</bean>			
+	</bean>		
+
+	<bean id="vocabularyEngine" class="de.unibamberg.minf.gtf.vocabulary.VocabularyEngine" />
+	
 </beans>
