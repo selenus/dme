@@ -32,6 +32,7 @@ import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.exceptions.GrammarProcessingException;
 import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
 import de.unibamberg.minf.gtf.syntaxtree.NonterminalSyntaxTreeNode;
+import de.unibamberg.minf.gtf.syntaxtree.SyntaxTreeNode;
 import de.unibamberg.minf.gtf.syntaxtree.TerminalSyntaxTreeNode;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
@@ -276,7 +277,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		TransformationFunctionImpl f;
 		ModelActionPojo result = new ModelActionPojo();
 
-		List<NonterminalSyntaxTreeNode> values = new ArrayList<NonterminalSyntaxTreeNode>();
+		List<SyntaxTreeNode> values = new ArrayList<SyntaxTreeNode>();
 		List<DescriptionGrammar> grammars = new ArrayList<DescriptionGrammar>();
 				
 		if (Schema.class.isAssignableFrom(entity.getClass())) {
@@ -286,10 +287,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
 			Element e = elementService.findById(elementId);
 			
-			NonterminalSyntaxTreeNode n = new NonterminalSyntaxTreeNode(g.getGrammarName(), null);
-			n.addChildNode(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, n));
-			
-			values.add(n);
+			values.add(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, null));
 			grammars.add(g);
 			
 			f = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
@@ -306,10 +304,8 @@ public class FunctionEditorController extends BaseFunctionController {
 				
 				Element e = elementService.findById(elementId);
 				
-				NonterminalSyntaxTreeNode n = new NonterminalSyntaxTreeNode(e.getName(), null);
-				n.addChildNode(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, n));
 				
-				values.add(n);
+				values.add(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, null));
 			}
 
 			f = (TransformationFunctionImpl)functionService.findById(functionId);
