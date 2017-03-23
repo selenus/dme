@@ -2,7 +2,7 @@ package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
 
-import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.dariahsp.web.model.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;

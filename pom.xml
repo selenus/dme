@@ -196,6 +196,12 @@
 		</dependency>
 		
 		<dependency>
+			<groupId>eu.dariah.de</groupId>
+			<artifactId>dariahsp-core</artifactId>
+			<version>0.0.4-SNAPSHOT</version>
+		</dependency>
+		
+		<!-- <dependency>
 			<groupId>de.dariah</groupId>
 			<artifactId>dariah-javasp-core</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
@@ -209,7 +215,7 @@
 			<groupId>de.dariah</groupId>
 			<artifactId>spring-security-saml2-core</artifactId>
 			<version>0.0.3-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 		
 		<!-- Persistence -->
 		<dependency>

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import de.dariah.samlsp.model.pojo.AuthPojo;
+
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.exceptions.GrammarProcessingException;
 import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
@@ -37,6 +37,7 @@ import de.unibamberg.minf.gtf.syntaxtree.TerminalSyntaxTreeNode;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
+import eu.dariah.de.dariahsp.web.model.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;

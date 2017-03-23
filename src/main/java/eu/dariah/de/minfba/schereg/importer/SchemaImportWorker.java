@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 import com.mongodb.DBObject;
 
-import de.dariah.samlsp.model.pojo.AuthPojo;
+import eu.dariah.de.dariahsp.web.model.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
