@@ -197,7 +197,7 @@
 		
 		<dependency>
 			<groupId>eu.dariah.de</groupId>
-			<artifactId>dariahsp-core</artifactId>
+			<artifactId>dariahsp</artifactId>
 			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		

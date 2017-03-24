@@ -1,5 +1,5 @@
-<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
-	xmlns="http://www.springframework.org/schema/security"
+<beans xmlns:sec="http://www.springframework.org/schema/security"
+	xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
@@ -9,106 +9,77 @@
 	<!-- <context:component-scan base-package="de.dariah.samlsp.orm.dao"/>
 	<context:component-scan base-package="de.dariah.samlsp.orm.service" /> -->		
 	
-	<http security="none" pattern="/resources/**"/>
+	<sec:http security="none" pattern="/resources/**"/>
 		
-	<http disable-url-rewriting="true" auto-config="true" use-expressions="false" entry-point-ref="ajaxEntryPoint" access-decision-manager-ref="accessDecisionManager" >
-		<csrf disabled="true"/>
-		<intercept-url pattern="/test/jumboFluid" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
-		<form-login 
+	<sec:http disable-url-rewriting="true" auto-config="true" use-expressions="false" entry-point-ref="ajaxEntryPoint" access-decision-manager-ref="accessDecisionManager" >
+		<sec:csrf disabled="true"/>
+		<sec:intercept-url pattern="/test/jumboFluid" requires-channel="http" access="IS_AUTHENTICATED_FULLY" />
+		
+		<sec:form-login 
 			authentication-success-handler-ref="simpleUrlAuthenticationSuccessHandler"
 			login-page="/login" 
 			authentication-failure-url="/login?error"
 			username-parameter="username"
 			password-parameter="password"
 			/>
-		<logout invalidate-session="true" logout-url="/logout" logout-success-url="/" />
-	</http>
+		<sec:logout invalidate-session="true" logout-url="/logout" logout-success-url="/" />
+	</sec:http>
 	
-	<beans:bean id="simpleUrlAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
-		<beans:property name="defaultTargetUrl" value="/"/>
-		<beans:property name="targetUrlParameter" value="redirectUrl"/>
-	</beans:bean>
+	<bean id="simpleUrlAuthenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+		<property name="defaultTargetUrl" value="/"/>
+		<property name="targetUrlParameter" value="redirectUrl"/>
+	</bean>
 		
-	<global-method-security pre-post-annotations="enabled" secured-annotations="enabled" />
+	<sec:global-method-security pre-post-annotations="enabled" secured-annotations="enabled" />
 	
-  	<beans:bean id="ajaxEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint">
-	</beans:bean>
+  	<bean id="ajaxEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint">
+	</bean>
 	
-	<beans:bean id="authInfoHelper" class="eu.dariah.de.dariahsp.web.AuthInfoHelper" />
+	<bean id="authInfoHelper" class="eu.dariah.de.dariahsp.web.AuthInfoHelper">
+		<property name="roleLevelVoter" ref="roleLevelVoter" />
+	</bean>
 	
-	<authentication-manager alias="authenticationManager">
-	  <authentication-provider ref="localAuthenticationProvider" />
-	</authentication-manager>
+	<sec:authentication-manager alias="authenticationManager">
+	  <sec:authentication-provider ref="localAuthenticationProvider" />
+	</sec:authentication-manager>
 	
-	<beans:bean id="localAuthenticationProvider" class="eu.dariah.de.dariahsp.web.LocalAuthenticationProvider">
-		<beans:property name="localUserDb" ref="localUserDb" />
-		<beans:property name="userService">
-			<beans:bean class="eu.dariah.de.minfba.schereg.service.UserServiceImpl" />
-		</beans:property>
-	</beans:bean>
+	<bean id="localAuthenticationProvider" class="eu.dariah.de.dariahsp.web.LocalAuthenticationProvider">
+		<property name="localUserDb" ref="localUserDb" />
+		<property name="userService">
+			<bean class="eu.dariah.de.minfba.schereg.service.UserServiceImpl" />
+		</property>
+	</bean>
 
-	<user-service id="localUserDb">
-		<user name="tgradl" password="hairad" authorities="ROLE_ADMINISTRATOR, ROLE_CONTRIBUTOR" />
-		<user name="tgradl_user" password="hairad" authorities="" />
-		<user name="ahenrich" password="hairad" authorities="ROLE_CONTRIBUTOR" />
+	<sec:user-service id="localUserDb">
+		<sec:user name="tgradl" password="hairad" authorities="ROLE_ADMINISTRATOR" />
+		<sec:user name="tgradl_user" password="hairad" authorities="" />
+		<sec:user name="ahenrich" password="hairad" authorities="ROLE_CONTRIBUTOR" />
 		
-		<user name="teckart" password="niralc" authorities="ROLE_CONTRIBUTOR" />
+		<sec:user name="teckart" password="niralc" authorities="ROLE_CONTRIBUTOR" />
 		
-		<user name="nutzer_hab" password="augusT66" authorities="ROLE_CONTRIBUTOR" />
-        <user name="nutzer_ksw" password="goEthe49" authorities="ROLE_CONTRIBUTOR" />
-		
-		<!-- 
-		<user name="workshop1" password="dariah411" authorities="" />
-		<user name="workshop2" password="dariah532" authorities="" />
-		<user name="workshop3" password="dariah141" authorities="" />
-		<user name="workshop4" password="dariah152" authorities="" />
-		<user name="workshop5" password="dariah715" authorities="" />
-		<user name="workshop6" password="dariah251" authorities="" />
-		<user name="workshop7" password="dariah433" authorities="" />
-		<user name="workshop8" password="dariah562" authorities="" />
-		<user name="workshop9" password="dariah797" authorities="" />
-		<user name="workshop10" password="dariah632" authorities="" />
-		<user name="workshop11" password="dariah422" authorities="" />
-		<user name="workshop12" password="dariah737" authorities="" />
-		<user name="workshop13" password="dariah244" authorities="" />
-		<user name="workshop14" password="dariah235" authorities="" />
-		<user name="workshop15" password="dariah728" authorities="" />
-		<user name="workshop16" password="dariah442" authorities="" />
-		<user name="workshop17" password="dariah446" authorities="" />
-		<user name="workshop18" password="dariah727" authorities="" />
-		<user name="workshop19" password="dariah228" authorities="" />
-		<user name="workshop20" password="dariah189" authorities="" />
-		<user name="workshop21" password="dariah142" authorities="" />
-		<user name="workshop22" password="dariah131" authorities="" />
-		<user name="workshop23" password="dariah168" authorities="" />
-		<user name="workshop24" password="dariah849" authorities="" />
-		<user name="workshop25" password="dariah623" authorities="" />
-		<user name="workshop26" password="dariah456" authorities="" />
-		<user name="workshop27" password="dariah933" authorities="" />
-		<user name="workshop28" password="dariah141" authorities="" />
-		<user name="workshop29" password="dariah354" authorities="" />
-		<user name="workshop30" password="dariah911" authorities="" />
-		<user name="workshop31" password="dariah422" authorities="" />
-		<user name="workshop32" password="dariah737" authorities="" />
-		<user name="workshop33" password="dariah244" authorities="" />
-		<user name="workshop34" password="dariah235" authorities="" />
-		<user name="workshop35" password="dariah728" authorities="" />
-		<user name="workshop36" password="dariah442" authorities="" />
-		<user name="workshop37" password="dariah446" authorities="" />
-		<user name="workshop38" password="dariah727" authorities="" />
-		<user name="workshop39" password="dariah228" authorities="" />
-		<user name="workshop40" password="dariah189" authorities="" /> -->
-    </user-service>
+		<sec:user name="nutzer_hab" password="augusT66" authorities="ROLE_CONTRIBUTOR" />
+        <sec:user name="nutzer_ksw" password="goEthe49" authorities="ROLE_CONTRIBUTOR" />
+    </sec:user-service>
 
 	
-	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
-		<beans:constructor-arg name="decisionVoters">
-			<beans:list>
-				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
-				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
-			</beans:list>
-		</beans:constructor-arg>
-		<beans:property name="allowIfAllAbstainDecisions" value="false" />
-	</beans:bean>
+	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+		<constructor-arg name="decisionVoters">
+			<list>
+				<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+				<ref bean="roleLevelVoter" />
+			</list>
+		</constructor-arg>
+		<property name="allowIfAllAbstainDecisions" value="false" />
+	</bean>
 	
-</beans:beans>
+	<bean id="roleLevelVoter" class="eu.dariah.de.dariahsp.web.RoleLevelVoter">
+		<property name="roleLevels">
+			<map>
+				<entry key="ROLE_ADMINISTRATOR" value="100" />
+				<entry key="ROLE_CONTRIBUTOR" value="60" />
+				<entry key="ROLE_USER" value="20" />
+			</map>
+		</property>
+	</bean>
+	
+</beans>
