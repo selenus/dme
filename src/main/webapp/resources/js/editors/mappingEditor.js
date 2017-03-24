@@ -414,17 +414,27 @@ MappingEditor.prototype.getMappings = function(selectedItemIds) {
 		    	for (var i=0; i<data.length; i++) {
 		    		var lhs = [];
 		    		var rhs = [];
-	    			for (var key in data[i].elementGrammarIdsMap) {
-	    				if(data[i].elementGrammarIdsMap.hasOwnProperty(key)) {
-	    					lhs.push(_this.source.getElementById(key).getConnector("mappings"));	
-	    				}
-	    			}
-		    		for (var j=0; j<data[i].targetElementIds.length; j++) {
-		    			rhs.push(_this.target.getElementById(data[i].targetElementIds[j]).getConnector("mappings"));	
-		    		}
-		    		if (lhs != null && rhs != null) {			
-		    			_this.graph.addMappingConnection(lhs, rhs, data[i].id);   			
-		    		}
+		    		for (var key in data[i].elementGrammarIdsMap) {
+                        try {
+                                if(data[i].elementGrammarIdsMap.hasOwnProperty(key)) {
+                                        lhs.push(_this.source.getElementById(key).getConnector("mappings"));    
+                                }
+                        }
+                        catch (e) {
+                                __notifications.showMessage(NOTIFICATION_TYPES.ERROR, "Unknown source element", "" + key + " mapping cell: " + data[i].id, "err-" + key, false);
+                        }
+	                }
+	                for (var j=0; j<data[i].targetElementIds.length; j++) {
+	                        try {
+	                                rhs.push(_this.target.getElementById(data[i].targetElementIds[j]).getConnector("mappings")); 
+	                        }
+	                        catch (e) {
+	                                __notifications.showMessage(NOTIFICATION_TYPES.ERROR, "Unknown target element", "" + data[i].targetElementIds[j] + " mapping cell: " + data[i].id, "err-" + key, false);
+	                        }
+	                }
+	                if (lhs != null && rhs != null) {
+	                        _this.graph.addMappingConnection(lhs, rhs, data[i].id);
+	                }
 		    	}
 	    	}
 	    	if (selectedItemIds!==undefined && selectedItemIds.length>0) {
