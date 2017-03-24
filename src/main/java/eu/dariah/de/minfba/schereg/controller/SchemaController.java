@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import eu.dariah.de.dariahsp.web.model.AuthPojo;
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.BaseSchema;
 import eu.dariah.de.minfba.core.metamodel.BaseTerminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;

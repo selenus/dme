@@ -2,7 +2,7 @@ package eu.dariah.de.minfba.schereg.importer;
 
 import java.util.List;
 
-import eu.dariah.de.dariahsp.web.model.AuthPojo;
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import eu.dariah.de.dariahsp.web.helper.AuthInfoHelper;
-import eu.dariah.de.dariahsp.web.model.AuthPojo;
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.dariahsp.web.AuthInfoHelper;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;

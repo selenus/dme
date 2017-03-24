@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import eu.dariah.de.dariahsp.web.helper.AuthInfoHelper;
+import eu.dariah.de.dariahsp.web.AuthInfoHelper;
 
 @Controller
 @RequestMapping(value="")

@@ -34,17 +34,20 @@
   	<beans:bean id="ajaxEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint">
 	</beans:bean>
 	
-	<beans:bean id="authInfoHelper" class="de.dariah.aai.javasp.web.helper.AuthInfoHelper" />
+	<beans:bean id="authInfoHelper" class="eu.dariah.de.dariahsp.web.AuthInfoHelper" />
 	
 	<authentication-manager alias="authenticationManager">
 	  <authentication-provider ref="localAuthenticationProvider" />
 	</authentication-manager>
 	
-	<beans:bean id="localAuthenticationProvider" class="eu.dariah.de.minfba.schereg.security.LocalAuthenticationProvider">
-		<beans:property name="localUserDetailsService" ref="localUserService" />
+	<beans:bean id="localAuthenticationProvider" class="eu.dariah.de.dariahsp.web.LocalAuthenticationProvider">
+		<beans:property name="localUserDb" ref="localUserDb" />
+		<beans:property name="userService">
+			<beans:bean class="eu.dariah.de.minfba.schereg.service.UserServiceImpl" />
+		</beans:property>
 	</beans:bean>
 
-	<user-service id="localUserService">
+	<user-service id="localUserDb">
 		<user name="tgradl" password="hairad" authorities="ROLE_ADMINISTRATOR, ROLE_CONTRIBUTOR" />
 		<user name="tgradl_user" password="hairad" authorities="" />
 		<user name="ahenrich" password="hairad" authorities="ROLE_CONTRIBUTOR" />

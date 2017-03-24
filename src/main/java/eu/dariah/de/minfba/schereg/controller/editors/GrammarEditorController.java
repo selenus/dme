@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.compilation.GrammarGenerationException;
 import de.unibamberg.minf.gtf.transformation.processing.params.TransformationParamDefinition;
-import eu.dariah.de.dariahsp.web.model.AuthPojo;
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;

@@ -9,16 +9,16 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import eu.dariah.de.dariahsp.model.User;
 import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
-import eu.dariah.de.minfba.schereg.dao.interfaces.PersistedUserDetailsDao;
-import eu.dariah.de.minfba.schereg.model.PersistedUserDetails;
+import eu.dariah.de.minfba.schereg.dao.interfaces.UserDao;
 import eu.dariah.de.minfba.schereg.pojo.ChangeSetPojo;
 
 @Component
 public class ChangeSetPojoConverter {
-	@Autowired private PersistedUserDetailsDao userDetailsDao;
+	@Autowired private UserDao userDetailsDao;
 	
 	public Collection<ChangeSetPojo> convert(List<ChangeSet> changeSets) {
 		Map<String, ChangeSetPojo> bySessionMap = new HashMap<String, ChangeSetPojo>();
@@ -32,7 +32,7 @@ public class ChangeSetPojoConverter {
 					}
 				} else {
 					cPojo = new ChangeSetPojo();
-					PersistedUserDetails ud = userDetailsDao.findById(c.getUserId());
+					User ud = userDetailsDao.findById(c.getUserId());
 					if (c.getUserId()!=null && ud!=null) {
 						cPojo.setUser(ud.getUsername());
 					}

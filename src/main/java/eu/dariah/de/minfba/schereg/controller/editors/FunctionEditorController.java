@@ -37,7 +37,7 @@ import de.unibamberg.minf.gtf.syntaxtree.TerminalSyntaxTreeNode;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
-import eu.dariah.de.dariahsp.web.model.AuthPojo;
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
