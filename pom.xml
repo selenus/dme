@@ -14,7 +14,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<eu.dariah.de.minfba.core-web.version>1.4.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
+		<eu.dariah.de.minfba.core-web.version>1.5.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
 		<eu.dariah.de.minfba.core-metamodel.version>3.3.0-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
 		<eu.dariah.de.minfba.processing.version>2.6.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
 		<de.unibamberg.minf.gtf-version>0.8.0-SNAPSHOT</de.unibamberg.minf.gtf-version>
