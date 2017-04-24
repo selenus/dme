@@ -43,9 +43,7 @@
 			<property name="paramName" value="lang" />
 			<property name="initService" ref="initService" />
 		</bean>
-		<bean class="eu.dariah.de.dariahsp.web.AuthInfoHandlerInterceptor">
-			<property name="authInfoHelper" ref="authInfoHelper" />
-		</bean>
+		
 	</mvc:interceptors>	
 		
 	<!-- Navigation configuration -->

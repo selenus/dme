@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-	<property file="${application.conf}" />
+	<property file="${schereg.yml}" />
+	<configuration scan="true" scanPeriod="10 seconds" />
 	
 	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>

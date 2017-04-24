@@ -2,15 +2,29 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-
+	
 	<bean id="configLocation" class="java.lang.String">
-		<constructor-arg value="file:${application.conf}" />
+		<constructor-arg value="file:${schereg.yml}" />
 	</bean>
-	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>file:${application.conf}</value>
-			</list>
-		</property>
+	<bean id="properties" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">
+	    <property name="resources" ref="configLocation"/>
 	</bean>
+
+	<bean class="eu.dariah.de.minfba.core.util.init.ListAwarePropertySourcesPlaceholderConfigurer">
+	    <property name="properties" ref="properties" />
+	    <property name="objectMapper" ref="objectMapper" />
+	    <property name="conversionService" ref="conversionService" />
+	</bean>
+	
+	<bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <bean class="eu.dariah.de.minfba.core.util.conversion.JsonToStringConverter" />
+            </list>
+        </property>
+    </bean>
+	
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+	
+	
 </beans>

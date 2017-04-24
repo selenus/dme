@@ -1,0 +1,14 @@
+paths:
+  logging: /data/_srv/schereg/log
+  grammars: /data/_srv/schereg/grammars
+  models: /data/_srv/schereg/models
+  tmpUploadDir: /tmp/schereg_uploads/
+
+url:
+  login: /login
+  logout: /logout
+
+db:
+  host: 127.0.0.1
+  port: 27017
+  database: schereg

@@ -15,9 +15,12 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<eu.dariah.de.minfba.core-web.version>1.5.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
+		<eu.dariah.de.minfba.core-util.version>1.1.0-SNAPSHOT</eu.dariah.de.minfba.core-util.version>
 		<eu.dariah.de.minfba.core-metamodel.version>3.3.0-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
 		<eu.dariah.de.minfba.processing.version>2.6.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
 		<de.unibamberg.minf.gtf-version>0.8.0-SNAPSHOT</de.unibamberg.minf.gtf-version>
+
+		<eu.dariah.de.dariahsp-version>1.0.0-SNAPSHOT</eu.dariah.de.dariahsp-version>
 
 		<org.springframework-version>4.3.6.RELEASE</org.springframework-version>
 		<org.springsecurity-version>4.2.1.RELEASE</org.springsecurity-version>
@@ -95,6 +98,11 @@
 			<groupId>eu.dariah.de.minfba.core</groupId>
 			<artifactId>core-web</artifactId>
 			<version>${eu.dariah.de.minfba.core-web.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>eu.dariah.de.minfba.core</groupId>
+			<artifactId>core-util</artifactId>
+			<version>${eu.dariah.de.minfba.core-util.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -197,8 +205,8 @@
 		
 		<dependency>
 			<groupId>eu.dariah.de</groupId>
-			<artifactId>dariahsp</artifactId>
-			<version>0.0.4-SNAPSHOT</version>
+			<artifactId>dariahsp-core</artifactId>
+			<version>${eu.dariah.de.dariahsp-version}</version>
 		</dependency>
 		
 		<!-- <dependency>

@@ -32,7 +32,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 @RequestMapping(value="/sessions")
 public class SessionsController {
 	
-	@Autowired protected AuthInfoHelper authInfoHelper;
+	@Autowired(required=false) protected AuthInfoHelper authInfoHelper;
 	@Autowired private PersistedSessionService sessionService;
 	
 	

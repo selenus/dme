@@ -19,7 +19,7 @@ import eu.dariah.de.dariahsp.web.AuthInfoHelper;
 @Controller
 @RequestMapping(value="")
 public class HomeController {
-	@Autowired protected AuthInfoHelper authInfoHelper;
+	@Autowired(required=false) protected AuthInfoHelper authInfoHelper;
 	
 	@Autowired private ServletContext servletContext;
 	

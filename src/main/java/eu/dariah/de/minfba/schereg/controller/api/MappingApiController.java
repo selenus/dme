@@ -32,7 +32,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 public class MappingApiController extends BaseApiController {
 	protected static final Logger logger = LoggerFactory.getLogger(MappingApiController.class);
 			
-	@Autowired protected AuthInfoHelper authInfoHelper;
+	@Autowired(required=false) protected AuthInfoHelper authInfoHelper;
 	
 	@Autowired private MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
