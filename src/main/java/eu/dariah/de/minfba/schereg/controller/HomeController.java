@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.dariahsp.web.AuthInfoHelper;
 
+
 @Controller
 @RequestMapping(value="")
 public class HomeController {
