@@ -560,7 +560,7 @@ textarea.height-sized-element {
 
 .activity-history-element {
 	min-width: 150px;
-	width: 150px;
+	/*width: 150px;*/
 	float: left;
 	margin-right: 7px;
 }

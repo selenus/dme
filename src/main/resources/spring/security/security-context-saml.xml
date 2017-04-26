@@ -97,7 +97,7 @@
         <property name="tlsKey" value="${auth.saml.sp.tlsKey}" />
         <property name="signMetadata" value="${auth.saml.sp.signMetadata}" />
         
-        <property name="ecpEnabled" value="${auth.saml.sp.ecpEnabled}" />
+        <property name="ecpEnabled" value="${auth.saml.sp.ecpEnabled:true}" />
         <property name="signingKey" value="${auth.saml.sp.signingKey}" />
         
         <property name="requireArtifactResolveSigned" value="${auth.saml.sp.requireArtifactResolveSigned:true}"/>
@@ -119,7 +119,9 @@
     </bean>
     -->
 
-	
+	<bean id="externalLocalSpMetadataConfigured" class="java.lang.Boolean">
+		<constructor-arg value="#{'${auth.saml.sp.externalMetadata:null}'!='null'}" />
+	</bean>	
 
     <!-- IDP Metadata configuration - paths to metadata of IDPs in circle of trust is here -->
     <bean id="metadata" class="eu.dariah.de.dariahsp.saml.metadata.ConditionalMetadataManager">

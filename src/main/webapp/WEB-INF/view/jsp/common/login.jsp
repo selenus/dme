@@ -10,10 +10,10 @@
 			<!-- Notifications -->
 			<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 			<div class="xs-hidden sm-visible col-sm-3 col-lg-2 col-sm-offset-1">
-				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title" /></div>
+				<div class="pull-right dariah-flower-white-45">DARIAHSP Test App</div>
 			</div>
 			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
-				<h1><s:message code="~eu.dariah.de.minfba.common.local_login.title" /></h1>
+				<h1>Local Login</h1>
 			</div>
 		</div>
 	</div>
@@ -24,32 +24,32 @@
 		<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
-				<li class="active"><s:message code="~eu.dariah.de.minfba.common.local_login.title" /></li>
+				<li class="active">Local Login</li>
 			</ul>
 			<div id="main-content">
-				<h2><s:message code="~eu.dariah.de.minfba.common.local_login.heading" /></h2>
+				<h2>Local Login</h2>
 				
 				<c:if test="${not empty error}">
-					<div class="alert alert-danger" role="alert"><s:message code="~eu.dariah.de.minfba.common.local_login.invalid" /></div>
+					<div class="alert alert-danger" role="alert">Invalid credentials</div>
 				</c:if>
 				
-				<form name='loginForm' class="form-horizontal" action="<c:url value='/login' />" method='POST'>
-					<input type="hidden" name="redirectUrl" id="redirectUrl" value="${redirectUrl}" />
+				<form name='loginForm' class="form-horizontal" action="<c:url value='/localsec/login' />" method='POST'>
+					<input type="hidden" name="loginRedirectUrl" id="loginRedirectUrl" value="${redirectUrl}" />
 					<div class="form-group">
-						<label for="username" class="col-sm-2 control-label"><s:message code="~eu.dariah.de.minfba.common.local_login.username" /></label>
+						<label for="username" class="col-sm-2 control-label">Username</label>
 					    <div class="col-sm-4">
 					     	<input type="text" class="form-control" id="username" name="username" autofocus>
 					    </div>
 					</div>
 					<div class="form-group">
-						<label for="password" class="col-sm-2 control-label"><s:message code="~eu.dariah.de.minfba.common.local_login.password" /></label>
+						<label for="password" class="col-sm-2 control-label">Password</label>
 					    <div class="col-sm-4">
 					     	<input type="password" class="form-control" id="password" name="password">
 					    </div>
 					</div>
 					<div class="form-group">
 					    <div class="col-sm-offset-2 col-sm-10">
-					      <button name="submit" type="submit" value="submit" class="btn btn-primary"><s:message code="~eu.dariah.de.minfba.common.local_login.signin" /></button>
+					      <button name="submit" type="submit" value="submit" class="btn btn-primary">Signin</button>
 					    </div>
 					</div>
 				</form>

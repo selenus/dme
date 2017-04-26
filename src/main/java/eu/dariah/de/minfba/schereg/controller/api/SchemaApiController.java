@@ -29,7 +29,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 public class SchemaApiController extends BaseApiController {
 	protected static final Logger logger = LoggerFactory.getLogger(SchemaApiController.class);
 	
-	@Autowired(required=false) protected AuthInfoHelper authInfoHelper;
+	@Autowired protected AuthInfoHelper authInfoHelper;
 	
 	@Autowired private SchemaService schemaService;
 	@Autowired protected ElementService elementService;
