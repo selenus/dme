@@ -10,7 +10,7 @@
 
 	<import resource="common-config.xml"/>
 	
-	<mongo:mongo id="mongod" host="${db.host}" port="${db.port}" />
+	<mongo:mongo id="mongod" host="${db.host}" port="${db.port}" write-concern="ACKNOWLEDGED" />
 	<mongo:db-factory dbname="${db.database}" mongo-ref="mongod" />
  
  

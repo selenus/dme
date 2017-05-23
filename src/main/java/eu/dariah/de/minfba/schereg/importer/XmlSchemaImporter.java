@@ -340,6 +340,10 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 	}
 	
 	protected String createNonterminalName(String terminalName) {
-		return terminalName.substring(0, 1).toUpperCase() + terminalName.substring(1); 
+		String name = terminalName.substring(0, 1).toUpperCase() + terminalName.substring(1);
+		
+		name = name.replaceAll("([^\\p{L}])([^\\p{L}\\p{N}-_.])*", "");
+		
+		return name; 
 	}
 }

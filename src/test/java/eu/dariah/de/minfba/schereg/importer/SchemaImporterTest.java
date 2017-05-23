@@ -13,6 +13,15 @@ public class SchemaImporterTest {
 	private String rootElementNs = "http://www.openarchives.org/OAI/2.0/oai_dc/";
 	private String rootElementName = "dc";
 	
+	@Test
+	public void testPatternReplacement() {
+		
+		String elementName = "_Nam~é+";
+		
+		elementName = elementName.replaceAll("([^\\p{L}])([^\\p{L}\\p{N}-_.])*", "");
+		
+		Assert.assertEquals(elementName, "Namé");
+	}
 	
 	//@Test
 	public void testXmlSchemaImport() throws ClassNotFoundException, InstantiationException, IllegalAccessException, ClassCastException {
