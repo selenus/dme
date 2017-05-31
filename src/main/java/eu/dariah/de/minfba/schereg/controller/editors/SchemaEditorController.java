@@ -106,7 +106,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			response.sendRedirect("/registry/");
 			return null;
 		}
-		
+				
 		model.addAttribute("schema", authPojoConverter.convert(schema, auth.getUserId()));
 		
 		List<RightsContainer<Mapping>> mappings = mappingService.getMappings(entityId);

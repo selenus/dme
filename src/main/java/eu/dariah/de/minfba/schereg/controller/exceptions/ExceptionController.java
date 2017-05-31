@@ -9,7 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import eu.dariah.de.dariahsp.exceptions.UserCredentialsException;
+import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
+import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 
 /**
  * 
@@ -25,7 +29,21 @@ import eu.dariah.de.dariahsp.exceptions.UserCredentialsException;
 @RequestMapping(value="/errors") 
 public class ExceptionController {
 	protected static final Logger logger = LoggerFactory.getLogger(ExceptionController.class);
+			
+	@RequestMapping(value = {"", "/"}, method = {RequestMethod.GET, RequestMethod.POST }, produces="application/json")
+	public @ResponseBody ModelActionPojo renderErrorPage1(Model m, HttpServletRequest httpRequest) {	
+		int httpErrorCode = getErrorCode(httpRequest);
 		
+		ModelActionPojo result = new ModelActionPojo(false);
+		result.setMessage(new MessagePojo("error", "Code: " + httpErrorCode, null));
+		
+		Exception e = getException(httpRequest);
+		
+		result.addObjectError(e.getMessage());
+		
+		return result;
+	}
+	
 	@RequestMapping(value = {"", "/"}, method = {RequestMethod.GET, RequestMethod.POST })
 	public String renderErrorPage(Model m, HttpServletRequest httpRequest) {		
 		String errorHeading = "";

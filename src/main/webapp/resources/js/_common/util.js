@@ -139,13 +139,39 @@ Util.prototype.processServerError = function(jqXHR, textStatus) {
 	}
 	
 	// Generic server error
-	if (jqXHR.reponseText!==null && jqXHR.reponseText!==undefined) {
+	if (jqXHR.responseJSON!==null && jqXHR.responseJSON!==undefined && jqXHR.responseJSON.success===false) {
+		var error = $('<div class="server-error-container">').append(_this.showErrors(jqXHR.responseJSON)).get();
+		$(errorContainer).append(error);
+	} else if (jqXHR.responseText!==null && jqXHR.responseText!==undefined) {
 		var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
 		$(errorContainer).append(error);
 	}
+	
+	//$(errorContainer).append(jqXHR.responseText);
+	
 	_this.showErrorAlert("~eu.dariah.de.minfba.common.view.forms.servererror.head",
 			"~eu.dariah.de.minfba.common.view.forms.servererror.body", $(errorContainer).html());
 };
+
+Util.prototype.showErrors = function(modelActionPojo) {	
+	var result = $("<ul>");
+	
+	if (modelActionPojo.objectErrors!=null && Array.isArray(modelActionPojo.objectErrors)) {
+		for (var i=0; i<modelActionPojo.objectErrors.length; i++) {
+			var li = $("<li>");
+			li.append(modelActionPojo.objectErrors[i]);
+			result.append(li);
+		}
+	}
+	if (modelActionPojo.objectWarnings!=null && Array.isArray(modelActionPojo.objectWarnings)) {
+		for (var i=0; i<modelActionPojo.objectWarnings.length; i++) {
+			var li = $("<li>");
+			li.append(modelActionPojo.objectWarnings[i]);
+			result.append(li);
+		}
+	}
+	return result;
+}
 
 Util.prototype.showErrorAlert = function(titleCode, messageCode, payload, callback) {	
 	bootbox.alert(

@@ -50,7 +50,10 @@ BaseEditor.prototype.applySample = function(callback) {
 	    		callback();
 	    	}
 	    }, 
-	    error: __util.processServerError
+	    error: function(jqXHR, textStatus, errorThrown ) {
+	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
+	    	__util.processServerError(jqXHR, textStatus, errorThrown);
+	    }
 	});
 };
 
