@@ -34,6 +34,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.Nonterminal;
@@ -143,6 +144,28 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.head", null, locale), 
 				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.body", null, locale));
 		result.setMessage(msg);
+		return result;
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})
+	public @ResponseBody ModelActionPojo downloadSample(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
+		ModelActionPojo result = new ModelActionPojo();
+		
+		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
+		
+		ObjectNode pojo = objectMapper.createObjectNode();
+		pojo.set("content", new TextNode(s.getSampleInput()));
+		
+		pojo.set("mime", new TextNode("application/xml; charset=utf-8"));
+		pojo.set("extension", new TextNode("xml"));
+		
+		
+		result.setPojo(pojo);
+		
 		return result;
 	}
 

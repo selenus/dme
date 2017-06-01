@@ -37,16 +37,6 @@ BaseEditor.prototype.applyAndExecuteSample = function() {
 };
 
 BaseEditor.prototype.uploadAndExecuteSample = function() {
-	/*var _this = this;
-	this.samplePane.children("div:not(.ui-pane-title)").hide();
-	
-	/* 
-	 * 1. Provide file upload
-	 * 2. Validate file
-	 * 3. Reset textbox if valid
-	 * 4. Execute sample
-	 */
-	
 	var _this = this;
 	var form_identifier = "edit-root";
 
@@ -56,8 +46,8 @@ BaseEditor.prototype.uploadAndExecuteSample = function() {
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"},
-		                /*{placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"},
-		                {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}	*/	
+		                {placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.schereg.editor.forms.sample_uploaded.head"},
+		                {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.schereg.editor.forms.sample_uploaded.body"}	
 		                ],
 		completeCallback: function() { 
 			_this.logArea.refresh();
@@ -73,18 +63,9 @@ BaseEditor.prototype.uploadAndExecuteSample = function() {
 		uploadTarget: "async/uploadSample", 			// where to we upload the file(s) to
 		multiFiles: false, 						// one or multiple files
 		elementChangeCallback: _this.handleFileValidatedOrFailed
-	});
-		
+	});	
 		
 	modalFormHandler.show(form_identifier);
-	
-	/*if (this.sampleModified) {
-		this.applySample(function() {
-			_this.executeSample();
-		})
-	} else {
-		this.executeSample();
-	}*/
 };
 
 BaseEditor.prototype.handleSampleUploaded = function(data) {
@@ -123,6 +104,29 @@ BaseEditor.prototype.applySample = function(callback) {
 	    	$(_this.samplePane).children("div:not(.ui-pane-title)").show();
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
 	    }
+	});
+};
+
+BaseEditor.prototype.downloadSample = function() {
+	var _this = this;
+
+	$.ajax({
+	    url: _this.pathname + "/async/download_sample",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	if (data.pojo===null || data.pojo.content===null || data.pojo.content.length==0) {
+	    		bootbox.alert(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"));
+	    	} else {
+		    	var content = data.pojo.content;
+		    	if (data.pojo.extension==="json") {
+		    		content = JSON.stringify(data.pojo.content);
+		    	}
+		    	blob = new Blob([content], {type: data.pojo.mime});
+		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.pojo.extension);
+	    	}
+	    },
+	    error: __util.processServerError
 	});
 };
 

@@ -15,7 +15,9 @@ function BaseEditor() {
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.base_rule",
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout",
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.separate",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.combined"]);
+	                              "~eu.dariah.de.minfba.schereg.model.grammar.combined",
+	                              
+	                              "~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"]);
 	this.vocabularySources = new Array();
 };
 

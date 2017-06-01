@@ -31,6 +31,10 @@
 	display: inline;
 }
 
+.btn-sm .fa {
+	font-size: 14px;
+}
+
 
 /*!
  *	Typeahead
