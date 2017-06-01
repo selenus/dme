@@ -123,9 +123,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	@RequestMapping(method=RequestMethod.POST, value={"/async/executeUploadedSample"})
 	public @ResponseBody ModelActionPojo executeUploadedSample(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
 		ModelActionPojo result = new ModelActionPojo();
-	
-		throw new IOException("test ex");
-		/*
+		
 		if (temporaryFilesMap.containsKey(fileId)) {
 			String sample = new String(Files.readAllBytes(Paths.get(  new File(temporaryFilesMap.get(fileId)).toURI()  )), Charset.forName("UTF-8"));
 			
@@ -145,7 +143,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.head", null, locale), 
 				messageSource.getMessage("~eu.dariah.de.minfba.common.view.forms.file.validationfailed.body", null, locale));
 		result.setMessage(msg);
-		return result;*/
+		return result;
 	}
 
 	@RequestMapping(method=GET, value={"/forms/fileupload"})
