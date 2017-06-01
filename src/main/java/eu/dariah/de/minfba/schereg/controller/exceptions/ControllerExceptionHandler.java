@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+
+import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
+import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,10 +44,11 @@ public class ControllerExceptionHandler {
 		}
 
 		if (headers.getAccept().contains(MediaType.APPLICATION_JSON)) {
+			ModelActionPojo result = new ModelActionPojo(false);
+			result.setMessage(new MessagePojo("error", "Code: 500", null));
+			result.addObjectError("Error code: 500");
 			
-			
-			
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ModelAndView(DEFAULT_ERROR_VIEW));
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 		}
 		
 		ModelAndView mav = new ModelAndView(DEFAULT_ERROR_VIEW);
