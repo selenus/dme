@@ -142,4 +142,9 @@ public class MappingEditorController extends BaseMainEditorController {
 		sessionService.saveSession(session);
 		return result;
 	}
+	
+	@Override
+	protected String getPrefix() {
+		return "/mapping/editor/";
+	}
 }

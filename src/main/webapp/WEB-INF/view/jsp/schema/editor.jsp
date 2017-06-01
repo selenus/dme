@@ -90,7 +90,11 @@
 								</div>
 								<div class="editor-sample-container">
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.data" /></h5>
-									<button type="button" onclick="editor.applyAndExecuteSample(); return false;" class="pull-right btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>
+									<div class="pull-right">
+										<button type="button" onclick="editor.uploadAndExecuteSample(); return false;" class="btn btn-default btn-sm"><i class="fa fa-upload" aria-hidden="true"></i></button>
+										<button type="button" onclick="editor.applyAndExecuteSample(); return false;" class="btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>	
+									</div>
+									
 									<ul class="nav nav-tabs" role="tablist">
 										<li role="presentation"<c:if test="${currentSampleCount==0}"> class="active"</c:if>>
 											<a href="#sample-input-container" aria-controls="sample-input-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /></a>

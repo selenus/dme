@@ -38,9 +38,11 @@ public class ExceptionController {
 		result.setMessage(new MessagePojo("error", "Code: " + httpErrorCode, null));
 		
 		Exception e = getException(httpRequest);
-		
-		result.addObjectError(e.getMessage());
-		
+		if (e!=null) {
+			result.addObjectError(e.getMessage());
+		} else {
+			result.addObjectError("Error code: " + httpErrorCode);
+		}
 		return result;
 	}
 	

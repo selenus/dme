@@ -46,6 +46,9 @@
 		</put-list-attribute>
 	</definition>
 	
+	<definition name="editor/form/upload_sample" template="/WEB-INF/view/jsp/editor/forms/sample_file.jsp" />
+	
+	
 	<!-- Element/concept editors -->
 	<definition name="elementEditor/form/edit_nonterminal" template="/WEB-INF/view/jsp/editor/element/edit_nonterminal.jsp" />
 	<definition name="elementEditor/form/edit_label" template="/WEB-INF/view/jsp/editor/element/edit_label.jsp" />

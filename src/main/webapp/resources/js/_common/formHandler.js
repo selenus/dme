@@ -61,6 +61,17 @@ var ModalFormHandler = function(options) {
 	            		 {placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.head"},
 	            		 {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.file.uploadcomplete.body"}];
 	
+	if (this.options.translations!=null && this.options.translations instanceof Array) {
+		for (var i=0; i<this.options.translations.length; i++) {
+			for (var j=0; j<this.translations.length; j++) {
+				if (this.translations[j].placeholder===this.options.translations[i].placeholder) {
+					this.translations[j].key=this.options.translations[i].key;
+					break;
+				}
+			}
+		}
+	}
+	
 	this.displayCallback = null;
 	this.setupCallback = null;
 	this.completeCallback = null;
@@ -400,6 +411,24 @@ SchemaSourceSelector.prototype.handleProgressAll = function(e, data) {
     $(this.container).find('.progress-extended').text(data.loaded + " of " + data.total + "B");
 };
 
+SchemaSourceSelector.prototype.handleValidationDone = function(success, objectId, data) {
+	$(this.container).find('.progress .bar').css('width', '75%');
+	$(this.container).find(".fileupload-progress").hide(0);
+	
+	var _this = this;
+	if (success==true) {
+		setTimeout(function() {
+				$(_this.owner.form).find(".form-btn-submit").removeAttr("disabled")
+		}, 200);
+	}
+	
+	$(this.container).find("input#file\\.id").attr("value", objectId);
+	
+	if (this.options.elementChangeCallback != undefined && typeof this.options.elementChangeCallback == 'function') {
+		this.options.elementChangeCallback(data);
+	}
+};
+
 SchemaSourceSelector.prototype.handleDone = function(e, data) {
 	$(this.container).find('.progress .bar').css('width', '75%');
     $(this.container).find('.progress-extended').text("");
@@ -418,31 +447,26 @@ SchemaSourceSelector.prototype.handleDone = function(e, data) {
 			_this.owner.addMessage("success", _this.owner.translate("~*file.uploadcomplete.head"), 
 					_this.owner.translate("~*file.uploadcomplete.body"));
 			
-			$.each(data.result.files, function (result, object) {
-	    		// Do the validation
-	    		$.ajax({
-			        url: window.location.pathname + object.validateLink,
-			        type: "GET",
-			        dataType: "json",
-			        success: function(data) { 
-			        	$(_this.container).find('.progress .bar').css('width', '75%');
-			        	$(_this.container).find(".fileupload-progress").hide(0);
-		        		_this.owner.addMessage(data.message.messageType, data.message.messageHead, data.message.messageBody);
-			        	
-			        	if (data.success==true) {
-			        		$(_this.owner.form).find(".form-btn-submit").removeAttr("disabled");
-			        	}
-			        	
-			        	$(_this.container).find("input#file\\.id").attr("value", object.id);
-			        	
-			        	if (_this.options.elementChangeCallback != undefined && typeof _this.options.elementChangeCallback == 'function') {
-			        		_this.options.elementChangeCallback(data);
-			        	}
-			        },
-			        error: function(jqXHR, textStatus, errorThrown) { 
-			        	__util.processServerError(jqXHR, textStatus, errorThrown);
-			        }
-				});
+			for (var i=0; i<data.result.files.length; i++) {
+				var object = data.result.files[i];
+
+				if (object.validateLink===null || object.validateLink===undefined) {
+					_this.handleValidationDone(true, object.id, object);
+				} else {
+					// Do the validation
+		    		$.ajax({
+				        url: window.location.pathname + object.validateLink,
+				        type: "GET",
+				        dataType: "json",
+				        success: function(data) { 
+			        		_this.owner.addMessage(data.message.messageType, data.message.messageHead, data.message.messageBody);
+			        		_this.handleValidationDone(data.success, object.id, data);
+				        },
+				        error: function(jqXHR, textStatus, errorThrown) { 
+				        	__util.processServerError(jqXHR, textStatus, errorThrown);
+				        }
+					});
+				}
 	    		
 	    		// General containers
 	    		var contentRow = $("<tr>");
@@ -458,7 +482,7 @@ SchemaSourceSelector.prototype.handleDone = function(e, data) {
 	    		      		
 	    		$(contentRow).appendTo($(fileTable));
 	    		
-	    	});
+	    	}
 			
 		} else {
 			_this.owner.addMessage("danger", _this.owner.translate("~*file.generalerror.head"), 

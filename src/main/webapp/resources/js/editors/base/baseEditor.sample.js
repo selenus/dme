@@ -36,6 +36,72 @@ BaseEditor.prototype.applyAndExecuteSample = function() {
 	}
 };
 
+BaseEditor.prototype.uploadAndExecuteSample = function() {
+	/*var _this = this;
+	this.samplePane.children("div:not(.ui-pane-title)").hide();
+	
+	/* 
+	 * 1. Provide file upload
+	 * 2. Validate file
+	 * 3. Reset textbox if valid
+	 * 4. Execute sample
+	 */
+	
+	var _this = this;
+	var form_identifier = "edit-root";
+
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "forms/uploadSample/",
+		additionalModalClasses: "wide-modal",
+		identifier: form_identifier,
+		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"},
+		                /*{placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"},
+		                {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}	*/	
+		                ],
+		completeCallback: function() { 
+			_this.executeSample(); 
+		}
+	});
+	
+	modalFormHandler.fileUploadElements.push({
+		selector: "#upload_source",				// selector for identifying where to put widget
+		formSource: "forms/fileupload",		// where is the form
+		uploadTarget: "async/uploadSample", 			// where to we upload the file(s) to
+		multiFiles: false, 						// one or multiple files
+		elementChangeCallback: _this.handleFileValidatedOrFailed
+	});
+		
+		
+	modalFormHandler.show(form_identifier);
+	
+	/*if (this.sampleModified) {
+		this.applySample(function() {
+			_this.executeSample();
+		})
+	} else {
+		this.executeSample();
+	}*/
+};
+
+BaseEditor.prototype.handleSampleUploaded = function(data) {
+	var select = $("#schema_root");
+	select.html("");
+	if (data==null || data.pojo==null || data.pojo.length==0) {
+		select.prop("disabled", "disabled");
+		$("#btn-submit-schema-elements").prop("disabled", "disabled");
+		return;
+	}
+	
+	var option;
+	for (var i=0; i<data.pojo.length; i++) {
+		option = "<option value='" + i + "'>" + data.pojo[i].name + " <small>(" + data.pojo[i].namespace + ")</small>" + "</option>";
+		select.append(option);
+	}
+	select.removeProp("disabled");
+	$("#btn-submit-schema-elements").removeProp("disabled");
+};
+
 BaseEditor.prototype.applySample = function(callback) {
 	var _this = this;
 	$.ajax({
@@ -312,7 +378,7 @@ BaseEditor.prototype.buildSampleResourceItem = function(key, resource) {
 	
 	var subItems = this.buildSampleResource(resource, item);
 	if (subItems.length > 0) {
-		item.append($("<ul>").append(subItems));
+		item.appenimportd($("<ul>").append(subItems));
 	}
 	
 	return item;
