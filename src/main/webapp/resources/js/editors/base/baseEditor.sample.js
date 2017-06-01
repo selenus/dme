@@ -60,6 +60,9 @@ BaseEditor.prototype.uploadAndExecuteSample = function() {
 		                {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}	*/	
 		                ],
 		completeCallback: function() { 
+			_this.logArea.refresh();
+    		_this.sampleModified = false;
+			_this.samplePane.children("div:not(.ui-pane-title)").hide();
 			_this.executeSample(); 
 		}
 	});
