@@ -232,6 +232,8 @@ BaseEditor.prototype.processSampleExecutionResult = function(count) {
 
 BaseEditor.prototype.getSampleResource = function() {
 	var _this = this;
+	this.samplePane.children("div:not(.ui-pane-title)").hide();
+	
 	$.ajax({
 	    url: this.samplePath + "async/getSampleResource",
 	    type: "GET",
@@ -248,6 +250,8 @@ BaseEditor.prototype.getSampleResource = function() {
 	    	_this.setSampleNavigationBar();
 	    	if (_this.mappingId!==undefined && _this instanceof MappingEditor) {
 	    		_this.getTransformedResource();
+	    	} else {
+	    		_this.samplePane.children("div:not(.ui-pane-title)").show();
 	    	}
 	    },
 	    error: function() {
@@ -272,7 +276,7 @@ BaseEditor.prototype.getTransformedResource = function() {
 	    	} else {
 	    		$(".sample-transformed-resource").text("");
 	    	}
-	    	
+	    	_this.samplePane.children("div:not(.ui-pane-title)").show();
 	    	_this.setSampleNavigationBar();
 	    },
 	    error: function() {
@@ -385,7 +389,7 @@ BaseEditor.prototype.buildSampleResourceItem = function(key, resource) {
 	
 	var subItems = this.buildSampleResource(resource, item);
 	if (subItems.length > 0) {
-		item.appenimportd($("<ul>").append(subItems));
+		item.append($("<ul>").append(subItems));
 	}
 	
 	return item;
