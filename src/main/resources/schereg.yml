@@ -6,6 +6,10 @@ paths:
   models: /data/_srv/schereg/models
   tmpUploadDir: /tmp/schereg_uploads/
 
+editors:
+  samples:
+    maxTravelSize: 50000
+
 db:
   host: 127.0.0.1
   port: 27017

@@ -107,23 +107,70 @@ BaseEditor.prototype.applySample = function(callback) {
 	});
 };
 
-BaseEditor.prototype.downloadSample = function() {
+BaseEditor.prototype.loadSampleInput = function() {
 	var _this = this;
+	this.samplePane.children("div:not(.ui-pane-title)").hide();
+	
+	$.ajax({
+	    url: _this.pathname + "/async/load_sample",
+	    type: "GET",
+	    dataType: "json",
+	    data: { t: "input" },
+	    success: function(data) {
+    		
+	    	$('#sample-input-textarea').val(data.pojo) , '#load-sample-input-buttonbar'
+	    	$('#load-sample-input-buttonbar').addClass("hide");
+    		
+    		_this.samplePane.children("div:not(.ui-pane-title)").show();
+    		_this.resize();
+	    },
+	    error: __util.processServerError
+	});
+};
 
+BaseEditor.prototype.downloadSample = function(type) {
+	var _this = this;
+	if (type==="output" || type==="transformed") {		
+	    bootbox.confirm({
+	        title: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.set_or_resource.head"),
+	    	message: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.set_or_resource.body"),
+	        buttons: {
+	            confirm: {
+	                label: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.resource"),
+	            },
+	            cancel: {
+	                label: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.set"),
+	            }
+	        },
+	        callback: function (result) {
+	            if (result===true) {
+	            	_this.downloadSampleFile(type, _this.getCurrentSampleIndex()); 
+	            } else {
+	            	_this.downloadSampleFile(type);
+	            }
+	        }
+	    });
+	} else {
+		this.downloadSampleFile(type);
+	}
+};
+
+BaseEditor.prototype.downloadSampleFile = function(type, index) {
+	var _this = this;
 	$.ajax({
 	    url: _this.pathname + "/async/download_sample",
 	    type: "GET",
 	    dataType: "json",
+	    data: { t: type, i: (index===null||index===undefined ? -1 : index) },
 	    success: function(data) {
-	    	if (data.pojo===null || data.pojo.content===null || data.pojo.content.length==0) {
+	    	if (data.content===null || data.content.length==0) {
 	    		bootbox.alert(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"));
 	    	} else {
-		    	var content = data.pojo.content;
-		    	if (data.pojo.extension==="json") {
-		    		content = JSON.stringify(data.pojo.content);
+		    	if (data.extension==="json") {
+		    		data.content = JSON.stringify(data.content);
 		    	}
-		    	blob = new Blob([content], {type: data.pojo.mime});
-		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.pojo.extension);
+		    	blob = new Blob([data.content], {type: data.mime});
+		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.extension);
 	    	}
 	    },
 	    error: __util.processServerError
@@ -230,20 +277,21 @@ BaseEditor.prototype.processSampleExecutionResult = function(count) {
 	this.getSampleResource();
 };
 
-BaseEditor.prototype.getSampleResource = function() {
+BaseEditor.prototype.getSampleResource = function(force) {
 	var _this = this;
 	this.samplePane.children("div:not(.ui-pane-title)").hide();
 	
 	$.ajax({
 	    url: this.samplePath + "async/getSampleResource",
 	    type: "GET",
-	    data: { index : _this.getCurrentSampleIndex() },
+	    data: { 
+	    	index: _this.getCurrentSampleIndex(),
+	    	force: (force===true)
+	    },
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data!=null && data!=undefined) {
-	    		var result = $("<ul>");
-	    		result.append(_this.buildSampleResource(data));
-	    		$(".sample-output-resource").html(result);
+	    		$(".sample-output-resource").html(_this.buildSampleResourceObject(data));
 	    	} else {
 	    		$(".sample-output-resource").text("");
 	    	}
@@ -270,9 +318,7 @@ BaseEditor.prototype.getTransformedResource = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data!=null && data!=undefined) {
-	    		var result = $("<ul>");
-		    	result.append(_this.buildSampleResource(data));
-		    	$(".sample-transformed-resource").html(result);
+		    	$(".sample-transformed-resource").html(_this.buildSampleResourceObject(data));
 	    	} else {
 	    		$(".sample-transformed-resource").text("");
 	    	}
@@ -337,8 +383,29 @@ BaseEditor.prototype.showSampleResourceSource = function() {
 	$(".btn-sample-target").removeClass("btn-info");
 }
 
+BaseEditor.prototype.buildSampleResourceObject = function(data) {
+	if (data.statusInfo.available===true) {
+		if (data.statusInfo.oversize===false) {
+			
+			$(".btn-load-sample-output").addClass("hide");
+			
+			var result = $("<ul>");
+    		result.append(this.buildSampleResource(data.pojo));
+			
+			return result;
+		} else {
+			$(".btn-load-sample-output").removeClass("hide");
+			var result = $("<p>");
+    		result.html("Large output resource. Please <a href=\"#\" onclick=\"editor.getSampleResource(true); return false;\"><span class=\"glyphicon glyphicon-download\" aria-hidden=\"true\"></span> load here</a> " +
+    				"explicitly if needed or <a href=\"#\" onclick=\"editor.downloadSample('output', true); return false;\"><span class=\"glyphicon glyphicon-download\" aria-hidden=\"true\"></span> download as file</a>.");
+			return result;
+		}
+	}
+};
+
 BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 	var items = [];
+
 	for (var i=0; i<Object.getOwnPropertyNames(resource).length; i++) {
 		var key = Object.getOwnPropertyNames(resource)[i];
 		
@@ -360,6 +427,7 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 		} else {
 			items.push(this.buildSampleResourceItem(key, value));
 		}
+	
 	}
 	return items;
 };

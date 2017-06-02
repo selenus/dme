@@ -508,9 +508,14 @@ textarea.height-sized-element {
 	box-shadow: none;
 }
 
-#sample-output-container {
+#sample-output-container,
+#sample-input-container {
 	border: 1px solid #DDD;
 	border-top: none;
+}
+
+#sample-input-container textarea {
+	border: none;
 }
 
 #sample-output-container .button-bar {

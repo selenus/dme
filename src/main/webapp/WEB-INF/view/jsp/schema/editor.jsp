@@ -89,7 +89,8 @@
 									  <button type="button" onclick="editor.uploadAndExecuteSample(); return false;" class="btn btn-default btn-sm"><i class="fa fa-upload" aria-hidden="true"></i></button>
 									  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars" aria-hidden="true"></i></button>
 									  <ul style="z-index: 1001" class="dropdown-menu">
-									    <li><a href="#" class="disabled" id="btn-download-sample" onclick="editor.downloadSample(); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.actions.download_sample_file" /></a></li>
+									    <li><a href="#" onclick="editor.downloadSample('input'); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.actions.download_sample_file" /></a></li>
+									    <li><a href="#" onclick="editor.downloadSample('output'); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.actions.download_sample_output" /></a></li>
 									    <li role="separator" class="divider"></li>
 									    <li><a href="#" onclick="sessions.saveSession(editor.schema.id);"><i class="fa fa-floppy-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></a></li>
 										<li><a href="#" onclick="sessions.loadSession(editor.schema.id);"><i class="fa fa-folder-open-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></a></li>
@@ -114,16 +115,41 @@
 									</ul>
 									<div class="tab-content">
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount==0}"> active</c:if>" id="sample-input-container">
-											<c:choose>
-												<c:when test="${session.sampleInput!=null && session.sampleInput!=''}">
-													<input type="hidden" id="sample-set" value="true">
-													<textarea class="sample-textarea form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" />" rows="3"></textarea>
-												</c:when>
-												<c:otherwise>
-													<input type="hidden" id="sample-set" value="false">
-													<textarea class="sample-textarea form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" />" rows="3"></textarea>
-												</c:otherwise>
-											</c:choose>
+											<div id="load-sample-input-buttonbar" class="button-bar<c:if test="${sampleInputOversize!=true}"> hide</c:if>">
+												<button type="button" onclick="editor.loadSampleInput(); return false;" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> ~ Download</button>
+											</div>
+											
+											<c:set var="sampleInputSet" value="${session.sampleInput!=null && session.sampleInput!=''}" />
+											<c:set var="sampleInputDisplayed" value="${inputSet && sampleInputOversize==false}" />
+											
+											<div id="sample-input-textarea-container">
+												
+												<input type="hidden" id="sample-set" value="${sampleInputSet}">
+												
+												<div id="sample-input-textarea-placeholder" onclick="alert('sabbl')" class="height-sized-element<c:if test="${sampleInputDisplayed}"> hide</c:if>">
+												
+													<c:choose>
+														<c:when test="${!sampleInputSet}">
+															<p><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" /></p>
+														</c:when>
+														<c:otherwise>
+															<p><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" /></p>
+														</c:otherwise>
+													</c:choose>
+													
+												
+												</div>
+											
+												<c:choose>
+													<c:when test="${sampleInputDisplayed}">
+														<textarea id="sample-input-textarea" class="sample-textarea form-control height-sized-element" rows="3">${session.sampleInput}</textarea>
+													</c:when>
+													<c:otherwise>
+														<textarea id="sample-input-textarea" class="sample-textarea form-control height-sized-element hide" rows="3"></textarea>
+													</c:otherwise>
+												</c:choose>
+											</div>
+											
 										</div>
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="sample-output-container">
 											<div class="button-bar">

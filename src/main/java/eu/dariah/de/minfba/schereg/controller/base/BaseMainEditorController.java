@@ -33,6 +33,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -67,6 +68,9 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	
 	@Value(value="${paths.tmpUploadDir:/tmp}")
 	protected String tmpUploadDirPath;
+	
+	@Value(value="${editors.samples.maxTravelSize:10000}")
+	protected int maxTravelSize;
 	
 	public BaseMainEditorController(String mainNavId) {
 		super(mainNavId);
@@ -147,8 +151,30 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		return result;
 	}
 	
+	@RequestMapping(method=RequestMethod.GET, value={"/async/load_sample"})
+	public @ResponseBody String loadSample(@PathVariable String entityId, @RequestParam(name="t", defaultValue="input") String type, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
+		
+		ModelActionPojo result = new ModelActionPojo();
+		
+		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
+		
+		if (type.equals("output")) {
+			result.setPojo(objectMapper.convertValue(s.getSampleOutput(), JsonNode.class));
+		} else if (type.equals("transformed")) { 
+			
+		} else {
+			result.setPojo(new TextNode(s.getSampleInput()));
+		}
+		
+		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
+	}
+	
 	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})
-	public @ResponseBody ModelActionPojo downloadSample(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
+	public @ResponseBody String downloadSample(@PathVariable String entityId, @RequestParam(name="t", defaultValue="input") String type, @RequestParam(name="i", defaultValue="-1") int index, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
 		ModelActionPojo result = new ModelActionPojo();
 		
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
@@ -158,15 +184,30 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		}
 		
 		ObjectNode pojo = objectMapper.createObjectNode();
-		pojo.set("content", new TextNode(s.getSampleInput()));
 		
-		pojo.set("mime", new TextNode("application/xml; charset=utf-8"));
-		pojo.set("extension", new TextNode("xml"));
-		
+		if (type.equals("output") || type.equals("transformed")) {
+			if (type.equals("output") && s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
+				if (index>=0) {
+					pojo.set("content", objectMapper.convertValue(s.getSampleOutput().get(index), JsonNode.class));
+				} else {
+					pojo.set("content", objectMapper.convertValue(s.getSampleOutput(), JsonNode.class));
+				}
+			} else if (type.equals("transformed") && s.getSampleMapped()!=null && s.getSampleMapped().size()>0) {
+				
+			}
+			pojo.set("mime", new TextNode("application/json; charset=utf-8"));
+			pojo.set("extension", new TextNode("json"));
+		} else if (type.equals("transformed")) { 
+			
+		} else {
+			pojo.set("content", new TextNode(s.getSampleInput()));
+			pojo.set("mime", new TextNode("application/xml; charset=utf-8"));
+			pojo.set("extension", new TextNode("xml"));
+		}
 		
 		result.setPojo(pojo);
 		
-		return result;
+		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pojo);
 	}
 
 	@RequestMapping(method=GET, value={"/forms/fileupload"})
@@ -190,14 +231,18 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 		
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getSampleResource")
-	public @ResponseBody Resource getSampleResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
+	public @ResponseBody ModelActionPojo getSampleResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, @RequestParam(defaultValue="false") boolean force, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s==null) {
 			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 			return null;
 		}
+		
+		ModelActionPojo result = new ModelActionPojo();
+		ObjectNode statusPojo = objectMapper.createObjectNode();
+		result.setStatusInfo(statusPojo);
+		
 		if (s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
-			
 			if (s.getSampleOutput().size()>index) {
 				Map<String, String> valueMap = new HashMap<String, String>();
 				this.fillValueMap(valueMap, s.getSampleOutput().get(index));
@@ -213,18 +258,30 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 							}
 						}*/
 					}
-				}				
+				}
 				
 				s.setSelectedValueMap(valueMap);
 				s.setSelectedOutputIndex(index);
 				
 				sessionService.saveSession(s);
 				
-				return s.getSampleOutput().get(index);
+				result.setSuccess(true);
+				statusPojo.set("available", BooleanNode.TRUE);
+				
+				if (!force && objectMapper.writeValueAsString(s.getSampleOutput().get(index)).getBytes().length > this.maxTravelSize) {
+					statusPojo.set("oversize", BooleanNode.TRUE);
+				} else {
+					statusPojo.set("oversize", BooleanNode.FALSE);
+					result.setPojo(s.getSampleOutput().get(index));
+				}
+				return result;
 			} 
 		}
-		response.getWriter().print("null");
-		return null;
+		
+		statusPojo.set("available", BooleanNode.FALSE);
+		
+		
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTransformedResource")

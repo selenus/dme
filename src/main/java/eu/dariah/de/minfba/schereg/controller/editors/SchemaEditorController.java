@@ -101,7 +101,9 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			response.sendRedirect("/registry/");
 			return null;
 		}
-				
+		
+		boolean oversized = false;
+		
 		model.addAttribute("schema", authPojoConverter.convert(schema, auth.getUserId()));
 		
 		List<RightsContainer<Mapping>> mappings = mappingService.getMappings(entityId);
@@ -109,9 +111,20 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		try {
 			PersistedSession s = sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId(), messageSource, locale);
 			model.addAttribute("session", s);
+			
+			if (s.getSampleInput()!=null) {
+				if (s.getSampleInput().getBytes().length>this.maxTravelSize) {
+					oversized = true;
+				} else {
+					model.addAttribute("sampleInput", s.getSampleInput());
+				}
+			}
+			
 		} catch (Exception e) {
 			logger.error("Failed to load/initialize persisted session", e);
-		} 
+		}
+		
+		model.addAttribute("sampleInputOversize", oversized);
 		return "schemaEditor";
 	}
 	
