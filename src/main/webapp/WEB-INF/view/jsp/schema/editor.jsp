@@ -115,10 +115,7 @@
 									</ul>
 									<div class="tab-content">
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount==0}"> active</c:if>" id="sample-input-container">
-											<div id="load-sample-input-buttonbar" class="button-bar<c:if test="${sampleInputOversize!=true}"> hide</c:if>">
-												<button type="button" onclick="editor.loadSampleInput(); return false;" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> ~ Download</button>
-											</div>
-											
+
 											<c:set var="sampleInputSet" value="${session.sampleInput!=null && session.sampleInput!=''}" />
 											<c:set var="sampleInputDisplayed" value="${inputSet && sampleInputOversize==false}" />
 											
@@ -126,7 +123,7 @@
 												
 												<input type="hidden" id="sample-set" value="${sampleInputSet}">
 												
-												<div id="sample-input-textarea-placeholder" onclick="alert('sabbl')" class="height-sized-element<c:if test="${sampleInputDisplayed}"> hide</c:if>">
+												<div id="sample-input-textarea-placeholder" onclick="editor.handleEnterTextarea(); return false;" class="codearea height-sized-element<c:if test="${sampleInputDisplayed}"> hide</c:if>">
 												
 													<c:choose>
 														<c:when test="${!sampleInputSet}">
@@ -134,6 +131,7 @@
 														</c:when>
 														<c:otherwise>
 															<p><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" /></p>
+															<p><a onclick="editor.loadSampleInput(); return false;"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> ~ Download</a></p>
 														</c:otherwise>
 													</c:choose>
 													

@@ -18,9 +18,30 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId) {
 		this.getSampleResource();
 	}
 	
+	$("#sample-input-textarea").focusout(function() {_this.handleLeaveTextarea();});
+	
 	$('.editor-sample-container a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 		_this.resize();
 	})
+};
+
+BaseEditor.prototype.handleEnterTextarea = function() {
+	
+	$("#sample-input-textarea").removeClass("hide");
+	$("#sample-input-textarea-placeholder").addClass("hide");
+	
+	$("#sample-input-textarea").focus();
+	
+	this.resizeContent();
+};
+
+BaseEditor.prototype.handleLeaveTextarea = function() {
+	if ($("#sample-input-textarea").val().length==0) {
+		$("#sample-input-textarea").addClass("hide");
+		$("#sample-input-textarea-placeholder").removeClass("hide");
+		
+		this.resizeContent();
+	}
 };
 
 BaseEditor.prototype.applyAndExecuteSample = function() {
