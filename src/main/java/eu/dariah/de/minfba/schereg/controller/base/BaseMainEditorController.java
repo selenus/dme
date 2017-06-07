@@ -48,6 +48,7 @@ import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.processing.model.base.Resource;
+import eu.dariah.de.minfba.processing.service.text.TextStringProcessingService;
 import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
@@ -330,6 +331,9 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);
 		
 		XmlStringProcessingService processingSvc = appContext.getBean(XmlStringProcessingService.class);
+		
+		//TextStringProcessingService processingSvc = appContext.getBean(TextStringProcessingService.class);
+		
 		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
 		
 		processingSvc.setXmlString(session.getSampleInput());

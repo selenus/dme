@@ -15,6 +15,15 @@
     	<property name="maxItems" value="100" />
     </bean>
     
+    <bean id="textProcessor" class="eu.dariah.de.minfba.processing.service.text.TextStringProcessingService" scope="prototype">
+    	<property name="elementProcessors">
+    		<list>
+				<ref bean="gtfElementProcessor" />
+			</list>
+    	</property>
+    	<property name="maxItems" value="100" />
+    </bean>
+    
     
    	<bean id="mappingExecutionService" class="eu.dariah.de.minfba.mapping.service.MappingExecutionServiceImpl" scope="prototype">
    		<property name="mappingProcessors">
