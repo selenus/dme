@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
@@ -23,7 +23,7 @@ public class SchemaDaoTest {
 	
 	//@Test
 	public void testCreateSchema() {
-		XmlSchema s = new XmlSchema();
+		XmlSchemaNature s = new XmlSchemaNature();
 		s.setExternalLabel("lblExt");
 		s.setLabel("lbl");
 		s.setNamespaces(new ArrayList<XmlNamespace>());

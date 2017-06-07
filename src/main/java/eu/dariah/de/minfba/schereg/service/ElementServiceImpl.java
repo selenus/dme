@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.BaseElement;
-import eu.dariah.de.minfba.core.metamodel.Label;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
@@ -415,7 +415,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public void clearElementTree(String schemaId, AuthPojo auth) {
-		Schema s = schemaDao.findEnclosedById(schemaId);
+		SchemaNature s = schemaDao.findEnclosedById(schemaId);
 		
 		if (s!=null) {	
 			try {
@@ -433,7 +433,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Terminal removeTerminal(String schemaId, String terminalId, AuthPojo auth) {
-		Schema s = schemaDao.findEnclosedById(schemaId);
+		SchemaNature s = schemaDao.findEnclosedById(schemaId);
 		Terminal tRemove = null;
 		if (s.getTerminals()!=null) {
 			for (Terminal t : s.getTerminals()) {

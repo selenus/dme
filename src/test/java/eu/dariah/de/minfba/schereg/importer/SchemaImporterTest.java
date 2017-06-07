@@ -4,7 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 
 public class SchemaImporterTest {
 	private static final Logger logger = LoggerFactory.getLogger(SchemaImporterTest.class);

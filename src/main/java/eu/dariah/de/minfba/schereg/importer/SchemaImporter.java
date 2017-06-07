@@ -3,11 +3,11 @@ package eu.dariah.de.minfba.schereg.importer;
 import java.util.List;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 
-public interface SchemaImporter<T extends Schema> extends Runnable {
+public interface SchemaImporter<T extends SchemaNature> extends Runnable {
 	public void setSchema(T schema);
 	public void setSchemaFilePath(String schemaFilePath);
 	

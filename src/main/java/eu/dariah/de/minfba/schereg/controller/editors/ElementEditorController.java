@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import eu.dariah.de.minfba.core.metamodel.Label;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
@@ -224,13 +224,13 @@ public class ElementEditorController extends BaseScheregController {
 			throw new Exception("Invalid call of getTerminal on non-nonterminal");
 		}
 		
-		Schema s = schemaService.findSchemaById(schemaId);
-		if (s instanceof XmlSchema) {
+		SchemaNature s = schemaService.findSchemaById(schemaId);
+		if (s instanceof XmlSchemaNature) {
 			if (terminalId==null || terminalId.isEmpty()) {
 				// None assigned yet
 				return null;
 			} else {
-				for (XmlTerminal t : ((XmlSchema)s).getTerminals()) {
+				for (XmlTerminal t : ((XmlSchemaNature)s).getTerminals()) {
 					if (t.getId().equals(terminalId)) {
 						return t;
 					}

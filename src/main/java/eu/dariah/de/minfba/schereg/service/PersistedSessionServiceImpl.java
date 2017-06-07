@@ -14,8 +14,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import eu.dariah.de.minfba.core.metamodel.Label;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.schereg.dao.interfaces.PersistedSessionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;

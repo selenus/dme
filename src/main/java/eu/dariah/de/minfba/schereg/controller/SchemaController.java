@@ -25,11 +25,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.BaseSchema;
-import eu.dariah.de.minfba.core.metamodel.BaseTerminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
+import eu.dariah.de.minfba.core.metamodel.SimpleTerminalImpl;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.web.controller.DataTableList;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
@@ -59,35 +59,35 @@ public class SchemaController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData")
-	public @ResponseBody DataTableList<AuthWrappedPojo<Schema>> getData(Model model, Locale locale, HttpServletRequest request) {
+	public @ResponseBody DataTableList<AuthWrappedPojo<SchemaNature>> getData(Model model, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
-		List<AuthWrappedPojo<Schema>> pojos = authPojoConverter.convert(schemas, auth.getUserId());	
-		return new DataTableList<AuthWrappedPojo<Schema>>(pojos);
+		List<RightsContainer<SchemaNature>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
+		List<AuthWrappedPojo<SchemaNature>> pojos = authPojoConverter.convert(schemas, auth.getUserId());	
+		return new DataTableList<AuthWrappedPojo<SchemaNature>>(pojos);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getData/{id}")
-	public @ResponseBody AuthWrappedPojo<Schema> getSchema(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
+	public @ResponseBody AuthWrappedPojo<SchemaNature> getSchema(@PathVariable String id, Model model, Locale locale, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		return authPojoConverter.convert(schemaService.findByIdAndAuth(id, auth), auth.getUserId());
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getElements/{id}")
-	public @ResponseBody Schema getElements(@PathVariable String id, Model model, Locale locale) {
+	public @ResponseBody SchemaNature getElements(@PathVariable String id, Model model, Locale locale) {
 		return schemaService.findSchemaById(id);
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {		
-		model.addAttribute("schema", new BaseSchema<BaseTerminal>());
+		model.addAttribute("schema", new SchemaImpl<SimpleTerminalImpl>());
 		model.addAttribute("actionPath", "/schema/async/save");
 		return "schema/form/edit";
 	}
 		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchema schema, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid XmlSchemaNature schema, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(schema.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -99,8 +99,8 @@ public class SchemaController extends BaseScheregController {
 			schema.setId(null);
 		}
 		
-		RightsContainer<Schema> existSchema = schemaService.findByIdAndAuth(schema.getId(), auth); 
-		Schema saveSchema = existSchema==null ? null : existSchema.getElement();
+		RightsContainer<SchemaNature> existSchema = schemaService.findByIdAndAuth(schema.getId(), auth); 
+		SchemaNature saveSchema = existSchema==null ? null : existSchema.getElement();
 		boolean draft = existSchema==null ? true : existSchema.isDraft();
 		
 		if (saveSchema==null) {
@@ -110,7 +110,7 @@ public class SchemaController extends BaseScheregController {
 			saveSchema.setDescription(schema.getDescription());
 		}
 		
-		schemaService.saveSchema(new AuthWrappedPojo<XmlSchema>((XmlSchema) saveSchema, true, false, false, draft, readOnly), auth);
+		schemaService.saveSchema(new AuthWrappedPojo<XmlSchemaNature>((XmlSchemaNature) saveSchema, true, false, false, draft, readOnly), auth);
 		return result;
 	}
 	
@@ -142,7 +142,7 @@ public class SchemaController extends BaseScheregController {
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 				return new ModelActionPojo(false);
 			}			
-			RightsContainer<Schema> existSchema = schemaService.findByIdAndAuth(id, auth);
+			RightsContainer<SchemaNature> existSchema = schemaService.findByIdAndAuth(id, auth);
 			if (existSchema!=null) {
 				existSchema.setDraft(false);
 				schemaService.saveSchema(authPojoConverter.convert(existSchema, auth.getUserId()), auth);

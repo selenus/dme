@@ -38,12 +38,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -322,10 +322,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			return null;
 		}
 		
-		XmlSchema s = (XmlSchema)schemaService.findSchemaById(entityId);
+		XmlSchemaNature s = (XmlSchemaNature)schemaService.findSchemaById(entityId);
 		if (s==null) {
 			Mapping m = mappingService.findMappingById(entityId);
-			s = (XmlSchema)schemaService.findSchemaById(m.getSourceId());
+			s = (XmlSchemaNature)schemaService.findSchemaById(m.getSourceId());
 		}		
 		
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);

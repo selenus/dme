@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
@@ -61,7 +61,7 @@ public class TerminalEditorController extends BaseScheregController {
 			model.addAttribute("readonly", false);
 		}
 		
-		Schema s = schemaService.findSchemaById(schemaId);
+		SchemaNature s = schemaService.findSchemaById(schemaId);
 		XmlTerminal terminal = null;
 		if (terminalId != "-1") {
 			if (s.getTerminals()!=null) {
@@ -81,9 +81,9 @@ public class TerminalEditorController extends BaseScheregController {
 		
 		
 		List<String> availableNamespaces = new ArrayList<String>();
-		if (s instanceof XmlSchema) {	
-			if (((XmlSchema)s).getNamespaces()!=null) {
-				for (XmlNamespace ns : ((XmlSchema)s).getNamespaces()) {
+		if (s instanceof XmlSchemaNature) {	
+			if (((XmlSchemaNature)s).getNamespaces()!=null) {
+				for (XmlNamespace ns : ((XmlSchemaNature)s).getNamespaces()) {
 					availableNamespaces.add(ns.getUrl());
 				}
 			}
@@ -107,7 +107,7 @@ public class TerminalEditorController extends BaseScheregController {
 				element.setId(null);
 			}
 			
-			XmlSchema s = (XmlSchema)schemaService.findSchemaById(schemaId);
+			XmlSchemaNature s = (XmlSchemaNature)schemaService.findSchemaById(schemaId);
 			if (s.getTerminals()!=null) {
 				for (int i=0; i<s.getTerminals().size(); i++) {
 					XmlTerminal t = s.getTerminals().get(i);

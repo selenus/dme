@@ -29,23 +29,23 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
+public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	private static final Logger logger = LoggerFactory.getLogger(XmlSchemaImporter.class);
 
 	private SchemaImportListener listener;
 	private Map<String, XmlTerminal> existingTerminalQNs = new HashMap<String, XmlTerminal>();
 	private XSModel model;
 	
-	private XmlSchema schema;
+	private XmlSchemaNature schema;
 	private String schemaFilePath;
 	private String rootElementNs;
 	private String rootElementName; 
@@ -56,8 +56,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchema> {
 	private Nonterminal rootNonterminal;
 	private List<Nonterminal> additionalRootElements;
 	
-	public XmlSchema getSchema() { return schema; }
-	@Override public void setSchema(XmlSchema schema) { this.schema = schema; }
+	public XmlSchemaNature getSchema() { return schema; }
+	@Override public void setSchema(XmlSchemaNature schema) { this.schema = schema; }
 	
 	public String getSchemaFilePath() { return schemaFilePath; }
 	@Override public void setSchemaFilePath(String schemaFilePath) { this.schemaFilePath = schemaFilePath; }

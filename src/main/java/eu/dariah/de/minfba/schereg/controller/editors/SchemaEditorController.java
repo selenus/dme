@@ -44,16 +44,16 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseMainEditorController;
@@ -96,7 +96,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@RequestMapping(method=GET, value="")
 	public String getEditor(@PathVariable String entityId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, auth);
+		RightsContainer<SchemaNature> schema = schemaService.findByIdAndAuth(entityId, auth);
 		if (schema==null) {
 			response.sendRedirect("/registry/");
 			return null;
@@ -135,7 +135,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, authInfoHelper.getAuth(request));
+		RightsContainer<SchemaNature> schema = schemaService.findByIdAndAuth(entityId, authInfoHelper.getAuth(request));
 		model.addAttribute("actionPath", "/schema/async/save");
 		model.addAttribute("schema", schema.getElement());
 		model.addAttribute("readOnly", schema.isReadOnly());
@@ -354,13 +354,13 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 						rootElements.addAll(elementService.extractAllNonterminals((Nonterminal)s.getRoot()));
 						
 						// TODO: We might want to move this import logic to a (dedicated) service
-						RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, auth);
+						RightsContainer<SchemaNature> schema = schemaService.findByIdAndAuth(entityId, auth);
 						
-						((XmlSchema)schema.getElement()).setNamespaces(((XmlSchema)s.getSchema()).getNamespaces());
+						((XmlSchemaNature)schema.getElement()).setNamespaces(((XmlSchemaNature)s.getSchema()).getNamespaces());
 						
 						Map<String, String> terminalIdMap = elementService.regenerateIds(entityId, s.getSchema().getTerminals());
 
-						((XmlSchema)schema.getElement()).setTerminals(((XmlSchema)s.getSchema()).getTerminals());
+						((XmlSchemaNature)schema.getElement()).setTerminals(((XmlSchemaNature)s.getSchema()).getTerminals());
 						
 						elementService.regenerateIds(entityId, rootElements.get(schemaRoot), terminalIdMap, s.getGrammars());
 
@@ -386,7 +386,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/export")
 	public @ResponseBody ModelActionPojo exportSchema(@PathVariable String entityId, Model model, Locale locale) {
-		Schema s = schemaService.findSchemaById(entityId);
+		SchemaNature s = schemaService.findSchemaById(entityId);
 		Element r = elementService.findRootBySchemaId(entityId, true);
 		
 		SerializableSchemaContainer sp = new SerializableSchemaContainer();
@@ -429,9 +429,9 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")
 	public @ResponseBody List<? extends Terminal> getTerminals(@PathVariable String entityId) {
-		Schema s = schemaService.findSchemaById(entityId);
-		if (s instanceof XmlSchema) {	
-			return ((XmlSchema)s).getTerminals();
+		SchemaNature s = schemaService.findSchemaById(entityId);
+		if (s instanceof XmlSchemaNature) {	
+			return ((XmlSchemaNature)s).getTerminals();
 		}
 		return null;
 	}

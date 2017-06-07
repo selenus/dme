@@ -11,10 +11,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
@@ -31,22 +31,22 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	@Autowired private ElementService elementService;
 	
 	@Override
-	public List<Schema> findAllSchemas() {
+	public List<SchemaNature> findAllSchemas() {
 		return schemaDao.findAllEnclosed();
 	}
 
 	@Override
-	public void saveSchema(AuthWrappedPojo<? extends Schema> schema, AuthPojo auth) {		
+	public void saveSchema(AuthWrappedPojo<? extends SchemaNature> schema, AuthPojo auth) {		
 		this.innerSaveSchema(schema.getPojo(), schema.isDraft(), schema.isReadOnly(), auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
-	public void saveSchema(Schema schema, AuthPojo auth) {
+	public void saveSchema(SchemaNature schema, AuthPojo auth) {
 		this.innerSaveSchema(schema, null, null, auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
-	public void saveSchema(Schema schema, List<Reference> rootNonterminals, AuthPojo auth) {
+	public void saveSchema(SchemaNature schema, List<Reference> rootNonterminals, AuthPojo auth) {
 		this.innerSaveSchema(schema, null, null, auth.getUserId(), auth.getSessionId());
 		
 		Reference root = this.findReferenceById(schema.getId());
@@ -62,8 +62,8 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		this.saveRootReference(root);
 	}
 	
-	private void innerSaveSchema(Schema schema, Boolean draft, Boolean readOnly, String userId, String sessionId) {
-		RightsContainer<Schema> container = null;
+	private void innerSaveSchema(SchemaNature schema, Boolean draft, Boolean readOnly, String userId, String sessionId) {
+		RightsContainer<SchemaNature> container = null;
 		boolean isNew = schema.getId()==null || schema.getId().equals("") || schema.getId().equals("undefined"); 
 		if (isNew) {
 			container = createContainer(userId);
@@ -83,8 +83,8 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		}
 	}
 	
-	private RightsContainer<Schema> createContainer(String userId) {
-		RightsContainer<Schema> container = new RightsContainer<Schema>();
+	private RightsContainer<SchemaNature> createContainer(String userId) {
+		RightsContainer<SchemaNature> container = new RightsContainer<SchemaNature>();
 		container.setOwnerId(userId);
 		container.setId(new ObjectId().toString());
 		container.setDraft(true);
@@ -92,13 +92,13 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	}
 
 	@Override
-	public Schema findSchemaById(String id) {
+	public SchemaNature findSchemaById(String id) {
 		return schemaDao.findEnclosedById(id);
 	}
 
 	@Override
 	public void deleteSchemaById(String id, AuthPojo auth) {
-		RightsContainer<Schema> s = schemaDao.findById(id);
+		RightsContainer<SchemaNature> s = schemaDao.findById(id);
 		if (s != null) {
 			if (this.getUserCanWriteEntity(s, auth.getUserId())) {
 				Reference r = this.findReferenceById(s.getId());
@@ -119,7 +119,7 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	}*/
 
 	@Override
-	public <T extends Schema> T convertSchema(T newSchema, Schema original) {
+	public <T extends SchemaNature> T convertSchema(T newSchema, SchemaNature original) {
 		newSchema.setId(original.getId());
 		newSchema.setLabel(original.getLabel());
 		newSchema.setDescription(original.getDescription());
@@ -129,10 +129,10 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	@Override
 	public Map<String, String> getAvailableTerminals(String schemaId) {
 		Map<String,String> availableTerminals = new HashMap<String,String>();
-		Schema s = this.findSchemaById(schemaId);
-		if (s instanceof XmlSchema) {	
-			if (((XmlSchema)s).getTerminals()!=null) {
-				for (XmlTerminal t : ((XmlSchema)s).getTerminals()) {
+		SchemaNature s = this.findSchemaById(schemaId);
+		if (s instanceof XmlSchemaNature) {	
+			if (((XmlSchemaNature)s).getTerminals()!=null) {
+				for (XmlTerminal t : ((XmlSchemaNature)s).getTerminals()) {
 					availableTerminals.put(t.getId(), t.getName() + " (" + t.getNamespace() + ")");
 				}
 			}
@@ -141,12 +141,12 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	}
 
 	@Override
-	public List<RightsContainer<Schema>> findAllByAuth(AuthPojo auth) {
+	public List<RightsContainer<SchemaNature>> findAllByAuth(AuthPojo auth) {
 		return schemaDao.findAllByUserId(auth.getUserId());
 	}
 
 	@Override
-	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth) {
+	public RightsContainer<SchemaNature> findByIdAndAuth(String schemaId, AuthPojo auth) {
 		return schemaDao.findByIdAndUserId(schemaId, auth.getUserId());
 	}
 	
@@ -154,10 +154,10 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	public List<ChangeSet> getChangeSetForAllSchemas() {
 		Query q = new Query();
 		q.fields().include("_id");
-		List<RightsContainer<Schema>> schemas = schemaDao.find(q);
+		List<RightsContainer<SchemaNature>> schemas = schemaDao.find(q);
 		List<String> ids = new ArrayList<String>();
 		if (schemas!=null) {
-			for (RightsContainer<Schema> s : schemas) {
+			for (RightsContainer<SchemaNature> s : schemas) {
 				ids.add(s.getId());
 			}
 		}

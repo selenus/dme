@@ -38,15 +38,15 @@ import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.Label;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
@@ -120,7 +120,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		List<Object> inputElementIds = new ArrayList<Object>();
 		List<Object> inputGrammarIds = new ArrayList<Object>();
 		
-		if (Schema.class.isAssignableFrom(entity.getClass())) {
+		if (SchemaNature.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceByChildId(entityId, functionId).getId();
 			model.addAttribute("grammar", grammarService.findById(grammarId));
 			
@@ -281,7 +281,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		List<SyntaxTreeNode> values = new ArrayList<SyntaxTreeNode>();
 		List<DescriptionGrammar> grammars = new ArrayList<DescriptionGrammar>();
 				
-		if (Schema.class.isAssignableFrom(entity.getClass())) {
+		if (SchemaNature.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceBySchemaAndChildId(entityId, functionId).getId();
 			DescriptionGrammar g = grammarService.findById(grammarId);
 			
@@ -294,7 +294,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			f = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
 		} else { // Mappings
 			Mapping m = (Mapping)entity;
-			Schema target = schemaService.findSchemaById(m.getTargetId());
+			SchemaNature target = schemaService.findSchemaById(m.getTargetId());
 			
 			Reference parentConceptReference = referenceService.findReferenceByChildId(entity.getId(), functionId);
 			MappedConcept mc = mappedConceptService.findById(parentConceptReference.getId());

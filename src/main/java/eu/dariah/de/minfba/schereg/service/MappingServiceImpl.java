@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.MappingDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
@@ -104,9 +104,9 @@ public class MappingServiceImpl extends BaseEntityServiceImpl implements Mapping
 		qSchema.fields().include("id");
 		qSchema.fields().include("element");
 		qSchema.addCriteria(Criteria.where("id").in(schemaIds));
-		List<RightsContainer<Schema>> requiredSchemas = schemaDao.find(qSchema);
+		List<RightsContainer<SchemaNature>> requiredSchemas = schemaDao.find(qSchema);
 		HashMap<String, String> schemaIdLabelMap = new HashMap<String, String>(requiredSchemas.size());
-		for (RightsContainer<Schema> s : requiredSchemas) {
+		for (RightsContainer<SchemaNature> s : requiredSchemas) {
 			schemaIdLabelMap.put(s.getId(), s.getElement().getLabel());
 		}
 		

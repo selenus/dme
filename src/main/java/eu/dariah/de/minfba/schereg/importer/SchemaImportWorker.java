@@ -20,11 +20,11 @@ import org.springframework.stereotype.Component;
 import com.mongodb.DBObject;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -74,13 +74,13 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			logger.error("Schema id must exist (schema must be saved) before import");
 			throw new SchemaImportException("Schema id must exist (schema must be saved) before import");
 		}
-		Schema tmpS = schemaService.findSchemaById(schemaId);
+		SchemaNature tmpS = schemaService.findSchemaById(schemaId);
 		
-		XmlSchema s;
-		if (tmpS instanceof XmlSchema) {
-			s = (XmlSchema)tmpS;
+		XmlSchemaNature s;
+		if (tmpS instanceof XmlSchemaNature) {
+			s = (XmlSchemaNature)tmpS;
 		} else {
-			s = new XmlSchema();
+			s = new XmlSchemaNature();
 			s.setId(tmpS.getId());
 			s.setLabel(tmpS.getLabel());
 			s.setDescription(tmpS.getDescription());
@@ -112,7 +112,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(Schema schema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+	public synchronized void registerImportFinished(SchemaNature schema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
 			elementService.clearElementTree(schema.getId(), auth);
 		}
@@ -137,7 +137,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 
 	@Override 
-	public synchronized void registerImportFailed(Schema schema) { 
+	public synchronized void registerImportFailed(SchemaNature schema) { 
 		if (this.processingSchemaIds.contains(schema.getId())) {
 			this.processingSchemaIds.remove(schema.getId());
 		}

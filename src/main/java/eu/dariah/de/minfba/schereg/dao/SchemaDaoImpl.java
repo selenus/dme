@@ -6,19 +6,19 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchema;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.RightsAssignedObjectDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 
 @Repository
-public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<Schema> implements SchemaDao {
+public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<SchemaNature> implements SchemaDao {
 	public SchemaDaoImpl() {
-		super(new RightsContainer<Schema>().getClass(), "schema");
+		super(new RightsContainer<SchemaNature>().getClass(), "schema");
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<Schema> implement
         Criteria filterContainedNamespace = Criteria.where("element.namespaces").elemMatch(Criteria.where("prefix").is(string));
                 
         BasicQuery query = new BasicQuery(findParentSchema.getCriteriaObject(), filterContainedNamespace.getCriteriaObject());	    
-	    XmlSchema result = (XmlSchema)this.findOne(query).getElement();
+	    XmlSchemaNature result = (XmlSchemaNature)this.findOne(query).getElement();
 		
 		if (result.getNamespaces()!=null && result.getNamespaces().size()>0) {
 			return result.getNamespaces().get(0);
@@ -38,11 +38,11 @@ public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<Schema> implement
 	}
 	
 	@Override
-	public <S extends RightsContainer<Schema>> S save(S element, String userId, String sessionId) {
+	public <S extends RightsContainer<SchemaNature>> S save(S element, String userId, String sessionId) {
 		/* XmlTerminal and XmlNamespace objects are saved with the schema */
-		if (element.getElement() instanceof XmlSchema) {
+		if (element.getElement() instanceof XmlSchemaNature) {
 			List<Change> changes;
-			XmlSchema s = (XmlSchema)element.getElement();
+			XmlSchemaNature s = (XmlSchemaNature)element.getElement();
 			if (s.getTerminals()!=null) {
 				for (XmlTerminal xmlT : s.getTerminals()) {
 					changes = xmlT.flush();
