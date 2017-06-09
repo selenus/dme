@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.dariahsp.web.AuthInfoHelper;
+import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
@@ -38,12 +40,12 @@ public class SchemaApiController extends BaseApiController {
 	@RequestMapping(method = RequestMethod.GET, value = "")
 	public @ResponseBody List<SerializableSchemaContainer> getSchemas(HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		List<RightsContainer<SchemaNature>> schemas = schemaService.findAllByAuth(auth);
+		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(auth);
 		List<SerializableSchemaContainer> result = new ArrayList<SerializableSchemaContainer>();
 		ChangeSet ch;
 		SerializableSchemaContainer sp;
 		if (schemas!=null) {
-			for (RightsContainer<SchemaNature> s : schemas) {
+			for (RightsContainer<Schema> s : schemas) {
 				if (s.getElement() instanceof XmlSchemaNature) {
 					XmlSchemaNature xmlS = ((XmlSchemaNature)s.getElement());
 					xmlS.setTerminals(null);
@@ -61,7 +63,7 @@ public class SchemaApiController extends BaseApiController {
 				s.getElement().flush();
 				
 				sp = new SerializableSchemaContainer();
-				sp.setSchema(s.getElement());
+				sp.setSchema((SchemaImpl)s.getElement());
 				
 				result.add(sp);
 			}
@@ -72,11 +74,11 @@ public class SchemaApiController extends BaseApiController {
 	@RequestMapping(method = RequestMethod.GET, value = "/{entityId}")
 	public @ResponseBody SerializableSchemaContainer exportSchema(@PathVariable String entityId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		RightsContainer<SchemaNature> s = schemaService.findByIdAndAuth(entityId, auth);
+		RightsContainer<Schema> s = schemaService.findByIdAndAuth(entityId, auth);
 		Element r = elementService.findRootBySchemaId(entityId, true);
 		
 		SerializableSchemaContainer sp = new SerializableSchemaContainer();
-		sp.setSchema(s.getElement());
+		sp.setSchema((SchemaImpl)s.getElement());
 		
 		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
 		if (ch!=null) {

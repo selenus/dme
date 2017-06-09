@@ -42,6 +42,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.util.Stopwatch;
@@ -322,10 +323,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			return null;
 		}
 		
-		XmlSchemaNature s = (XmlSchemaNature)schemaService.findSchemaById(entityId);
+		Schema s = schemaService.findSchemaById(entityId);
 		if (s==null) {
 			Mapping m = mappingService.findMappingById(entityId);
-			s = (XmlSchemaNature)schemaService.findSchemaById(m.getSourceId());
+			s = schemaService.findSchemaById(m.getSourceId());
 		}		
 		
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);

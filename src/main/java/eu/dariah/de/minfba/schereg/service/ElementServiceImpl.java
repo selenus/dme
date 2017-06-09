@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.BaseElement;
+import eu.dariah.de.minfba.core.metamodel.LabelImpl;
+import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
+import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
+import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
@@ -22,9 +26,12 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
+import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
@@ -204,7 +211,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		for (Identifiable i : elements) {
 			if (i instanceof BaseElement) {
 				BaseElement e = (BaseElement)i;
-				convert = new Label(e.getEntityId(), e.getName());
+				convert = new LabelImpl(e.getEntityId(), e.getName());
 				convert.setId(e.getId());
 				
 				subelements = e.getAllChildElements();
@@ -387,9 +394,9 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		Element element = null;
 		if (rParent!=null) {
 			if (eParent instanceof Nonterminal) {
-				element = new Nonterminal(schemaId, getNormalizedName(label));
+				element = new NonterminalImpl(schemaId, getNormalizedName(label));
 			} else {
-				element = new Label(schemaId, getNormalizedName(label));
+				element = new LabelImpl(schemaId, getNormalizedName(label));
 			}
 			elementDao.save(element, auth.getUserId(), auth.getSessionId());
 			
@@ -415,7 +422,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public void clearElementTree(String schemaId, AuthPojo auth) {
-		SchemaNature s = schemaDao.findEnclosedById(schemaId);
+		Schema s = schemaDao.findEnclosedById(schemaId);
 		
 		if (s!=null) {	
 			try {
@@ -433,10 +440,13 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Terminal removeTerminal(String schemaId, String terminalId, AuthPojo auth) {
-		SchemaNature s = schemaDao.findEnclosedById(schemaId);
+		Schema s = schemaDao.findEnclosedById(schemaId);
 		Terminal tRemove = null;
-		if (s.getTerminals()!=null) {
-			for (Terminal t : s.getTerminals()) {
+		
+		List<XmlTerminal> terminals = s.getNature(XmlSchemaNature.class).getTerminals();
+		
+		if (terminals!=null) {
+			for (Terminal t : terminals) {
 				if (t.getId().equals(terminalId)) {
 					tRemove = t;
 					break;
@@ -444,7 +454,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			}
 		}
 		if (tRemove!=null) {
-			s.getTerminals().remove(tRemove);
+			terminals.remove(tRemove);
 			try {
 				schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
 			} catch (GenericScheregException e) {
@@ -454,7 +464,9 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			List<Element> elements = elementDao.find(Query.query(Criteria.where("schemaId").is(schemaId).and("terminalId").is(terminalId)));
 			if (elements!=null) {
 				for (Element e : elements) {
-					((Nonterminal)e).setTerminalId("");
+					
+					s.getNature(XmlSchemaNature.class).removeTerminalFromMap(tRemove.getId());
+					
 					elementDao.save(e, auth.getUserId(), auth.getSessionId());
 				}
 			}
@@ -493,16 +505,17 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 
 	@Override
-	public void regenerateIds(String entityId, Element element, Map<String, String> terminalIdMap, Map<String, GrammarContainer> grammarContainerMap) {
+	public void regenerateIds(SchemaNature nature, String entityId, Element element, Map<String, String> terminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
 		element.setEntityId(entityId);
 		element.setId(null);
 		if (element instanceof Nonterminal) {
-			((Nonterminal)element).setTerminalId(terminalIdMap.get(((Nonterminal)element).getTerminalId()));
+			String terminalId = nature.getTerminalId(element.getId());
+			nature.mapNonterminal(element.getId(), terminalIdMap.get(terminalId));
 		}
 		List<Element> children = element.getAllChildElements();
 		if (children!=null) {
 			for (Element child : children) {
-				this.regenerateIds(entityId, child, terminalIdMap, grammarContainerMap);
+				this.regenerateIds(nature, entityId, child, terminalIdMap, grammarContainerMap);
 			}
 		}
 		if (element.getGrammars()!=null) {

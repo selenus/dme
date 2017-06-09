@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
@@ -16,7 +17,7 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 
 @Repository
-public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<SchemaNature> implements SchemaDao {
+public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<Schema> implements SchemaDao {
 	public SchemaDaoImpl() {
 		super(new RightsContainer<SchemaNature>().getClass(), "schema");
 	}
@@ -38,7 +39,7 @@ public class SchemaDaoImpl extends RightsAssignedObjectDaoImpl<SchemaNature> imp
 	}
 	
 	@Override
-	public <S extends RightsContainer<SchemaNature>> S save(S element, String userId, String sessionId) {
+	public <S extends RightsContainer<Schema>> S save(S element, String userId, String sessionId) {
 		/* XmlTerminal and XmlNamespace objects are saved with the schema */
 		if (element.getElement() instanceof XmlSchemaNature) {
 			List<Change> changes;

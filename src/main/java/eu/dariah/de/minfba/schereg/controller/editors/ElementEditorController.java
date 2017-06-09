@@ -17,10 +17,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import eu.dariah.de.minfba.core.metamodel.LabelImpl;
+import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
@@ -98,7 +101,7 @@ public class ElementEditorController extends BaseScheregController {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		model.addAttribute("element", new Nonterminal(schemaId, null));
+		model.addAttribute("element", new NonterminalImpl(schemaId, null));
 		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewNonterminal");
 		return "elementEditor/form/edit_nonterminal";
@@ -111,7 +114,7 @@ public class ElementEditorController extends BaseScheregController {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		model.addAttribute("element", new Label(schemaId, null));
+		model.addAttribute("element", new LabelImpl(schemaId, null));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewLabel");
 		return "elementEditor/form/edit_label";
 	}
@@ -217,20 +220,24 @@ public class ElementEditorController extends BaseScheregController {
 	public @ResponseBody Terminal getTerminal(@PathVariable String schemaId, @PathVariable String elementId) throws Exception {
 		Element e = elementService.findById(elementId);
 		String terminalId = null;
+		
+		
+		Schema s = schemaService.findSchemaById(schemaId);
+		XmlSchemaNature sn = s.getNature(XmlSchemaNature.class);
+		
 		if (e instanceof Nonterminal) {
-			terminalId = ((Nonterminal)e).getTerminalId();
+			terminalId = sn.getTerminalId(e.getId());
 		} else {
 			logger.warn("GetTerminal called for object of type {}", e.getClass().getSimpleName());
 			throw new Exception("Invalid call of getTerminal on non-nonterminal");
 		}
 		
-		SchemaNature s = schemaService.findSchemaById(schemaId);
-		if (s instanceof XmlSchemaNature) {
+		if (sn!=null) {
 			if (terminalId==null || terminalId.isEmpty()) {
 				// None assigned yet
 				return null;
 			} else {
-				for (XmlTerminal t : ((XmlSchemaNature)s).getTerminals()) {
+				for (XmlTerminal t : sn.getTerminals()) {
 					if (t.getId().equals(terminalId)) {
 						return t;
 					}

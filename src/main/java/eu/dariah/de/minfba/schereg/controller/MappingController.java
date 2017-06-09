@@ -28,6 +28,7 @@ import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
 import eu.dariah.de.minfba.core.metamodel.SimpleTerminalImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.mapping.MappingImpl;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
@@ -69,7 +70,7 @@ public class MappingController extends BaseScheregController {
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value="forms/add")
 	public String getAddForm(Model model, Locale locale, HttpServletRequest request) {
-		List<RightsContainer<SchemaNature>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
+		List<RightsContainer<Schema>> schemas = schemaService.findAllByAuth(authInfoHelper.getAuth(request));
 		Mapping m = new MappingImpl();
 		if (schemas.size()>1) {
 			m.setSourceId(schemas.get(0).getId());
@@ -93,7 +94,7 @@ public class MappingController extends BaseScheregController {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		RightsContainer<Mapping> mapping = mappingService.findByIdAndAuth(id, auth);
 		
-		List<RightsContainer<SchemaNature>> schemas = new ArrayList<RightsContainer<SchemaNature>>(2);
+		List<RightsContainer<Schema>> schemas = new ArrayList<RightsContainer<Schema>>(2);
 		schemas.add(schemaService.findByIdAndAuth(mapping.getElement().getSourceId(), auth));
 		schemas.add(schemaService.findByIdAndAuth(mapping.getElement().getTargetId(), auth));
 		
@@ -179,8 +180,8 @@ public class MappingController extends BaseScheregController {
 			AuthPojo auth = authInfoHelper.getAuth(request);			
 			RightsContainer<Mapping> existMapping = mappingService.findByIdAndAuth(id, auth);
 			if (existMapping!=null) {
-				RightsContainer<SchemaNature> source = schemaService.findByIdAndAuth(existMapping.getElement().getSourceId(), auth);
-				RightsContainer<SchemaNature> target = schemaService.findByIdAndAuth(existMapping.getElement().getTargetId(), auth);
+				RightsContainer<Schema> source = schemaService.findByIdAndAuth(existMapping.getElement().getSourceId(), auth);
+				RightsContainer<Schema> target = schemaService.findByIdAndAuth(existMapping.getElement().getTargetId(), auth);
 				
 				if (source.isDraft() || target.isDraft()) {
 					result.setMessage(new MessagePojo("error", "~eu.dariah.de.minfba.schereg.model.mapping.validation.no_pub_schema_drafts", ""));
