@@ -42,8 +42,8 @@
 	</bean>
 	
 	<bean class="eu.dariah.de.minfba.schereg.sessions.SessionCleanerService">
-		<property name="defaultExpirationMins" value="4320" />
-		<property name="intervalMins" value="720" />
+		<property name="defaultExpirationMins" value="86400" /> <!-- 60 days -->
+		<property name="intervalMins" value="2880" /> <!-- every two days -->
 	</bean>
 	
 	<context:component-scan base-package="eu.dariah.de.dariahsp.configuration" />
