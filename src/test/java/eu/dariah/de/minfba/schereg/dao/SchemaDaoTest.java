@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
@@ -23,20 +25,25 @@ public class SchemaDaoTest {
 	
 	//@Test
 	public void testCreateSchema() {
-		XmlSchemaNature s = new XmlSchemaNature();
-		s.setExternalLabel("lblExt");
+		Schema s = new SchemaImpl();
+		
+		XmlSchemaNature xmlN = new XmlSchemaNature();
+		
+		s.addOrReplaceSchemaNature(xmlN);
+		
+		xmlN.setExternalLabel("lblExt");
 		s.setLabel("lbl");
-		s.setNamespaces(new ArrayList<XmlNamespace>());
+		xmlN.setNamespaces(new ArrayList<XmlNamespace>());
 		
 		XmlNamespace xs = new XmlNamespace();
 		xs.setPrefix("prefix_1");
 		xs.setUrl("url_1");
-		s.getNamespaces().add(xs);
+		xmlN.getNamespaces().add(xs);
 		
 		xs = new XmlNamespace();
 		xs.setPrefix("prefix_2");
 		xs.setUrl("url_2");
-		s.getNamespaces().add(xs);
+		xmlN.getNamespaces().add(xs);
 		
 		/*s = schemaDao.save(s);
 		

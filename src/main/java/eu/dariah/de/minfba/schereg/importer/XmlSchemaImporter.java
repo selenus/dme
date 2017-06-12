@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
+import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
@@ -87,7 +89,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	public void run() {
 		try {
 			Stopwatch sw = new Stopwatch().start();
-			logger.debug(String.format("Started importing schema %s", schema.getLabel()));
+			logger.debug(String.format("Started importing schema %s", schema.getEntityId()));
 			
 			this.importXmlSchema();
 			if (this.getListener()!=null) {
@@ -100,7 +102,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 				}				
 				schema.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
 				
-				logger.info(String.format("Finisched importing schema %s in %sms", schema.getLabel(), sw.getElapsedTime()));
+				logger.info(String.format("Finisched importing schema %s in %sms", schema.getEntityId(), sw.getElapsedTime()));
 				this.getListener().registerImportFinished(schema, rootNonterminal, additionalRootElements, auth);
 			}
 		} catch (Exception e) {
@@ -148,7 +150,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		return null;
 	}
 	
-	protected void importXmlSchema() {
+	protected void importXmlSchema() throws MetamodelConsistencyException {
 		XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 		XSLoader schemaLoader = impl.createXSLoader(null);
 		model = schemaLoader.loadURI(schemaFilePath);
@@ -207,7 +209,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 				if (addRoot.equals(compareRoot)) {
 					continue;
 				}
-				if (this.getChildrenContainTerminalId(compareRoot, addRoot.getTerminalId())) {
+				if (this.getChildrenContainTerminalId(compareRoot, schema.getTerminalId(addRoot.getId()))) {
 					compareN.remove(addRoot);
 					break;
 				}
@@ -217,7 +219,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	}
 	
 	private boolean getChildrenContainTerminalId(Nonterminal parent, String terminalId) {
-		if (parent.getTerminalId().equals(terminalId)) {
+		
+		if (schema.getTerminalId(parent.getId()).equals(terminalId)) {
 			return true;
 		}
 		if (parent.getChildNonterminals()!=null && !parent.getChildNonterminals().isEmpty()) {
@@ -230,7 +233,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		return false;
 	}
 	
-	protected Nonterminal getRoot(String rootElementNs, String rootElementName) {
+	protected Nonterminal getRoot(String rootElementNs, String rootElementName) throws MetamodelConsistencyException {
 		XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
 		boolean nsMatch;
 		for (int j=0; j<elements.getLength(); j++) {
@@ -247,7 +250,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		return null;
 	}
 	
-	protected Nonterminal processElement(Nonterminal parentNonterminal, XSElementDecl element, List<String> processedTerminalQNs) {
+	protected Nonterminal processElement(Nonterminal parentNonterminal, XSElementDecl element, List<String> processedTerminalQNs) throws MetamodelConsistencyException {
 		String terminalQN = this.createTerminalQN(element.getNamespace(), element.getName(), false);
 		Nonterminal n = this.createNonterminal(element.getNamespace(), element.getName(), false);
 		if (processedTerminalQNs.contains(terminalQN)) {
@@ -268,7 +271,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		return n;
 	}
 	
-	protected void processComplexElement(Nonterminal nonterminal, XSElementDecl element, XSComplexTypeDefinition typeDef, List<String> processedTerminalQNs) {
+	protected void processComplexElement(Nonterminal nonterminal, XSElementDecl element, XSComplexTypeDefinition typeDef, List<String> processedTerminalQNs) throws MetamodelConsistencyException {
 		XSObjectList attrList = typeDef.getAttributeUses();
 		
 		// Process attributes
@@ -287,7 +290,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		// NOTE: Nothing to do for simple elements as attributes have already been processed
 	}
 
-	protected void processContentModel(Nonterminal parentNonterminal, XSParticle particle, List<String> processedTerminalQNs) {
+	protected void processContentModel(Nonterminal parentNonterminal, XSParticle particle, List<String> processedTerminalQNs) throws MetamodelConsistencyException {
 		XSTerm contentModel = particle.getTerm();
 
 		if (contentModel.getType()==XSConstants.ELEMENT_DECLARATION) {
@@ -310,7 +313,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		}
 	}
 
-	protected Nonterminal createNonterminal(String terminalNamespace, String terminalName, boolean isAttribute) {
+	protected Nonterminal createNonterminal(String terminalNamespace, String terminalName, boolean isAttribute) throws MetamodelConsistencyException {
 		String terminalQN = createTerminalQN(terminalNamespace, terminalName, isAttribute);
 		
 		String terminalId = null;
@@ -327,10 +330,12 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 			existingTerminalQNs.put(terminalQN, t);
 		}
 				
-		Nonterminal n = new Nonterminal();
+		Nonterminal n = new NonterminalImpl();
 		n.setId(new ObjectId().toString());
 		n.setName(this.createNonterminalName(terminalName));
-		n.setTerminalId(terminalId);
+		
+		schema.mapNonterminal(n.getId(), terminalId);
+		
 		n.setEntityId(this.schema.getId());
 		return n;
 	}

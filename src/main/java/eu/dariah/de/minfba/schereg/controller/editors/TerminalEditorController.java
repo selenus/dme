@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
@@ -61,11 +62,13 @@ public class TerminalEditorController extends BaseScheregController {
 			model.addAttribute("readonly", false);
 		}
 		
-		SchemaNature s = schemaService.findSchemaById(schemaId);
+		Schema s = schemaService.findSchemaById(schemaId);
+		XmlSchemaNature xmlSchemaNature = s.getNature(XmlSchemaNature.class);
+		
 		XmlTerminal terminal = null;
 		if (terminalId != "-1") {
-			if (s.getTerminals()!=null) {
-				for (Terminal t : s.getTerminals()) {
+			if (xmlSchemaNature.getTerminals()!=null) {
+				for (Terminal t : xmlSchemaNature.getTerminals()) {
 					if (t.getId().equals(terminalId)) {
 						terminal = (XmlTerminal)t;
 						break;
@@ -107,10 +110,12 @@ public class TerminalEditorController extends BaseScheregController {
 				element.setId(null);
 			}
 			
-			XmlSchemaNature s = (XmlSchemaNature)schemaService.findSchemaById(schemaId);
-			if (s.getTerminals()!=null) {
-				for (int i=0; i<s.getTerminals().size(); i++) {
-					XmlTerminal t = s.getTerminals().get(i);
+			Schema s = schemaService.findSchemaById(schemaId);
+			XmlSchemaNature xmlSchemaNature = s.getNature(XmlSchemaNature.class);
+					
+			if (xmlSchemaNature.getTerminals()!=null) {
+				for (int i=0; i<xmlSchemaNature.getTerminals().size(); i++) {
+					XmlTerminal t = xmlSchemaNature.getTerminals().get(i);
 					if (t.getName().equals(element.getName()) && t.getNamespace().equals(element.getNamespace()) &&
 							!t.getId().equals(element.getId())) {
 						result.setSuccess(false);
@@ -120,17 +125,17 @@ public class TerminalEditorController extends BaseScheregController {
 					}
 				}
 			}
-			if (s.getTerminals()==null) {
-				s.setTerminals(new ArrayList<XmlTerminal>());
+			if (xmlSchemaNature.getTerminals()==null) {
+				xmlSchemaNature.setTerminals(new ArrayList<XmlTerminal>());
 			}
 			if (element.getId()==null) {
 				element.setId(new ObjectId().toString());
 				element.addChange(ChangeType.NEW_OBJECT, "terminal", null, element.getId());
-				s.getTerminals().add(element);
+				xmlSchemaNature.getTerminals().add(element);
 			} else {
-				for (int i=0; i<s.getTerminals().size(); i++) {
-					if (s.getTerminals().get(i).getId().equals(element.getId())) {
-						s.getTerminals().set(i, element);
+				for (int i=0; i<xmlSchemaNature.getTerminals().size(); i++) {
+					if (xmlSchemaNature.getTerminals().get(i).getId().equals(element.getId())) {
+						xmlSchemaNature.getTerminals().set(i, element);
 						break;
 					}
 				}

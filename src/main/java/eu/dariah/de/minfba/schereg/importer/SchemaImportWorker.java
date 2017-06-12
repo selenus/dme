@@ -22,6 +22,7 @@ import com.mongodb.DBObject;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
@@ -74,16 +75,16 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			logger.error("Schema id must exist (schema must be saved) before import");
 			throw new SchemaImportException("Schema id must exist (schema must be saved) before import");
 		}
-		SchemaNature tmpS = schemaService.findSchemaById(schemaId);
+		Schema tmpS = schemaService.findSchemaById(schemaId);
 		
 		XmlSchemaNature s;
-		if (tmpS instanceof XmlSchemaNature) {
-			s = (XmlSchemaNature)tmpS;
+		if (tmpS.getNature(XmlSchemaNature.class)!=null) {
+			s = tmpS.getNature(XmlSchemaNature.class);
 		} else {
 			s = new XmlSchemaNature();
 			s.setId(tmpS.getId());
-			s.setLabel(tmpS.getLabel());
-			s.setDescription(tmpS.getDescription());
+			//s.setLabel(tmpS.getLabel());
+			//s.setDescription(tmpS.getDescription());
 		}
 		
 		if (!this.processingSchemaIds.contains(schemaId)) {
@@ -129,7 +130,10 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			}
 		}
 		
-		schemaService.saveSchema(schema, rootNonterminals, auth);
+		Schema s = schemaService.findSchemaById(schema.getEntityId());
+		s.addOrReplaceSchemaNature(schema);
+		
+		schemaService.saveSchema(s, rootNonterminals, auth);
 		
 		if (this.processingSchemaIds.contains(schema.getId())) {
 			this.processingSchemaIds.remove(schema.getId());

@@ -159,7 +159,8 @@ public class ElementEditorController extends BaseScheregController {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
 			Nonterminal n = (Nonterminal)elementService.findById(element.getId());
-			n.setTerminalId(element.getTerminalId());
+			// Not changeable here
+			//n.setTerminalId(element.getTerminalId());
 			n.setTransient(element.isTransient());
 			n.setName(ElementServiceImpl.getNormalizedName(element.getName()));
 			

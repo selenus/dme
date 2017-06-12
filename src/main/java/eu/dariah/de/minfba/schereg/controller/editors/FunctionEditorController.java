@@ -46,6 +46,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
@@ -294,7 +295,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			f = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
 		} else { // Mappings
 			Mapping m = (Mapping)entity;
-			SchemaNature target = schemaService.findSchemaById(m.getTargetId());
+			Schema target = schemaService.findSchemaById(m.getTargetId());
 			
 			Reference parentConceptReference = referenceService.findReferenceByChildId(entity.getId(), functionId);
 			MappedConcept mc = mappedConceptService.findById(parentConceptReference.getId());
