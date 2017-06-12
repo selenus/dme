@@ -26,31 +26,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="col-sm-3 control-label" for="element_terminalId"><s:message code="~eu.dariah.de.minfba.schereg.model.element.terminal" />:</label>
-				<div class="col-sm-8">
-					<s:message code="~eu.dariah.de.minfba.schereg.notification.assign_terminal" var="assign_terminal" />
-					<sf:select path="terminalId" class="form-control">
-						<sf:option value="" label="${assign_terminal}"  />
-						<sf:option value="-1" label="_________________" disabled="true"  />
-	   					<sf:options cssClass="schema-terminal" items="${availableTerminals}" />
-					</sf:select>
-					<sf:errors path="terminalId" cssClass="error" />
-					<c:if test="${!readonly}">
-						<div class="clearfix tab-buttons">
-							<button type="button" onclick="editor.editTerminal(); return false;" class="btn btn-default btn-sm">
-								<span class="glyphicon glyphicon-edit"></span> <s:message code="~eu.dariah.de.minfba.common.link.edit" />
-							</button>
-							<button type="button" onclick="editor.addTerminal(); return false;" class="btn btn-default btn-sm">
-								<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.common.link.add" />
-							</button> 
-							<button type="button" onclick="editor.removeTerminal(); return false;" class="btn btn-danger btn-sm">
-								<span class="glyphicon glyphicon-trash"></span> <s:message code="~eu.dariah.de.minfba.common.link.delete" />
-							</button>
-						</div>
-					</c:if>
-				</div>
-			</div>
+			
 		</fieldset>
 	</div>
 	<div class="form-footer">

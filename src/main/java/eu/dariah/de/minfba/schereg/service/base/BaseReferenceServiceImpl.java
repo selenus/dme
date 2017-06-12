@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.LabelImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
@@ -275,10 +276,10 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 					g.getTransformationFunctions().add((TransformationFunctionImpl)fillElement(rChild, elementMap));
 				}	
 			}
-			if (e instanceof TransformationFunctionImpl && r.getChildReferences().containsKey(Label.class.getName())) {
+			if (e instanceof TransformationFunctionImpl && r.getChildReferences().containsKey(LabelImpl.class.getName())) {
 				TransformationFunctionImpl f = (TransformationFunctionImpl)e;
 				f.setOutputElements(new ArrayList<Label>());
-				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
+				for (Reference rChild : r.getChildReferences().get(LabelImpl.class.getName())) {
 					f.getOutputElements().add((Label)fillElement(rChild, elementMap));
 				}	
 			}

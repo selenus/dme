@@ -34,7 +34,7 @@ public class ControllerExceptionHandler {
     }
 	
 	@ExceptionHandler(value = Exception.class)
-	public Object defaultErrorHandler(@RequestHeader HttpHeaders headers, HttpServletRequest req, Exception e) throws Exception {
+	public Object defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
 		// If the exception is annotated with @ResponseStatus rethrow it and let
 		// the framework handle it - like the OrderNotFoundException example
 		// at the start of this post.
@@ -42,8 +42,9 @@ public class ControllerExceptionHandler {
 		if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null) {
 			throw e;
 		}
-
-		if (headers.getAccept().contains(MediaType.APPLICATION_JSON)) {
+		logger.error("Caught server error", e);
+		
+		if (req.getHeader("accept")!=null && req.getHeader("accept").toLowerCase().contains("json")) {
 			ModelActionPojo result = new ModelActionPojo(false);
 			result.setMessage(new MessagePojo("error", "Code: 500", null));
 			result.addObjectError("Error code: 500");
@@ -59,6 +60,8 @@ public class ControllerExceptionHandler {
 		mav.addObject("errorMsg", e.getMessage());
 		mav.addObject("url", req.getRequestURL());
 		mav.addObject("exception", e);
+		
+		
 		
 		return mav;
 	}

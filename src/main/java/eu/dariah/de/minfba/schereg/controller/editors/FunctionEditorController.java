@@ -121,7 +121,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		List<Object> inputElementIds = new ArrayList<Object>();
 		List<Object> inputGrammarIds = new ArrayList<Object>();
 		
-		if (SchemaNature.class.isAssignableFrom(entity.getClass())) {
+		if (Schema.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceByChildId(entityId, functionId).getId();
 			model.addAttribute("grammar", grammarService.findById(grammarId));
 			
@@ -282,7 +282,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		List<SyntaxTreeNode> values = new ArrayList<SyntaxTreeNode>();
 		List<DescriptionGrammar> grammars = new ArrayList<DescriptionGrammar>();
 				
-		if (SchemaNature.class.isAssignableFrom(entity.getClass())) {
+		if (Schema.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceBySchemaAndChildId(entityId, functionId).getId();
 			DescriptionGrammar g = grammarService.findById(grammarId);
 			

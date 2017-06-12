@@ -37,7 +37,7 @@ public class ExceptionController {
 		ModelActionPojo result = new ModelActionPojo(false);
 		result.setMessage(new MessagePojo("error", "Code: " + httpErrorCode, null));
 		
-		Exception e = getException(httpRequest);
+		Throwable e = getException(httpRequest);
 		if (e!=null) {
 			result.addObjectError(e.getMessage());
 		} else {
@@ -116,11 +116,11 @@ public class ExceptionController {
 	}
 	
 
-	private Exception getException(HttpServletRequest httpRequest) {
+	private Throwable getException(HttpServletRequest httpRequest) {
 		if (httpRequest.getAttribute("javax.servlet.error.exception")==null) {
 			return null;
 		}
-		return (Exception) httpRequest.getAttribute("javax.servlet.error.exception");
+		return (Throwable) httpRequest.getAttribute("javax.servlet.error.exception");
 	}
 	
 	private int getErrorCode(HttpServletRequest httpRequest) {
