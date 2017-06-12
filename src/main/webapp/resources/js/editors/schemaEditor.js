@@ -221,12 +221,11 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	
 	_this.createActionButtons(_this.elementContextButtons, e.element.getContextMenuItems(), "editor");
 	
-	if (e.element.getType()==="Nonterminal") {
+	if (e.element.getType()==="NonterminalImpl") {
 		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail, _this.processTerminalElement);
 	} else {
 		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail);
 	}
-	
 	
 	_this.loadActivitiesForElement(e.element.id, _this.elementActivitiesContainer);
 	

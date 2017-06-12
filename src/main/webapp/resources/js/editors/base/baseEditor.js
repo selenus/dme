@@ -124,7 +124,7 @@ BaseEditor.prototype.getElementDetails = function(pathPrefix, type, id, containe
 
 BaseEditor.prototype.getElementType = function(originalType) {
 	var type = originalType;
-	if (type==="Nonterminal" || type==="Label") {
+	if (type==="NonterminalImpl" || type==="LabelImpl") {
 		type="element";
 	} else if (type==="DescriptionGrammarImpl") {
 		type="grammar";

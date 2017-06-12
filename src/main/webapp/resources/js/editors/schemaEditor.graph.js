@@ -7,7 +7,7 @@ SchemaEditor.prototype.initGraph = function() {
 	this.graph = new Model(this.context.canvas, {
 		readOnly: !(_this.schema.owned || _this.schema.write),
 		elementTemplateOptions : [{
-			key: "Nonterminal",
+			key: "NonterminalImpl",
 			primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
 			getContextMenuItems: function(element) { 
 				var items = [
@@ -30,7 +30,7 @@ SchemaEditor.prototype.initGraph = function() {
 				return items; 
 			}, 
 		}, {
-			key: "Label",
+			key: "LabelImpl",
 			primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
 			getContextMenuItems: function(element) { 
 				var items = [

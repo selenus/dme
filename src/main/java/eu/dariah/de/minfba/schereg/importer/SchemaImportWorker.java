@@ -82,6 +82,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			s = tmpS.getNature(XmlSchemaNature.class);
 		} else {
 			s = new XmlSchemaNature();
+			s.setSchema(tmpS);
 			s.setId(tmpS.getId());
 			//s.setLabel(tmpS.getLabel());
 			//s.setDescription(tmpS.getDescription());
@@ -113,9 +114,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(SchemaNature schema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+	public synchronized void registerImportFinished(SchemaNature schemaNature, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
-			elementService.clearElementTree(schema.getId(), auth);
+			elementService.clearElementTree(schemaNature.getId(), auth);
 		}
 		
 		
@@ -130,13 +131,13 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			}
 		}
 		
-		Schema s = schemaService.findSchemaById(schema.getEntityId());
-		s.addOrReplaceSchemaNature(schema);
+		Schema s = schemaService.findSchemaById(schemaNature.getEntityId());
+		s.addOrReplaceSchemaNature(schemaNature);
 		
 		schemaService.saveSchema(s, rootNonterminals, auth);
 		
-		if (this.processingSchemaIds.contains(schema.getId())) {
-			this.processingSchemaIds.remove(schema.getId());
+		if (this.processingSchemaIds.contains(schemaNature.getId())) {
+			this.processingSchemaIds.remove(schemaNature.getId());
 		}
 	}
 
