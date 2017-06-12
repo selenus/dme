@@ -221,7 +221,7 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	
 	_this.createActionButtons(_this.elementContextButtons, e.element.getContextMenuItems(), "editor");
 	
-	if (e.element.getType()==="NonterminalImpl") {
+	if (e.element.getType()==="Nonterminal") {
 		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail, _this.processTerminalElement);
 	} else {
 		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail);
@@ -415,9 +415,9 @@ SchemaEditor.prototype.showTypeaheadFoundResult = function(data) {
 		result += 	 	'Nonterminal: ';
 	} else if (data.simpleType==='Label') {
 		result += 	 	'Label: ';
-	} else if (data.simpleType==='DescriptionGrammarImpl') {
+	} else if (data.simpleType==='Grammar') {
 		result += 	 	'Grammar: ';
-	} else if (data.simpleType==='TransformationFunctionImpl') {
+	} else if (data.simpleType==='Function') {
 		result += 	 	'Function: ';
 	}
 	result += 	 data.id + '<p>';

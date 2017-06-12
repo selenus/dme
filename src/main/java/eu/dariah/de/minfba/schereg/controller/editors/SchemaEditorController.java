@@ -60,12 +60,14 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseMainEditorController;
+import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.importer.SchemaImportWorker;
-import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
+import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
+import eu.dariah.de.minfba.schereg.pojo.converter.ModelElementPojoConverter;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
@@ -412,24 +414,13 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
-	public @ResponseBody Element getHierarchy(@PathVariable String entityId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+	public @ResponseBody ModelElementPojo getHierarchy(@PathVariable String entityId, @RequestParam(defaultValue="false") boolean staticElementsOnly, Model model, Locale locale, HttpServletResponse response) throws IOException, GenericScheregException {
 		Element result = elementService.findRootBySchemaId(entityId, true);
 		if (result==null) {
 			response.getWriter().print("null");
 			response.setContentType("application/json");
 		}
-		return result;
-	}
-	
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getRendered")
-	public @ResponseBody MappableElement getRenderedHierarchy(@PathVariable String entityId, Model model, Locale locale, HttpServletResponse response) throws IOException {
-		Element e = elementService.findRootBySchemaId(entityId, true);
-		MappableElement result =  ElementServiceImpl.convertElement(e, true);
-		if (result==null) {
-			response.getWriter().print("null");
-			response.setContentType("application/json");
-		}
-		return result;
+		return ModelElementPojoConverter.convertModelElement(result, staticElementsOnly);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")

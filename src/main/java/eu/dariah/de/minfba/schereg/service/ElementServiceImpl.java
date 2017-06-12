@@ -39,7 +39,6 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.MappedConceptDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
-import eu.dariah.de.minfba.schereg.model.MappableElement;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -142,30 +141,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		return (Element)fillElement(rootElementReference, elementMap);
 	}
-	
-	public static MappableElement convertElement(Element e, boolean deep) {
-		if (e==null) {
-			return null;
-		}
-		MappableElement eMap = new MappableElement();
-		eMap.setId(e.getId());
-		eMap.setLabel(e.getName());
-		eMap.setType(e.getClass().getSimpleName());
 		
-		if (deep) {
-			List<Element> eChildren = e.getAllChildElements();
-			if (eChildren!=null && eChildren.size()>0) {
-				MappableElement meChild;
-				eMap.setChildren(new ArrayList<MappableElement>(eChildren.size()));
-				for (Element eChild : eChildren) {
-					meChild = convertElement(eChild, true); 
-					eMap.getChildren().add(meChild);
-				}
-			}
-		}
-		return eMap;
-	}
-	
 	@Override
 	public void saveOrReplaceRoot(String schemaId, Nonterminal element, AuthPojo auth) {
 		this.clearElementTree(schemaId, auth);

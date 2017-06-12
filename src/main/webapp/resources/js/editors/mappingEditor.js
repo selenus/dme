@@ -348,7 +348,8 @@ MappingEditor.prototype.reloadElementHierarchy = function(path, area, selectedIt
 
 	var _this = this;
 	$.ajax({
-		url: path + "async/getRendered",
+		url: path + "async/getHierarchy",
+		data: { staticElementsOnly: true },
 	    type: "GET",
 	    success: function(data) {
 	    	if (data===null || data===undefined || data.length==0) {
@@ -382,7 +383,8 @@ MappingEditor.prototype.reloadElementHierarchy = function(path, area, selectedIt
 MappingEditor.prototype.getElementHierarchy = function(path, area) {
 	var _this = this;
 	$.ajax({
-	    url: path + "async/getRendered",
+		url: path + "async/getHierarchy",
+		data: { staticElementsOnly: true },
 	    type: "GET",
 	    success: function(data) {
 	    	if (data===null || data===undefined || data.length==0) {
@@ -451,7 +453,7 @@ MappingEditor.prototype.getMappings = function(selectedItemIds) {
 
 MappingEditor.prototype.processElementHierarchy = function(schema, data) {
 	var parent = schema.addElement(data.type, null, data.id, this.formatLabel(data.label), null);
-	this.generateTree(schema, parent, data.children);
+	this.generateTree(schema, parent, data.childElements);
 	schema.elements[0].setExpanded(true);
 };
 
@@ -462,7 +464,7 @@ MappingEditor.prototype.generateTree = function(area, parent, children) {
 			var icon = null;
 			
 			var e = area.addElement(children[i].type, parent, children[i].id, this.formatLabel(children[i].label), icon);
-			this.generateTree(area, e, children[i].children);
+			this.generateTree(area, e, children[i].childElements);
 		}
 	}
 };

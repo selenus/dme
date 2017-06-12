@@ -124,11 +124,11 @@ BaseEditor.prototype.getElementDetails = function(pathPrefix, type, id, containe
 
 BaseEditor.prototype.getElementType = function(originalType) {
 	var type = originalType;
-	if (type==="NonterminalImpl" || type==="LabelImpl") {
+	if (type==="Nonterminal" || type==="Label") {
 		type="element";
-	} else if (type==="DescriptionGrammarImpl") {
+	} else if (type==="Grammar") {
 		type="grammar";
-	} else if (type==="TransformationFunctionImpl") {
+	} else if (type==="Function") {
 		type="function";
 	}
 	return type;

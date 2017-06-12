@@ -7,7 +7,7 @@ SchemaEditor.prototype.initGraph = function() {
 	this.graph = new Model(this.context.canvas, {
 		readOnly: !(_this.schema.owned || _this.schema.write),
 		elementTemplateOptions : [{
-			key: "NonterminalImpl",
+			key: "Nonterminal",
 			primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
 			getContextMenuItems: function(element) { 
 				var items = [
@@ -30,7 +30,7 @@ SchemaEditor.prototype.initGraph = function() {
 				return items; 
 			}, 
 		}, {
-			key: "LabelImpl",
+			key: "Label",
 			primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
 			getContextMenuItems: function(element) { 
 				var items = [
@@ -53,7 +53,7 @@ SchemaEditor.prototype.initGraph = function() {
 				return items; 
 			}
 		}, {
-			key: "TransformationFunctionImpl",
+			key: "Function",
 			primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
 			getContextMenuItems: function(element) { 
 				var items = [
@@ -75,7 +75,7 @@ SchemaEditor.prototype.initGraph = function() {
 				return items; 
 			}
 		}, {
-			key: "DescriptionGrammarImpl",
+			key: "Grammar",
 			primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
 			getContextMenuItems: function(element) { 
 				var items = [
@@ -277,67 +277,27 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var root = this.area.addElement(data.simpleType, null, data.id, this.formatLabel(data.name), null);
-	this.generateTree(this.area, root, data.childNonterminals, null, data.grammars, true);
+	var root = this.area.addElement(data.type, null, data.id, this.formatLabel(data.label), null);
+	this.generateTree(this.area, root, data.childElements, true);
 	this.area.elements[0].setExpanded(true);
 	this.graph.update();
 };
 
-
-SchemaEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, grammars, isSource) {
-
-	if (nonterminals!=null && nonterminals instanceof Array) {
-		for (var i=0; i<nonterminals.length; i++) {
+SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSource) {
+	if (elements!=null && elements instanceof Array) {
+		for (var i=0; i<elements.length; i++) {
 			var icon = null;
-			if (nonterminals[i].terminalId==null || nonterminals[i].terminalId=="") {
+			if (elements[i].state==="ERROR") {
+				icon = this.options.icons.error;
+			} else if (elements[i].state==="WARNING") {
 				icon = this.options.icons.warning;
 			}
-			var e = this.area.addElement(nonterminals[i].simpleType, parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), icon);
+			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon);
 			
-			this.generateTree(area, e, nonterminals[i].childNonterminals, null, nonterminals[i].grammars, isSource);
+			this.generateTree(area, e, elements[i].childElements, isSource);
 		}
 	}
-	if (subelements!=null && subelements instanceof Array) {
-		for (var i=0; i<subelements.length; i++) {
-			var e = this.area.addElement(subelements[i].simpleType, parent, subelements[i].id, this.formatLabel(subelements[i].name), null);
-			this.generateTree(area, e, null, subelements[i].subLabels, subelements[i].grammars, isSource);
-		}
-	}
-	if (grammars != null && grammars instanceof Array) {
-		for (var i=0; i<grammars.length; i++) {
-			var icon = null;
-			if (grammars[i].error==true) {
-				icon = this.options.icons.error;
-			}
-			var fDesc = this.area.addElement(grammars[i].simpleType, parent, grammars[i].id, this.formatLabel("g: " + grammars[i].grammarName), icon);
-			
-			if (grammars[i].transformationFunctions != null && grammars[i].transformationFunctions instanceof Array) {
-				for (var j=0; j<grammars[i].transformationFunctions.length; j++) {
-					if (grammars[i].transformationFunctions[j].error==true) {
-						icon = this.options.icons.error;
-					}
-					var fOut = this.area.addElement(grammars[i].transformationFunctions[j].simpleType, fDesc, grammars[i].transformationFunctions[j].id, 
-							this.formatLabel("f: " + grammars[i].transformationFunctions[j].name), icon);
-					
-					if (grammars[i].transformationFunctions[j].outputElements != null && grammars[i].transformationFunctions[j].outputElements instanceof Array) {
-						for (var k=0; k<grammars[i].transformationFunctions[j].outputElements.length; k++) {
-							
-							var e = this.area.addElement(grammars[i].transformationFunctions[j].outputElements[k].simpleType, fOut, grammars[i].transformationFunctions[j].outputElements[k].id, 
-									this.formatLabel(grammars[i].transformationFunctions[j].outputElements[k].name), null);
-							
-							
-							this.generateTree(area, e, 
-									grammars[i].transformationFunctions[j].outputElements[k].childNonterminals,
-									grammars[i].transformationFunctions[j].outputElements[k].subLabels,
-									grammars[i].transformationFunctions[j].outputElements[k].grammars, isSource);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-};
+}
 
 SchemaEditor.prototype.formatLabel = function(label) {
 	if (label.length > 25) {
