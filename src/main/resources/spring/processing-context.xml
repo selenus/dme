@@ -100,10 +100,40 @@
 					</bean>
 				</entry>
 				<entry key="NLP" value-ref="nlpMainDispatcher" />
+				<entry key="DAI" value-ref="daiDispatcher" />
+				
 			</map>
 		</property>
 	</bean>		
 
 	<bean id="vocabularyEngine" class="de.unibamberg.minf.gtf.vocabulary.VocabularyEngine" />
+	
+	<bean id="daiDispatcher" class="de.unibamberg.minf.gtf.extensions.dai.dispatcher.MainDaiDispatcher">
+		<property name="daiCommandsDispatcherMap">
+			<map>
+				<entry key="CHRONONTOLOGY" value-ref="chronontologyCommandsDispatcher" />
+				<entry key="GAZETTEER" value-ref="gazetteerCommandsDispatcher" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="chronontologyCommandsDispatcher" class="de.unibamberg.minf.gtf.extensions.dai.dispatcher.ChronontologyCommandsDispatcher">
+		<property name="commands">
+			<bean class="de.unibamberg.minf.gtf.extensions.dai.commands.ChronontologyCommands">
+				<property name="restTemplate" ref="restTemplate" />
+				<property name="baseUrl" value="http://chronontology.dainst.org/data/period/" />
+			</bean>
+		</property>
+	</bean>
+	
+	<bean id="gazetteerCommandsDispatcher" class="de.unibamberg.minf.gtf.extensions.dai.dispatcher.GazetteerCommandsDispatcher">
+		<property name="commands">
+			<bean class="de.unibamberg.minf.gtf.extensions.dai.commands.GazetteerCommands">
+				<property name="restTemplate" ref="restTemplate" />
+				<property name="baseUrl" value="https://gazetteer.dainst.org/" />
+				<property name="defaultLimit" value="100" />
+			</bean>
+		</property>
+	</bean>
 	
 </beans>
