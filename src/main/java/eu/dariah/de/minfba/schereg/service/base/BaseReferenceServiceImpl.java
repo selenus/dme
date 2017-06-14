@@ -254,10 +254,10 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 				for (Reference rChild : r.getChildReferences().get(Nonterminal.class.getName())) {
 					n.getChildNonterminals().add((Nonterminal)fillElement(rChild, elementMap));
 				}	
-			} else if (e instanceof Label && r.getChildReferences().containsKey(Label.class.getName())) {
+			} else if (e instanceof Label && r.getChildReferences().containsKey(LabelImpl.class.getName())) {
 				Label l = (Label)e;
 				l.setSubLabels(new ArrayList<Label>());
-				for (Reference rChild : r.getChildReferences().get(Label.class.getName())) {
+				for (Reference rChild : r.getChildReferences().get(LabelImpl.class.getName())) {
 					l.getSubLabels().add((Label)fillElement(rChild, elementMap));
 				}	
 			}
