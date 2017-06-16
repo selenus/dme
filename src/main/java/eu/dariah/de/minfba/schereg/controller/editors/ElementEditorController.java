@@ -143,6 +143,7 @@ public class ElementEditorController extends BaseScheregController {
 			Label l = (Label)elementService.findById(element.getId());
 			l.setTransient(element.isTransient());
 			l.setName(ElementServiceImpl.getNormalizedName(element.getName()));
+			l.setEntityId(schemaId);
 			
 			elementService.saveElement(element, authInfoHelper.getAuth(request));
 		}		
@@ -163,6 +164,7 @@ public class ElementEditorController extends BaseScheregController {
 			//n.setTerminalId(element.getTerminalId());
 			n.setTransient(element.isTransient());
 			n.setName(ElementServiceImpl.getNormalizedName(element.getName()));
+			n.setEntityId(schemaId);
 			
 			elementService.saveElement(n, authInfoHelper.getAuth(request));
 		}		

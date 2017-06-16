@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import com.mongodb.WriteResult;
+
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeImpl;
@@ -55,6 +57,12 @@ public class ElementDaoImpl extends TrackedEntityDaoImpl<Element> implements Ele
 		
 		mongoTemplate.insert(saveElements, this.getCollectionName());
 		mongoTemplate.insert(changeSets, changeSetDao.getCollectionName());
+	}
+
+	@Override
+	public int deleteAll(String entityId) {
+		WriteResult result = mongoTemplate.remove(Query.query(Criteria.where(ENTITY_ID_FIELD).is(entityId)), this.getCollectionName());
+		return result.getN();
 	}
 
 }

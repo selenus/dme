@@ -42,12 +42,14 @@ public class ControllerExceptionHandler {
 		if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null) {
 			throw e;
 		}
-		logger.error("Caught server error", e);
+		logger.error(String.format("Caught server error at %s", req.getServletPath()), e);
 		
-		if (req.getHeader("accept")!=null && req.getHeader("accept").toLowerCase().contains("json")) {
+		if ( (req.getHeader("accept")!=null && req.getHeader("accept").toLowerCase().contains("json")) || 
+				req.getServletPath().contains("/async/") || 
+				req.getServletPath().contains("/forms/")) {
 			ModelActionPojo result = new ModelActionPojo(false);
 			result.setMessage(new MessagePojo("error", "Code: 500", null));
-			result.addObjectError("Error code: 500");
+			result.addObjectError("Internal error: " + e.getClass().getSimpleName());
 			
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 		}

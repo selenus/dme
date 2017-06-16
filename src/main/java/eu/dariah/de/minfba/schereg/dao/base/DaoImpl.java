@@ -1,6 +1,5 @@
 package eu.dariah.de.minfba.schereg.dao.base;
 
-import org.bson.BSON;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +10,8 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
 public abstract class DaoImpl<T extends Identifiable> implements Dao {
 	protected static final String ID_FIELD = "_id";
+	protected static final String ENTITY_ID_FIELD = "entityId";
+	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected final Class<T> clazz;
 	protected final String collectionName;

@@ -221,7 +221,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewRoot")
-	public @ResponseBody ModelActionPojo saveNonterminal(@PathVariable String entityId, @Valid Nonterminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveNonterminal(@PathVariable String entityId, @Valid NonterminalImpl element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);

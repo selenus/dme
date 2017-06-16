@@ -7,4 +7,6 @@ import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
 public interface GrammarDao extends TrackedEntityDao<DescriptionGrammar> {
 	public List<DescriptionGrammar> findByEntityId(String entityId);
+	
+	public int deleteAll(String entityId);
 }

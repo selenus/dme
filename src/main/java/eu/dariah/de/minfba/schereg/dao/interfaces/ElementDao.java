@@ -9,4 +9,6 @@ public interface ElementDao extends TrackedEntityDao<Element> {
 	public List<Element> findByEntityId(String entityId);
 
 	public void saveNew(List<Element> saveElements, String userId, String sessionId);
+
+	public int deleteAll(String entityId);
 }

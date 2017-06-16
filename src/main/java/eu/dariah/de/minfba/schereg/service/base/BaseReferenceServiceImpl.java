@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.LabelImpl;
+import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
@@ -122,7 +123,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		Map<String, Reference[]> subordinateReferenceMap = new HashMap<String, Reference[]>();
 		getAllSubordinateReferences(rootReference, subordinateReferenceMap);
 		
-		referenceDao.deleteAll(subordinateReferenceMap, auth.getUserId(), auth.getSessionId());
+		//referenceDao.deleteAll(subordinateReferenceMap, auth.getUserId(), auth.getSessionId());
 		//referenceDao.delete(rootReference);
 	}
 	
@@ -248,11 +249,11 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		Identifiable e = elementMap.get(r.getId());
 		
 		if (r.getChildReferences()!=null) {
-			if (e instanceof Nonterminal && r.getChildReferences().containsKey(Nonterminal.class.getName())) {
+			if (e instanceof NonterminalImpl && r.getChildReferences().containsKey(NonterminalImpl.class.getName())) {
 				Nonterminal n = (Nonterminal)e;
 				n.setChildNonterminals(new ArrayList<Nonterminal>());
-				for (Reference rChild : r.getChildReferences().get(Nonterminal.class.getName())) {
-					n.getChildNonterminals().add((Nonterminal)fillElement(rChild, elementMap));
+				for (Reference rChild : r.getChildReferences().get(NonterminalImpl.class.getName())) {
+					n.getChildNonterminals().add((NonterminalImpl)fillElement(rChild, elementMap));
 				}	
 			} else if (e instanceof Label && r.getChildReferences().containsKey(LabelImpl.class.getName())) {
 				Label l = (Label)e;

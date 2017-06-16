@@ -8,7 +8,6 @@
 	<div class="form-header">
 		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.nonterminal.edit" /></h3>	
 		<sf:hidden path="id" />
-		<sf:hidden path="entityId" />
 	</div>
 	<div class="form-content">
 		<fieldset<c:if test="${readonly}"> disabled</c:if>>

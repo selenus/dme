@@ -7,4 +7,6 @@ import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
 public interface FunctionDao extends TrackedEntityDao<TransformationFunction> {
 	public List<TransformationFunction> findByEntityId(String entityId);
+	
+	public int deleteAll(String entityId);
 }

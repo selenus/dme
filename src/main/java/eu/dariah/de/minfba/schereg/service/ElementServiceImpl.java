@@ -108,14 +108,14 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		Reference reference = this.findReferenceById(schemaId);
 		Reference rootElementReference = null;
 		if (reference.getChildReferences()!=null) {
-			if (reference.getChildReferences().containsKey(Nonterminal.class.getName()) &&
-					reference.getChildReferences().get(Nonterminal.class.getName()).length>0 ) {
-				if (reference.getChildReferences().get(Nonterminal.class.getName()).length==1) {
-					rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[0];
+			if (reference.getChildReferences().containsKey(NonterminalImpl.class.getName()) &&
+					reference.getChildReferences().get(NonterminalImpl.class.getName()).length>0 ) {
+				if (reference.getChildReferences().get(NonterminalImpl.class.getName()).length==1) {
+					rootElementReference = reference.getChildReferences().get(NonterminalImpl.class.getName())[0];
 				} else {
-					for (int i=0; i<reference.getChildReferences().get(Nonterminal.class.getName()).length; i++) {
-						if (reference.getChildReferences().get(Nonterminal.class.getName())[i].isRoot()) {
-							rootElementReference = reference.getChildReferences().get(Nonterminal.class.getName())[i];
+					for (int i=0; i<reference.getChildReferences().get(NonterminalImpl.class.getName()).length; i++) {
+						if (reference.getChildReferences().get(NonterminalImpl.class.getName())[i].isRoot()) {
+							rootElementReference = reference.getChildReferences().get(NonterminalImpl.class.getName())[i];
 							break;
 						}
 					}
@@ -154,7 +154,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		childArray[0] = r;
 		
 		root.setChildReferences(new HashMap<String, Reference[]>());
-		root.getChildReferences().put(element.getClass().getName(), childArray);
+		root.getChildReferences().put(element.getClass().getName(), childArray);;
 		this.saveRootReference(root);
 	}
 	
@@ -244,8 +244,8 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public Element saveElement(Element e, AuthPojo auth) {
-		if (e instanceof Nonterminal) {
-			Nonterminal n = ((Nonterminal)e);
+		if (e instanceof NonterminalImpl) {
+			NonterminalImpl n = ((NonterminalImpl)e);
 			n.setName(getNormalizedName(n.getName()));
 			List<Nonterminal> subelements = n.getChildNonterminals();
 			n.setChildNonterminals(null);
@@ -253,7 +253,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			
 			n.setChildNonterminals(subelements);
 		} else {
-			Label l = ((Label)e);
+			LabelImpl l = ((LabelImpl)e);
 			l.setName(getNormalizedName(l.getName()));
 			List<Label> subelements = l.getSubLabels();
 			l.setSubLabels(null);
@@ -403,6 +403,8 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		if (s!=null) {	
 			try {
 				this.clearReferenceTree(schemaId, auth);
+				this.deleteAllElements(schemaId);
+				
 				try {
 					schemaDao.updateContained(s, auth.getUserId(), auth.getSessionId());
 				} catch (GenericScheregException e) {
@@ -412,6 +414,15 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 				logger.error("Failed to remove tree by schemaID", e);
 			}
 		}
+	}
+
+	private int deleteAllElements(String entityId) {
+		int result = elementDao.deleteAll(entityId);
+		result += grammarDao.deleteAll(entityId);
+		result += functionDao.deleteAll(entityId);
+		
+		logger.info("Deleted all {} elements of model {}", result, entityId);
+		return result;
 	}
 
 	@Override
