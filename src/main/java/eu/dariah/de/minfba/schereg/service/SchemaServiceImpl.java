@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
@@ -59,7 +60,7 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		for (int i=0; i<rootNonterminals.size(); i++) {
 			childArray[i] = rootNonterminals.get(i);
 		}		
-		root.getChildReferences().put(Nonterminal.class.getName(), childArray);
+		root.getChildReferences().put(NonterminalImpl.class.getName(), childArray);
 		this.saveRootReference(root);
 	}
 	
@@ -102,13 +103,8 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		RightsContainer<Schema> s = schemaDao.findById(id);
 		if (s != null) {
 			if (this.getUserCanWriteEntity(s, auth.getUserId())) {
-				Reference r = this.findReferenceById(s.getId());
-				if (r.getChildReferences()!=null && r.getChildReferences().size()>0) {
-					String rootNonterminalId = r.getChildReferences().get(Nonterminal.class.getName())[0].getId();
-					if (BaseDaoImpl.isValidObjectId(rootNonterminalId)) {
-						elementService.removeElement(s.getId(), rootNonterminalId, auth);
-					}
-				}
+				elementService.clearElementTree(id, auth);
+				referenceDao.delete(id);
 				schemaDao.delete(s, auth.getUserId(), auth.getSessionId());
 			}
 		}

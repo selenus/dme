@@ -291,7 +291,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			saveElements.add(e);
 			
 			n.setChildNonterminals((List<Nonterminal>)subelements);
-			subelementClass = Nonterminal.class;
+			subelementClass = NonterminalImpl.class;
 		} else {
 			Label l = ((Label)e);
 			l.setName(getNormalizedName(l.getName()));
@@ -301,7 +301,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			saveElements.add(e);
 			
 			l.setSubLabels((List<Label>)subelements);			
-			subelementClass = Label.class;
+			subelementClass = LabelImpl.class;
 		}
 		
 		// TODO: Collect grammars and functions just like elements to batch save?

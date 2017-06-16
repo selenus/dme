@@ -102,7 +102,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 				}				
 				schema.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
 				
-				logger.info(String.format("Finisched importing schema %s in %sms", schema.getEntityId(), sw.getElapsedTime()));
+				logger.info(String.format("Finished importing schema %s in %sms", schema.getEntityId(), sw.getElapsedTime()));
 				this.getListener().registerImportFinished(schema, rootNonterminal, additionalRootElements, auth);
 			}
 		} catch (Exception e) {
