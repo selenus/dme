@@ -2,6 +2,8 @@ package eu.dariah.de.minfba.schereg.pojo;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
 public class ModelElementPojo implements Identifiable {
@@ -12,6 +14,7 @@ public class ModelElementPojo implements Identifiable {
 	private String id;
 	private String label;
 	private String type;
+	private boolean processingRoot;
 	private ModelElementState state;
 	private List<ModelElementPojo> childElements;
 	
@@ -24,6 +27,10 @@ public class ModelElementPojo implements Identifiable {
 	
 	public String getType() { return type; }
 	public void setType(String type) { this.type = type; }
+	
+	@JsonProperty(value="pRoot")
+	public boolean isProcessingRoot() { return processingRoot; }
+	public void setProcessingRoot(boolean processingRoot) { this.processingRoot = processingRoot; }
 	
 	public ModelElementState getState() { return state; }
 	public void setState(ModelElementState state) { this.state = state; }

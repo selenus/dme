@@ -9,8 +9,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
 public abstract class DaoImpl<T extends Identifiable> implements Dao {
-	protected static final String ID_FIELD = "_id";
-	protected static final String ENTITY_ID_FIELD = "entityId";
+	public static final String ID_FIELD = "_id";
+	public static final String ENTITY_ID_FIELD = "entityId";
 	
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	protected final Class<T> clazz;

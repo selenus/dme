@@ -61,6 +61,8 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
 	                              "~eu.dariah.de.minfba.schereg.dialog.element_label",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.head",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.body",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.head",
 	                              "~eu.dariah.de.minfba.common.view.forms.servererror.body",
 	                              "~eu.dariah.de.minfba.schereg.model.element.element",
@@ -81,6 +83,7 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.button.export",
 	                              "~eu.dariah.de.minfba.schereg.button.import",
 	                              "~eu.dariah.de.minfba.schereg.button.create_root",
+	                              "~eu.dariah.de.minfba.schereg.button.set_processing_root",
 	                              
 	                              "~eu.dariah.de.minfba.schereg.notification.import_error.head",
 	                              "~eu.dariah.de.minfba.schereg.notification.import_error.body",
@@ -390,6 +393,28 @@ SchemaEditor.prototype.assignChild = function(elementId) {
 	});
 		
 	modalFormHandler.show(form_identifier);
+};
+
+SchemaEditor.prototype.setProcessingRoot = function(elementId) {
+	var _this = this;
+	
+	bootbox.confirm({
+				title: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.head"),
+				message: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.body"),
+				callback: function(result) {
+					if(result) {
+						$.ajax({
+						    url: _this.pathname + "/element/" + elementId + "/async/setProcessingRoot",
+						    type: "GET",
+						    dataType: "json",
+						    success: function(data) {
+						    	_this.reloadElementHierarchy();
+						    },
+						    error: __util.processServerError
+						});
+					}
+				}
+	});
 };
 
 SchemaEditor.prototype.registerElementTypeahead = function(typeahead) {

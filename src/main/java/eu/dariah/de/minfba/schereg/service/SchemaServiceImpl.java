@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
@@ -162,5 +163,14 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		}
 	
 		return super.getChangeSetForElements(ids);
+	}
+
+	@Override
+	public void setProcessingRoot(String schemaId, String elementId, AuthPojo auth) {
+		Nonterminal newRoot = Nonterminal.class.cast(elementService.findById(elementId));
+		newRoot.setProcessingRoot(true);
+		
+		elementService.unsetSchemaProcessingRoot(schemaId);
+		elementService.saveElement(newRoot, auth);
 	}
 }

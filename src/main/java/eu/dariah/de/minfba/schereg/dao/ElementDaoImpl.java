@@ -7,6 +7,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import com.mongodb.WriteResult;
@@ -16,6 +17,7 @@ import eu.dariah.de.minfba.core.metamodel.tracking.Change;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeImpl;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
+import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 
@@ -63,6 +65,11 @@ public class ElementDaoImpl extends TrackedEntityDaoImpl<Element> implements Ele
 	public int deleteAll(String entityId) {
 		WriteResult result = mongoTemplate.remove(Query.query(Criteria.where(ENTITY_ID_FIELD).is(entityId)), this.getCollectionName());
 		return result.getN();
+	}
+	
+	@Override
+	public void updateByQuery(Query query, Update update) {
+		mongoTemplate.updateMulti(query, update, this.getCollectionName());
 	}
 
 }

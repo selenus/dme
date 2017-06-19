@@ -22,6 +22,7 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("setProcessingRoot", "~eu.dariah.de.minfba.schereg.button.set_processing_root", "grain", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
@@ -144,6 +145,7 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "editGrammar" : return this.editGrammar(elementId);
 	    case "editFunction" : return this.editFunction(elementId);
 	    case "assignChild" : return this.assignChild(elementId);
+	    case "setProcessingRoot" : return this.setProcessingRoot(elementId);
 	    
 	    case "moveUpGrammar" : return this.moveGrammar(1);
 	    case "moveDownGrammar" : return this.moveGrammar(-1);
@@ -277,13 +279,13 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var root = this.area.addElement(data.type, null, data.id, this.formatLabel(data.label), null);
-	this.generateTree(this.area, root, data.childElements, true);
+	var root = this.area.addElement(data.type, null, data.id, this.formatLabel(data.label), null, data.pRoot);
+	this.generateTree(this.area, root, data.childElements, true, data.pRoot);
 	this.area.elements[0].setExpanded(true);
 	this.graph.update();
 };
 
-SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSource) {
+SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSource, processed) {
 	if (elements!=null && elements instanceof Array) {
 		for (var i=0; i<elements.length; i++) {
 			var icon = null;
@@ -292,9 +294,10 @@ SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSou
 			} else if (elements[i].state==="WARNING") {
 				icon = this.options.icons.warning;
 			}
-			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon);
+			var childProcessed = processed || elements[i].pRoot;
+			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon, childProcessed);
 			
-			this.generateTree(area, e, elements[i].childElements, isSource);
+			this.generateTree(area, e, elements[i].childElements, isSource, childProcessed);
 		}
 	}
 }

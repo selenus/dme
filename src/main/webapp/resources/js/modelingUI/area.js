@@ -218,7 +218,7 @@ Area.prototype.setActive = function(active) {
 
 Area.prototype.setSize = function() {}; // Dummy placeholder...remove
 
-Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
+Area.prototype.addElement = function(templateKey, parent, id, label, icons, processed) {
 	var template = null;
 	for (var i=0; i<this.elementTemplates.length; i++) {
 		if (this.elementTemplates[i].options.key===templateKey) {
@@ -226,7 +226,7 @@ Area.prototype.addElement = function(templateKey, parent, id, label, icons) {
 			break;
 		}
 	}
-	var e = new Element(template, parent, id, label, icons);
+	var e = new Element(template, parent, id, label, icons, processed);
 	this.elements.push(e);
 	if (parent==null) {
 		this.root = e;

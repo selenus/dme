@@ -1,4 +1,4 @@
-var Element = function(template, parent, id, label, icons) {
+var Element = function(template, parent, id, label, icons, processed) {
 	this.template = template;
 	this.parent = parent;
 	this.id = id;
@@ -8,7 +8,7 @@ var Element = function(template, parent, id, label, icons) {
 	this.selected = false;
 	this.active = false;
 	this.visible = false;
-	
+	this.processed = processed;
 	this.expander = null;
 	
 	this.connectors = [];

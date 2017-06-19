@@ -166,6 +166,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		
 		/* Element processing */
 		this.rootNonterminal = this.getRoot(rootElementNs, rootElementName);
+		this.rootNonterminal.setProcessingRoot(true);
 		
 		XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
 		Map<String, XmlTerminal> rootTerminals = new HashMap<String, XmlTerminal>();

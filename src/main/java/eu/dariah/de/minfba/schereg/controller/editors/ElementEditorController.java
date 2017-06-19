@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.LabelImpl;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -30,6 +31,7 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
+import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -261,6 +263,24 @@ public class ElementEditorController extends BaseScheregController {
 			return new ModelActionPojo(false);
 		}
 		elementService.removeElement(schemaId, elementId, authInfoHelper.getAuth(request));
+		return new ModelActionPojo(true);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.GET, value = "/async/setProcessingRoot")
+	public @ResponseBody ModelActionPojo setProcessingRoot(@PathVariable String schemaId, @PathVariable String elementId, HttpServletRequest request, HttpServletResponse response) throws GenericScheregException {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if (!schemaService.getUserCanWriteEntity(schemaId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
+		
+		Element e = elementService.findById(elementId);
+		if (e instanceof Nonterminal && e.getEntityId().equals(schemaId)) {
+			schemaService.setProcessingRoot(schemaId, elementId, auth);
+		} else {
+			throw new GenericScheregException("Failed to set processing root. Must be part of current schema and nonterminal node.");
+		}
 		return new ModelActionPojo(true);
 	}
 	

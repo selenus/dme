@@ -113,8 +113,14 @@ ElementTemplate.prototype.paint = function(element, context) {
 	}
 	
 	context.lineWidth = this.options.lineWidth;
-	context.fillStyle = element.selected ? this.options.secondaryColor : this.options.primaryColor;
-	context.strokeStyle = element.selected ? this.options.primaryColor : this.options.secondaryColor;
+	
+	if (element.processed===undefined || element.processed===true) {
+		context.fillStyle = element.selected ? this.options.secondaryColor : this.options.primaryColor;
+		context.strokeStyle = element.selected ? this.options.primaryColor : this.options.secondaryColor;
+	} else {
+		context.fillStyle = element.selected ? "#666" : "#EEE";
+		context.strokeStyle = element.selected ? "#EEE" : "#666";
+	}
 	
 	if (this.options.radius==0) {
 		context.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height, true, true)
