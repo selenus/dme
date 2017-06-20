@@ -429,6 +429,9 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 
 	for (var i=0; i<Object.getOwnPropertyNames(resource).length; i++) {
 		var key = Object.getOwnPropertyNames(resource)[i];
+		if (key==="#") {
+			continue;
+		}
 		
 		if (key==="~") {
 			parentItem.append("<button onclick=\"editor.toggleSampleOutputValue(this);\" class=\"btn btn-link btn-xs sample-output-value-expanded\">" +
