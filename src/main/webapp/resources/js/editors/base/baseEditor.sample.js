@@ -149,8 +149,24 @@ BaseEditor.prototype.loadSampleInput = function() {
 	});
 };
 
-BaseEditor.prototype.downloadSample = function(type) {
+BaseEditor.prototype.downloadSample = function(type, index) {
+	
 	var _this = this;
+	var form_identifier = "download-sample";
+
+	modalFormHandler = new ModalFormHandler({
+		formUrl: "forms/download_output/",
+		data: { t: type, i: (index===null||index===undefined ? -1 : index) },
+		additionalModalClasses: "wide-modal",
+		identifier: form_identifier,
+		completeCallback: function() { 
+			// _this.downloadSampleFile(type, _this.getCurrentSampleIndex());   
+		}
+	});
+	
+	modalFormHandler.show(form_identifier);
+	
+	/*var _this = this;
 	if (type==="output" || type==="transformed") {		
 	    bootbox.confirm({
 	        title: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.set_or_resource.head"),
@@ -173,7 +189,7 @@ BaseEditor.prototype.downloadSample = function(type) {
 	    });
 	} else {
 		this.downloadSampleFile(type);
-	}
+	}*/
 };
 
 BaseEditor.prototype.downloadSampleFile = function(type, index) {
@@ -429,6 +445,9 @@ BaseEditor.prototype.buildSampleResource = function(resource, parentItem) {
 
 	for (var i=0; i<Object.getOwnPropertyNames(resource).length; i++) {
 		var key = Object.getOwnPropertyNames(resource)[i];
+		if (key==="#") {
+			continue;
+		}
 		
 		if (key==="~") {
 			parentItem.append("<button onclick=\"editor.toggleSampleOutputValue(this);\" class=\"btn btn-link btn-xs sample-output-value-expanded\">" +

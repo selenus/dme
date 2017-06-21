@@ -40,6 +40,7 @@ public class ModelElementPojoConverter {
 		ModelElementPojo p = new ModelElementPojo();
 		p.setState(ModelElementState.OK);
 		p.setType("Nonterminal");
+		p.setProcessingRoot(n.isProcessingRoot());
 		
 		if (n.getChildNonterminals()!=null && n.getChildNonterminals().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());

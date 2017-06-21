@@ -175,6 +175,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/forms/download_output")
+	public String getAssignChildForm(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam(name="t", defaultValue="input") String type, @RequestParam(name="i", defaultValue="-1") int index, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {	
+		//model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/assignChild");
+		return "editor/form/download_output";
+	}
+	
 	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})
 	public @ResponseBody String downloadSample(@PathVariable String entityId, @RequestParam(name="t", defaultValue="input") String type, @RequestParam(name="i", defaultValue="-1") int index, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
 		ModelActionPojo result = new ModelActionPojo();

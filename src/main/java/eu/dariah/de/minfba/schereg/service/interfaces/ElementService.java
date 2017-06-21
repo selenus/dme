@@ -47,4 +47,5 @@ public interface ElementService extends BaseService {
 	
 	public Map<String, String> regenerateIds(String entityId, List<? extends Terminal> terminals);
 	public void regenerateIds(SchemaNature nature, String entityId, Element element, Map<String, String> terminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException;
+	public void unsetSchemaProcessingRoot(String schemaId);
 }

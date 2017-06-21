@@ -30,6 +30,6 @@ public interface SchemaService extends BaseEntityService {
 	
 	public List<ChangeSet> getChangeSetForAllSchemas();
 	public void saveSchema(Schema schema, List<Reference> rootNonterminals, AuthPojo auth);
-
 	
+	public void setProcessingRoot(String schemaId, String elementId, AuthPojo auth);	
 }

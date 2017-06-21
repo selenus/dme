@@ -539,4 +539,9 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		return terminalIdMap;
 	}
+
+	@Override
+	public void unsetSchemaProcessingRoot(String schemaId) {
+		elementDao.updateByQuery(Query.query(Criteria.where(DaoImpl.ENTITY_ID_FIELD).is(schemaId).and("_class").is(NonterminalImpl.class.getName())), Update.update("processingRoot", false));
+	}
 }
