@@ -21,21 +21,12 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 public abstract class BaseFunctionController extends BaseScheregController {
-	@Autowired private MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired protected PersistedSessionService sessionService;
 	@Autowired private ReferenceService referenceService;
 	
 	public BaseFunctionController(String mainNavId) {
 		super(mainNavId);
-	}
-	
-	protected Identifiable getEntity(String entityId) {
-		Identifiable entity = mappingService.findMappingById(entityId);
-		if (entity==null) {
-			entity = schemaService.findSchemaById(entityId);
-		}
-		return entity;
 	}
 	
 	protected boolean getIsReadOnly(Identifiable entity, String userId) {

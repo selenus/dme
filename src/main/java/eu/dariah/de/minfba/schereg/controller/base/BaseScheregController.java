@@ -11,15 +11,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.dariahsp.web.AuthInfoHelper;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.web.controller.BaseTranslationController;
 import eu.dariah.de.minfba.schereg.pojo.ChangeSetPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.ChangeSetPojoConverter;
+import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 public abstract class BaseScheregController extends BaseTranslationController {
 
 	@Autowired protected AuthInfoHelper authInfoHelper;
 	@Autowired protected SchemaService schemaService;
+	@Autowired protected MappingService mappingService;
+	
 	@Autowired private ChangeSetPojoConverter changeSetPojoConverter;
 	
 	
@@ -44,4 +48,19 @@ public abstract class BaseScheregController extends BaseTranslationController {
 		return changeSetPojoConverter.convert(schemaService.getChangeSetForAllSchemas());
 	}
 	
+	protected Identifiable getEntity(String entityId) {
+		Identifiable entity = mappingService.findMappingById(entityId);
+		if (entity==null) {
+			entity = schemaService.findSchemaById(entityId);
+		}
+		return entity;
+	}
+	
+	protected String getLimitedString(String string, int limit) {
+		if (string==null || string.trim().length()<limit) {
+			return string;
+		} else {
+			return string.substring(0, limit-3) + "...";
+		}
+	}
 }

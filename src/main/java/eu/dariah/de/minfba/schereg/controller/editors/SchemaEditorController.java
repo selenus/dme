@@ -78,7 +78,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.MappingService;
 public class SchemaEditorController extends BaseMainEditorController implements InitializingBean {	
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
-	@Autowired private MappingService mappingService;
 	@Autowired private GrammarService grammarService;
 	
 	@Autowired private IdentifiableService identifiableService;

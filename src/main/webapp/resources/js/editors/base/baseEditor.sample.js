@@ -150,46 +150,39 @@ BaseEditor.prototype.loadSampleInput = function() {
 };
 
 BaseEditor.prototype.downloadSample = function(type, index) {
-	
-	var _this = this;
 	var form_identifier = "download-sample";
-
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "forms/download_output/",
-		data: { t: type, i: (index===null||index===undefined ? -1 : index) },
 		additionalModalClasses: "wide-modal",
-		identifier: form_identifier,
-		completeCallback: function() { 
-			// _this.downloadSampleFile(type, _this.getCurrentSampleIndex());   
-		}
+		identifier: form_identifier
 	});
-	
 	modalFormHandler.show(form_identifier);
-	
-	/*var _this = this;
-	if (type==="output" || type==="transformed") {		
-	    bootbox.confirm({
-	        title: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.set_or_resource.head"),
-	    	message: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.set_or_resource.body"),
-	        buttons: {
-	            confirm: {
-	                label: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.resource"),
-	            },
-	            cancel: {
-	                label: __translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.set"),
-	            }
-	        },
-	        callback: function (result) {
-	            if (result===true) {
-	            	_this.downloadSampleFile(type, _this.getCurrentSampleIndex()); 
-	            } else {
-	            	_this.downloadSampleFile(type);
-	            }
-	        }
-	    });
-	} else {
-		this.downloadSampleFile(type);
-	}*/
+};
+
+BaseEditor.prototype.downloadOutput = function() {
+	var _this = this;
+	$.ajax({
+	    url: _this.pathname + "/async/download_output",
+	    type: "GET",
+	    dataType: "json",
+	    data: { 
+	    	data: $('input[name=\"download-data-radios\"]:checked').val(), 
+	    	model: $('input[name=\"download-model-radios\"]:checked').val(),
+	    	format: $('input[name=\"download-format-radios\"]:checked').val()
+	    },
+	    success: function(data) {
+	    	if (data.content===null || data.content.length==0) {
+	    		bootbox.alert(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"));
+	    	} else {
+		    	if (data.extension==="json") {
+		    		data.content = JSON.stringify(data.content);
+		    	}
+		    	blob = new Blob([data.content], {type: data.mime});
+		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.extension);
+	    	}
+	    },
+	    error: __util.processServerError
+	});
 };
 
 BaseEditor.prototype.downloadSampleFile = function(type, index) {

@@ -41,7 +41,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 @Controller
 @RequestMapping(value="/mapping/editor/{entityId}/")
 public class MappingEditorController extends BaseMainEditorController {
-	@Autowired private SchemaService schemaService;
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
 	@Autowired private MappedConceptService mappedConceptService;

@@ -44,7 +44,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 @Controller
 @RequestMapping(value="/schema")
 public class SchemaController extends BaseScheregController {
-	@Autowired private SchemaService schemaService;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	
 	public SchemaController() {

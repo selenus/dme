@@ -45,8 +45,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 @Controller
 @RequestMapping(value="/mapping/")
 public class MappingController extends BaseScheregController {
-	@Autowired private MappingService mappingService;
-	@Autowired private SchemaService schemaService;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	
 	public MappingController() {

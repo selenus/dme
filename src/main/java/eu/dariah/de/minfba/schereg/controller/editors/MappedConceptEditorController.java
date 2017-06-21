@@ -40,7 +40,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 @Controller
 @RequestMapping(value="/mapping/editor/{mappingId}/mappedConcept/{mappedConceptId}")
 public class MappedConceptEditorController extends BaseScheregController {
-	@Autowired protected MappingService mappingService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private ElementService elementService;
 	@Autowired private GrammarService grammarService;

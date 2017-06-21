@@ -49,7 +49,7 @@ public class ControllerExceptionHandler {
 				req.getServletPath().contains("/forms/")) {
 			ModelActionPojo result = new ModelActionPojo(false);
 			result.setMessage(new MessagePojo("error", "Code: 500", null));
-			result.addObjectError("Internal error: " + e.getClass().getSimpleName());
+			result.addObjectError(e.getClass().getSimpleName() + ": " + e.getMessage());
 			
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result);
 		}

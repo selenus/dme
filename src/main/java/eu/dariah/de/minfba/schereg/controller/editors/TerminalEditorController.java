@@ -36,7 +36,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 @RequestMapping(value="/schema/editor/{schemaId}/terminal/{terminalId}")
 public class TerminalEditorController extends BaseScheregController {
 	@Autowired private ElementService elementService;
-	@Autowired private SchemaService schemaService;
 	
 	public TerminalEditorController() {
 		super("schemaEditor");

@@ -109,3 +109,12 @@ h2 {/* -> move to bootstrap.css */
 	display: inline;
 	margin-left: 10px;
 }
+
+/*!
+ *	Forms
+ */
+.form-horizontal input[type="radio"], 
+.form-horizontal input[type="checkbox"] {
+    margin-top: 0;
+}
+

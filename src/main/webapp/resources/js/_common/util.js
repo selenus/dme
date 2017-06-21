@@ -143,8 +143,15 @@ Util.prototype.processServerError = function(jqXHR, textStatus) {
 		var error = $('<div class="server-error-container">').append(_this.showErrors(jqXHR.responseJSON)).get();
 		$(errorContainer).append(error);
 	} else if (jqXHR.responseText!==null && jqXHR.responseText!==undefined) {
-		var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
-		$(errorContainer).append(error);
+		 try {
+			 // Happens e.g. when we call for HTML forms asynchronously - i.e. JSON is not the expected answer type
+			 var jsonError = JSON.parse(jqXHR.responseText);
+			 var error = $('<div class="server-error-container">').append(_this.showErrors(jsonError)).get();
+			 $(errorContainer).append(error);
+		 } catch (e) {
+			 var error = $('<div class="server-error-container">').append(jqXHR.responseText).get();
+			 $(errorContainer).append(error);
+		 }
 	}
 	
 	//$(errorContainer).append(jqXHR.responseText);

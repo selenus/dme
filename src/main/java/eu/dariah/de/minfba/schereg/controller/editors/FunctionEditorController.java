@@ -69,7 +69,6 @@ public class FunctionEditorController extends BaseFunctionController {
 	@Autowired private GrammarService grammarService;
 	@Autowired private ElementService elementService;
 	
-	@Autowired private SchemaService schemaService;
 	@Autowired private MappedConceptService mappedConceptService;
 	
 	@Autowired private MainEngine mainEngine;

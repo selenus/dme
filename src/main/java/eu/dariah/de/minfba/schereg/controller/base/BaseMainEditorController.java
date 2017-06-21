@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
@@ -49,8 +50,10 @@ import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.processing.model.base.Resource;
+import eu.dariah.de.minfba.processing.output.xml.XmlFileOutputService;
 import eu.dariah.de.minfba.processing.service.text.TextStringProcessingService;
 import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
+import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
@@ -176,9 +179,76 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/forms/download_output")
-	public String getAssignChildForm(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam(name="t", defaultValue="input") String type, @RequestParam(name="i", defaultValue="-1") int index, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {	
-		//model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/assignChild");
+	public String getAssignChildForm(@PathVariable String entityId, Model model, HttpServletRequest request) throws GenericScheregException {
+		Identifiable entity = this.getEntity(entityId);
+		if (Schema.class.isAssignableFrom(entity.getClass())) {
+			model.addAttribute("sourceModel", this.getLimitedString(((Schema)entity).getLabel(), 50));
+		} else {
+			Mapping m = (Mapping)entity;
+			model.addAttribute("sourceModel", this.getLimitedString(schemaService.findSchemaById(m.getSourceId()).getLabel(), 50));
+			model.addAttribute("targetModel", this.getLimitedString(schemaService.findSchemaById(m.getTargetId()).getLabel(), 50));
+		}
+		
+		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			throw new GenericScheregException("Session not available. Try to re-login.");
+		}
+		
+		if (s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
+			model.addAttribute("datasetCount", s.getSampleOutput().size());
+			model.addAttribute("datasetCurrent", s.getSelectedOutputIndex());
+		} else {
+			model.addAttribute("datasetCount", 0);
+		}
 		return "editor/form/download_output";
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})
+	public @ResponseBody String downloadOutput(@PathVariable String entityId, @RequestParam(defaultValue="single") String data, @RequestParam(defaultValue="source") String model, @RequestParam(defaultValue="xml") String format, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
+		ModelActionPojo result = new ModelActionPojo();
+		
+		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
+		
+		ObjectNode pojo = objectMapper.createObjectNode();
+		
+		if (format.equals("json")) {
+			Object content;
+			if (model.equals("target")) {
+				if (data.equals("single")) {
+					content = s.getSampleMapped().get(s.getSelectedOutputIndex());
+				} else {
+					content = s.getSampleMapped();
+				}
+			} else {
+				if (data.equals("single")) {
+					content = s.getSampleOutput().get(s.getSelectedOutputIndex());
+				} else {
+					content = s.getSampleOutput();
+				}
+			}
+			pojo.set("content", objectMapper.convertValue(content, JsonNode.class));
+			pojo.set("mime", new TextNode("application/json; charset=utf-8"));
+			pojo.set("extension", new TextNode("json"));
+		} else {
+			XmlFileOutputService xmlOutService = appContext.getBean(XmlFileOutputService.class);
+			
+			
+			xmlOutService.setSchema(null);
+			xmlOutService.setRoot(null);
+			
+			xmlOutService.writeOutput(resource, fileName);
+		}
+		
+	
+		
+		
+		result.setPojo(pojo);
+		
+		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pojo);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})
