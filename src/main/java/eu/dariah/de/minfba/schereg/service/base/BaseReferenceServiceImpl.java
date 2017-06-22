@@ -142,7 +142,15 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 				if (!subordinateReferenceMap.containsKey(type)) {
 					subordinateReferenceMap.put(type, reference.getChildReferences().get(type));
 				} else {
-					subordinateReferenceMap.put(type, ArrayUtils.addAll(subordinateReferenceMap.get(type), reference.getChildReferences().get(type)));
+					try {
+						Reference[] subordinates = ArrayUtils.addAll(subordinateReferenceMap.get(type), reference.getChildReferences().get(type));
+						if (subordinates.length>0) {
+							subordinateReferenceMap.put(type, subordinates);
+						}
+					} catch (Exception e) {
+						System.err.println("here");
+					}
+					
 				}
 				for (Reference rSub : reference.getChildReferences().get(type)) {
 					getAllSubordinateReferences(rSub, subordinateReferenceMap);
@@ -252,9 +260,14 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 			if (e instanceof NonterminalImpl && r.getChildReferences().containsKey(NonterminalImpl.class.getName())) {
 				Nonterminal n = (Nonterminal)e;
 				n.setChildNonterminals(new ArrayList<Nonterminal>());
-				for (Reference rChild : r.getChildReferences().get(NonterminalImpl.class.getName())) {
-					n.getChildNonterminals().add((NonterminalImpl)fillElement(rChild, elementMap));
-				}	
+				try {
+					for (Reference rChild : r.getChildReferences().get(NonterminalImpl.class.getName())) {
+						n.getChildNonterminals().add((NonterminalImpl)fillElement(rChild, elementMap));
+					}	
+				} catch (Exception e2) {
+					logger.error("here");
+				}
+				
 			} else if (e instanceof Label && r.getChildReferences().containsKey(LabelImpl.class.getName())) {
 				Label l = (Label)e;
 				l.setSubLabels(new ArrayList<Label>());

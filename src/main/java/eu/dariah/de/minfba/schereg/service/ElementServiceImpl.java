@@ -282,6 +282,11 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			e.setId(DaoImpl.createNewObjectId());
 		}
 		
+		if (saveElements.contains(e)) {
+			logger.debug("Recursion at " + e.getName());
+			return null;
+		}
+		
 		if (e instanceof Nonterminal) {
 			Nonterminal n = ((Nonterminal)e);
 			n.setName(getNormalizedName(n.getName()));
@@ -322,12 +327,17 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 						fSubrefs[j] = new Reference(f.getId());
 						
 						if (f.getOutputElements()!=null) {
-							Reference[] labelReferences = new Reference[f.getOutputElements().size()];
+							List<Reference> labelReferences = new ArrayList<Reference>();
 							for (int k=0; k<f.getOutputElements().size(); k++) {
-								labelReferences[k] = this.saveElementsInHierarchy(f.getOutputElements().get(k), saveElements);
+								Reference rSub = this.saveElementsInHierarchy(f.getOutputElements().get(k), saveElements);
+								if (rSub!=null) {
+									labelReferences.add(rSub);
+								}
 							}
-							fSubrefs[j].setChildReferences(new HashMap<String, Reference[]>());
-							fSubrefs[j].getChildReferences().put(Label.class.getName(), labelReferences);
+							if (labelReferences.size()>0) {
+								fSubrefs[j].setChildReferences(new HashMap<String, Reference[]>());
+								fSubrefs[j].getChildReferences().put(LabelImpl.class.getName(), labelReferences.toArray(new Reference[0]));
+							}
 						}
 						gSubrefs[i].setChildReferences(new HashMap<String, Reference[]>());
 						gSubrefs[i].getChildReferences().put(TransformationFunctionImpl.class.getName(), fSubrefs);
@@ -349,11 +359,16 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 				r.setChildReferences(new HashMap<String, Reference[]>());
 			}
 			
-			Reference[] subreferences = new Reference[subelements.size()];
-			for (int i=0; i<subreferences.length; i++) {
-				subreferences[i] = saveElementsInHierarchy(subelements.get(i), saveElements);
+			List<Reference> subreferences = new ArrayList<Reference>();
+			for (int i=0; i<subelements.size(); i++) {
+				Reference rSub = saveElementsInHierarchy(subelements.get(i), saveElements);
+				if (rSub!=null) {
+					subreferences.add(rSub);
+				}
 			}
-			r.getChildReferences().put(subelementClass.getName(), subreferences);
+			if (subreferences.size()>0) {
+				r.getChildReferences().put(subelementClass.getName(), subreferences.toArray(new Reference[0]));
+			}
 		}
 		
 		
