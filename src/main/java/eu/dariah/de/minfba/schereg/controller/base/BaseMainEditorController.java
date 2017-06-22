@@ -3,6 +3,8 @@ package eu.dariah.de.minfba.schereg.controller.base;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -18,8 +20,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
@@ -229,7 +236,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		fos.setSchema(schemaService.findSchemaById(schemaId));
 		fos.setRoot(elementService.findRootBySchemaId(schemaId, true));
 		
-		String fileName = request.getSession().getId() + File.separator + fos.getSchema().getLabel();
+		String fileName = s.getId() + File.separator + s.getId();
 		File outDir = new File(fos.getOutputPath(fileName, 0)).getParentFile();
 		
 		if (outDir.exists()) {
@@ -243,11 +250,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		if (outDir.listFiles().length > 1) {
 			// Relative link to the ZIP file
 			logger.debug("Zip compressing " + outDir.listFiles().length + " output files");
-			pojo.set("link", new TextNode(fos.compressOutput(fileName)));
+			fos.compressOutput(fileName);
+			pojo.set("link", new TextNode(s.getId() + "/zip"));
 			
 		} else {
 			// Relative link to the one file
-			pojo.set("link", new TextNode(fileName + "." + fos.getFileExtension()));
+			pojo.set("link", new TextNode(s.getId() + "/" + fos.getFileExtension()));
 		}
 		
 		/*if (format.equals("json")) {
@@ -296,19 +304,28 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pojo);
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value={"/async/download_output"})
-	public void getFile(@PathVariable String entityId, HttpServletRequest request, HttpServletResponse response) {
-	    try {
-	      // get your file as InputStream
-	      //InputStream is = ...;
-	      // copy it to response's OutputStream
-	      //org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-	      response.flushBuffer();
-	    } catch (IOException ex) {
-	      //logger.info("Error writing file to output stream. Filename was '{}'", fileName, ex);
-	      throw new RuntimeException("IOError writing file to output stream");
-	    }
+	@RequestMapping(method=RequestMethod.GET, value={"/async/download_output/"})
+	public ResponseEntity<byte[]> getFile(@PathVariable String entityId, @PathVariable String sessionId, @PathVariable String file, HttpServletRequest request) throws FileNotFoundException, IOException {
+		String baseDir = appContext.getBean(JsonFileOutputService.class).getOutputBaseDirectory();
+		
+		HttpHeaders headers = new HttpHeaders();
+		
+	    
+		File downloadFile = new File(baseDir + File.separator + sessionId + File.separator + sessionId + "." + file);
+		byte[] contents = IOUtils.toByteArray(new FileInputStream(downloadFile));
+		
+		if (file.toLowerCase().endsWith("xml")) {
+			headers.setContentType(MediaType.APPLICATION_XML);
+		} else if (file.toLowerCase().endsWith("zip")) {
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		} else {
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		}
 
+	    headers.setContentDispositionFormData(downloadFile.getName(), downloadFile.getName());
+	    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+	    ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(contents, headers, HttpStatus.OK);
+	    return response;
 	}
 	
 	private Resource[] getResource(PersistedSession s, boolean single, boolean target) {

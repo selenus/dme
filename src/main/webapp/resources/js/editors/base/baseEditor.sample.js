@@ -171,15 +171,18 @@ BaseEditor.prototype.createDownload = function() {
 	    	format: $('input[name=\"download-format-radios\"]:checked').val()
 	    },
 	    success: function(data) {
-	    	if (data.content===null || data.content.length==0) {
-	    		bootbox.alert(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"));
-	    	} else {
-		    	if (data.extension==="json") {
-		    		data.content = JSON.stringify(data.content);
-		    	}
-		    	blob = new Blob([data.content], {type: data.mime});
-		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.extension);
-	    	}
+	    	$("#download-link-container").html(
+	    			"<span>" +
+		    			(data.count==1 ? 
+		    					__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.file_count") :
+		    					String.format(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.files_count"), data.count)
+		    			) + ": " +
+	    				"<a target=\"_blank\" href=\"" + _this.pathname + "/async/download_output/" + data.link + "\">" +
+	    					"<i class=\"fa fa-download\" aria-hidden=\"true\"></i> " + 
+	    					__translator.translate("~eu.dariah.de.minfba.common.link.download") +
+	    				"</a>  " +
+	    			"</span>");
+	    	
 	    },
 	    error: __util.processServerError
 	});

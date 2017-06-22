@@ -17,6 +17,10 @@ function BaseEditor() {
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.separate",
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.combined",
 	                              
+	                              "~eu.dariah.de.minfba.schereg.editor.sample.download.file_count",
+	                              "~eu.dariah.de.minfba.schereg.editor.sample.download.files_count",
+	                              "~eu.dariah.de.minfba.common.link.download",
+	                              
 	                              "~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"]);
 	this.vocabularySources = new Array();
 };
