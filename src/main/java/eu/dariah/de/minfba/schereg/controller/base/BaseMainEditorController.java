@@ -17,6 +17,7 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +35,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
@@ -49,7 +51,10 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.processing.exception.ProcessingConfigException;
 import eu.dariah.de.minfba.processing.model.base.Resource;
+import eu.dariah.de.minfba.processing.output.FileOutputService;
+import eu.dariah.de.minfba.processing.output.json.JsonFileOutputService;
 import eu.dariah.de.minfba.processing.output.xml.XmlFileOutputService;
 import eu.dariah.de.minfba.processing.service.text.TextStringProcessingService;
 import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
@@ -203,52 +208,137 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		return "editor/form/download_output";
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})
-	public @ResponseBody String downloadOutput(@PathVariable String entityId, @RequestParam(defaultValue="single") String data, @RequestParam(defaultValue="source") String model, @RequestParam(defaultValue="xml") String format, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
+	@RequestMapping(method=RequestMethod.GET, value={"/async/download_link"})
+	public @ResponseBody String getDownloadLink(@PathVariable String entityId, @RequestParam(defaultValue="single") String data, @RequestParam(defaultValue="source") String model, @RequestParam(defaultValue="xml") String format, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException, ProcessingConfigException {
 		ModelActionPojo result = new ModelActionPojo();
 		
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s==null) {
 			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 			return null;
+		}		
+
+		FileOutputService fos;
+		if (format.equals("json")) {
+			fos = appContext.getBean(JsonFileOutputService.class);
+		} else {
+			fos = appContext.getBean(XmlFileOutputService.class);
 		}
+		
+		String schemaId = this.getModelId(entityId, model.equals("target"));
+		fos.setSchema(schemaService.findSchemaById(schemaId));
+		fos.setRoot(elementService.findRootBySchemaId(schemaId, true));
+		
+		String fileName = request.getSession().getId() + File.separator + fos.getSchema().getLabel();
+		File outDir = new File(fos.getOutputPath(fileName, 0)).getParentFile();
+		
+		if (outDir.exists()) {
+			FileUtils.deleteDirectory(outDir);
+		}
+		
+		fos.writeOutput(this.getResource(s, data.equals("single"), model.equals("target")), fileName);
 		
 		ObjectNode pojo = objectMapper.createObjectNode();
-		
-		if (format.equals("json")) {
-			Object content;
-			if (model.equals("target")) {
-				if (data.equals("single")) {
-					content = s.getSampleMapped().get(s.getSelectedOutputIndex());
-				} else {
-					content = s.getSampleMapped();
-				}
-			} else {
-				if (data.equals("single")) {
-					content = s.getSampleOutput().get(s.getSelectedOutputIndex());
-				} else {
-					content = s.getSampleOutput();
-				}
-			}
-			pojo.set("content", objectMapper.convertValue(content, JsonNode.class));
-			pojo.set("mime", new TextNode("application/json; charset=utf-8"));
-			pojo.set("extension", new TextNode("json"));
+		pojo.set("count", new IntNode(outDir.listFiles().length));
+		if (outDir.listFiles().length > 1) {
+			// Relative link to the ZIP file
+			logger.debug("Zip compressing " + outDir.listFiles().length + " output files");
+			pojo.set("link", new TextNode(fos.compressOutput(fileName)));
+			
 		} else {
-			XmlFileOutputService xmlOutService = appContext.getBean(XmlFileOutputService.class);
-			
-			
-			xmlOutService.setSchema(null);
-			xmlOutService.setRoot(null);
-			
-			xmlOutService.writeOutput(resource, fileName);
+			// Relative link to the one file
+			pojo.set("link", new TextNode(fileName + "." + fos.getFileExtension()));
 		}
 		
-	
-		
-		
+		/*if (format.equals("json")) {
+			
+			//objectMapper.writeValue(resultFile, this.getResource(s, data.equals("single"), model.equals("target")));
+			
+			pojo.set("content", objectMapper.convertValue(this.getResource(s, data.equals("single"), model.equals("target")), JsonNode.class));
+			pojo.set("mime", new TextNode("application/json; charset=utf-8"));
+			pojo.set("extension", new TextNode("json"));
+			
+		}*/ /*else {
+			
+			
+			XmlFileOutputService xmlOutService = appContext.getBean(XmlFileOutputService.class);
+			xmlOutService.setSchema(schema);
+			xmlOutService.setRoot(elementService.findRootBySchemaId(schemaId, true));
+			
+			try {
+				String fileName = request.getSession().getId() + File.separator + xmlOutService.getSchema().getLabel();
+				File outDir = new File(xmlOutService.getOutputPath(fileName, 0)).getParentFile();
+				
+				if (outDir.exists()) {
+					FileUtils.deleteDirectory(outDir);
+				}
+				
+				xmlOutService.writeOutput(this.getResource(s, data.equals("single"), model.equals("target")), fileName);
+								
+				
+				if (outDir.listFiles().length > 1) {
+					// Relative link to the ZIP file
+					logger.debug("Zip compressing " + outDir.listFiles().length + " output files");
+					pojo.set("link", new TextNode(xmlOutService.compressOutput(fileName)));
+					
+				} else {
+					// Relative link to the one XML file
+					pojo.set("link", new TextNode(fileName + "." + xmlOutService.getFileExtension()));
+				}
+			} catch (ProcessingConfigException e) {
+				logger.error("Failed to output sample as XML", e);
+				throw e;
+			}
+		}*/
+
 		result.setPojo(pojo);
 		
 		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pojo);
+	}
+	
+	@RequestMapping(method=RequestMethod.GET, value={"/async/download_output"})
+	public void getFile(@PathVariable String entityId, HttpServletRequest request, HttpServletResponse response) {
+	    try {
+	      // get your file as InputStream
+	      //InputStream is = ...;
+	      // copy it to response's OutputStream
+	      //org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+	      response.flushBuffer();
+	    } catch (IOException ex) {
+	      //logger.info("Error writing file to output stream. Filename was '{}'", fileName, ex);
+	      throw new RuntimeException("IOError writing file to output stream");
+	    }
+
+	}
+	
+	private Resource[] getResource(PersistedSession s, boolean single, boolean target) {
+		if (target) {
+			if (single) {
+				return new Resource[] {s.getSampleMapped().get(s.getSelectedOutputIndex())};
+			} else {
+				return s.getSampleMapped().toArray(new Resource[0]);
+			}
+		} else {
+			if (single) {
+				return new Resource[] {s.getSampleOutput().get(s.getSelectedOutputIndex())};
+			} else {
+				return s.getSampleOutput().toArray(new Resource[0]);
+			}
+		}
+	}
+	
+	private String getModelId(String entityId, boolean target) {
+		Identifiable entity = this.getEntity(entityId);
+		if (Schema.class.isAssignableFrom(entity.getClass())) {
+			return entity.getId();
+		} else {
+			Mapping m = (Mapping)entity;
+			if (target) {
+				return m.getTargetId();
+			} else {
+				return m.getSourceId();
+			}
+		}
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})

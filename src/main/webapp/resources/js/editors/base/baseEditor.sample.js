@@ -159,10 +159,10 @@ BaseEditor.prototype.downloadSample = function(type, index) {
 	modalFormHandler.show(form_identifier);
 };
 
-BaseEditor.prototype.downloadOutput = function() {
+BaseEditor.prototype.createDownload = function() {
 	var _this = this;
 	$.ajax({
-	    url: _this.pathname + "/async/download_output",
+	    url: _this.pathname + "/async/download_link",
 	    type: "GET",
 	    dataType: "json",
 	    data: { 

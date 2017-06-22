@@ -18,6 +18,12 @@
     
     <bean id="xmlFileOutputService" class="eu.dariah.de.minfba.processing.output.xml.XmlFileOutputService" scope="prototype">
     	<property name="outputBaseDirectory" value="${paths.tmpUploadDir:/tmp}" />
+    	<property name="extensionNamespacePattern" value="https://schereg.de.dariah.eu/namespaces/%s/" />
+    </bean>
+    
+    <bean id="jsonFileOutputService" class="eu.dariah.de.minfba.processing.output.json.JsonFileOutputService" scope="prototype">
+    	<property name="outputBaseDirectory" value="${paths.tmpUploadDir:/tmp}" />
+    	<property name="objMapper" ref="objectMapper" />
     </bean>
     
     <bean id="textProcessor" class="eu.dariah.de.minfba.processing.service.text.TextStringProcessingService" scope="prototype">

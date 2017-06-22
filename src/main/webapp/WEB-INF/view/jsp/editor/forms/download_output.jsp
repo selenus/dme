@@ -77,7 +77,7 @@
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-4 col-sm-8">
-						<button onclick="editor.downloadOutput(); return false;" class="btn btn-primary"><s:message code="~eu.dariah.de.minfba.common.link.download" /></button>
+						<button onclick="editor.createDownload(); return false;" class="btn btn-primary"><s:message code="~eu.dariah.de.minfba.common.link.create_download_link" /></button>
 					</div>
 				</div>
 			</c:when>
