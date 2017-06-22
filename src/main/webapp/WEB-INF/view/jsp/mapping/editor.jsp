@@ -84,9 +84,10 @@
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sessions" /></h5>									
 								</div>
 								<div class="ui-pane-subcontainer button-bar">
+									<button type="button" onclick="editor.newSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.new_session" /></button>
 									<button type="button" onclick="sessions.saveSession(editor.mappingId);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></button>
 									<button type="button" onclick="sessions.loadSession(editor.mappingId);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></button>
-									<button type="button" onclick="editor.resetSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.common.link.reset" /></button>
+									<button type="button" onclick="editor.deleteSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.delete_session" /></button>
 								</div>
 								<div class="editor-sample-container">
 									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.data" /></h5>

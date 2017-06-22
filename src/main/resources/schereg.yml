@@ -5,6 +5,7 @@ paths:
   grammars: /data/_srv/schereg/grammars
   models: /data/_srv/schereg/models
   tmpUploadDir: /tmp/schereg_uploads/
+  sampleFilesDir: /tmp/schereg_sample_files/
 
 editors:
   samples:

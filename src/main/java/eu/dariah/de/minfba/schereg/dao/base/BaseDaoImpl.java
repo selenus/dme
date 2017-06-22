@@ -47,8 +47,9 @@ public abstract class BaseDaoImpl<T extends Identifiable> extends DaoImpl<T> imp
 
 	@Override
 	public List<T> findAll(Sort sort) {
-		// TODO Auto-generated method stub
-		return null;
+		Query query = new Query();
+		query.with(sort);
+		return mongoTemplate.find(query, clazz, this.getCollectionName());		
 	}
 
 	@Override
@@ -64,6 +65,12 @@ public abstract class BaseDaoImpl<T extends Identifiable> extends DaoImpl<T> imp
 	@Override
 	public T findOne(Query q) {
 		return mongoTemplate.findOne(q, this.clazz, this.getCollectionName());
+	}
+	
+	@Override
+	public T findOne(Query q, Sort sort) {
+		q.with(sort);
+		return mongoTemplate.findOne(q, clazz, this.getCollectionName());		
 	}
 	
 	/*@Override

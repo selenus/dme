@@ -16,6 +16,7 @@ public interface BaseDao<T extends Identifiable> extends Dao {
 	public T findById(String id);
 	public List<T> find(Query q);
 	public T findOne(Query q);
+	public T findOne(Query q, Sort sort);
 	
 	/*public void findAndModify(Query query, Update update);
 	public void updateMulti(Query query, Update update);*/

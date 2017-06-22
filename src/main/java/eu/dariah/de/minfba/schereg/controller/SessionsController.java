@@ -11,19 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import eu.dariah.de.dariahsp.web.AuthInfoHelper;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
+import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
 import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
@@ -34,7 +32,7 @@ public class SessionsController {
 	
 	@Autowired protected AuthInfoHelper authInfoHelper;
 	@Autowired private PersistedSessionService sessionService;
-	
+	@Autowired protected MessageSource messageSource;
 	
 	@RequestMapping(value = {"", "/"}, method = RequestMethod.GET)
 	public ModelActionPojo getHome(HttpServletResponse response)  {
@@ -49,6 +47,23 @@ public class SessionsController {
 			return null;
 		}
 		sessionService.deleteSession(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		return new ModelActionPojo(true);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/newSession")
+	public @ResponseBody ModelActionPojo newSession(@RequestParam String entityId, HttpServletRequest request, HttpServletResponse response, Locale locale) throws GenericScheregException {
+		String userId = authInfoHelper.getUserId(request);
+		PersistedSession sCurrent = sessionService.access(entityId, request.getSession().getId(), userId);
+		if (sCurrent==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
+		// Unassign current session
+		sCurrent.setHttpSessionId(null);
+		sessionService.saveSession(sCurrent);
+		
+		// New session
+		sessionService.createAndSaveSession(entityId, request.getSession().getId(), userId, messageSource, locale);
 		return new ModelActionPojo(true);
 	}
 	

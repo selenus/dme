@@ -29,6 +29,7 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 	private DateTime lastAccessed;
 	private DateTime created;
 	private boolean notExpiring;
+	private SessionSampleFile sampleFile;
 	
 	private String sampleInput;
 	private List<Resource> sampleOutput;
@@ -77,6 +78,10 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 
 	public List<LogEntryPojo> getSessionLog() { return sessionLog; }
 	public void setSessionLog(List<LogEntryPojo> sessionLog) { this.sessionLog = sessionLog; }
+	
+	public SessionSampleFile getSampleFile() { return sampleFile; }
+	public void setSampleFile(SessionSampleFile sampleFile) { this.sampleFile = sampleFile; }
+	
 	
 	public List<LogEntryPojo> getSortedSessionLog() {
 		List<LogEntryPojo> result = this.getSessionLog();

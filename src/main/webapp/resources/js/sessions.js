@@ -4,18 +4,18 @@ $(document).ready(function() {
 });
 
 var SessionHandler = function() {
-	//this.prepareTranslations([]);
+	__translator.addTranslations([
+								"~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.head",
+								"~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.body"
+		]);
 	//__translator.getTranslations();
 	this.pathname = __util.getBaseUrl() + "sessions";
 };
 
-SessionHandler.prototype.resetSession = function(entityId, callback) {
-	/* Only deletion is necessary, a reload of the page results in the
-	 *  creation of a new persisted session if none is available
-	 */
+SessionHandler.prototype.newSession = function(entityId, callback) {
 	var _this = this;
 	$.ajax({
-	    url: _this.pathname + "/async/deleteSession",
+	    url: _this.pathname + "/async/newSession",
 	    data: { entityId: entityId },
 	    type: "GET",
 	    success: function(data) {
@@ -24,6 +24,29 @@ SessionHandler.prototype.resetSession = function(entityId, callback) {
 	    	}
 	    }, 
 	    error: __util.processServerError
+	});
+};
+
+SessionHandler.prototype.deleteSession = function(entityId, callback) {
+	var _this = this;
+	bootbox.confirm({
+		title: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.head"),
+		message: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.body"),
+		callback: function(result) {
+			if(result) {
+				$.ajax({
+				    url: _this.pathname + "/async/deleteSession",
+				    data: { entityId: entityId },
+				    type: "GET",
+				    success: function(data) {
+				    	if (data.success) { 
+				    		_this.handleCallback(callback, data);
+				    	}
+				    }, 
+				    error: __util.processServerError
+				});
+			}
+		}
 	});
 };
 

@@ -3,11 +3,12 @@ package eu.dariah.de.minfba.schereg.controller.base;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -18,9 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,15 +44,11 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -56,11 +57,12 @@ import eu.dariah.de.minfba.processing.model.base.Resource;
 import eu.dariah.de.minfba.processing.output.FileOutputService;
 import eu.dariah.de.minfba.processing.output.json.JsonFileOutputService;
 import eu.dariah.de.minfba.processing.output.xml.XmlFileOutputService;
-import eu.dariah.de.minfba.processing.service.text.TextStringProcessingService;
 import eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
+import eu.dariah.de.minfba.schereg.model.SessionSampleFile;
+import eu.dariah.de.minfba.schereg.model.SessionSampleFile.FileTypes;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
 import eu.dariah.de.minfba.schereg.processing.CollectingResourceConsumptionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -229,7 +231,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		fos.setSchema(schemaService.findSchemaById(schemaId));
 		fos.setRoot(elementService.findRootBySchemaId(schemaId, true));
 		
-		String fileName = request.getSession().getId() + File.separator + fos.getSchema().getLabel();
+		String fileName = s.getId() + File.separator + s.getId();
 		File outDir = new File(fos.getOutputPath(fileName, 0)).getParentFile();
 		
 		if (outDir.exists()) {
@@ -240,75 +242,53 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		
 		ObjectNode pojo = objectMapper.createObjectNode();
 		pojo.set("count", new IntNode(outDir.listFiles().length));
+		
+		SessionSampleFile sampleFile = new SessionSampleFile();
+		sampleFile.setFileCount(outDir.listFiles().length);
+		
 		if (outDir.listFiles().length > 1) {
-			// Relative link to the ZIP file
 			logger.debug("Zip compressing " + outDir.listFiles().length + " output files");
-			pojo.set("link", new TextNode(fos.compressOutput(fileName)));
-			
+			fos.compressOutput(fileName);
+			sampleFile.setType(FileTypes.ZIP);
+			sampleFile.setPath(fos.getOutputBaseDirectory() + File.separator + s.getId() + File.separator + s.getId() + ".zip");
 		} else {
-			// Relative link to the one file
-			pojo.set("link", new TextNode(fileName + "." + fos.getFileExtension()));
+			sampleFile.setType(fos instanceof XmlFileOutputService ? FileTypes.XML : FileTypes.JSON);
+			sampleFile.setPath(fos.getOutputBaseDirectory() + File.separator + s.getId() + File.separator + s.getId() + "." + fos.getFileExtension());
 		}
 		
-		/*if (format.equals("json")) {
-			
-			//objectMapper.writeValue(resultFile, this.getResource(s, data.equals("single"), model.equals("target")));
-			
-			pojo.set("content", objectMapper.convertValue(this.getResource(s, data.equals("single"), model.equals("target")), JsonNode.class));
-			pojo.set("mime", new TextNode("application/json; charset=utf-8"));
-			pojo.set("extension", new TextNode("json"));
-			
-		}*/ /*else {
-			
-			
-			XmlFileOutputService xmlOutService = appContext.getBean(XmlFileOutputService.class);
-			xmlOutService.setSchema(schema);
-			xmlOutService.setRoot(elementService.findRootBySchemaId(schemaId, true));
-			
-			try {
-				String fileName = request.getSession().getId() + File.separator + xmlOutService.getSchema().getLabel();
-				File outDir = new File(xmlOutService.getOutputPath(fileName, 0)).getParentFile();
-				
-				if (outDir.exists()) {
-					FileUtils.deleteDirectory(outDir);
-				}
-				
-				xmlOutService.writeOutput(this.getResource(s, data.equals("single"), model.equals("target")), fileName);
-								
-				
-				if (outDir.listFiles().length > 1) {
-					// Relative link to the ZIP file
-					logger.debug("Zip compressing " + outDir.listFiles().length + " output files");
-					pojo.set("link", new TextNode(xmlOutService.compressOutput(fileName)));
-					
-				} else {
-					// Relative link to the one XML file
-					pojo.set("link", new TextNode(fileName + "." + xmlOutService.getFileExtension()));
-				}
-			} catch (ProcessingConfigException e) {
-				logger.error("Failed to output sample as XML", e);
-				throw e;
-			}
-		}*/
+		s.setSampleFile(sampleFile);
+		sessionService.saveSession(s);
 
 		result.setPojo(pojo);
 		
 		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pojo);
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value={"/async/download_output"})
-	public void getFile(@PathVariable String entityId, HttpServletRequest request, HttpServletResponse response) {
-	    try {
-	      // get your file as InputStream
-	      //InputStream is = ...;
-	      // copy it to response's OutputStream
-	      //org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-	      response.flushBuffer();
-	    } catch (IOException ex) {
-	      //logger.info("Error writing file to output stream. Filename was '{}'", fileName, ex);
-	      throw new RuntimeException("IOError writing file to output stream");
-	    }
+	@RequestMapping(method=RequestMethod.GET, value={"/async/download_output/"})
+	public ResponseEntity<byte[]> getFile(@PathVariable String entityId, HttpServletRequest request, HttpServletResponse response) throws FileNotFoundException, IOException {
+		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
+		if (s==null) {
+			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+			return null;
+		}
+		
+		HttpHeaders headers = new HttpHeaders();
+		
+	    
+		File downloadFile = new File(s.getSampleFile().getPath());
+		byte[] contents = IOUtils.toByteArray(new FileInputStream(downloadFile));
+		
+		if (s.getSampleFile().getType().equals(FileTypes.XML)) {
+			headers.setContentType(MediaType.APPLICATION_XML);
+		} else if (s.getSampleFile().getType().equals(FileTypes.ZIP)) {
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		} else {
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		}
 
+	    headers.setContentDispositionFormData(downloadFile.getName(), downloadFile.getName());
+	    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+	    return new ResponseEntity<byte[]>(contents, headers, HttpStatus.OK);
 	}
 	
 	private Resource[] getResource(PersistedSession s, boolean single, boolean target) {

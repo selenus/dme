@@ -55,12 +55,24 @@ public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends Base
 	
 	@Override
 	public List<T> findAll(Sort sort) {
-		// TODO sort
-		List<T> result = mongoTemplate.findAll(clazz, this.getCollectionName());
+		Query query = new Query();
+		query.with(sort);
+		
+		List<T> result = mongoTemplate.find(query, clazz, this.getCollectionName());
 		if (result != null) {
 			for (T e : result) {
 				e.flush();
 			}
+		}
+		return result;
+	}
+	
+	@Override
+	public T findOne(Query q, Sort sort) {
+		q.with(sort);
+		T result = mongoTemplate.findOne(q, clazz, this.getCollectionName());
+		if (result != null) {
+			result.flush();
 		}
 		return result;
 	}

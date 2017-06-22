@@ -1,23 +1,19 @@
 package eu.dariah.de.minfba.schereg.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletResponse;
 
 import org.bson.types.ObjectId;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.schereg.dao.interfaces.PersistedSessionDao;
-import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;
@@ -26,7 +22,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.PersistedSessionService;
 @Service
 public class PersistedSessionServiceImpl implements PersistedSessionService {
 	@Autowired private PersistedSessionDao sessionDao;
-	@Autowired private ReferenceDao referenceDao;
 
 	@Override
 	public List<PersistedSession> findAllByUser(String entityId, String userId) {
@@ -51,11 +46,16 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 	public PersistedSession accessOrCreate(String entityId, String httpSessionId, String userId, MessageSource messageSource, Locale locale) throws GenericScheregException {
 		PersistedSession s = this.find(entityId, httpSessionId, userId);
 		if (s==null) {
-			s = createAndSaveSession(entityId, httpSessionId, userId, messageSource, locale);
+			s = this.findLatest(entityId, userId);
+			if (s!=null) {
+				return reassignPersistedSession(httpSessionId, userId, s.getId());
+			} else {
+				s = createAndSaveSession(entityId, httpSessionId, userId, messageSource, locale);
+			}
 		}
 		return this.saveSession(s);
 	}
-	
+
 	@Override
 	public String getSampleInputValue(PersistedSession s, String functionId) {
 		if (s.getSelectedValueMap()!=null) {
@@ -124,6 +124,15 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 	@Override
 	public void deleteSessions(List<PersistedSession> sessions) {
 		sessionDao.delete(sessions);
+	}
+	
+	private PersistedSession findLatest(String entityId, String userId) {
+		PersistedSession s = sessionDao.findOne(Query.query(Criteria.where("userId").is(userId).and("entityId").is(entityId)), 
+				new Sort(Sort.Direction.DESC, "lastAccessed"));
+		if (s==null) {
+			return null;
+		}
+		return s;
 	}
 	
 	private PersistedSession find(String entityId, String httpSessionId, String userId) {
