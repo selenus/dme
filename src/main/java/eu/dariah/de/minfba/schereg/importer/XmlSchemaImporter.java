@@ -63,6 +63,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	
 	private Map<String, List<ImportAwareNonterminal>> extensionIdNonterminalMap;
 	
+	private Map<String, ImportAwareNonterminal> terminalIdNonterminalMap;
+	
 	
 	public XmlSchemaNature getSchema() { return schema; }
 	@Override public void setSchema(XmlSchemaNature schema) { this.schema = schema; }
@@ -99,6 +101,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 			logger.debug(String.format("Started importing schema %s", schema.getEntityId()));
 			
 			this.extensionIdNonterminalMap = new HashMap<String, List<ImportAwareNonterminal>>();
+			this.terminalIdNonterminalMap = new HashMap<String, ImportAwareNonterminal>();
 			
 			this.importXmlSchema();
 			if (this.getListener()!=null) {
@@ -199,16 +202,20 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 			}
 		}
 		
+		Map<String, NonterminalImpl> serializedNonterminals = new HashMap<String, NonterminalImpl>();
+		
 		// No "additional roots" possible
 		if (rootTerminals.size()==0) {
 			this.combineExtensionNonterminals();
 			
 			// We expect that no abstract element can be selected as root!
 			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.rootNonterminal);
-			this.rootNonterminal = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.rootNonterminal);
+			this.rootNonterminal = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.rootNonterminal, serializedNonterminals);
 			this.rootNonterminal.setProcessingRoot(true);
 			return;
 		}
+		
+		
 		
 		List<Nonterminal> potentialRootElements = new ArrayList<Nonterminal>(rootTerminals.keySet().size());
 		Nonterminal additionalRootNonterminal;
@@ -240,24 +247,31 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		
 		this.combineExtensionNonterminals();
 		
+		
+		
 		// We expect that no abstract element can be selected as root!
 		this.resolveExtensionHierarchy((ImportAwareNonterminal)this.rootNonterminal);
-		this.rootNonterminal = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.rootNonterminal);
+		this.rootNonterminal = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.rootNonterminal, serializedNonterminals);
+		this.rootNonterminal.setProcessingRoot(true);
 		for (int i=0; i<this.additionalRootElements.size(); i++) {
 			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.additionalRootElements.get(i));
-			this.additionalRootElements.set(i, this.convertToSerializableNonterminals((ImportAwareNonterminal)this.additionalRootElements.get(i)));
+			this.additionalRootElements.set(i, this.convertToSerializableNonterminals((ImportAwareNonterminal)this.additionalRootElements.get(i), serializedNonterminals));
 		}
 	}
 	
-	private Nonterminal convertToSerializableNonterminals(ImportAwareNonterminal n) {
+	private Nonterminal convertToSerializableNonterminals(ImportAwareNonterminal n, Map<String, NonterminalImpl> serializedNonterminals) {
 		if (n==null) {
 			return null;
 		}
+		if (serializedNonterminals.containsKey(n.getId())) {
+			return serializedNonterminals.get(n.getId());
+		}
 		NonterminalImpl nResult = new NonterminalImpl(n.getEntityId(), n.getId(), n.getName());
+		serializedNonterminals.put(nResult.getId(), nResult);
 		if (n.getChildNonterminals()!=null) {
 			nResult.setChildNonterminals(new ArrayList<Nonterminal>());
 			for (Nonterminal nChild : n.getChildNonterminals()) {
-				nResult.getChildNonterminals().add(this.convertToSerializableNonterminals((ImportAwareNonterminal)nChild));
+				nResult.getChildNonterminals().add(this.convertToSerializableNonterminals((ImportAwareNonterminal)nChild, serializedNonterminals));
 			}
 		}
 		return nResult;
@@ -346,6 +360,11 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	protected ImportAwareNonterminal processElement(ImportAwareNonterminal parentNonterminal, XSElementDecl element, List<String> processedTerminalQNs) throws MetamodelConsistencyException {	
 		String terminalQN = this.createTerminalQN(element.getNamespace(), element.getName(), false);
 		
+		if (terminalIdNonterminalMap.containsKey(terminalQN)) {
+			logger.debug("Reusing existing nonterminal for qn: " + terminalQN);
+			return terminalIdNonterminalMap.get(terminalQN);
+		}
+		
 		ImportAwareNonterminal n = this.createNonterminal(element.getNamespace(), element.getName(), false, element.getAbstract());
 		XSElementDeclaration substDec = element.getSubstitutionGroupAffiliation();
 		
@@ -423,6 +442,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		}
 	}
 
+	
+	
 	protected ImportAwareNonterminal createNonterminal(String terminalNamespace, String terminalName, boolean isAttribute, boolean isAbstract) throws MetamodelConsistencyException {
 		String terminalQN = createTerminalQN(terminalNamespace, terminalName, isAttribute);
 		
@@ -449,6 +470,9 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		schema.mapNonterminal(n.getId(), terminalId);
 		
 		n.setEntityId(this.schema.getId());
+		
+		terminalIdNonterminalMap.put(terminalQN, n);
+		
 		return n;
 	}
 	

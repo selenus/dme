@@ -125,11 +125,11 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		rootNonterminal.setRoot(true);
 		
 		rootNonterminals.add(rootNonterminal);
-		if (additionalRootElements!=null && additionalRootElements.size()>0) {
+		/*if (additionalRootElements!=null && additionalRootElements.size()>0) {
 			for (Nonterminal addRoot : additionalRootElements) {
 				rootNonterminals.add(elementService.saveElementHierarchy(addRoot, auth));
 			}
-		}
+		}*/
 		
 		Schema s = schemaService.findSchemaById(schemaNature.getEntityId());
 		s.addOrReplaceSchemaNature(schemaNature);
