@@ -249,11 +249,19 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		if (outDir.listFiles().length > 1) {
 			logger.debug("Zip compressing " + outDir.listFiles().length + " output files");
 			fos.compressOutput(fileName);
+
 			sampleFile.setType(FileTypes.ZIP);
 			sampleFile.setPath(fos.getOutputBaseDirectory() + File.separator + s.getId() + File.separator + s.getId() + ".zip");
+
+			pojo.set("link", new TextNode(s.getId() + "/zip"));
+			
+
 		} else {
+
 			sampleFile.setType(fos instanceof XmlFileOutputService ? FileTypes.XML : FileTypes.JSON);
 			sampleFile.setPath(fos.getOutputBaseDirectory() + File.separator + s.getId() + File.separator + s.getId() + "." + fos.getFileExtension());
+
+			
 		}
 		
 		s.setSampleFile(sampleFile);
@@ -273,8 +281,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		}
 		
 		HttpHeaders headers = new HttpHeaders();
-		
-	    
+
 		File downloadFile = new File(s.getSampleFile().getPath());
 		byte[] contents = IOUtils.toByteArray(new FileInputStream(downloadFile));
 		
@@ -288,6 +295,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 
 	    headers.setContentDispositionFormData(downloadFile.getName(), downloadFile.getName());
 	    headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
 	    return new ResponseEntity<byte[]>(contents, headers, HttpStatus.OK);
 	}
 	
