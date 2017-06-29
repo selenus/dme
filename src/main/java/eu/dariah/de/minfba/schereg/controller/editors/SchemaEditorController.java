@@ -330,7 +330,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, 
-			@RequestParam(value="schema_root") Integer schemaRoot, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+			@RequestParam(value="schema_root_qn") String schemaRoot, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -341,7 +341,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			if (temporaryFilesMap.containsKey(fileId)) {
 				
 				if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
-					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
+					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, 0, authInfoHelper.getAuth(request));
 				} else {
 					try {
 						SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);

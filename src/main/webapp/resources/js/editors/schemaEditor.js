@@ -419,7 +419,7 @@ SchemaEditor.prototype.setProcessingRoot = function(elementId) {
 
 SchemaEditor.prototype.registerElementTypeahead = function(typeahead) {
 	var _this = this;
-	this.registerTypeahead(typeahead, "elements", "code", 8, 
+	this.registerTypeahead(typeahead, "elements", _this.vocabularySources["elements"], "code", 8, 
 			function(data) { return _this.showTypeaheadFoundResult(data); },
 			function(t, suggestion) { 
 				$(t).closest(".form-group").removeClass("has-error"); 
@@ -577,21 +577,42 @@ SchemaEditor.prototype.triggerUploadFile = function() {
 
 
 SchemaEditor.prototype.handleFileValidatedOrFailed = function(data) {
-	var select = $("#schema_root");
-	select.html("");
+	var rootSelector = $("#schema_root");
+	rootSelector.val("");
+	
+	// No root elements
 	if (data==null || data.pojo==null || data.pojo.length==0) {
 		select.prop("disabled", "disabled");
 		$("#btn-submit-schema-elements").prop("disabled", "disabled");
 		return;
 	}
 	
-	var option;
-	for (var i=0; i<data.pojo.length; i++) {
-		option = "<option value='" + i + "'>" + data.pojo[i].name + " <small>(" + data.pojo[i].namespace + ")</small>" + "</option>";
-		select.append(option);
-	}
-	select.removeProp("disabled");
+	var _this = editor;
+	var elements = new Bloodhound({
+		  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+		  queryTokenizer: Bloodhound.tokenizers.whitespace,
+		  identify: function(obj) { return (obj.namespace + ":" + obj.name); },
+		  local: data.pojo
+	});
+	
+	_this.registerTypeahead(rootSelector, "importedelements", elements, "name", 8, 
+			function(e) { return '<p><strong>' + e.name + '</strong><br/ >' + e.namespace + '<p>'; },
+			function(t, suggestion) {
+				$("#schema_root_qn").val(suggestion.namespace + ":" + suggestion.name);
+				/*$(t).closest(".form-group").removeClass("has-error"); 
+				$(t).closest(".form-content").find("#element-id").val(suggestion.id);
+				$(t).closest(".form-content").find("#element-id-display").val(suggestion.id);
+				$(t).closest(".form-content").find("#element-name").val(suggestion.name!==undefined ? suggestion.name : suggestion.grammarName);*/
+			},
+			function(t, value) {
+				$("#schema_root_qn").val(value);
+			}
+	);
+	
+	
+	rootSelector.removeProp("disabled");
 	$("#btn-submit-schema-elements").removeProp("disabled");
+	
 };
 
 SchemaEditor.prototype.triggerEditSchema = function() {

@@ -20,6 +20,7 @@ function BaseEditor() {
 	                              "~eu.dariah.de.minfba.schereg.editor.sample.download.file_count",
 	                              "~eu.dariah.de.minfba.schereg.editor.sample.download.files_count",
 	                              "~eu.dariah.de.minfba.common.link.download",
+	                              "~eu.dariah.de.minfba.common.labels.no_match_found",
 	                              
 	                              "~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"]);
 	this.vocabularySources = new Array();
@@ -53,22 +54,23 @@ BaseEditor.prototype.addVocabularySource = function(name, urlSuffix, params) {
 	});
 };
 
-BaseEditor.prototype.registerTypeahead = function(element, datasource, displayAttr, limit, suggestionCallback, selectionCallback, changeCallback) {
+BaseEditor.prototype.registerTypeahead = function(element, name, datasource, displayAttr, limit, suggestionCallback, selectionCallback, changeCallback) {
+	
 	var _this = this;
 	element.typeahead(null, {
-		name: datasource,
+		name: name,
 		hint: false,
 		display: displayAttr,
-		source: _this.vocabularySources[datasource],
+		source: datasource,
 		limit: limit,
 		templates: {
 			empty: ['<div class="tt-empty-message">',
-			        	__translator.translate("~eu.dariah.de.colreg.common.labels.no_match_found"),
+			        	__translator.translate("~eu.dariah.de.minfba.common.labels.no_match_found"),
 			        '</div>'].join('\n'),
 			suggestion: function(data) { return suggestionCallback(data); }
 		}
 	});
-	
+
 	// Executed when a suggestion has been accepted by the user
 	if (selectionCallback!==undefined && selectionCallback!==null && typeof selectionCallback==='function') {
 		element.bind('typeahead:select typeahead:autocomplete', function(ev, suggestion) {

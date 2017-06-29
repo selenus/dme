@@ -19,7 +19,9 @@
 		<div class="form-group">
 			<label class="col-sm-4 control-label" for="schema_root"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.root_element" />:</label>
 			<div class="col-sm-8">
-				<select id="schema_root" name="schema_root" class="form-control" disabled="disabled"></select>
+				<!--<select id="schema_root" name="schema_root" class="form-control" disabled="disabled"></select>-->
+				<input type="text" class="form-control typeahead" id="schema_root" disabled="disabled" />
+				<input type="hidden" id="schema_root_qn" />
 			</div>
 		</div>
 	</div>
