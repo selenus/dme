@@ -341,9 +341,18 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			if (temporaryFilesMap.containsKey(fileId)) {
 				
 				if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
-					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, 0, authInfoHelper.getAuth(request));
+					if (schemaRoot.isEmpty()) {
+						result.setSuccess(false);
+						result.addFieldError("schema_root", messageSource.getMessage("~eu.dariah.de.minfba.schereg.notification.import.root_missing", null, locale));
+						
+						return result;
+					}
+					
+					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
 				} else {
 					try {
+						// TODO Fix import of regularly exported schema
+						
 						SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
 					
 						List<Element> rootElements = new ArrayList<Element>();
@@ -360,10 +369,10 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 
 						((XmlSchemaNature)schema.getElement()).setTerminals(xmlNature.getTerminals());
 						
-						elementService.regenerateIds(xmlNature, entityId, rootElements.get(schemaRoot), terminalIdMap, s.getGrammars());
+						elementService.regenerateIds(xmlNature, entityId, null, terminalIdMap, s.getGrammars());
 
 						schemaService.saveSchema(schema.getElement(), auth);
-						elementService.saveOrReplaceRoot(entityId, (Nonterminal)rootElements.get(schemaRoot), auth);
+						elementService.saveOrReplaceRoot(entityId, null, auth);
 						
 					} catch (Exception e) {
 						logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);

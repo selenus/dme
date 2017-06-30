@@ -158,7 +158,7 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "reset" : return this.area.resetView();
 	    
 	    case "exportSchema" : return this.exportSchema();
-	    case "importSchema" : return this.triggerUploadFile();
+	    case "importSchema" : return this.importSchema();
 	    case "createRoot" : return this.createRoot();
 	    
 	    default:

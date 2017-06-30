@@ -51,13 +51,13 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	public boolean isSupported(String filePath) {
-		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
+		XmlSchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
 		importer.setSchemaFilePath(filePath);
 		return importer.getIsSupported();
 	}
 	
 	public List<? extends Terminal> getPossibleRootTerminals(String filePath) {
-		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
+		XmlSchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
 		importer.setSchemaFilePath(filePath);
 		return importer.getPossibleRootTerminals();
 	}
@@ -66,7 +66,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		return schemaId!=null && this.processingSchemaIds.contains(schemaId);
 	}
 	
-	public void importSchema(String filePath, String schemaId, Integer rootTerminalIndex, AuthPojo auth) throws SchemaImportException {
+	public void importSchema(String filePath, String schemaId, String schemaRoot, AuthPojo auth) throws SchemaImportException {
 		/*
 		 * Currently only XML Schemata are supported for import;
 		 * 	TODO: Extend for (configurable) support of CSV, JSON etc. schemata
@@ -97,12 +97,20 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			throw new SchemaImportException("Schema import file not set or accessible [{}]");
 		}
 		
-		
-		XmlTerminal rootTerminal = (XmlTerminal)getPossibleRootTerminals(filePath).get(rootTerminalIndex);
+		XmlSchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
+		XmlTerminal rootTerminal = null;
+		String compQN;
+		for (Terminal possibleRoot : this.getPossibleRootTerminals(filePath)) {
+			compQN = importer.createTerminalQN(((XmlTerminal)possibleRoot).getNamespace(), possibleRoot.getName(), ((XmlTerminal)possibleRoot).isAttribute());
+			if (compQN.equals(schemaRoot)) {
+				rootTerminal = (XmlTerminal)possibleRoot;
+				break;
+			}
+		}
 		s.setRootElementNamespace(rootTerminal.getNamespace());
 		s.setRootElementName(rootTerminal.getName());
 		
-		SchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
+		
 		importer.setListener(this);
 		importer.setSchema(s);
 		importer.setSchemaFilePath(filePath);

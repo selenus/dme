@@ -1,5 +1,12 @@
 var modalFormHandler = null;
 
+$.fn.modal.defaults.spinner = $.fn.modalmanager.defaults.spinner = 
+    '<div class="loading-spinner" style="width: 200px; margin-left: -100px;">' +
+        '<div class="progress progress-striped active">' +
+            '<div class="progress-bar" style="width: 100%;"></div>' +
+        '</div>' +
+    '</div>';
+
 /** These are the placeholders used within this form:
   * 	- ~*... in the ModalFormHandler
   * 	- ~*file... in the SchemaSourceSelector
@@ -75,6 +82,7 @@ var ModalFormHandler = function(options) {
 	this.displayCallback = null;
 	this.setupCallback = null;
 	this.completeCallback = null;
+	this.submitCallback = null;
 };
 
 ModalFormHandler.prototype.update = function() {
@@ -94,13 +102,18 @@ ModalFormHandler.prototype.show = function(identifier) {
 	} else { 
 		// show previously hidden form
 		$(this.container).modal('show');
+		$('body').modalmanager('removeLoading');
 	}
 	this.formResetted = false;
 };
 
+ModalFormHandler.prototype.loading = function() {
+	$('body').modalmanager('loading');
+};
+
 ModalFormHandler.prototype.init = function() {
 	var _this = this;
-	$('body').modalmanager('loading');
+	this.loading();
 	
 	// Prepare required translations for the dialog and retrieve them
 	if (this.translations!=null && this.translations instanceof Array) {
@@ -253,15 +266,23 @@ ModalFormHandler.prototype.submit = function(data) {
 			$(_this.container).find("form").prop("action")!="" && $(_this.container).find("form").prop("method")!="") {
 		
 		try {
+			var d = $(data).serialize();
+			if (_this.options.submitCallback != undefined && typeof _this.options.submitCallback == 'function') {
+				if(_this.options.submitCallback($(data).serialize(), _this.container)===false) {
+					return false;
+				}
+			}
+			this.loading();
 			$.ajax({
 		        url: $(_this.container).find("form").prop("action"),
-		        data: $(data).serialize(),
+		        data: d,
 		        type: $(_this.container).find("form").prop("method"),
 		        dataType: "json",
 		        success: function(data) { 
 		        	_this.processSubmitResponse(data); 
 		        },
-		        error: function(jqXHR, textStatus, errorThrown) { 
+		        error: function(jqXHR, textStatus, errorThrown) {
+		        	this.show(this.options.identifier);
 		        	__util.processServerError(jqXHR, textStatus, errorThrown); 
 		        }
 			});
@@ -298,6 +319,8 @@ ModalFormHandler.prototype.translate = function(placeholder) {
 
 ModalFormHandler.prototype.processSubmitResponse = function(data) {
 	var _this = this;
+	
+	this.show(this.options.identifier);
 	
 	if (data.success == true) {
 		// successfully saved

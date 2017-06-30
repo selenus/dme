@@ -145,6 +145,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	@Override
 	public List<XmlTerminal> getPossibleRootTerminals() {
 		try {
+			Stopwatch sw = new Stopwatch().start();
+			
 			XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 			XSLoader schemaLoader = impl.createXSLoader(null);
 			model = schemaLoader.loadURI(schemaFilePath);
@@ -160,12 +162,16 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 				root.setNamespace(elem.getNamespace());
 				rootTerminals.add(root);
 			}
+			
+			logger.debug("Detection of possible root nonterminals took {}ms", sw.getElapsedTime());
+			
 			return rootTerminals;
 		} catch (Exception e) {}
 		return null;
 	}
 	
 	protected void importXmlSchema() throws MetamodelConsistencyException {
+		Stopwatch sw = new Stopwatch().start();
 		XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 		XSLoader schemaLoader = impl.createXSLoader(null);
 		model = schemaLoader.loadURI(schemaFilePath);
@@ -212,6 +218,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.rootNonterminal);
 			this.rootNonterminal = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.rootNonterminal, serializedNonterminals);
 			this.rootNonterminal.setProcessingRoot(true);
+			
+			logger.debug("Schema import took {}ms", sw.getElapsedTime());
 			return;
 		}
 		
@@ -257,6 +265,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.additionalRootElements.get(i));
 			this.additionalRootElements.set(i, this.convertToSerializableNonterminals((ImportAwareNonterminal)this.additionalRootElements.get(i), serializedNonterminals));
 		}
+		logger.debug("Schema import took {}ms", sw.getElapsedTime());
 	}
 	
 	private Nonterminal convertToSerializableNonterminals(ImportAwareNonterminal n, Map<String, NonterminalImpl> serializedNonterminals) {
@@ -403,7 +412,11 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		ImportAwareNonterminal attr;
 		for (int i=0; i<attrList.getLength(); i++) {
 			XSAttributeDeclaration attrDecl = ((XSAttributeUse)attrList.item(i)).getAttrDeclaration();
-			attr = this.createNonterminal(attrDecl.getNamespace(), attrDecl.getName(), true, false);
+			if (attrDecl.getNamespace()!=null) {
+				attr = this.createNonterminal(attrDecl.getNamespace(), attrDecl.getName(), true, false);
+			} else {
+				attr = this.createNonterminal(typeDef.getNamespace(), attrDecl.getName(), true, false);
+			}
 			addChildNonterminal(nonterminal, attr);
 		}
 		

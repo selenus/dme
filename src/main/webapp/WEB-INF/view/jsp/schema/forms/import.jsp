@@ -21,7 +21,7 @@
 			<div class="col-sm-8">
 				<!--<select id="schema_root" name="schema_root" class="form-control" disabled="disabled"></select>-->
 				<input type="text" class="form-control typeahead" id="schema_root" disabled="disabled" />
-				<input type="hidden" id="schema_root_qn" />
+				<input type="hidden" name="schema_root_qn" id="schema_root_qn" />
 			</div>
 		</div>
 	</div>
