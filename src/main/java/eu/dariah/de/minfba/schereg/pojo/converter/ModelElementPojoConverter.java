@@ -15,6 +15,16 @@ import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo.ModelElementState;
 
 public class ModelElementPojoConverter {
 
+	public static List<ModelElementPojo> convertModelElements(List<Element> modelElements, boolean staticElementsOnly) throws GenericScheregException {
+		List<ModelElementPojo> results = new ArrayList<ModelElementPojo>();
+		if (modelElements!=null) {
+			for (Element e : modelElements) {
+				results.add(convertModelElement(e, staticElementsOnly));
+			}
+		}
+		return results;
+	}
+	
 	public static ModelElementPojo convertModelElement(BaseModelElement modelElement, boolean staticElementsOnly) throws GenericScheregException {
 		if (modelElement==null) {
 			return null;
@@ -124,4 +134,6 @@ public class ModelElementPojoConverter {
 		
 		return p;
 	}
+
+	
 }

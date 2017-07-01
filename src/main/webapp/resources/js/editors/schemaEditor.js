@@ -99,6 +99,10 @@ var SchemaEditor = function(options) {
 
 SchemaEditor.prototype = new BaseEditor();
 
+SchemaEditor.prototype.getEntityId = function() {
+	return this.schema.id;
+};
+
 SchemaEditor.prototype.init = function() {
 	this.initLayout();
 	this.initGraph();

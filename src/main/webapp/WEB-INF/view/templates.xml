@@ -59,6 +59,7 @@
 			<add-attribute type="string" value="jquery/jquery.ui.widget.js" />
 			<add-attribute type="string" value="jquery/jquery.iframe-transport.js" />
 			<add-attribute type="string" value="jquery/jquery.contextMenu.js" />
+			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
 			<add-attribute type="string" value="jquery/typeahead.bundle.min.js" />
 			
 			<add-attribute type="string" value="lib/svg-pan-zoom.js" />

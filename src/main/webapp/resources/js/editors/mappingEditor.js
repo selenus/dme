@@ -44,6 +44,7 @@ var MappingEditor = function(options) {
 	this.elementContextButtons = $("#schema-element-context-buttons");
 	this.elementActivitiesContainer = $("#schema-element-context-activities");
 	
+	this.pathname = __util.getBaseUrl() + "mapping/editor/" + this.mappingId + "/";
 	this.context = document.getElementById("mapping-editor-canvas").getContext("2d");
 	this.layout = null;
 	
@@ -91,6 +92,10 @@ var MappingEditor = function(options) {
 };
 
 MappingEditor.prototype = new BaseEditor();
+
+MappingEditor.prototype.getEntityId = function() {
+	return this.mappingId;
+};
 
 MappingEditor.prototype.registerEvents = function() {
 	document.addEventListener("selectionEvent", this.selectionHandler, false);

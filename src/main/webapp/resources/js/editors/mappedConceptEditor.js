@@ -70,7 +70,7 @@ MappedConceptEditor.prototype.init = function() {
 		                        	 getContextMenuItems: _this.getElementContextMenu
 		                         }),
 		                         $.extend(true, {}, commonElementOptions, {
-		                        	 key: "DescriptionGrammarImpl", 
+		                        	 key: "Grammar", 
 		                        	 primaryColor: "#FFE173", 
 		                        	 secondaryColor: "#6d5603",
 		                        	 getContextMenuItems: _this.getGrammarContextMenu,
@@ -83,7 +83,7 @@ MappedConceptEditor.prototype.init = function() {
 		                        	 radius: 5
 		                         }),
 		                         $.extend(true, {}, commonElementOptions, {
-		                        	 key: "TransformationFunctionImpl", 
+		                        	 key: "Function", 
 		                        	 primaryColor: "#FFE173", 
 		                        	 offsetFunction: function(x, y, element, parentElement, isTarget, elementPositioningDelta) {
 		                        		 var delta = {};
@@ -364,12 +364,11 @@ MappedConceptEditor.prototype.getElementHierarchy = function(path, area, isSourc
 	    	}
 	    	
 	    	var wrapper = {};
-	    	wrapper.childNonterminals = data;
+	    	wrapper.childElements = data;
 	    	wrapper.id = "-1";
-	    	wrapper.name = "~Input";
-	    	wrapper.transient = true;
-	    	wrapper.type = "null";
-	    	wrapper.simpleType = "LogicalRoot";
+	    	wrapper.label = "~Input";
+	    	wrapper.type = "LogicalRoot";
+	    	wrapper.state = "OK";
 	    	
 	    	_this.processElementHierarchy(wrapper, area, isSource);
 
@@ -382,38 +381,35 @@ MappedConceptEditor.prototype.getElementHierarchy = function(path, area, isSourc
 };
 
 MappedConceptEditor.prototype.processElementHierarchy = function(data, area, isSource) {
-	var root = area.addElement(data.simpleType, null, data.id, this.formatLabel(data.name), null);
-	this.generateTree(area, root, data.childNonterminals, null, data.grammars, isSource);
+	var root = area.addElement(data.type, null, data.id, this.formatLabel(data.label), null, false);
+	this.generateTree(area, root, data.childElements, isSource);
 	area.elements[0].setExpanded(true);
 	this.graph.update();
 };
 
 
-MappedConceptEditor.prototype.generateTree = function(area, parent, nonterminals, subelements, grammars, isSource) {
-
-	if (nonterminals!=null && nonterminals instanceof Array) {
-		for (var i=0; i<nonterminals.length; i++) {
-			var e = area.addElement(nonterminals[i].simpleType, parent, nonterminals[i].id, this.formatLabel(nonterminals[i].name), null);
-			if (!isSource) {
-				this.targetElements.push(nonterminals[i].id);
-			}
-			this.generateTree(area, e, nonterminals[i].childNonterminals, null, nonterminals[i].grammars, isSource);
-		}
-	}
-	if (grammars != null && grammars instanceof Array) {
-		for (var i=0; i<grammars.length; i++) {
+MappedConceptEditor.prototype.generateTree = function(area, parentNode, elements, isSource) {
+	if (elements!=null && elements instanceof Array) {
+		for (var i=0; i<elements.length; i++) {
 			var icon = null;
-			/*if (grammars[i].error==true) {
+			if (elements[i].state==="ERROR") {
 				icon = this.options.icons.error;
-			}*/
-			var fDesc = area.addElement(grammars[i].simpleType, parent, grammars[i].id, grammars[i].grammarName, icon);
-			
-			if (isSource) {
-				this.sourceGrammars.push(grammars[i].id);
+			} else if (elements[i].state==="WARNING") {
+				icon = this.options.icons.warning;
 			}
+			var e = area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon, true);
+			
+			if ((elements[i].type==="Nonterminal" || elements[i].type==="Label") && !isSource) {
+				this.targetElements.push(elements[i].id);
+			}
+			if (elements[i].type==="Grammar" && isSource) {
+				this.sourceGrammars.push(elements[i].id);
+			}
+			
+			this.generateTree(area, e, elements[i].childElements, isSource);
 		}
 	}
-};
+}
 
 MappedConceptEditor.prototype.addMapping = function() {
 	var lhs = [];

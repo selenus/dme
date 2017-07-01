@@ -92,8 +92,8 @@
 									    <li><a href="#" onclick="editor.downloadSampleOutput(); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.actions.download_sample_output" /></a></li>
 									    <li role="separator" class="divider"></li>
 									    <li><a href="#" onclick="editor.newSampleSession(); return false;"><i class="fa fa-plus" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.new_session" /></a></li>
-									    <li><a href="#" onclick="sessions.saveSession(editor.schema.id);"><i class="fa fa-floppy-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></a></li>
-										<li><a href="#" onclick="sessions.loadSession(editor.schema.id);"><i class="fa fa-folder-open-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></a></li>
+									    <li><a href="#" onclick="sessions.saveSession(editor.getEntityId());"><i class="fa fa-floppy-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></a></li>
+										<li><a href="#" onclick="sessions.loadSession(editor.getEntityId());"><i class="fa fa-folder-open-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></a></li>
 										<li><a href="#" onclick="editor.deleteSampleSession(); return false;"><i class="fa fa-trash" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.delete_session" /></a></li>
 									  </ul>
 									</div>

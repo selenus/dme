@@ -163,7 +163,7 @@ BaseEditor.prototype.downloadSampleInput = function() {
 		    		data.content = JSON.stringify(data.content);
 		    	}
 		    	blob = new Blob([data.content], {type: data.mime});
-		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.extension);
+		    	saveAs(blob, "sample_" + _this.getEntityId() + "." + data.extension);
 	    	}
 	    },
 	    error: __util.processServerError
@@ -198,7 +198,7 @@ BaseEditor.prototype.createDownload = function() {
 		    					__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.file_count") :
 		    					String.format(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.files_count"), data.count)
 		    			) + ": " +
-	    				"<a target=\"_blank\" href=\"" + _this.pathname + "/async/download_output/" + data.link + "\">" +
+	    				"<a target=\"_blank\" href=\"" + _this.pathname + "/async/download_output/\">" +
 	    					"<i class=\"fa fa-download\" aria-hidden=\"true\"></i> " + 
 	    					__translator.translate("~eu.dariah.de.minfba.common.link.download") +
 	    				"</a>  " +
@@ -357,7 +357,7 @@ BaseEditor.prototype.getTransformedResource = function() {
 	    	}
 	    	_this.samplePane.children("div:not(.ui-pane-title)").show();
 	    	_this.setSampleNavigationBar();
-	    	this.resizeContent();
+	    	_this.resizeContent();
 	    },
 	    error: function() {
 	    	$(".sample-transformed-resource").text("");

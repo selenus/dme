@@ -31,6 +31,8 @@ import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
+import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo;
+import eu.dariah.de.minfba.schereg.pojo.converter.ModelElementPojoConverter;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
@@ -149,7 +151,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/source")
-	public @ResponseBody List<Element> getRenderedSource(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+	public @ResponseBody List<ModelElementPojo> getRenderedSource(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException, GenericScheregException {
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
 		if (mc==null) {
 			response.getWriter().print("null");
@@ -171,8 +173,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 				}
 			}
 		}
-
-		return sourceElements;
+		return ModelElementPojoConverter.convertModelElements(sourceElements, false);
 	}
 	
 	@PreAuthorize("isAuthenticated()")
@@ -183,7 +184,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/target")
-	public @ResponseBody List<Element> getRenderedTargets(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException {
+	public @ResponseBody List<ModelElementPojo> getRenderedTargets(@PathVariable String mappingId, @PathVariable String mappedConceptId, Model model, Locale locale, HttpServletResponse response) throws IOException, GenericScheregException {
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
 		if (mc==null) {
 			response.getWriter().print("null");
@@ -192,7 +193,7 @@ public class MappedConceptEditorController extends BaseScheregController {
 		List<Object> targetElementIds = new ArrayList<Object>();
 		targetElementIds.addAll(mc.getTargetElementIds());
 				
-		return elementService.findByIds(targetElementIds);
+		return ModelElementPojoConverter.convertModelElements(elementService.findByIds(targetElementIds), false);
 	}
 	
 	@PreAuthorize("isAuthenticated()")

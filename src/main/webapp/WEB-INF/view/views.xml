@@ -29,8 +29,6 @@
 		<put-attribute name="content" value="/WEB-INF/view/jsp/editor/schema_editor.jsp" />
 		
 		<put-list-attribute name="scripts" inherit="true">
-			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
-
 			<add-attribute type="string" value="editors/schemaEditor.js" />
 			<add-attribute type="string" value="editors/schemaEditor.graph.js" />
 			<add-attribute type="string" value="editors/schemaEditor.importexport.js" />	
