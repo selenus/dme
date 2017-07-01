@@ -11,8 +11,8 @@
 			<add-attribute type="string" value="registry/mapping.js" />
 		</put-list-attribute>
 	</definition>
-	<definition name="mapping/form/edit" template="/WEB-INF/view/jsp/mapping/forms/edit.jsp" />
-	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/schema/forms/edit.jsp" />
+	<definition name="mapping/form/edit" template="/WEB-INF/view/jsp/editor/forms/edit_mapping.jsp" />
+	<definition name="schema/form/edit" template="/WEB-INF/view/jsp/editor/forms/edit_schema.jsp" />
 	
 	<!-- Vocabulary -->
 	<definition name="vocabulary/home" extends="template_tables">
@@ -26,7 +26,7 @@
 	
 	<!-- Schema Editor -->
 	<definition name="schemaEditor" extends="template_editors">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/schema/editor.jsp" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/editor/schema_editor.jsp" />
 		
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="jquery/jquery.fileupload.js" />
@@ -36,11 +36,11 @@
 			<add-attribute type="string" value="editors/schemaEditor.importexport.js" />	
 		</put-list-attribute>
 	</definition>
-	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/schema/forms/import.jsp" />
+	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/editor/forms/import_schema.jsp" />
 			
 	<!-- Mapping Editor -->
 	<definition name="mappingEditor" extends="template_editors">
-		<put-attribute name="content" value="/WEB-INF/view/jsp/mapping/editor.jsp" />
+		<put-attribute name="content" value="/WEB-INF/view/jsp/editor/mapping_editor.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="editors/mappingEditor.js" />
 			<add-attribute type="string" value="editors/mappedConceptEditor.js" />

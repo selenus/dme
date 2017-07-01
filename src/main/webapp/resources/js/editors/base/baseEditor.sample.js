@@ -149,7 +149,28 @@ BaseEditor.prototype.loadSampleInput = function() {
 	});
 };
 
-BaseEditor.prototype.downloadSample = function(type, index) {
+BaseEditor.prototype.downloadSampleInput = function() {
+	var _this = this;
+	$.ajax({
+	    url: _this.pathname + "/async/download_sample_input",
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	if (data.content===null || data.content.length==0) {
+	    		bootbox.alert(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"));
+	    	} else {
+		    	if (data.extension==="json") {
+		    		data.content = JSON.stringify(data.content);
+		    	}
+		    	blob = new Blob([data.content], {type: data.mime});
+		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.extension);
+	    	}
+	    },
+	    error: __util.processServerError
+	});
+};
+
+BaseEditor.prototype.downloadSampleOutput = function() {
 	var form_identifier = "download-sample";
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "forms/download_output/",
@@ -183,28 +204,6 @@ BaseEditor.prototype.createDownload = function() {
 	    				"</a>  " +
 	    			"</span>");
 	    	
-	    },
-	    error: __util.processServerError
-	});
-};
-
-BaseEditor.prototype.downloadSampleFile = function(type, index) {
-	var _this = this;
-	$.ajax({
-	    url: _this.pathname + "/async/download_sample",
-	    type: "GET",
-	    dataType: "json",
-	    data: { t: type, i: (index===null||index===undefined ? -1 : index) },
-	    success: function(data) {
-	    	if (data.content===null || data.content.length==0) {
-	    		bootbox.alert(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"));
-	    	} else {
-		    	if (data.extension==="json") {
-		    		data.content = JSON.stringify(data.content);
-		    	}
-		    	blob = new Blob([data.content], {type: data.mime});
-		    	saveAs(blob, "sample_" + _this.schema.id + "." + data.extension);
-	    	}
 	    },
 	    error: __util.processServerError
 	});

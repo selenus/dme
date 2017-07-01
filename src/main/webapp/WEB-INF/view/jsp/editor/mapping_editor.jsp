@@ -80,21 +80,25 @@
 										<span class="pull-right"><span class="glyphicon glyphicon-info-sign glyphicon-color-info" data-toggle="tooltip" data-placement="top" title="<s:message code="~eu.dariah.de.minfba.schereg.editor.hint.sessions" />" aria-hidden="true"></span></span>
 									</h4>
 								</div>
-								<div style="background-color: white; overflow: hidden;">
-									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sessions" /></h5>									
-								</div>
-								<div class="ui-pane-subcontainer button-bar">
-									<button type="button" onclick="editor.newSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.new_session" /></button>
-									<button type="button" onclick="sessions.saveSession(editor.mappingId);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></button>
-									<button type="button" onclick="sessions.loadSession(editor.mappingId);" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></button>
-									<button type="button" onclick="editor.deleteSampleSession(); return false;" class="btn btn-default btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.button.delete_session" /></button>
-								</div>
+							
 								<div class="editor-sample-container">
-									<h5><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.data" /></h5>
-									<div class="pull-right">
-										<button type="button" onclick="editor.uploadAndExecuteSample(); return false;" class="btn btn-default btn-sm"><i class="fa fa-upload" aria-hidden="true"></i></button>
-										<button type="button" onclick="editor.applyAndExecuteSample(); return false;" class="btn btn-primary btn-sm"><s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute" /></button>	
+									<!-- Single button -->
+									<div class="btn-group pull-right" style="margin-bottom: 10px;">
+									  <button type="button" onclick="editor.applyAndExecuteSample(); return false;" class="btn btn-primary btn-sm"><i class="fa fa-cog" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.actions.execute"/> </button>
+									  <button type="button" onclick="editor.uploadAndExecuteSample(); return false;" class="btn btn-default btn-sm"><i class="fa fa-upload" aria-hidden="true"></i></button>
+									  <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bars" aria-hidden="true"></i></button>
+									  <ul style="z-index: 1001" class="dropdown-menu">
+									    <li><a href="#" onclick="editor.downloadSampleInput(); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.actions.download_sample_file" /></a></li>
+									    <li><a href="#" onclick="editor.downloadSampleOutput(); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.actions.download_sample_output" /></a></li>
+									    <li role="separator" class="divider"></li>
+									    <li><a href="#" onclick="editor.newSampleSession(); return false;"><i class="fa fa-plus" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.new_session" /></a></li>
+									    <li><a href="#" onclick="sessions.saveSession(editor.schema.id);"><i class="fa fa-floppy-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.save_session" /></a></li>
+										<li><a href="#" onclick="sessions.loadSession(editor.schema.id);"><i class="fa fa-folder-open-o" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></a></li>
+										<li><a href="#" onclick="editor.deleteSampleSession(); return false;"><i class="fa fa-trash" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.button.delete_session" /></a></li>
+									  </ul>
 									</div>
+									
+									
 									<ul class="nav nav-tabs" role="tablist">
 										<li role="presentation"<c:if test="${currentSampleCount==0}"> class="active"</c:if>>
 											<a href="#sample-input-container" aria-controls="sample-input-container" role="tab" data-toggle="tab"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.input" /></a>
@@ -109,18 +113,7 @@
 										</c:choose>
 									</ul>
 									<div class="tab-content">
-										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount==0}"> active</c:if>" id="sample-input-container">
-											<c:choose>
-												<c:when test="${session.sampleInput!=null && session.sampleInput!=''}">
-													<input type="hidden" id="sample-set" value="true">
-													<textarea class="sample-textarea form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" />" rows="3"></textarea>
-												</c:when>
-												<c:otherwise>
-													<input type="hidden" id="sample-set" value="false">
-													<textarea class="sample-textarea form-control height-sized-element" placeholder="<s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" />" rows="3"></textarea>
-												</c:otherwise>
-											</c:choose>
-										</div>
+										<%@ include file="include/sample_input_container.jsp" %>
 										<div role="tabpanel" class="tab-pane <c:if test="${currentSampleCount>0}"> active</c:if>" id="sample-output-container">
 											<div class="button-bar">
 												<div class="pull-left">

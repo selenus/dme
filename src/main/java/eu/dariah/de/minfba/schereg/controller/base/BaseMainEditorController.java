@@ -329,8 +329,8 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		}
 	}
 	
-	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample"})
-	public @ResponseBody String downloadSample(@PathVariable String entityId, @RequestParam(name="t", defaultValue="input") String type, @RequestParam(name="i", defaultValue="-1") int index, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
+	@RequestMapping(method=RequestMethod.GET, value={"/async/download_sample_input"})
+	public @ResponseBody String downloadSampleInput(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
 		ModelActionPojo result = new ModelActionPojo();
 		
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
@@ -341,25 +341,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		
 		ObjectNode pojo = objectMapper.createObjectNode();
 		
-		if (type.equals("output") || type.equals("transformed")) {
-			if (type.equals("output") && s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
-				if (index>=0) {
-					pojo.set("content", objectMapper.convertValue(s.getSampleOutput().get(index), JsonNode.class));
-				} else {
-					pojo.set("content", objectMapper.convertValue(s.getSampleOutput(), JsonNode.class));
-				}
-			} else if (type.equals("transformed") && s.getSampleMapped()!=null && s.getSampleMapped().size()>0) {
-				
-			}
-			pojo.set("mime", new TextNode("application/json; charset=utf-8"));
-			pojo.set("extension", new TextNode("json"));
-		} else if (type.equals("transformed")) { 
-			
-		} else {
-			pojo.set("content", new TextNode(s.getSampleInput()));
-			pojo.set("mime", new TextNode("application/xml; charset=utf-8"));
-			pojo.set("extension", new TextNode("xml"));
-		}
+		pojo.set("content", new TextNode(s.getSampleInput()));
+		pojo.set("mime", new TextNode("application/xml; charset=utf-8"));
+		pojo.set("extension", new TextNode("xml"));
+	
 		
 		result.setPojo(pojo);
 		
