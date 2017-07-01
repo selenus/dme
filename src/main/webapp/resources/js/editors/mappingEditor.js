@@ -115,9 +115,9 @@ MappingEditor.prototype.initLayout = function() {
 	
 	var initEastClosed = true;
 	var initWestClosed = true;
-	if (this.layoutContainer.width()>800) {
+	/*if (this.layoutContainer.width()>800) {
 		initEastClosed = false;
-	}
+	}*/
 	if (this.layoutContainer.width()>1100) {
 		initWestClosed = false;
 	}
@@ -152,7 +152,7 @@ MappingEditor.prototype.initLayout = function() {
 			initClosed : initSouthClosed 
 		},
 		west : {
-			size : "25%",
+			size : "33%",
 			minWidth : 200,
 			minHeight : 400,
 			initClosed : initWestClosed,

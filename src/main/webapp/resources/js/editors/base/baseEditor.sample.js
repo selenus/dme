@@ -333,6 +333,7 @@ BaseEditor.prototype.getSampleResource = function(force) {
 	    	} else {
 	    		_this.samplePane.children("div:not(.ui-pane-title)").show();
 	    	}
+	    	_this.resizeContent();
 	    },
 	    error: function() {
 	    	$(".sample-output-resource").text("");
@@ -356,6 +357,7 @@ BaseEditor.prototype.getTransformedResource = function() {
 	    	}
 	    	_this.samplePane.children("div:not(.ui-pane-title)").show();
 	    	_this.setSampleNavigationBar();
+	    	this.resizeContent();
 	    },
 	    error: function() {
 	    	$(".sample-transformed-resource").text("");

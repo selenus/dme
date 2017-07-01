@@ -426,12 +426,17 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTransformedResource")
-	public @ResponseBody Resource getTransformedResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
+	public @ResponseBody ModelActionPojo getTransformedResource(@PathVariable String entityId, @RequestParam(defaultValue="0") int index, @RequestParam(defaultValue="false") boolean force, HttpServletRequest request, HttpServletResponse response, Locale locale) throws IOException {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s==null) {
 			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 			return null;
 		}
+		
+		ModelActionPojo result = new ModelActionPojo();
+		ObjectNode statusPojo = objectMapper.createObjectNode();
+		result.setStatusInfo(statusPojo);
+		
 		if (s.getSampleMapped()!=null && s.getSampleMapped().size()>0) {
 			
 			if (s.getSampleMapped().size()>index) {
@@ -443,11 +448,20 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				
 				sessionService.saveSession(s);
 				
-				return s.getSampleMapped().get(index);
+				result.setSuccess(true);
+				statusPojo.set("available", BooleanNode.TRUE);
+				
+				if (!force && objectMapper.writeValueAsString(s.getSampleMapped().get(index)).getBytes().length > this.maxTravelSize) {
+					statusPojo.set("oversize", BooleanNode.TRUE);
+				} else {
+					statusPojo.set("oversize", BooleanNode.FALSE);
+					result.setPojo(s.getSampleMapped().get(index));
+				}
+				return result;
 			} 
 		}
-		response.getWriter().print("null");
-		return null;
+		statusPojo.set("available", BooleanNode.FALSE);
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")

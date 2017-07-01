@@ -66,11 +66,25 @@ public class MappingEditorController extends BaseMainEditorController {
 		model.addAttribute("source", authPojoConverter.convert(schemaService.findByIdAndAuth(mappingPojo.getPojo().getSourceId(), auth), auth.getUserId()));
 		model.addAttribute("target", authPojoConverter.convert(schemaService.findByIdAndAuth(mappingPojo.getPojo().getTargetId(), auth), auth.getUserId()));
 		
+		boolean oversized = false;
 		try {
-			model.addAttribute("session", sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId(), messageSource, locale));
-		} catch (GenericScheregException e) {
+			PersistedSession s = sessionService.accessOrCreate(entityId, request.getSession().getId(), auth.getUserId(), messageSource, locale);
+			model.addAttribute("session", s);
+			
+			if (s.getSampleInput()!=null) {
+				if (s.getSampleInput().getBytes().length>this.maxTravelSize) {
+					oversized = true;
+				} else {
+					model.addAttribute("sampleInput", s.getSampleInput());
+				}
+			}
+			
+		} catch (Exception e) {
 			logger.error("Failed to load/initialize persisted session", e);
-		} 
+		}
+		
+		model.addAttribute("sampleInputOversize", oversized);
+		
 		return "mappingEditor";
 	}
 	

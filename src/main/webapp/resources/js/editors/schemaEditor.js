@@ -123,14 +123,19 @@ SchemaEditor.prototype.initLayout = function() {
 	this.layoutContainer.removeClass("hide").addClass("fade");
 	
 	var initEastClosed = true;
-	if (this.layoutContainer.width()>1100) {
+	var initWestClosed = true;
+	/*if (this.layoutContainer.width()>800) {
 		initEastClosed = false;
+	}*/
+	if (this.layoutContainer.width()>1100) {
+		initWestClosed = false;
 	}
 	
 	var initSouthClosed = true;
 	if ($(window).height()>800) {
 		initSouthClosed = false;
 	}
+	
 	this.layout = this.layoutContainer.layout({
 		defaults : {
 			fxName : "slide",
@@ -149,9 +154,9 @@ SchemaEditor.prototype.initLayout = function() {
 			initClosed : initEastClosed,
 		},
 		west : {
-			size : initEastClosed ? "40%" : "30%",
+			size : initWestClosed ? "40%" : "30%",
 			paneSelector : ".layout-west",
-			initClosed : initEastClosed,
+			initClosed : initWestClosed,
 			onopen_start: function () { _this.sample_onPaneOpenStart(); }
 		},
 		south : { 
