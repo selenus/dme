@@ -1,16 +1,11 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
-import java.util.Map;
-
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
-import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
@@ -40,12 +35,8 @@ public interface ElementService extends BaseService {
 	
 	public List<Element> findByIds(List<Object> elementIds);
 	public List<Element> findBySchemaId(String schemaId);
-	
-	public List<Nonterminal> extractAllNonterminals(Nonterminal root);
-	
+		
 	public Reference assignChildTreeToParent(String entityId, String elementId, String childId);
-	
-	public Map<String, String> regenerateIds(String entityId, List<? extends Terminal> terminals);
-	public void regenerateIds(SchemaNature nature, String entityId, Element element, Map<String, String> terminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException;
+		
 	public void unsetSchemaProcessingRoot(String schemaId);
 }

@@ -493,69 +493,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	}
 
 	@Override
-	public List<Nonterminal> extractAllNonterminals(Nonterminal root) {
-		List<Nonterminal> result = new ArrayList<Nonterminal>();
-		if (root!=null) {
-			result.add(root);
-			if (root.getChildNonterminals()!=null) {
-				for (Nonterminal childN : root.getChildNonterminals()) {
-					result.addAll(this.extractAllNonterminals(childN));
-				}
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public void regenerateIds(SchemaNature nature, String entityId, Element element, Map<String, String> terminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
-		element.setEntityId(entityId);
-		element.setId(null);
-		if (element instanceof Nonterminal) {
-			String terminalId = nature.getTerminalId(element.getId());
-			nature.mapNonterminal(element.getId(), terminalIdMap.get(terminalId));
-		}
-		List<Element> children = element.getAllChildElements();
-		if (children!=null) {
-			for (Element child : children) {
-				this.regenerateIds(nature, entityId, child, terminalIdMap, grammarContainerMap);
-			}
-		}
-		if (element.getGrammars()!=null) {
-			for (DescriptionGrammarImpl g : element.getGrammars()) {
-				g.setEntityId(entityId);
-				
-				if (grammarContainerMap!=null && grammarContainerMap.containsKey(g.getId())) {
-					g.setGrammarContainer(grammarContainerMap.get(g.getId()));
-				}
-				g.setId(null);
-				
-				
-				if (g.getTransformationFunctions()!=null) {
-					for (TransformationFunctionImpl f : g.getTransformationFunctions()) {
-						f.setEntityId(entityId);
-						f.setId(null);
-					}
-				}
-			}
-		}
-	}
-
-	@Override
-	public Map<String, String> regenerateIds(String entityId, List<? extends Terminal> terminals) {
-		if (terminals==null) {
-			return null;
-		}
-		Map<String, String> terminalIdMap = new HashMap<String, String>();
-		String idOld;
-		for (Terminal xt : terminals) {
-			idOld = xt.getId();
-			xt.setId(new ObjectId().toString());
-			terminalIdMap.put(idOld, xt.getId());
-		}
-		return terminalIdMap;
-	}
-
-	@Override
 	public void unsetSchemaProcessingRoot(String schemaId) {
 		elementDao.updateByQuery(Query.query(Criteria.where(DaoImpl.ENTITY_ID_FIELD).is(schemaId).and("_class").is(NonterminalImpl.class.getName())), Update.update("processingRoot", false));
 	}

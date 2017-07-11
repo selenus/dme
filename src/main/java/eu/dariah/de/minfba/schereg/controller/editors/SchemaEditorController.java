@@ -293,9 +293,9 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			return new ModelActionPojo(false);
 		}		
 		if (temporaryFilesMap.containsKey(fileId)) {
-			if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
-				result.setPojo(importWorker.getPossibleRootTerminals(temporaryFilesMap.get(fileId)));
-			} else {
+			//if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
+				result.setPojo(importWorker.getPossibleRootElements(temporaryFilesMap.get(fileId)));
+			/*} else {
 				try {
 					SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
 				
@@ -306,7 +306,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 				} catch (Exception e) {
 					logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);
 				}	
-			}
+			} */
 			
 			if (result.getPojo()!=null) {
 				result.setSuccess(true);
@@ -340,7 +340,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		try {
 			if (temporaryFilesMap.containsKey(fileId)) {
 				
-				if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
+				//if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
 					if (schemaRoot.isEmpty()) {
 						result.setSuccess(false);
 						result.addFieldError("schema_root", messageSource.getMessage("~eu.dariah.de.minfba.schereg.notification.import.root_missing", null, locale));
@@ -349,7 +349,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 					}
 					
 					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
-				} else {
+				/*} else {
 					try {
 						// TODO Fix import of regularly exported schema
 						
@@ -361,6 +361,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 						// TODO: We might want to move this import logic to a (dedicated) service
 						RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, auth);
 						
+
 						XmlSchemaNature xmlNature = schema.getElement().getNature(XmlSchemaNature.class);
 						
 						xmlNature.setNamespaces(s.getSchema().getNature(XmlSchemaNature.class).getNamespaces());
@@ -377,7 +378,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 					} catch (Exception e) {
 						logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);
 					}	
-				}
+				}*/
 				result.setSuccess(true);
 				return result;
 			}

@@ -33,23 +33,23 @@
 	<dependencies>
 	
 	<!-- NEW!! -->
-		<!-- ANTLR 4 -->
+		<!-- ANTLR 4 
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-runtime</artifactId>
 			<version>${org.antlr4-version}</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4-annotations</artifactId>
 			<version>${org.antlr4-version}</version>
-		</dependency> -->
+		</dependency> 
 		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>antlr4</artifactId>
 			<version>${org.antlr4-version}</version>
 		</dependency>
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.antlr</groupId>
 			<artifactId>stringtemplate</artifactId>
 			<version>4.0.2</version>

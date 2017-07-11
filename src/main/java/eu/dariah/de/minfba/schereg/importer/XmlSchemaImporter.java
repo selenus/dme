@@ -24,16 +24,14 @@ import org.apache.xerces.xs.XSParticle;
 import org.apache.xerces.xs.XSTerm;
 import org.apache.xerces.xs.XSTypeDefinition;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
@@ -43,87 +41,49 @@ import eu.dariah.de.minfba.schereg.importer.model.ImportAwareNonterminal;
 
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
-	private static final Logger logger = LoggerFactory.getLogger(XmlSchemaImporter.class);
-
-	private SchemaImportListener listener;
+public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImporter {
+	
 	private Map<String, XmlTerminal> existingTerminalQNs = new HashMap<String, XmlTerminal>();
 	private XSModel model;
-	
-	private XmlSchemaNature schema;
-	private String schemaFilePath;
-	private String rootElementNs;
-	private String rootElementName; 
 	private String[] namespaces;
-	
-	private AuthPojo auth;
-	
-	private Nonterminal rootNonterminal;
-	private List<Nonterminal> additionalRootElements;
-	
 	private Map<String, List<ImportAwareNonterminal>> extensionIdNonterminalMap;
-	
 	private Map<String, ImportAwareNonterminal> terminalIdNonterminalMap;
-	
-	
-	public XmlSchemaNature getSchema() { return schema; }
-	@Override public void setSchema(XmlSchemaNature schema) { this.schema = schema; }
-	
-	public String getSchemaFilePath() { return schemaFilePath; }
-	@Override public void setSchemaFilePath(String schemaFilePath) { this.schemaFilePath = schemaFilePath; }
- 	
- 	public String getRootElementNs() { return rootElementNs; }
- 	@Override public void setRootElementNs(String rootElementNs) { this.rootElementNs = rootElementNs; }
-	
-	public String getRootElementName() { return rootElementName; }
-	@Override public void setRootElementName(String rootElementName) { this.rootElementName = rootElementName; }
-	
-	@Override public Nonterminal getRootNonterminal() { return rootNonterminal; }
-	public void setRootNonterminal(Nonterminal rootNonterminal) { this.rootNonterminal = rootNonterminal; }
-	
-	@Override public List<Nonterminal> getAdditionalRootElements() { return additionalRootElements; }
-	public void setAdditionalRootElements(List<Nonterminal> additionalRootElements) { this.additionalRootElements = additionalRootElements; }
+
+	private XmlSchemaNature xmlNature;
 	
 	@Override public String[] getNamespaces() { return namespaces; }
 	public void setNamespaces(String[] namespaces) { this.namespaces = namespaces; }
-	
-	public SchemaImportListener getListener() { return listener; }
-	@Override public void setListener(SchemaImportListener listener) { this.listener = listener; }
-	
-	@Override public void setAuth(AuthPojo auth) { this.auth = auth; }
-	@Override public AuthPojo getAuth() { return this.auth; }
-	
 	
 	@Override
 	public void run() {
 		try {
 			Stopwatch sw = new Stopwatch().start();
-			logger.debug(String.format("Started importing schema %s", schema.getEntityId()));
+			logger.debug(String.format("Started importing schema %s", this.getSchema().getEntityId()));
+			
+			this.prepareXmlNature();
 			
 			this.extensionIdNonterminalMap = new HashMap<String, List<ImportAwareNonterminal>>();
 			this.terminalIdNonterminalMap = new HashMap<String, ImportAwareNonterminal>();
 			
 			this.importXmlSchema();
 			if (this.getListener()!=null) {
-				schema.setNamespaces(new ArrayList<XmlNamespace>());
+				xmlNature.setNamespaces(new ArrayList<XmlNamespace>());
 				for (String ns : namespaces) {
 					XmlNamespace namespace = new XmlNamespace("", ns);
 					namespace.setId(new ObjectId().toString());
 					namespace.addChange(ChangeType.NEW_OBJECT, "namespace", null, namespace.getId());
-					schema.getNamespaces().add(namespace);
+					xmlNature.getNamespaces().add(namespace);
 				}				
-				schema.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
+				xmlNature.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
 				
-				logger.info(String.format("Finished importing schema %s in %sms", schema.getEntityId(), sw.getElapsedTime()));
+				logger.info(String.format("Finished importing schema %s in %sms", xmlNature.getEntityId(), sw.getElapsedTime()));
 				
-				
-				
-				this.getListener().registerImportFinished(schema, rootNonterminal, additionalRootElements, auth);
+				this.getListener().registerImportFinished(this.getSchema(), this.getRootNonterminal(), this.getAdditionalRootElements(), this.getAuth());
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing XML Schema", e);
 			if (this.getListener()!=null) {
-				this.getListener().registerImportFailed(schema);
+				this.getListener().registerImportFailed(this.getSchema());
 			}
 		}
 	}
@@ -133,7 +93,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		try {
 			XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 			XSLoader schemaLoader = impl.createXSLoader(null);
-			model = schemaLoader.loadURI(schemaFilePath);
+			model = schemaLoader.loadURI(this.getSchemaFilePath());
 			
 			if (model!=null) {
 				return true;
@@ -143,13 +103,13 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	}
 	
 	@Override
-	public List<XmlTerminal> getPossibleRootTerminals() {
+	public List<XmlTerminal> getPossibleRootElements() {
 		try {
 			Stopwatch sw = new Stopwatch().start();
 			
 			XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 			XSLoader schemaLoader = impl.createXSLoader(null);
-			model = schemaLoader.loadURI(schemaFilePath);
+			model = schemaLoader.loadURI(this.getSchemaFilePath());
 			
 			XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
 			List<XmlTerminal> rootTerminals = new ArrayList<XmlTerminal>(elements.getLength());
@@ -170,11 +130,35 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		return null;
 	}
 	
+	private void prepareXmlNature() {
+		if (this.getSchema().getNature(XmlSchemaNature.class)!=null) {
+			xmlNature = this.getSchema().getNature(XmlSchemaNature.class);
+		} else {
+			xmlNature = new XmlSchemaNature();
+			xmlNature.setSchema(this.getSchema());
+			xmlNature.setId(this.getSchema().getId());
+			this.getSchema().addOrReplaceSchemaNature(xmlNature);
+		}
+		
+		XmlTerminal rootTerminal = null;
+		String compQN;
+		for (Terminal possibleRoot : this.getPossibleRootElements()) {
+			compQN = this.createTerminalQN(((XmlTerminal)possibleRoot).getNamespace(), possibleRoot.getName(), ((XmlTerminal)possibleRoot).isAttribute());
+			if (compQN.equals(this.getRootElementName())) {
+				rootTerminal = (XmlTerminal)possibleRoot;
+				break;
+			}
+		}
+		
+		xmlNature.setRootElementNamespace(rootTerminal.getNamespace());
+		xmlNature.setRootElementName(rootTerminal.getName());
+	}
+	
 	protected void importXmlSchema() throws MetamodelConsistencyException {
 		Stopwatch sw = new Stopwatch().start();
 		XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 		XSLoader schemaLoader = impl.createXSLoader(null);
-		model = schemaLoader.loadURI(schemaFilePath);
+		model = schemaLoader.loadURI(this.getSchemaFilePath());
 		
 		/* Namespace precollection */
 		XSNamespaceItemList nsList = model.getNamespaceItems();
@@ -186,8 +170,8 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		}
 		
 		/* Element processing */
-		this.rootNonterminal = this.getRoot(rootElementNs, rootElementName);
-		this.rootNonterminal.setProcessingRoot(true);
+		this.setRootNonterminal(this.getRoot(xmlNature.getRootElementNamespace(), xmlNature.getRootElementName()));
+		this.getRootNonterminal().setProcessingRoot(true);
 		
 		XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
 		Map<String, XmlTerminal> rootTerminals = new HashMap<String, XmlTerminal>();
@@ -215,9 +199,9 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 			this.combineExtensionNonterminals();
 			
 			// We expect that no abstract element can be selected as root!
-			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.rootNonterminal);
-			this.rootNonterminal = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.rootNonterminal, serializedNonterminals);
-			this.rootNonterminal.setProcessingRoot(true);
+			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootNonterminal());
+			this.setRootNonterminal(this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootNonterminal(), serializedNonterminals));
+			this.getRootNonterminal().setProcessingRoot(true);
 			
 			logger.debug("Schema import took {}ms", sw.getElapsedTime());
 			return;
@@ -244,13 +228,13 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 				if (addRoot.equals(compareRoot)) {
 					continue;
 				}
-				if (this.getChildrenContainTerminalId(compareRoot, schema.getTerminalId(addRoot.getId()))) {
+				if (this.getChildrenContainTerminalId(compareRoot, this.xmlNature.getTerminalId(addRoot.getId()))) {
 					compareN.remove(addRoot);
 					break;
 				}
 			}
 		}
-		this.additionalRootElements = compareN;
+		this.setAdditionalRootElements(compareN);
 		
 		
 		this.combineExtensionNonterminals();
@@ -258,12 +242,12 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		
 		
 		// We expect that no abstract element can be selected as root!
-		this.resolveExtensionHierarchy((ImportAwareNonterminal)this.rootNonterminal);
-		this.rootNonterminal = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.rootNonterminal, serializedNonterminals);
-		this.rootNonterminal.setProcessingRoot(true);
-		for (int i=0; i<this.additionalRootElements.size(); i++) {
-			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.additionalRootElements.get(i));
-			this.additionalRootElements.set(i, this.convertToSerializableNonterminals((ImportAwareNonterminal)this.additionalRootElements.get(i), serializedNonterminals));
+		this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootNonterminal());
+		this.setRootNonterminal(this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootNonterminal(), serializedNonterminals));
+		this.getRootNonterminal().setProcessingRoot(true);
+		for (int i=0; i<this.getAdditionalRootElements().size(); i++) {
+			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getAdditionalRootElements().get(i));
+			this.getAdditionalRootElements().set(i, this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getAdditionalRootElements().get(i), serializedNonterminals));
 		}
 		logger.debug("Schema import took {}ms", sw.getElapsedTime());
 	}
@@ -336,7 +320,7 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 	
 	private boolean getChildrenContainTerminalId(Nonterminal parent, String terminalId) {
 		
-		if (schema.getTerminalId(parent.getId()).equals(terminalId)) {
+		if (this.xmlNature.getTerminalId(parent.getId()).equals(terminalId)) {
 			return true;
 		}
 		if (parent.getChildNonterminals()!=null && !parent.getChildNonterminals().isEmpty()) {
@@ -480,9 +464,9 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		n.setAbstract(isAbstract);
 		n.setTerminalQN(this.createTerminalQN(terminalNamespace, terminalName, isAttribute));
 		
-		schema.mapNonterminal(n.getId(), terminalId);
+		this.xmlNature.mapNonterminal(n.getId(), terminalId);
 		
-		n.setEntityId(this.schema.getId());
+		n.setEntityId(this.getSchema().getId());
 		
 		terminalIdNonterminalMap.put(terminalQN, n);
 		
@@ -493,11 +477,5 @@ public class XmlSchemaImporter implements SchemaImporter<XmlSchemaNature> {
 		return String.format("{%s}:%s%s", terminalNamespace, (isAttribute ? "#" : ""), terminalName);
 	}
 	
-	protected String createNonterminalName(String terminalName) {
-		String name = terminalName.substring(0, 1).toUpperCase() + terminalName.substring(1);
-		
-		name = name.replaceAll("([^\\p{L}])([^\\p{L}\\p{N}-_.])*", "");
-		
-		return name; 
-	}
+	
 }

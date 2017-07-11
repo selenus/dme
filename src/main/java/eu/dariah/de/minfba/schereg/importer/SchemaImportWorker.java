@@ -3,6 +3,7 @@ package eu.dariah.de.minfba.schereg.importer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,24 +13,16 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import com.mongodb.DBObject;
-
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
-import eu.dariah.de.minfba.schereg.service.SchemaServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
@@ -51,15 +44,25 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	public boolean isSupported(String filePath) {
-		XmlSchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
-		importer.setSchemaFilePath(filePath);
-		return importer.getIsSupported();
+		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
+		for (SchemaImporter importer : importers.values()) {
+			importer.setSchemaFilePath(filePath);
+			if (importer.getIsSupported()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
-	public List<? extends Terminal> getPossibleRootTerminals(String filePath) {
-		XmlSchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
-		importer.setSchemaFilePath(filePath);
-		return importer.getPossibleRootTerminals();
+	public List<? extends Identifiable> getPossibleRootElements(String filePath) {
+		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
+		for (SchemaImporter importer : importers.values()) {
+			importer.setSchemaFilePath(filePath);
+			if (importer.getIsSupported()) {
+				return importer.getPossibleRootElements();
+			}
+		}
+		return null;
 	}
 	
 	public boolean isBeingProcessed(String schemaId) {
@@ -67,64 +70,41 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	public void importSchema(String filePath, String schemaId, String schemaRoot, AuthPojo auth) throws SchemaImportException {
-		/*
-		 * Currently only XML Schemata are supported for import;
-		 * 	TODO: Extend for (configurable) support of CSV, JSON etc. schemata
-		 */
 		if (schemaId==null || schemaId.trim().isEmpty()) {
 			logger.error("Schema id must exist (schema must be saved) before import");
 			throw new SchemaImportException("Schema id must exist (schema must be saved) before import");
 		}
-		Schema tmpS = schemaService.findSchemaById(schemaId);
 		
-		XmlSchemaNature s;
-		if (tmpS.getNature(XmlSchemaNature.class)!=null) {
-			s = tmpS.getNature(XmlSchemaNature.class);
-		} else {
-			s = new XmlSchemaNature();
-			s.setSchema(tmpS);
-			s.setId(tmpS.getId());
-			//s.setLabel(tmpS.getLabel());
-			//s.setDescription(tmpS.getDescription());
-		}
-		
+		Schema s = schemaService.findSchemaById(schemaId);
 		if (!this.processingSchemaIds.contains(schemaId)) {
 			this.processingSchemaIds.add(schemaId);
 		}
-		
 		if (filePath==null || !(new File(filePath).exists())) {
 			logger.error("Schema import file not set or accessible [{}]", filePath);
 			throw new SchemaImportException("Schema import file not set or accessible [{}]");
 		}
-		
-		XmlSchemaImporter importer = appContext.getBean(XmlSchemaImporter.class);
-		XmlTerminal rootTerminal = null;
-		String compQN;
-		for (Terminal possibleRoot : this.getPossibleRootTerminals(filePath)) {
-			compQN = importer.createTerminalQN(((XmlTerminal)possibleRoot).getNamespace(), possibleRoot.getName(), ((XmlTerminal)possibleRoot).isAttribute());
-			if (compQN.equals(schemaRoot)) {
-				rootTerminal = (XmlTerminal)possibleRoot;
-				break;
+
+		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
+		for (SchemaImporter importer : importers.values()) {
+			importer.setSchemaFilePath(filePath);
+			if (importer.getIsSupported()) {
+				importer.setListener(this);
+				importer.setSchema(s);
+				importer.setRootElementName(schemaRoot); 
+				importer.setAuth(auth);
+				
+				this.executor.execute(importer);
+				return;
 			}
 		}
-		s.setRootElementNamespace(rootTerminal.getNamespace());
-		s.setRootElementName(rootTerminal.getName());
 		
-		
-		importer.setListener(this);
-		importer.setSchema(s);
-		importer.setSchemaFilePath(filePath);
-		importer.setRootElementNs(s.getRootElementNamespace());
-		importer.setRootElementName(s.getRootElementName()); 
-		importer.setAuth(auth);
-		
-		this.executor.execute(importer);
+		throw new SchemaImportException("Failed to import schema due to no matching importer being available");
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(SchemaNature schemaNature, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+	public synchronized void registerImportFinished(Schema importedSchema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
-			elementService.clearElementTree(schemaNature.getId(), auth);
+			elementService.clearElementTree(importedSchema.getId(), auth);
 		}
 		
 		
@@ -139,18 +119,19 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			}
 		}*/
 		
-		Schema s = schemaService.findSchemaById(schemaNature.getEntityId());
-		s.addOrReplaceSchemaNature(schemaNature);
-		
+		Schema s = schemaService.findSchemaById(importedSchema.getEntityId());
+		for (SchemaNature n : importedSchema.getNatures()) {
+			s.addOrReplaceSchemaNature(n);
+		}
 		schemaService.saveSchema(s, rootNonterminals, auth);
 		
-		if (this.processingSchemaIds.contains(schemaNature.getId())) {
-			this.processingSchemaIds.remove(schemaNature.getId());
+		if (this.processingSchemaIds.contains(importedSchema.getId())) {
+			this.processingSchemaIds.remove(importedSchema.getId());
 		}
 	}
 
 	@Override 
-	public synchronized void registerImportFailed(SchemaNature schema) { 
+	public synchronized void registerImportFailed(Schema schema) { 
 		if (this.processingSchemaIds.contains(schema.getId())) {
 			this.processingSchemaIds.remove(schema.getId());
 		}

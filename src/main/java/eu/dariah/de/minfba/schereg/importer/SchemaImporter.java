@@ -3,12 +3,15 @@ package eu.dariah.de.minfba.schereg.importer;
 import java.util.List;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 
-public interface SchemaImporter<T extends SchemaNature> extends Runnable {
-	public void setSchema(T schema);
+public interface SchemaImporter extends Runnable {
+	
+	public Schema getSchema();
+	public void setSchema(Schema schema);
+	
 	public void setSchemaFilePath(String schemaFilePath);
 	
 	public boolean getIsSupported();
@@ -17,10 +20,11 @@ public interface SchemaImporter<T extends SchemaNature> extends Runnable {
 	public Nonterminal getRootNonterminal();
 	public List<Nonterminal> getAdditionalRootElements();
 	public void setListener(SchemaImportListener importWorker);
-	public List<? extends Terminal> getPossibleRootTerminals();
-	public void setRootElementNs(String rootElementNs);
+
 	public void setRootElementName(String rootElementName);
 	
 	public void setAuth(AuthPojo auth);
 	public AuthPojo getAuth();
+	List<? extends Identifiable> getPossibleRootElements();
+
 }

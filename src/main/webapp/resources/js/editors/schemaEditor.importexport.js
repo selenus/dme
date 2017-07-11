@@ -8,6 +8,7 @@ SchemaEditor.prototype.importSchema = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
 		                ],
+		additionalModalClasses: "wide-modal",
 		completeCallback: function() { 
 			_this.reloadElementHierarchy(); 
 		}
@@ -56,7 +57,13 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 	});
 	
 	_this.registerTypeahead(rootSelector, "importedelements", elements, "name", 8, 
-			function(e) { return '<p><strong>' + e.name + '</strong><br/ >' + e.namespace + '<p>'; },
+			function(e) { 
+				if (e.namespace===undefined || e.namespace===null || e.namespace==="") {
+					return '<p><strong>' + e.name + '</strong><p>';
+				} else {
+					return '<p><strong>' + e.name + '</strong><br/ >' + e.namespace + '<p>';
+				}
+			},
 			function(t, suggestion) {
 				$("#schema_root_qn").val("{" + suggestion.namespace + "}:" + suggestion.name);
 			},
