@@ -24,6 +24,11 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("setProcessingRoot", "~eu.dariah.de.minfba.schereg.button.set_processing_root", "grain", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
+					if (element.disabled) {
+						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+					} else {
+						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+					}
 					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
 					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
@@ -47,6 +52,11 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
+					if (element.disabled) {
+						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+					} else {
+						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+					}
 					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
 					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
@@ -64,12 +74,15 @@ SchemaEditor.prototype.initGraph = function() {
 				];
 				
 				if (_this.schema.owned || _this.schema.write) {
-					items.push(
-							_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key),
-							_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
-							_this.graph.createContextMenuSeparator(),
-							_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key)
-					);
+					items.push(_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
+					if (element.disabled) {
+						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+					} else {
+						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+					}
+					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
 					items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
 				}
@@ -85,14 +98,17 @@ SchemaEditor.prototype.initGraph = function() {
 				    _this.graph.createContextMenuSeparator()
 				];
 				if (_this.schema.owned || _this.schema.write) {
-					items.push(
-							_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key),
-							_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key),
-							_this.graph.createContextMenuItem("moveUpGrammar", "~eu.dariah.de.minfba.common.link.move_up", "arrow-up", element.id, element.template.options.key),
-							_this.graph.createContextMenuItem("moveDownGrammar", "~eu.dariah.de.minfba.common.link.move_down", "arrow-down", element.id, element.template.options.key),
-							_this.graph.createContextMenuSeparator(),
-							_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key)
-					);
+					items.push(_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("moveUpGrammar", "~eu.dariah.de.minfba.common.link.move_up", "arrow-up", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("moveDownGrammar", "~eu.dariah.de.minfba.common.link.move_down", "arrow-down", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuSeparator());
+					if (element.disabled) {
+						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+					} else {
+						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+					}
+					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
 					items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
 				}
@@ -151,6 +167,8 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "moveDownGrammar" : return this.moveGrammar(-1);
 	    
 	    case "removeElement" :  return this.removeElement(elementType, elementId);
+	    case "disableElement" :  return this.toggleElementDisabled(elementType, elementId, true);
+	    case "enableElement" :  return this.toggleElementDisabled(elementType, elementId, false);
 	    
 	    case "expandAll" :  return this.area.expandAll(true);
 	    case "collapseAll" : return this.area.expandAll(false);
@@ -279,8 +297,8 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var root = this.area.addElement(data.type, null, data.id, this.formatLabel(data.label), null, data.pRoot);
-	this.generateTree(this.area, root, data.childElements, true, data.pRoot);
+	var root = this.area.addElement(data.type, null, data.id, this.formatLabel(data.label), null, data.pRoot, data.disabled);
+	this.generateTree(this.area, root, data.childElements, true, (data.pRoot && !data.disabled));
 	this.area.elements[0].setExpanded(true);
 	this.graph.update();
 };
@@ -294,8 +312,8 @@ SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSou
 			} else if (elements[i].state==="WARNING") {
 				icon = this.options.icons.warning;
 			}
-			var childProcessed = processed || elements[i].pRoot;
-			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon, childProcessed);
+			var childProcessed = (processed || elements[i].pRoot) && !elements[i].disabled;
+			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon, childProcessed, elements[i].disabled);
 			
 			this.generateTree(area, e, elements[i].childElements, isSource, childProcessed);
 		}

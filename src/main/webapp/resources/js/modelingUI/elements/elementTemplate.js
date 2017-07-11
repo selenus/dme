@@ -114,7 +114,7 @@ ElementTemplate.prototype.paint = function(element, context) {
 	
 	context.lineWidth = this.options.lineWidth;
 	
-	if (element.processed===undefined || element.processed===true) {
+	if ( (element.processed===undefined || element.processed===true) && element.disabled===false) {
 		context.fillStyle = element.selected ? this.options.secondaryColor : this.options.primaryColor;
 		context.strokeStyle = element.selected ? this.options.primaryColor : this.options.secondaryColor;
 	} else {

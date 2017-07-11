@@ -25,7 +25,6 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
@@ -36,7 +35,6 @@ import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
-import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value={"/schema/editor/{schemaId}/element/{elementId}", "/mapping/editor/{schemaId}/element/{elementId}"})
@@ -229,14 +227,13 @@ public class ElementEditorController extends BaseScheregController {
 		Schema s = schemaService.findSchemaById(schemaId);
 		XmlSchemaNature sn = s.getNature(XmlSchemaNature.class);
 		
-		if (e instanceof Nonterminal) {
-			terminalId = sn.getTerminalId(e.getId());
-		} else {
-			logger.warn("GetTerminal called for object of type {}", e.getClass().getSimpleName());
-			throw new Exception("Invalid call of getTerminal on non-nonterminal");
-		}
-		
 		if (sn!=null) {
+			if (e instanceof Nonterminal) {
+				terminalId = sn.getTerminalId(e.getId());
+			} else {
+				logger.warn("GetTerminal called for object of type {}", e.getClass().getSimpleName());
+				throw new Exception("Invalid call of getTerminal on non-nonterminal");
+			}
 			if (terminalId==null || terminalId.isEmpty()) {
 				// None assigned yet
 				return null;
@@ -264,6 +261,22 @@ public class ElementEditorController extends BaseScheregController {
 		elementService.removeElement(schemaId, elementId, authInfoHelper.getAuth(request));
 		return new ModelActionPojo(true);
 	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.GET, value = "/async/disable")
+	public @ResponseBody ModelActionPojo disableElement(@PathVariable String schemaId, @PathVariable String elementId, @RequestParam boolean disabled, HttpServletRequest request, HttpServletResponse response) {
+		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
+		
+		Element e = elementService.findById(elementId);
+		e.setDisabled(disabled);
+		
+		elementService.saveElement(e, authInfoHelper.getAuth(request));
+		return new ModelActionPojo(true);
+	}
+	
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/async/setProcessingRoot")

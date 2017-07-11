@@ -1,4 +1,4 @@
-var Element = function(template, parent, id, label, icons, processed) {
+var Element = function(template, parent, id, label, icons, processed, disabled) {
 	this.template = template;
 	this.parent = parent;
 	this.id = id;
@@ -10,6 +10,7 @@ var Element = function(template, parent, id, label, icons, processed) {
 	this.visible = false;
 	this.processed = processed;
 	this.expander = null;
+	this.disabled = (disabled===undefined ? false : disabled);
 	
 	this.connectors = [];
 	if (this.template.connectorTemplates!=null) {

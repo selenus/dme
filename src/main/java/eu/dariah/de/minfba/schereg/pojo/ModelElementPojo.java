@@ -15,6 +15,7 @@ public class ModelElementPojo implements Identifiable {
 	private String label;
 	private String type;
 	private boolean processingRoot;
+	private boolean disabled;
 	private ModelElementState state;
 	private List<ModelElementPojo> childElements;
 	
@@ -31,6 +32,9 @@ public class ModelElementPojo implements Identifiable {
 	@JsonProperty(value="pRoot")
 	public boolean isProcessingRoot() { return processingRoot; }
 	public void setProcessingRoot(boolean processingRoot) { this.processingRoot = processingRoot; }
+	
+	public boolean isDisabled() { return disabled; }
+	public void setDisabled(boolean disabled) { this.disabled = disabled; }
 	
 	public ModelElementState getState() { return state; }
 	public void setState(ModelElementState state) { this.state = state; }

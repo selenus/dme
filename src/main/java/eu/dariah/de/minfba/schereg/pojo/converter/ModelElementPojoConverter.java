@@ -76,7 +76,7 @@ public class ModelElementPojoConverter {
 		ModelElementPojo p = new ModelElementPojo();
 		p.setState(ModelElementState.OK);
 		p.setType("Label");
-		
+
 		if (l.getSubLabels()!=null && l.getSubLabels().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
 			for (Label childL : l.getSubLabels()) {
@@ -89,6 +89,7 @@ public class ModelElementPojoConverter {
 	private static ModelElementPojo convertElement(ModelElementPojo p, Element e, boolean staticElementsOnly) {
 		p.setId(e.getId());
 		p.setLabel(e.getName());
+		p.setDisabled(e.isDisabled());
 				
 		if (!staticElementsOnly && e.getGrammars()!=null && e.getGrammars().size()>0) {
 			if (p.getChildElements()==null) {
@@ -107,6 +108,7 @@ public class ModelElementPojoConverter {
 		p.setLabel(g.getGrammarName());
 		p.setState(ModelElementState.OK);
 		p.setType("Grammar");
+		p.setDisabled(g.isDisabled());
 		
 		if (g.getTransformationFunctions()!=null && g.getTransformationFunctions().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
@@ -124,6 +126,7 @@ public class ModelElementPojoConverter {
 		p.setLabel(f.getName());
 		p.setState(ModelElementState.OK);
 		p.setType("Function");
+		p.setDisabled(f.isDisabled());
 		
 		if (f.getOutputElements()!=null && f.getOutputElements().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());

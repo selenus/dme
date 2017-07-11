@@ -50,6 +50,21 @@ public class GrammarEditorController extends BaseFunctionController {
 	}
 	
 	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.GET, value = "/async/disable")
+	public @ResponseBody ModelActionPojo disableElement(@PathVariable String entityId, @PathVariable String grammarId, @RequestParam boolean disabled, HttpServletRequest request, HttpServletResponse response) {
+		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
+		
+		DescriptionGrammarImpl g = (DescriptionGrammarImpl)grammarService.findById(grammarId);
+		g.setDisabled(disabled);
+		
+		grammarService.saveGrammar(g, authInfoHelper.getAuth(request));
+		return new ModelActionPojo(true);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
 	public @ResponseBody DescriptionGrammar removeElement(@PathVariable String entityId, @PathVariable String grammarId, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);

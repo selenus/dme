@@ -53,6 +53,8 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.common.link.edit",
 	                              "~eu.dariah.de.minfba.common.link.view",
 	                              "~eu.dariah.de.minfba.common.link.delete",
+	                              "~eu.dariah.de.minfba.common.link.disable",
+	                              "~eu.dariah.de.minfba.common.link.enable",
 	                              "~eu.dariah.de.minfba.common.link.move_down",
 	                              "~eu.dariah.de.minfba.common.link.move_up",
 	                              "~eu.dariah.de.minfba.schereg.button.add_nonterminal",
@@ -60,6 +62,8 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
 	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_disable",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_enable",
 	                              "~eu.dariah.de.minfba.schereg.dialog.element_label",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.head",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.body",
@@ -469,6 +473,25 @@ SchemaEditor.prototype.removeElement = function(type, id) {
 			    dataType: "json",
 			    success: function(data) {
 			    	_this.graph.deselectAll();
+			    	_this.reloadElementHierarchy();
+			    },
+			    error: __util.processServerError
+			});
+		}
+	});
+};
+
+SchemaEditor.prototype.toggleElementDisabled = function(type, id, disable) { 
+	var _this = this;
+	
+	bootbox.confirm(String.format((disable ? __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_disable") : __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_enable")), id), function(result) {
+		if(result) {
+			$.ajax({
+			    url: _this.pathname + "/" + _this.getElementType(type) + "/" + id + "/async/disable",
+			    data: { disabled: disable },
+			    type: "GET",
+			    dataType: "json",
+			    success: function(data) {
 			    	_this.reloadElementHierarchy();
 			    },
 			    error: __util.processServerError

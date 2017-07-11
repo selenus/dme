@@ -31,7 +31,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.exceptions.GrammarProcessingException;
 import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
-import de.unibamberg.minf.gtf.syntaxtree.NonterminalSyntaxTreeNode;
 import de.unibamberg.minf.gtf.syntaxtree.SyntaxTreeNode;
 import de.unibamberg.minf.gtf.syntaxtree.TerminalSyntaxTreeNode;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
@@ -47,7 +46,6 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
@@ -58,7 +56,6 @@ import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
-import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
 @RequestMapping(value={"/schema/editor/{entityId}/function/{functionId}",
@@ -87,6 +84,21 @@ public class FunctionEditorController extends BaseFunctionController {
 			return null;
 		}
 		return functionService.deleteFunctionById(entityId, functionId, authInfoHelper.getAuth(request));
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.GET, value = "/async/disable")
+	public @ResponseBody ModelActionPojo disableElement(@PathVariable String entityId, @PathVariable String functionId, @RequestParam boolean disabled, HttpServletRequest request, HttpServletResponse response) {
+		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
+		
+		TransformationFunctionImpl f = (TransformationFunctionImpl)functionService.findById(functionId);
+		f.setDisabled(disabled);
+		
+		functionService.saveFunction(f, authInfoHelper.getAuth(request));
+		return new ModelActionPojo(true);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
@@ -286,7 +298,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			DescriptionGrammar g = grammarService.findById(grammarId);
 			
 			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
-			Element e = elementService.findById(elementId);
+			//Element e = elementService.findById(elementId);
 			
 			values.add(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, null));
 			grammars.add(g);
@@ -303,7 +315,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			for (String elementId : mc.getElementGrammarIdsMap().keySet()) {
 				grammars.add(grammarService.findById(mc.getElementGrammarIdsMap().get(elementId)));
 				
-				Element e = elementService.findById(elementId);
+				//Element e = elementService.findById(elementId);
 				
 				
 				values.add(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, null));
