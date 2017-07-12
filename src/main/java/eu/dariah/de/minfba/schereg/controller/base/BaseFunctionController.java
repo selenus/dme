@@ -71,6 +71,7 @@ public abstract class BaseFunctionController extends BaseScheregController {
 			return null;
 		}
 		
-		return sessionService.getSampleInputValue(session, inputElementId);
+		String result = sessionService.getSampleInputValue(session, inputElementId);
+		return result;
 	}
 }
