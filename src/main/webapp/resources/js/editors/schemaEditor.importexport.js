@@ -99,3 +99,19 @@ SchemaEditor.prototype.exportSchema = function() {
 	    error: __util.processServerError
 	});
 };
+
+SchemaEditor.prototype.exportSubtree = function(elementId) {
+	var _this = this;
+	
+	$.ajax({
+	    url: _this.pathname + "/async/exportSubtree",
+	    data: { elementId: elementId },
+	    type: "GET",
+	    dataType: "json",
+	    success: function(data) {
+	    	blob = new Blob([JSON.stringify(data.pojo)], {type: "application/json; charset=utf-8"});
+	    	saveAs(blob, "schema_" + _this.schema.id + ".json");
+	    },
+	    error: __util.processServerError
+	});
+};

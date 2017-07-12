@@ -12,10 +12,12 @@ import org.springframework.stereotype.Service;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
+import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
@@ -172,5 +174,43 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		
 		elementService.unsetSchemaProcessingRoot(schemaId);
 		elementService.saveElement(newRoot, auth);
+	}
+	
+	@Override
+	public SchemaImpl cloneSchemaForSubtree(Schema s, Element subtree) {
+		SchemaImpl expSchema = new SchemaImpl();
+		expSchema.setDescription(s.getDescription());
+		expSchema.setEntityId(s.getEntityId());
+		expSchema.setId(s.getId());
+		expSchema.setLabel(s.getId());
+		
+		List<Nonterminal> nonterminals = ElementServiceImpl.extractAllNonterminals(subtree);
+		try {
+			SchemaNature expNature;
+			for (SchemaNature nature : s.getNatures()) {
+				expNature = (SchemaNature)nature.clone();
+				
+				List<String> remNonterminalIds = new ArrayList<String>();
+				for (String nId : nature.getNonterminalTerminalIdMap().keySet()) {
+					boolean remove = true;
+					for (Nonterminal n : nonterminals) {
+						if (n.getId().equals(nId)) {
+							remove = false;
+							break;
+						}
+					}
+					if (remove) {
+						remNonterminalIds.add(nId);
+					}
+				}				
+				for (String rId : remNonterminalIds) {
+					expNature.removeNonterminalBinding(rId);
+				}
+				expSchema.addOrReplaceSchemaNature(expNature);				
+			}
+		} catch (Exception e) {
+			logger.error("Failed to clone schema nature", e);
+		}
+		return expSchema;
 	}
 }

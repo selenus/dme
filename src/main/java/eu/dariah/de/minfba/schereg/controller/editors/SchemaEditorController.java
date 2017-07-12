@@ -39,14 +39,18 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.LabelImpl;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
+import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
+import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
@@ -62,6 +66,8 @@ import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.pojo.converter.ModelElementPojoConverter;
+import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 
@@ -71,6 +77,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private GrammarService grammarService;
+	@Autowired private FunctionService functionService;
 	
 	@Autowired private IdentifiableService identifiableService;
 	
@@ -413,6 +420,59 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		result.setPojo(sp);
 		return result;
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/exportSubtree")
+	public @ResponseBody ModelActionPojo exportSubtree(@PathVariable String entityId, @RequestParam String elementId, Model model, Locale locale) {
+		Schema s = schemaService.findSchemaById(entityId);
+		//Element expE = elementService.findById(elementId);
+		
+		Identifiable rootE = elementService.getElementSubtree(entityId, elementId);
+		
+		Element expE;
+		
+		if (Element.class.isAssignableFrom(rootE.getClass())) {
+			expE = (Element)rootE;
+		} else {
+			expE = new NonterminalImpl(s.getEntityId(), "EXPORT_CONTAINER");
+			expE.setGrammars(new ArrayList<DescriptionGrammarImpl>());
+			
+			DescriptionGrammarImpl expG;
+			if (DescriptionGrammarImpl.class.isAssignableFrom(rootE.getClass())) {
+				expG = (DescriptionGrammarImpl)rootE;
+			} else {
+				expG = new DescriptionGrammarImpl(entityId, "EXPORT_CONTAINER");
+				expG.setTransformationFunctions(new ArrayList<TransformationFunctionImpl>());
+				
+				TransformationFunctionImpl expF;
+				if (TransformationFunctionImpl.class.isAssignableFrom(rootE.getClass())) {
+					expF = (TransformationFunctionImpl)rootE;
+				} else {
+					return null;
+				}
+				expG.getTransformationFunctions().add(expF);
+			}
+			expE.getGrammars().add(expG);
+		}
+
+		SerializableSchemaContainer sp = new SerializableSchemaContainer();
+		sp.setSchema(schemaService.cloneSchemaForSubtree(s, expE));
+		sp.setRoot(expE);
+		
+		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
+		if (ch!=null) {
+			s.setVersionId(ch.getId());
+		}
+		
+
+		//sp.setGrammars(grammarService.serializeGrammarSources(entityId));
+		
+		ModelActionPojo result = new ModelActionPojo(true);
+		result.setPojo(sp);
+		return result;
+	}
+	
+	
+	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
 	public @ResponseBody ModelElementPojo getHierarchy(@PathVariable String entityId, @RequestParam(defaultValue="false") boolean staticElementsOnly, Model model, Locale locale, HttpServletResponse response) throws IOException, GenericScheregException {

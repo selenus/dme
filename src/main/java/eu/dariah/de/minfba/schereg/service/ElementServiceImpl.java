@@ -200,6 +200,24 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		return result;
 	}
 	
+	public static List<Nonterminal> extractAllNonterminals(Element element) {
+		if (!Nonterminal.class.isAssignableFrom(element.getClass())) {
+			return new ArrayList<Nonterminal>();
+		}
+		Nonterminal root = (Nonterminal)element;
+		List<Nonterminal> result = new ArrayList<Nonterminal>();
+		if (root!=null) {
+			result.add(root);
+			if (root.getChildNonterminals()!=null) {
+				for (Nonterminal childN : root.getChildNonterminals()) {
+					result.addAll(extractAllNonterminals(childN));
+				}
+			}
+		}
+		return result;
+	}
+	
+	
 	private Identifiable getElementSubtree(Element searchElement, String matchElementId) {
 		if (searchElement.getId().equals(matchElementId)) {
 			return searchElement;

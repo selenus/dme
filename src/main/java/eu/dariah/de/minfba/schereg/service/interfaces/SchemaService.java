@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
@@ -31,5 +33,6 @@ public interface SchemaService extends BaseEntityService {
 	public List<ChangeSet> getChangeSetForAllSchemas();
 	public void saveSchema(Schema schema, List<Reference> rootNonterminals, AuthPojo auth);
 	
-	public void setProcessingRoot(String schemaId, String elementId, AuthPojo auth);	
+	public void setProcessingRoot(String schemaId, String elementId, AuthPojo auth);
+	public SchemaImpl cloneSchemaForSubtree(Schema s, Element subtree);	
 }

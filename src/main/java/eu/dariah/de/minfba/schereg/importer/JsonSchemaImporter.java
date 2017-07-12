@@ -29,6 +29,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.util.Stopwatch;
+import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 
 /**
  * Importer for JSON based schema definitions
@@ -97,7 +98,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
 			
 			List<Element> rootElements = new ArrayList<Element>();
-			rootElements.addAll(this.extractAllNonterminals((Nonterminal)s.getRoot()));
+			rootElements.addAll(ElementServiceImpl.extractAllNonterminals((Nonterminal)s.getRoot()));
 			
 			return rootElements;
 		} catch (Exception e) {
@@ -109,19 +110,6 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 	@Override
 	public String[] getNamespaces() {
 		return new String[]{""};
-	}
-	
-	private List<Nonterminal> extractAllNonterminals(Nonterminal root) {
-		List<Nonterminal> result = new ArrayList<Nonterminal>();
-		if (root!=null) {
-			result.add(root);
-			if (root.getChildNonterminals()!=null) {
-				for (Nonterminal childN : root.getChildNonterminals()) {
-					result.addAll(extractAllNonterminals(childN));
-				}
-			}
-		}
-		return result;
 	}
 	
 	private void regenerateElementIds(Schema schema, Element element, Map<String, String> nonterminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
