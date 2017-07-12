@@ -119,19 +119,23 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(Schema importedSchema, String parentElementId, Identifiable root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+	public void registerImportFinished(Schema importedSchema, String parentElementId, List<Identifiable> rootElements, List<Identifiable> additionalRootElements, AuthPojo auth) {
 		if (parentElementId==null) {
-			this.importSchema(importedSchema, (Nonterminal)root, additionalRootElements, auth);
+			this.importSchema(importedSchema, (Nonterminal)rootElements.get(0), additionalRootElements, auth);
 		} else {
-			this.importSubtree(importedSchema, parentElementId, root, additionalRootElements, auth);
+			this.importSubtree(importedSchema, parentElementId, rootElements, additionalRootElements, auth);
 		}
 	}
 	
-	private synchronized void importSubtree(Schema importedSchema, String parentElementId, Identifiable root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+	private synchronized void importSubtree(Schema importedSchema, String parentElementId, List<Identifiable> rootElements, List<Identifiable> additionalRootElements, AuthPojo auth) {
 		logger.debug("import done");
+		
+		if (this.processingSchemaIds.contains(importedSchema.getId())) {
+			this.processingSchemaIds.remove(importedSchema.getId());
+		}
 	}
 	
-	private synchronized void importSchema(Schema importedSchema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+	private synchronized void importSchema(Schema importedSchema, Nonterminal root, List<Identifiable> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
 			elementService.clearElementTree(importedSchema.getId(), auth);
 		}

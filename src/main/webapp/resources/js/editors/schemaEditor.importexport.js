@@ -1,9 +1,12 @@
-SchemaEditor.prototype.importSchema = function() {
+SchemaEditor.prototype.importSchema = function(elementId) {
 	var _this = this;
 	var form_identifier = "upload-file-" + this.schema.id;
 	
+	var data = elementId===undefined ? undefined : { elementId : elementId };
+	
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "forms/import/",
+		data: data,
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
@@ -17,7 +20,7 @@ SchemaEditor.prototype.importSchema = function() {
 	modalFormHandler.fileUploadElements.push({
 		selector: "#schema_source",				// selector for identifying where to put widget
 		formSource: "forms/fileupload",			// where is the form
-		uploadTarget: "async/upload", 			// where to we upload the file(s) to
+		uploadTarget: "async/upload" + (elementId===undefined ? "": "/" + elementId), 			// where to we upload the file(s) to
 		multiFiles: false, 						// one or multiple files
 		elementChangeCallback: _this.setupRootSelection
 	});
@@ -116,32 +119,4 @@ SchemaEditor.prototype.exportSubtree = function(elementId) {
 	    },
 	    error: __util.processServerError
 	});
-};
-
-SchemaEditor.prototype.importSubtree = function(elementId) {
-	var _this = this;
-	var form_identifier = "upload-file-" + this.schema.id;
-	
-	modalFormHandler = new ModalFormHandler({
-		formUrl: "forms/importSubtree/",
-		data: { elementId : elementId },
-		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
-		                ],
-		additionalModalClasses: "wide-modal",
-		completeCallback: function() { 
-			_this.reloadElementHierarchy(); 
-		}
-	});
-	
-	modalFormHandler.fileUploadElements.push({
-		selector: "#schema_source",				// selector for identifying where to put widget
-		formSource: "forms/fileupload",			// where is the form
-		uploadTarget: "async/upload/" + elementId, 			// where to we upload the file(s) to
-		multiFiles: false, 						// one or multiple files
-		elementChangeCallback: _this.setupRootSelection
-	});
-		
-	modalFormHandler.show(form_identifier);
 };

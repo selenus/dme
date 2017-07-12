@@ -1,11 +1,13 @@
 package eu.dariah.de.minfba.schereg.importer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 
@@ -22,8 +24,8 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	
 	private AuthPojo auth;
 	
-	private Nonterminal rootNonterminal;
-	private List<Nonterminal> additionalRootElements;
+	private List<Identifiable> rootElements = new ArrayList<Identifiable>();
+	private List<Identifiable> additionalRootElements;
 	
 	
 	@Override public Schema getSchema() { return schema; }
@@ -41,12 +43,12 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	public String getElementId() { return elementId; }
 	@Override public void setElementId(String elementId) { this.elementId = elementId; }
 	
-	@Override public Nonterminal getRootNonterminal() { return rootNonterminal; }
-	protected void setRootNonterminal(Nonterminal rootNonterminal) { this.rootNonterminal = rootNonterminal; }
+	@Override public List<Identifiable> getRootElements() { return rootElements; }
+	public void setRootElements(List<Identifiable> rootElements) { this.rootElements = rootElements; }
 	
-	@Override public List<Nonterminal> getAdditionalRootElements() { return additionalRootElements; }
-	protected void setAdditionalRootElements(List<Nonterminal> additionalRootElements) { this.additionalRootElements = additionalRootElements; }
-
+	@Override public List<Identifiable> getAdditionalRootElements() { return additionalRootElements; }
+	public void setAdditionalRootElements(List<Identifiable> additionalRootElements) { this.additionalRootElements = additionalRootElements; }
+	
 	protected SchemaImportListener getListener() { return listener; }
 	@Override public void setListener(SchemaImportListener listener) { this.listener = listener; }
 	

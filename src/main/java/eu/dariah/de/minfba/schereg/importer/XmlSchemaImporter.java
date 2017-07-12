@@ -80,7 +80,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 				
 				logger.info(String.format("Finished importing schema %s in %sms", xmlNature.getEntityId(), sw.getElapsedTime()));
 				
-				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootNonterminal(), this.getAdditionalRootElements(), this.getAuth());
+				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootElements(), this.getAdditionalRootElements(), this.getAuth());
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing XML Schema", e);
@@ -93,7 +93,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	@Override
 	public List<? extends Identifiable> getElementsByTypes(List<Class<? extends Identifiable>> allowedSubtreeRoots) {
 		this.run();
-		return IdentifiableServiceImpl.extractAllByTypes(this.getRootNonterminal(), allowedSubtreeRoots);
+		return IdentifiableServiceImpl.extractAllByTypes(this.getRootElements().get(0), allowedSubtreeRoots);
 	}
 	
 	@Override
@@ -178,8 +178,9 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		}
 		
 		/* Element processing */
-		this.setRootNonterminal(this.getRoot(xmlNature.getRootElementNamespace(), xmlNature.getRootElementName()));
-		this.getRootNonterminal().setProcessingRoot(true);
+		Nonterminal rootN = this.getRoot(xmlNature.getRootElementNamespace(), xmlNature.getRootElementName());
+		rootN.setProcessingRoot(true);
+		this.getRootElements().add(rootN);
 		
 		XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
 		Map<String, XmlTerminal> rootTerminals = new HashMap<String, XmlTerminal>();
@@ -207,9 +208,13 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 			this.combineExtensionNonterminals();
 			
 			// We expect that no abstract element can be selected as root!
-			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootNonterminal());
-			this.setRootNonterminal(this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootNonterminal(), serializedNonterminals));
-			this.getRootNonterminal().setProcessingRoot(true);
+			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootElements().get(0));
+			
+			
+			rootN = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootElements().get(0), serializedNonterminals);
+			rootN.setProcessingRoot(true);
+			this.getRootElements().add(rootN);
+	
 			
 			logger.debug("Schema import took {}ms", sw.getElapsedTime());
 			return;
@@ -228,11 +233,11 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 			}
 		}
 		
-		List<Nonterminal> compareN = new ArrayList<Nonterminal>(potentialRootElements);
+		List<Identifiable> compareN = new ArrayList<Identifiable>(potentialRootElements);
 		
 		// Check for each potential root if it is a child in any other potential tree
 		for (Nonterminal addRoot : potentialRootElements) {
-			for (Nonterminal compareRoot : compareN) {
+			for (Identifiable compareRoot : compareN) {
 				if (addRoot.equals(compareRoot)) {
 					continue;
 				}
@@ -250,9 +255,12 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		
 		
 		// We expect that no abstract element can be selected as root!
-		this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootNonterminal());
-		this.setRootNonterminal(this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootNonterminal(), serializedNonterminals));
-		this.getRootNonterminal().setProcessingRoot(true);
+		this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootElements().get(0));
+		
+		rootN = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootElements().get(0), serializedNonterminals);
+		rootN.setProcessingRoot(true);
+		this.getRootElements().add(rootN);
+		
 		for (int i=0; i<this.getAdditionalRootElements().size(); i++) {
 			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getAdditionalRootElements().get(i));
 			this.getAdditionalRootElements().set(i, this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getAdditionalRootElements().get(i), serializedNonterminals));
@@ -326,15 +334,18 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		}
 	}
 	
-	private boolean getChildrenContainTerminalId(Nonterminal parent, String terminalId) {
+	private boolean getChildrenContainTerminalId(Identifiable parent, String terminalId) {
 		
 		if (this.xmlNature.getTerminalId(parent.getId()).equals(terminalId)) {
 			return true;
 		}
-		if (parent.getChildNonterminals()!=null && !parent.getChildNonterminals().isEmpty()) {
-			for (Nonterminal child : parent.getChildNonterminals()) {
-				if (this.getChildrenContainTerminalId(child, terminalId)) {
-					return true;
+		if (Nonterminal.class.isAssignableFrom(parent.getClass())) {
+			Nonterminal parentN = (Nonterminal)parent;
+			if (parentN.getChildNonterminals()!=null && !parentN.getChildNonterminals().isEmpty()) {
+				for (Nonterminal child : parentN.getChildNonterminals()) {
+					if (this.getChildrenContainTerminalId(child, terminalId)) {
+						return true;
+					}
 				}
 			}
 		}

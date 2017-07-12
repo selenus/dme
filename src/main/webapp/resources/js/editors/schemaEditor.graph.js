@@ -175,7 +175,7 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "moveDownGrammar" : return this.moveGrammar(-1);
 	    
 	    case "exportSubtree" :  return this.exportSubtree(elementId);
-	    case "importSubtree" :  return this.importSubtree(elementId);
+	    case "importSubtree" :  return this.importSchema(elementId);
 	    
 	    case "removeElement" :  return this.removeElement(elementType, elementId);
 	    case "disableElement" :  return this.toggleElementDisabled(elementType, elementId, true);

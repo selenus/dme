@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 
 public class SchemaImporterTest {
@@ -31,7 +32,7 @@ public class SchemaImporterTest {
 		si.setRootElementName(rootElementName);
 		si.run();
 		
-		Nonterminal root = si.getRootNonterminal();
+		Identifiable root = si.getRootElements().get(0);
 		
 		Assert.assertNotNull(root);		
 	}

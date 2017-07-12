@@ -30,6 +30,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.util.Stopwatch;
+import eu.dariah.de.minfba.schereg.importer.model.ImportAwareNonterminal;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
 
@@ -55,7 +56,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 			this.importSerializedJsonSchema();
 			if (this.getListener()!=null) {
 				logger.info(String.format("Finished importing schema %s in %sms", this.getSchema().getId(), sw.getElapsedTime()));
-				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootNonterminal(), this.getAdditionalRootElements(), this.getAuth());
+				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootElements(), this.getAdditionalRootElements(), this.getAuth());
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing JSON Schema", e);
@@ -84,11 +85,18 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 		Map<String, String> nonterminalIdMap = new HashMap<String, String>();
 		this.regenerateElementIds(this.getSchema(), s.getRoot(), nonterminalIdMap, s.getGrammars());
 		
-		for (SchemaNature nature : s.getSchema().getNatures()) {
-			this.regenerateTerminalIds(nature, this.getSchema().getId(), nonterminalIdMap);
+		if (s.getSchema().getNatures()!=null) {
+			for (SchemaNature nature : s.getSchema().getNatures()) {
+				this.regenerateTerminalIds(nature, this.getSchema().getId(), nonterminalIdMap);
+			}
 		}
 		
-		this.setRootNonterminal((Nonterminal)s.getRoot());
+		this.setRootElements(new ArrayList<Identifiable>());
+		
+
+		this.getRootElements().add(s.getRoot());
+
+
 		this.setSchema(s.getSchema());
 	}
 
