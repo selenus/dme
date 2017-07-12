@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import eu.dariah.de.minfba.core.metamodel.LabelImpl;
+import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
@@ -53,7 +55,9 @@ public abstract class BaseFunctionController extends BaseScheregController {
 			}
 		} else {
 			parentClasses.add(Nonterminal.class.getName());
+			parentClasses.add(NonterminalImpl.class.getName());
 			parentClasses.add(Label.class.getName());
+			parentClasses.add(LabelImpl.class.getName());
 			
 			Reference r = referenceService.findReferenceByChildId(entity.getId(), executableId, parentClasses);
 			
