@@ -347,7 +347,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 				}
 				
 				if (elementId!=null) {
-					//importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, schemaRoot, schemaRootType, authInfoHelper.getAuth(request));
+					importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, schemaRoot, schemaRootType, authInfoHelper.getAuth(request));
 				} else {
 					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
 				}
@@ -389,12 +389,8 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@RequestMapping(method = RequestMethod.GET, value = "/async/exportSubtree")
 	public @ResponseBody ModelActionPojo exportSubtree(@PathVariable String entityId, @RequestParam String elementId, Model model, Locale locale) {
 		Schema s = schemaService.findSchemaById(entityId);
-		//Element expE = elementService.findById(elementId);
-		
 		Identifiable rootE = elementService.getElementSubtree(entityId, elementId);
-		
 		Element expE;
-		
 		if (Element.class.isAssignableFrom(rootE.getClass())) {
 			expE = (Element)rootE;
 		} else {

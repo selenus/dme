@@ -55,7 +55,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 			this.importSerializedJsonSchema();
 			if (this.getListener()!=null) {
 				logger.info(String.format("Finished importing schema %s in %sms", this.getSchema().getId(), sw.getElapsedTime()));
-				this.getListener().registerImportFinished(this.getSchema(), this.getRootNonterminal(), this.getAdditionalRootElements(), this.getAuth());
+				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootNonterminal(), this.getAdditionalRootElements(), this.getAuth());
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing JSON Schema", e);

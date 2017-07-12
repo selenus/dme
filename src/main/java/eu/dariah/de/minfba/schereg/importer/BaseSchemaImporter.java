@@ -17,6 +17,8 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	private Schema schema;
 	private String schemaFilePath;
 	private String rootElementName; 
+	private String rootElementType;
+	private String elementId;
 	
 	private AuthPojo auth;
 	
@@ -32,6 +34,12 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
  	
  	protected String getRootElementName() { return rootElementName; }
 	@Override public void setRootElementName(String rootElementName) { this.rootElementName = rootElementName; }
+	
+	public String getRootElementType() { return rootElementType; }
+	@Override public void setRootElementType(String rootElementType) { this.rootElementType = rootElementType; }
+	
+	public String getElementId() { return elementId; }
+	@Override public void setElementId(String elementId) { this.elementId = elementId; }
 	
 	@Override public Nonterminal getRootNonterminal() { return rootNonterminal; }
 	protected void setRootNonterminal(Nonterminal rootNonterminal) { this.rootNonterminal = rootNonterminal; }

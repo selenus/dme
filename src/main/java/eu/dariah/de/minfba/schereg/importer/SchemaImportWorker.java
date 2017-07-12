@@ -81,14 +81,18 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	public void importSchema(String filePath, String schemaId, String schemaRoot, AuthPojo auth) throws SchemaImportException {
-		if (schemaId==null || schemaId.trim().isEmpty()) {
+		this.importSubtree(filePath, schemaId, null, schemaRoot, null, auth);
+	}
+
+	public void importSubtree(String filePath, String entityId, String elementId, String schemaRoot, String schemaRootType, AuthPojo auth) throws SchemaImportException {
+		if (entityId==null || entityId.trim().isEmpty()) {
 			logger.error("Schema id must exist (schema must be saved) before import");
 			throw new SchemaImportException("Schema id must exist (schema must be saved) before import");
 		}
 		
-		Schema s = schemaService.findSchemaById(schemaId);
-		if (!this.processingSchemaIds.contains(schemaId)) {
-			this.processingSchemaIds.add(schemaId);
+		Schema s = schemaService.findSchemaById(entityId);
+		if (!this.processingSchemaIds.contains(entityId)) {
+			this.processingSchemaIds.add(entityId);
 		}
 		if (filePath==null || !(new File(filePath).exists())) {
 			logger.error("Schema import file not set or accessible [{}]", filePath);
@@ -103,6 +107,8 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 				importer.setSchema(s);
 				importer.setRootElementName(schemaRoot); 
 				importer.setAuth(auth);
+				importer.setRootElementType(schemaRootType);
+				importer.setElementId(elementId);
 				
 				this.executor.execute(importer);
 				return;
@@ -113,12 +119,22 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public synchronized void registerImportFinished(Schema importedSchema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+	public synchronized void registerImportFinished(Schema importedSchema, String parentElementId, Identifiable root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+		if (parentElementId==null) {
+			this.importSchema(importedSchema, (Nonterminal)root, additionalRootElements, auth);
+		} else {
+			this.importSubtree(importedSchema, parentElementId, root, additionalRootElements, auth);
+		}
+	}
+	
+	private synchronized void importSubtree(Schema importedSchema, String parentElementId, Identifiable root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
+		logger.debug("import done");
+	}
+	
+	private synchronized void importSchema(Schema importedSchema, Nonterminal root, List<Nonterminal> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
 			elementService.clearElementTree(importedSchema.getId(), auth);
 		}
-		
-		
 		List<Reference> rootNonterminals = new ArrayList<Reference>();
 		Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
 		rootNonterminal.setRoot(true);
@@ -140,6 +156,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			this.processingSchemaIds.remove(importedSchema.getId());
 		}
 	}
+	
 
 	@Override 
 	public synchronized void registerImportFailed(Schema schema) { 
@@ -147,7 +164,5 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			this.processingSchemaIds.remove(schema.getId());
 		}
 		logger.warn("Schema import failed");
-	}
-
-	
+	}	
 }

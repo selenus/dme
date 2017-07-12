@@ -112,7 +112,7 @@ SchemaEditor.prototype.exportSubtree = function(elementId) {
 	    dataType: "json",
 	    success: function(data) {
 	    	blob = new Blob([JSON.stringify(data.pojo)], {type: "application/json; charset=utf-8"});
-	    	saveAs(blob, "schema_" + _this.schema.id + ".json");
+	    	saveAs(blob, "subtree_" + _this.schema.id + ".json");
 	    },
 	    error: __util.processServerError
 	});
