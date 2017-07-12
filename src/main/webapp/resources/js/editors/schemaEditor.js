@@ -62,6 +62,7 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
 	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
 	                              "~eu.dariah.de.minfba.schereg.button.export_from_here",
+	                              "~eu.dariah.de.minfba.schereg.button.import_here",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_disable",
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_enable",

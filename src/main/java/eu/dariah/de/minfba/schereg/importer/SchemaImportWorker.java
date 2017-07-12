@@ -65,6 +65,17 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		return null;
 	}
 	
+	public List<? extends Identifiable> getElementsByTypes(String filePath, List<Class<? extends Identifiable>> allowedSubtreeRoots) {
+		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
+		for (SchemaImporter importer : importers.values()) {
+			importer.setSchemaFilePath(filePath);
+			if (importer.getIsSupported()) {
+				return importer.getElementsByTypes(allowedSubtreeRoots);
+			}
+		}
+		return null;
+	}
+	
 	public boolean isBeingProcessed(String schemaId) {
 		return schemaId!=null && this.processingSchemaIds.contains(schemaId);
 	}
@@ -137,4 +148,6 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		}
 		logger.warn("Schema import failed");
 	}
+
+	
 }

@@ -47,6 +47,7 @@ import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -67,6 +68,7 @@ import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.pojo.converter.ModelElementPojoConverter;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
@@ -198,6 +200,20 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	}
 	
 	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/forms/importSubtree"})
+	public String getImportSubtreeForm(@PathVariable String entityId, @RequestParam String elementId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/importSubtree");
+		model.addAttribute("schema", schemaService.findSchemaById(entityId));
+		model.addAttribute("elementId", elementId);
+		return "schemaEditor/form/import";
+	}
+	
+	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/fileupload"})
 	public String getImportForm(Model model, Locale locale) {
 		return "common/fileupload";
@@ -234,8 +250,8 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method = RequestMethod.POST, value = "/async/upload", produces = "application/json; charset=utf-8")
-	public @ResponseBody JsonNode prepareSchema(@PathVariable String entityId, MultipartHttpServletRequest request, Model model, Locale locale, HttpServletResponse response) throws IOException {
+	@RequestMapping(method = RequestMethod.POST, value = {"/async/upload", "/async/upload/{elementId}"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody JsonNode prepareSchema(@PathVariable String entityId, @PathVariable(required=false) String elementId, MultipartHttpServletRequest request, Model model, Locale locale, HttpServletResponse response) throws IOException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -267,8 +283,11 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		fileNode.put("fileName", file.getOriginalFilename());
 		fileNode.put("fileSize", humanReadableByteCount(file.getBytes().length, false));
 		fileNode.put("deleteLink", "/async/file/delete/" + tmpId);
-		fileNode.put("validateLink", "/async/file/validate/" + tmpId);
-
+		if (elementId==null) {
+			fileNode.put("validateLink", "/async/file/validate/" + tmpId);
+		} else {
+			fileNode.put("validateLink", "/async/file/validate/" + tmpId + "/" + elementId);
+		}
 		filesNode.add(fileNode);
 		
 		ObjectNode result = objectMapper.createObjectNode();
@@ -292,28 +311,20 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method=GET, value={"/async/file/validate/{fileId}"})
-	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String entityId, @PathVariable String fileId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException {
+	@RequestMapping(method=GET, value={"/async/file/validate/{fileId}", "/async/file/validate/{fileId}/{elementId}"})
+	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String entityId, @PathVariable String fileId, @PathVariable(required=false) String elementId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException {
 		ModelActionPojo result = new ModelActionPojo();
 		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}		
 		if (temporaryFilesMap.containsKey(fileId)) {
-			//if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
+			if (elementId==null) {
 				result.setPojo(importWorker.getPossibleRootElements(temporaryFilesMap.get(fileId)));
-			/*} else {
-				try {
-					SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
-				
-					List<Element> rootElements = new ArrayList<Element>();
-					rootElements.addAll(elementService.extractAllNonterminals((Nonterminal)s.getRoot()));
-					
-					result.setPojo(rootElements);
-				} catch (Exception e) {
-					logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);
-				}	
-			} */
+			} else {
+				List<Class<? extends Identifiable>> allowedSubtreeRoots = identifiableService.getAllowedSubelementTypes(elementId);
+				result.setPojo(importWorker.getElementsByTypes(temporaryFilesMap.get(fileId), allowedSubtreeRoots));
+			}
 			
 			if (result.getPojo()!=null) {
 				result.setSuccess(true);
@@ -463,15 +474,20 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			s.setVersionId(ch.getId());
 		}
 		
-
-		//sp.setGrammars(grammarService.serializeGrammarSources(entityId));
-		
+		List<Identifiable> relevantGrammarsI = IdentifiableServiceImpl.extractAllByTypes(expE, IdentifiableServiceImpl.getGrammarClasses());
+		if (relevantGrammarsI!=null && relevantGrammarsI.size()>0) {
+			List<DescriptionGrammar> relevantGrammars = new ArrayList<DescriptionGrammar>(relevantGrammarsI.size());
+			for (Identifiable g : relevantGrammarsI) {
+				if (!relevantGrammars.contains(g)) {
+					relevantGrammars.add((DescriptionGrammar)g);
+				}
+			}
+			sp.setGrammars(grammarService.serializeGrammarSources(relevantGrammars));
+		}
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(sp);
 		return result;
 	}
-	
-	
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")

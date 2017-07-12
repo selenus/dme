@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
@@ -38,6 +39,7 @@ import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.schereg.importer.model.ImportAwareNonterminal;
+import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
 
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -86,6 +88,12 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 				this.getListener().registerImportFailed(this.getSchema());
 			}
 		}
+	}
+	
+	@Override
+	public List<? extends Identifiable> getElementsByTypes(List<Class<? extends Identifiable>> allowedSubtreeRoots) {
+		this.run();
+		return IdentifiableServiceImpl.extractAllByTypes(this.getRootNonterminal(), allowedSubtreeRoots);
 	}
 	
 	@Override
@@ -475,7 +483,5 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	
 	protected String createTerminalQN(String terminalNamespace, String terminalName, boolean isAttribute) {
 		return String.format("{%s}:%s%s", terminalNamespace, (isAttribute ? "#" : ""), terminalName);
-	}
-	
-	
+	}	
 }

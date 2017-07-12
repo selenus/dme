@@ -25,6 +25,8 @@ public interface SchemaImporter extends Runnable {
 	
 	public void setAuth(AuthPojo auth);
 	public AuthPojo getAuth();
-	List<? extends Identifiable> getPossibleRootElements();
+	
+	public List<? extends Identifiable> getPossibleRootElements();
+	public List<? extends Identifiable> getElementsByTypes(List<Class<? extends Identifiable>> allowedSubtreeRoots);
 
 }

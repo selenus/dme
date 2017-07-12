@@ -23,6 +23,7 @@ import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
@@ -30,6 +31,7 @@ import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
+import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
 
 /**
  * Importer for JSON based schema definitions
@@ -63,6 +65,18 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 		}
 	}
 
+	@Override
+	public List<? extends Identifiable> getElementsByTypes(List<Class<? extends Identifiable>> allowedSubtreeRoots) {
+		try {
+			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
+
+			return IdentifiableServiceImpl.extractAllByTypes(s.getRoot(), allowedSubtreeRoots);
+		} catch (Exception e) {
+			logger.error("Failed to deserialize JSON schema", e);
+			return null;
+		}
+	}
+	
 	private void importSerializedJsonSchema() throws JsonParseException, JsonMappingException, IOException, MetamodelConsistencyException {
 		SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
 		s.getSchema().setId(this.getSchema().getId());

@@ -23,6 +23,7 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("setProcessingRoot", "~eu.dariah.de.minfba.schereg.button.set_processing_root", "grain", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
 						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
@@ -51,6 +52,7 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
 						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
@@ -78,6 +80,7 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
 						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
@@ -106,6 +109,7 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("moveDownGrammar", "~eu.dariah.de.minfba.common.link.move_down", "arrow-down", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
 					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
 						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
@@ -171,6 +175,7 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "moveDownGrammar" : return this.moveGrammar(-1);
 	    
 	    case "exportSubtree" :  return this.exportSubtree(elementId);
+	    case "importSubtree" :  return this.importSubtree(elementId);
 	    
 	    case "removeElement" :  return this.removeElement(elementType, elementId);
 	    case "disableElement" :  return this.toggleElementDisabled(elementType, elementId, true);

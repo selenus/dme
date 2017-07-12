@@ -7,6 +7,9 @@
 	<div class="form-header">
 		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.button.import" /></h3>
 		<input type="hidden" name="schemaId" value="${schema.id}">
+		<c:if test="${elementId}">
+			<input type="hidden" name="elementId" id="elementId" />
+		</c:if>
 	</div>
 	<div class="form-content">
 		<div class="form-group">

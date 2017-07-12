@@ -272,9 +272,13 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 
 	@Override
 	public Map<String, GrammarContainer> serializeGrammarSources(String entityId) {
-		Map<String, GrammarContainer> containers = new HashMap<String, GrammarContainer>();
-		List<DescriptionGrammar> grammars = this.findByEntityId(entityId, true);
+		List<DescriptionGrammar> grammars = this.findByEntityId(entityId, false);
+		return serializeGrammarSources(grammars);
+	}
 
+	@Override
+	public Map<String, GrammarContainer> serializeGrammarSources(List<DescriptionGrammar> grammars) {
+		Map<String, GrammarContainer> containers = new HashMap<String, GrammarContainer>();
 		if (grammars!=null) {
 			for (DescriptionGrammar g : grammars) {
 				if (g.isPassthrough() || g.isError() || g.isTemporary()) {
@@ -282,10 +286,13 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 				}
 				
 				if (DescriptionGrammarImpl.class.isAssignableFrom(g.getClass())) {
+					g = this.findById(g.getId());
 					containers.put(g.getId(), ((DescriptionGrammarImpl)g).getGrammarContainer());
 				}
 			}
 		}
 		return containers;
 	}
+	
+
 }

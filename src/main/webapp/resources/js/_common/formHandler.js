@@ -376,9 +376,11 @@ var SchemaSourceSelector = function(owner, container, modelId, options) {
 	
 	var _this = this;
 	
+	var data = $.extend(this.options.data, _this.options.preexisting == null ? null : { preexisting: $(_this.owner.form).find(_this.options.preexisting).val() });
+	
 	$.ajax({
         url: window.location.pathname + _this.options.formSource,
-        data: _this.options.preexisting == null ? null : { preexisting: $(_this.owner.form).find(_this.options.preexisting).val() },
+        data: data,
         type: "GET",
         dataType: "html",
         success: function(data) { _this.displayForm(data); },

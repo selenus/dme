@@ -37,4 +37,6 @@ public interface GrammarService extends BaseService {
 	public void moveGrammar(String entityId, String grammarId, int delta, AuthPojo auth);
 	
 	public Map<String, GrammarContainer> serializeGrammarSources(String entityId);
+
+	public Map<String, GrammarContainer> serializeGrammarSources(List<DescriptionGrammar> grammars);
 }
