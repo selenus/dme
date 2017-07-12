@@ -97,6 +97,11 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.body",
 	                              "~eu.dariah.de.minfba.schereg.button.assign_child",
 	                              
+	                              "~eu.dariah.de.minfba.common.model.types.descriptiongrammarimpl",
+	                              "~eu.dariah.de.minfba.common.model.types.labelimpl",
+	                              "~eu.dariah.de.minfba.common.model.types.nonterminalimpl",
+	                              "~eu.dariah.de.minfba.common.model.types.transformationfunctionimpl",
+	                              
 	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_publish"]);
 	__translator.getTranslations();
 	

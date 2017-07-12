@@ -59,7 +59,9 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 	_this.registerTypeahead(rootSelector, "importedelements", elements, "name", 8, 
 			function(e) { 
 				if (e.namespace===undefined || e.namespace===null || e.namespace==="") {
-					return '<p><strong>' + e.name + '</strong><p>';
+					return '<p><strong>' + e.name + '</strong> ' +
+							'<small><em>' + __translator.translate("~eu.dariah.de.minfba.common.model.types." + e.simpleType.toLowerCase()) + '</em></small>' +
+						   '<p>';
 				} else {
 					return '<p><strong>' + e.name + '</strong><br/ >' + e.namespace + '<p>';
 				}
@@ -71,11 +73,13 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 				for (var i=0; i<data.pojo.length; i++) {
 					if (value===data.pojo[i].name) {
 						$("#schema_root_qn").val("{" + data.pojo[i].namespace + "}:" + data.pojo[i].name);
+						$("#schema_root_type").val(data.pojo[i].simpleType);
 						return;
 					}
 				}
 				$("#schema_root_qn").val("");
-			}
+				$("#schema_root_type").val("");
+			}			
 	);
 
 	rootSelector.focus();

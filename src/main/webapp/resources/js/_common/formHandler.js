@@ -282,7 +282,7 @@ ModalFormHandler.prototype.submit = function(data) {
 		        	_this.processSubmitResponse(data); 
 		        },
 		        error: function(jqXHR, textStatus, errorThrown) {
-		        	this.show(this.options.identifier);
+		        	this.show(_this.options.identifier);
 		        	__util.processServerError(jqXHR, textStatus, errorThrown); 
 		        }
 			});

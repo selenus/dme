@@ -7,8 +7,8 @@
 	<div class="form-header">
 		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.button.import" /></h3>
 		<input type="hidden" name="schemaId" value="${schema.id}">
-		<c:if test="${elementId}">
-			<input type="hidden" name="elementId" id="elementId" />
+		<c:if test="${elementId!=null}">
+			<input type="hidden" name="elementId" id="elementId" value="${elementId}" />
 		</c:if>
 	</div>
 	<div class="form-content">
@@ -25,6 +25,7 @@
 				<!--<select id="schema_root" name="schema_root" class="form-control" disabled="disabled"></select>-->
 				<input type="text" class="form-control typeahead" id="schema_root" disabled="disabled" />
 				<input type="hidden" name="schema_root_qn" id="schema_root_qn" />
+				<input type="hidden" name="schema_root_type" id="schema_root_type" />
 			</div>
 		</div>
 	</div>

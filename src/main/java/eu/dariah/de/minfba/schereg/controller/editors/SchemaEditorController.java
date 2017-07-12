@@ -3,14 +3,12 @@ package eu.dariah.de.minfba.schereg.controller.editors;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +37,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.LabelImpl;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -47,11 +44,9 @@ import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
@@ -67,9 +62,7 @@ import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo;
 import eu.dariah.de.minfba.schereg.pojo.converter.AuthWrappedPojoConverter;
 import eu.dariah.de.minfba.schereg.pojo.converter.ModelElementPojoConverter;
-import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
-import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 
@@ -79,7 +72,6 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private GrammarService grammarService;
-	@Autowired private FunctionService functionService;
 	
 	@Autowired private IdentifiableService identifiableService;
 	
@@ -188,7 +180,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/import"})
-	public String getImportForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public String getImportForm(@PathVariable String entityId, @RequestParam(required=false) String elementId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -196,20 +188,9 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		}
 		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/import");
 		model.addAttribute("schema", schemaService.findSchemaById(entityId));
-		return "schemaEditor/form/import";
-	}
-	
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method=GET, value={"/forms/importSubtree"})
-	public String getImportSubtreeForm(@PathVariable String entityId, @RequestParam String elementId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
-		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return null;
+		if (elementId!=null){
+			model.addAttribute("elementId", elementId);
 		}
-		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/importSubtree");
-		model.addAttribute("schema", schemaService.findSchemaById(entityId));
-		model.addAttribute("elementId", elementId);
 		return "schemaEditor/form/import";
 	}
 	
@@ -347,8 +328,9 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, 
-			@RequestParam(value="schema_root_qn") String schemaRoot, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, @RequestParam(required=false, value="elementId") String elementId, 
+			@RequestParam(value="schema_root_qn") String schemaRoot, @RequestParam(required=false, value="schema_root_tyoe") String schemaRootType, 
+			Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -357,46 +339,18 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		ModelActionPojo result = new ModelActionPojo();
 		try {
 			if (temporaryFilesMap.containsKey(fileId)) {
+				if (schemaRoot.isEmpty()) {
+					result.setSuccess(false);
+					result.addFieldError("schema_root", messageSource.getMessage("~eu.dariah.de.minfba.schereg.notification.import.root_missing", null, locale));
+					
+					return result;
+				}
 				
-				//if (importWorker.isSupported(temporaryFilesMap.get(fileId))) {
-					if (schemaRoot.isEmpty()) {
-						result.setSuccess(false);
-						result.addFieldError("schema_root", messageSource.getMessage("~eu.dariah.de.minfba.schereg.notification.import.root_missing", null, locale));
-						
-						return result;
-					}
-					
+				if (elementId!=null) {
+					//importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, schemaRoot, schemaRootType, authInfoHelper.getAuth(request));
+				} else {
 					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
-				/*} else {
-					try {
-						// TODO Fix import of regularly exported schema
-						
-						SerializableSchemaContainer s = objectMapper.readValue(new File(temporaryFilesMap.get(fileId)), SerializableSchemaContainer.class);
-					
-						List<Element> rootElements = new ArrayList<Element>();
-						rootElements.addAll(elementService.extractAllNonterminals((Nonterminal)s.getRoot()));
-						
-						// TODO: We might want to move this import logic to a (dedicated) service
-						RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, auth);
-						
-
-						XmlSchemaNature xmlNature = schema.getElement().getNature(XmlSchemaNature.class);
-						
-						xmlNature.setNamespaces(s.getSchema().getNature(XmlSchemaNature.class).getNamespaces());
-						
-						Map<String, String> terminalIdMap = elementService.regenerateIds(entityId, xmlNature.getTerminals());
-
-						((XmlSchemaNature)schema.getElement()).setTerminals(xmlNature.getTerminals());
-						
-						elementService.regenerateIds(xmlNature, entityId, null, terminalIdMap, s.getGrammars());
-
-						schemaService.saveSchema(schema.getElement(), auth);
-						elementService.saveOrReplaceRoot(entityId, null, auth);
-						
-					} catch (Exception e) {
-						logger.warn(String.format("Could not parse uploaded file as SerializableSchemaContainer [%s]", temporaryFilesMap.get(fileId)), e);
-					}	
-				}*/
+				}
 				result.setSuccess(true);
 				return result;
 			}
