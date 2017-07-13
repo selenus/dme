@@ -28,6 +28,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
@@ -91,7 +92,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	}
 	
 	@Override
-	public List<? extends Identifiable> getElementsByTypes(List<Class<? extends Identifiable>> allowedSubtreeRoots) {
+	public List<? extends ModelElement> getElementsByTypes(List<Class<? extends ModelElement>> allowedSubtreeRoots) {
 		this.run();
 		return IdentifiableServiceImpl.extractAllByTypes(this.getRootElements().get(0), allowedSubtreeRoots);
 	}
@@ -233,11 +234,11 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 			}
 		}
 		
-		List<Identifiable> compareN = new ArrayList<Identifiable>(potentialRootElements);
+		List<ModelElement> compareN = new ArrayList<ModelElement>(potentialRootElements);
 		
 		// Check for each potential root if it is a child in any other potential tree
 		for (Nonterminal addRoot : potentialRootElements) {
-			for (Identifiable compareRoot : compareN) {
+			for (ModelElement compareRoot : compareN) {
 				if (addRoot.equals(compareRoot)) {
 					continue;
 				}

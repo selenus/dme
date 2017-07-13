@@ -40,4 +40,19 @@ public class ReferenceServiceImpl implements ReferenceService {
 	public Reference findReferenceByChildId(Reference reference, String childId, List<String> parentClassNames) {
 		return referenceDao.findParentByChildId(reference, childId, parentClassNames);
 	}
+
+	@Override
+	public Reference findReferenceBySchemaId(String schemaId) {
+		return referenceDao.findById(schemaId);
+	}
+
+	@Override
+	public void saveRoot(Reference root) {
+		referenceDao.save(root);
+	}
+
+	@Override
+	public Reference findReferenceById(Reference root, String referenceId) {
+		return referenceDao.findById(root, referenceId);
+	}
 }

@@ -12,4 +12,10 @@ public interface ReferenceService {
 	
 	public Reference findReferenceByChildId(String rootElementId, String childId, List<String> parentClassNames);
 	public Reference findReferenceByChildId(Reference reference, String childId, List<String> parentClassNames);
+
+	public Reference findReferenceBySchemaId(String schemaId);
+
+	public void saveRoot(Reference root);
+
+	public Reference findReferenceById(Reference root, String referenceId);
 }

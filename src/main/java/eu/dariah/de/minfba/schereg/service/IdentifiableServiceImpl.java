@@ -1,7 +1,9 @@
 package eu.dariah.de.minfba.schereg.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,26 +11,35 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.core.metamodel.LabelImpl;
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
+import eu.dariah.de.minfba.schereg.serialization.Reference;
+import eu.dariah.de.minfba.schereg.service.base.BaseServiceImpl;
+import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 
 @Service
-public class IdentifiableServiceImpl implements IdentifiableService {
+public class IdentifiableServiceImpl extends BaseServiceImpl implements IdentifiableService {
 
 	@Autowired private ElementDao elementDao;
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private FunctionDao functionDao;
+	
+	@Autowired private GrammarService grammarService;
 	
 	@Override
 	public List<Identifiable> findByNameAndSchemaId(String query, String schemaId, Class<?>[] entityTypes) {
@@ -75,18 +86,18 @@ public class IdentifiableServiceImpl implements IdentifiableService {
 	}
 
 	@Override
-	public List<Class<? extends Identifiable>> getAllowedSubelementTypes(String elementId) {
+	public List<Class<? extends ModelElement>> getAllowedSubelementTypes(String elementId) {
 		Identifiable i = this.findById(elementId);
 		
-		List<Class<? extends Identifiable>> allowedSubelementTypes; 
+		List<Class<? extends ModelElement>> allowedSubelementTypes; 
 		if (i!=null) { 
 			if (Nonterminal.class.isAssignableFrom(i.getClass())) {
-				allowedSubelementTypes = new ArrayList<Class<? extends Identifiable>>(); 
+				allowedSubelementTypes = new ArrayList<Class<? extends ModelElement>>(); 
 				allowedSubelementTypes.addAll(getGrammarClasses());
 				allowedSubelementTypes.addAll(getNonterminalClasses());
 				return allowedSubelementTypes;
 			} else if (Label.class.isAssignableFrom(i.getClass())) {
-				allowedSubelementTypes = new ArrayList<Class<? extends Identifiable>>(); 
+				allowedSubelementTypes = new ArrayList<Class<? extends ModelElement>>(); 
 				allowedSubelementTypes.addAll(getGrammarClasses());
 				allowedSubelementTypes.addAll(getLabelClasses());
 				return allowedSubelementTypes;
@@ -99,39 +110,39 @@ public class IdentifiableServiceImpl implements IdentifiableService {
 		return null;
 	}
 	
-	public static List<Class<? extends Identifiable>> getNonterminalClasses() {
-		List<Class<? extends Identifiable>> result = new ArrayList<Class<? extends Identifiable>>();
+	public static List<Class<? extends ModelElement>> getNonterminalClasses() {
+		List<Class<? extends ModelElement>> result = new ArrayList<Class<? extends ModelElement>>();
 		result.add(NonterminalImpl.class);
 		result.add(Nonterminal.class);
 		return result;
 	}
 	
-	public static List<Class<? extends Identifiable>> getLabelClasses() {
-		List<Class<? extends Identifiable>> result = new ArrayList<Class<? extends Identifiable>>();
+	public static List<Class<? extends ModelElement>> getLabelClasses() {
+		List<Class<? extends ModelElement>> result = new ArrayList<Class<? extends ModelElement>>();
 		result.add(LabelImpl.class);
 		result.add(Label.class);
 		return result;
 	}
 	
-	public static List<Class<? extends Identifiable>> getGrammarClasses() {
-		List<Class<? extends Identifiable>> result = new ArrayList<Class<? extends Identifiable>>();
+	public static List<Class<? extends ModelElement>> getGrammarClasses() {
+		List<Class<? extends ModelElement>> result = new ArrayList<Class<? extends ModelElement>>();
 		result.add(DescriptionGrammarImpl.class);
 		result.add(DescriptionGrammar.class);
 		return result;
 	}
 	
-	public static List<Class<? extends Identifiable>> getFunctionClasses() {
-		List<Class<? extends Identifiable>> result = new ArrayList<Class<? extends Identifiable>>();
+	public static List<Class<? extends ModelElement>> getFunctionClasses() {
+		List<Class<? extends ModelElement>> result = new ArrayList<Class<? extends ModelElement>>();
 		result.add(TransformationFunctionImpl.class);
 		result.add(TransformationFunction.class);
 		return result;
 	}
 
-	public static <T extends Identifiable> List<T> extractAllByTypes(Identifiable i, List<Class<? extends T>> allowedSubtreeRoots) {
-		List<T> result = new ArrayList<T>();
+	public static List<ModelElement> extractAllByTypes(ModelElement i, List<Class<? extends ModelElement>> allowedSubtreeRoots) {
+		List<ModelElement> result = new ArrayList<ModelElement>();
 		if (i!=null) {
 			if (allowedSubtreeRoots.contains(i.getClass())) {				
-				result.add((T)i);
+				result.add(i);
 			}
 			if (Nonterminal.class.isAssignableFrom(i.getClass())) {
 				Nonterminal n = (Nonterminal)i;
@@ -175,6 +186,104 @@ public class IdentifiableServiceImpl implements IdentifiableService {
 		}
 		return result;
 	}
+
+	public static List<ModelElement> extractAllByType(ModelElement i, String rootElementType) {
+		if (rootElementType.equals(Nonterminal.class.getName()) || rootElementType.equals(NonterminalImpl.class.getName())) {
+			return extractAllByTypes(i, getNonterminalClasses());
+		} else if (rootElementType.equals(Label.class.getName()) || rootElementType.equals(LabelImpl.class.getName())) {
+			return extractAllByTypes(i, getLabelClasses());
+		} else if (rootElementType.equals(DescriptionGrammar.class.getName()) || rootElementType.equals(DescriptionGrammarImpl.class.getName())) {
+			return extractAllByTypes(i, getGrammarClasses());
+		} else if (rootElementType.equals(Nonterminal.class.getName()) || rootElementType.equals(NonterminalImpl.class.getName())) {
+			return extractAllByTypes(i, getFunctionClasses());
+		}
+		return null;
+	}
+
+	@Override
+	public Reference saveHierarchy(ModelElement me, AuthPojo auth) {
+
+		List<Element> saveElements = new ArrayList<Element>();
+		List<DescriptionGrammar> saveGrammars = new ArrayList<DescriptionGrammar>();
+		List<TransformationFunction> saveFunctions = new ArrayList<TransformationFunction>();
+		Reference r = this.saveElementsInHierarchy(me, saveElements, saveGrammars, saveFunctions);
+		
+		if (!saveElements.isEmpty()) {
+			elementDao.saveNew(saveElements, auth.getUserId(), auth.getSessionId());
+		}
+		if (!saveGrammars.isEmpty()) {
+			for (DescriptionGrammar g : saveGrammars) {
+				grammarService.saveGrammar((DescriptionGrammarImpl)g, auth);
+			}
+		}
+		if (!saveFunctions.isEmpty()) {
+			functionDao.saveNew(saveFunctions, auth.getUserId(), auth.getSessionId());
+		}
+		return r;
+	}
 	
-	
+	private Reference saveElementsInHierarchy(ModelElement me, List<Element> saveElements, List<DescriptionGrammar> saveGrammars, List<TransformationFunction> saveFunctions) {
+		Reference r = new Reference();
+		r.setId(me.getId());
+		
+		Map<String, List<? extends ModelElement>> subElementsMap = new HashMap<String, List<? extends ModelElement>>();
+		
+		if (me.getId()==null) {
+			me.setId(DaoImpl.createNewObjectId());
+		}
+		
+		if (saveElements.contains(me) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
+			logger.debug("Recursion at " + me.getName());
+			return null;
+		}
+				
+		if (Element.class.isAssignableFrom(me.getClass())) {
+			Element e = (Element)me;
+			if (e.getGrammars()!=null) {
+				subElementsMap.put(DescriptionGrammarImpl.class.getName(), e.getGrammars());
+				e.setGrammars(null);
+			}
+			if (Nonterminal.class.isAssignableFrom(me.getClass())) {
+				Nonterminal n = ((Nonterminal)me);
+				if (n.getChildNonterminals()!=null) {
+					subElementsMap.put(NonterminalImpl.class.getName(), n.getChildNonterminals());
+					n.setChildNonterminals(null); // or empty?
+				}
+			} else {
+				Label l = ((Label)e);
+				if (l.getSubLabels()!=null) {
+					subElementsMap.put(LabelImpl.class.getName(), l.getSubLabels());
+					l.setSubLabels(null); // or empty?
+				}
+			}
+			saveElements.add(e);
+		} else if (DescriptionGrammar.class.isAssignableFrom(me.getClass())) {
+			DescriptionGrammar g = (DescriptionGrammar)me;
+			if (g.getTransformationFunctions()!=null) {
+				subElementsMap.put(TransformationFunctionImpl.class.getName(), g.getTransformationFunctions());
+				g.setTransformationFunctions(null);
+			}
+			saveGrammars.add(g);
+		} else if (TransformationFunction.class.isAssignableFrom(me.getClass())) {
+			TransformationFunction f = (TransformationFunction)me;
+			if (f.getOutputElements()!=null) {
+				subElementsMap.put(LabelImpl.class.getName(), f.getOutputElements());
+				f.setOutputElements(null);
+			}
+			saveFunctions.add(f);
+		}
+		
+		if (!subElementsMap.isEmpty()) {
+			r.setChildReferences(new HashMap<String, Reference[]>());		
+			List<Reference> subreferences;
+			for (String subclass : subElementsMap.keySet()) {
+				subreferences = new ArrayList<Reference>();
+				for (ModelElement childMe : subElementsMap.get(subclass)) {
+					subreferences.add(this.saveElementsInHierarchy(childMe, saveElements, saveGrammars, saveFunctions));
+				}
+				r.getChildReferences().put(subclass, subreferences.toArray(new Reference[0]));
+			}
+		}
+		return r;
+	}	
 }

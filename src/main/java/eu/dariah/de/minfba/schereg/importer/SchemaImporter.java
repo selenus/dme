@@ -3,6 +3,7 @@ package eu.dariah.de.minfba.schereg.importer;
 import java.util.List;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -17,8 +18,8 @@ public interface SchemaImporter extends Runnable {
 	public boolean getIsSupported();
 	
 	public String[] getNamespaces();
-	public List<Identifiable> getRootElements();
-	public List<Identifiable> getAdditionalRootElements();
+	public List<ModelElement> getRootElements();
+	public List<ModelElement> getAdditionalRootElements();
 	public void setListener(SchemaImportListener importWorker);
 
 	public void setRootElementName(String rootElementName);
@@ -29,6 +30,6 @@ public interface SchemaImporter extends Runnable {
 	public AuthPojo getAuth();
 	
 	public List<? extends Identifiable> getPossibleRootElements();
-	public List<? extends Identifiable> getElementsByTypes(List<Class<? extends Identifiable>> allowedSubtreeRoots);
+	public List<? extends ModelElement> getElementsByTypes(List<Class<? extends ModelElement>> allowedSubtreeRoots);
 
 }

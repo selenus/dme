@@ -27,4 +27,6 @@ public interface ReferenceDao extends BaseDao<Reference> {
 	public Reference findParentByChildId(String rootId, String childId, List<String> parentClassNames);
 
 	public Identifiable findIdentifiableById(String id);
+
+	public Reference findById(Reference root, String referenceId);
 }

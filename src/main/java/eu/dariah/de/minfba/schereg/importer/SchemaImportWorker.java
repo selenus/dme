@@ -2,6 +2,7 @@ package eu.dariah.de.minfba.schereg.importer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -16,14 +17,17 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
+import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
+import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
+import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Component
@@ -33,6 +37,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	
 	@Autowired private SchemaService schemaService;
 	@Autowired private ElementService elementService;
+	@Autowired private IdentifiableService identifiableService;
+	
+	@Autowired private ReferenceService referenceService;
 	
 	private ApplicationContext appContext;
 	
@@ -65,7 +72,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		return null;
 	}
 	
-	public List<? extends Identifiable> getElementsByTypes(String filePath, List<Class<? extends Identifiable>> allowedSubtreeRoots) {
+	public List<? extends ModelElement> getElementsByTypes(String filePath, List<Class<? extends ModelElement>> allowedSubtreeRoots) {
 		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
 		for (SchemaImporter importer : importers.values()) {
 			importer.setSchemaFilePath(filePath);
@@ -119,7 +126,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public void registerImportFinished(Schema importedSchema, String parentElementId, List<Identifiable> rootElements, List<Identifiable> additionalRootElements, AuthPojo auth) {
+	public void registerImportFinished(Schema importedSchema, String parentElementId, List<ModelElement> rootElements, List<ModelElement> additionalRootElements, AuthPojo auth) {
 		if (parentElementId==null) {
 			this.importSchema(importedSchema, (Nonterminal)rootElements.get(0), additionalRootElements, auth);
 		} else {
@@ -127,20 +134,54 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		}
 	}
 	
-	private synchronized void importSubtree(Schema importedSchema, String parentElementId, List<Identifiable> rootElements, List<Identifiable> additionalRootElements, AuthPojo auth) {
-		logger.debug("import done");
+	private synchronized void importSubtree(Schema importedSchema, String parentElementId, List<ModelElement> rootElements, List<ModelElement> additionalRootElements, AuthPojo auth) {
+		Schema s = schemaService.findSchemaById(importedSchema.getId());
+		Reference root = referenceService.findReferenceBySchemaId(s.getId());
+		
+		Reference parent = referenceService.findReferenceById(root, parentElementId);
+		List<Reference> subrefs;
+		for (ModelElement me : rootElements) {
+			subrefs = new ArrayList<Reference>();
+			if (parent.getChildReferences()==null) {
+				parent.setChildReferences(new HashMap<String, Reference[]>());
+			}
+			if (parent.getChildReferences().containsKey(me.getClass().getName())) {
+				for (Reference r : parent.getChildReferences().get(me.getClass().getName())) {
+					subrefs.add(r);
+				}
+			}
+			subrefs.add(identifiableService.saveHierarchy(me, auth));			
+			parent.getChildReferences().put(me.getClass().getName(), subrefs.toArray(new Reference[0]));
+		}
+		referenceService.saveRoot(root);
+		
+		for (SchemaNature n : importedSchema.getNatures()) {
+			SchemaNature existN = s.getNature(n.getClass());
+			if (existN!=null) {			
+				try {
+					existN.merge(n);
+				} catch (MetamodelConsistencyException e) {
+					logger.error("Failed to merge schema natures");
+				}
+			}
+		}
+		
+		schemaService.saveSchema(s, auth);
 		
 		if (this.processingSchemaIds.contains(importedSchema.getId())) {
 			this.processingSchemaIds.remove(importedSchema.getId());
 		}
 	}
 	
-	private synchronized void importSchema(Schema importedSchema, Nonterminal root, List<Identifiable> additionalRootElements, AuthPojo auth) {
+	private synchronized void importSchema(Schema importedSchema, Nonterminal root, List<ModelElement> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
 			elementService.clearElementTree(importedSchema.getId(), auth);
 		}
 		List<Reference> rootNonterminals = new ArrayList<Reference>();
-		Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
+		
+		Reference rootNonterminal = identifiableService.saveHierarchy(root, auth);
+		
+		//Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
 		rootNonterminal.setRoot(true);
 		
 		rootNonterminals.add(rootNonterminal);
@@ -155,6 +196,8 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			s.addOrReplaceSchemaNature(n);
 		}
 		schemaService.saveSchema(s, rootNonterminals, auth);
+		
+		
 		
 		if (this.processingSchemaIds.contains(importedSchema.getId())) {
 			this.processingSchemaIds.remove(importedSchema.getId());

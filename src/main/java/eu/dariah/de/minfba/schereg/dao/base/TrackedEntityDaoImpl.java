@@ -18,7 +18,6 @@ import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ChangeSetDao;
-import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 
 public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends BaseDaoImpl<T> implements TrackedEntityDao<T> {
 	@Autowired protected ChangeSetDao changeSetDao;
@@ -29,6 +28,34 @@ public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends Base
 	
 	public TrackedEntityDaoImpl(Class<?> clazz, String collectionName) {
 		super(clazz, collectionName);
+	}
+	
+	@Override
+	public void saveNew(List<T> saveElements, String userId, String sessionId) {
+		List<ChangeSet> changeSets = new ArrayList<ChangeSet>();
+		ChangeSet c;
+		
+		for (T e : saveElements) {
+			List<Change> changes = e.flush();
+			if (changes==null) {
+				changes = new ArrayList<Change>();
+				changes.add(new ChangeImpl<String>(ChangeType.NEW_OBJECT, this.getCollectionName(), null, e.getId(), DateTime.now()));
+				
+				if (changes!=null && changes.size()>0) {
+					c = new ChangeSet();
+					c.setUserId(userId);
+					c.setSessionId(sessionId);
+					c.setEntityId(e.getEntityId());
+					c.setElementId(e.getId());
+					c.setChanges(changes);
+					
+					changeSets.add(c);
+				}
+			}
+		}
+		
+		mongoTemplate.insert(saveElements, this.getCollectionName());
+		mongoTemplate.insert(changeSets, changeSetDao.getCollectionName());
 	}
 
 	@Override

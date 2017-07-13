@@ -36,6 +36,7 @@ import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
+import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 
 @Service
 public class ElementServiceImpl extends BaseReferenceServiceImpl implements ElementService {
@@ -45,8 +46,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Autowired private FunctionDao functionDao;
 	@Autowired private MappedConceptDao mappedConceptDao;
 	
-	// TODO Get rid of this once we have a dedicated importer for json
-	@Autowired private GrammarService grammarService;
+	@Autowired private IdentifiableService identifiableService;
 	
 	@Override
 	public Element findRootBySchemaId(String schemaId) {
@@ -140,7 +140,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		this.clearElementTree(schemaId, auth);
 		element.setId(null);
 		
-		Reference r = this.saveElementHierarchy(element, auth);
+		Reference r = identifiableService.saveHierarchy(element, auth);
 		Reference root = this.findReferenceById(schemaId);
 	
 		Reference[] childArray = new Reference[1];
@@ -242,17 +242,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		return null;
 	}
-	
-	@Override
-	public Reference saveElementHierarchy(Element e, AuthPojo auth) {
-		List<Element> saveElements = new ArrayList<Element>();	
-		Reference r = this.saveElementsInHierarchy(e, saveElements);
 		
-		elementDao.saveNew(saveElements, auth.getUserId(), auth.getSessionId());
-		
-		return r;
-	}
-	
 	@Override
 	public Element saveElement(Element e, AuthPojo auth) {
 		if (e instanceof NonterminalImpl) {
@@ -275,118 +265,6 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		return e;
 	}
 	
-	private Reference saveElementsInHierarchy(Element e, List<Element> saveElements) {
-		
-		/*
-		 *	TODO: What if the element e is not root but exists as node in another 
-		 *		  reference tree? -> Find the tree and merge!
-		 *
-		 * 	TODO: What if the element has an id (is saved) but the reference can 
-		 * 		  nowhere be found? 
-		 */
-		Reference r = new Reference();
-		
-		List<? extends Element> subelements;
-		Class<? extends Element> subelementClass;
-		
-		if (e.getId()==null) {
-			e.setId(DaoImpl.createNewObjectId());
-		}
-		
-		if (saveElements.contains(e)) {
-			logger.debug("Recursion at " + e.getName());
-			return null;
-		}
-		
-		if (e instanceof Nonterminal) {
-			Nonterminal n = ((Nonterminal)e);
-			n.setName(getNormalizedName(n.getName()));
-			subelements = n.getChildNonterminals();
-			n.setChildNonterminals(null);
-			//elementDao.save(e, auth.getUserId(), auth.getSessionId());
-			saveElements.add(e);
-			
-			n.setChildNonterminals((List<Nonterminal>)subelements);
-			subelementClass = NonterminalImpl.class;
-		} else {
-			Label l = ((Label)e);
-			l.setName(getNormalizedName(l.getName()));
-			subelements = l.getSubLabels();
-			l.setSubLabels(null);
-			//elementDao.save(e, auth.getUserId(), auth.getSessionId());
-			saveElements.add(e);
-			
-			l.setSubLabels((List<Label>)subelements);			
-			subelementClass = LabelImpl.class;
-		}
-		
-		// TODO: Collect grammars and functions just like elements to batch save?
-		if (e.getGrammars()!=null) {
-			Reference[] gSubrefs = new Reference[e.getGrammars().size()];
-			DescriptionGrammarImpl g;
-			for (int i=0; i<e.getGrammars().size(); i++) {
-				g = e.getGrammars().get(i);
-				grammarService.saveGrammar(g, null);
-				gSubrefs[i] = new Reference(g.getId());
-				if (g.getTransformationFunctions()!=null) {
-					
-					Reference[] fSubrefs = new Reference[g.getTransformationFunctions().size()];
-					TransformationFunctionImpl f;
-					for (int j=0; j<g.getTransformationFunctions().size(); j++) {
-						f = g.getTransformationFunctions().get(j);
-						functionDao.save(f);
-						fSubrefs[j] = new Reference(f.getId());
-						
-						if (f.getOutputElements()!=null) {
-							List<Reference> labelReferences = new ArrayList<Reference>();
-							for (int k=0; k<f.getOutputElements().size(); k++) {
-								Reference rSub = this.saveElementsInHierarchy(f.getOutputElements().get(k), saveElements);
-								if (rSub!=null) {
-									labelReferences.add(rSub);
-								}
-							}
-							if (labelReferences.size()>0) {
-								fSubrefs[j].setChildReferences(new HashMap<String, Reference[]>());
-								fSubrefs[j].getChildReferences().put(LabelImpl.class.getName(), labelReferences.toArray(new Reference[0]));
-							}
-						}
-						gSubrefs[i].setChildReferences(new HashMap<String, Reference[]>());
-						gSubrefs[i].getChildReferences().put(TransformationFunctionImpl.class.getName(), fSubrefs);
-					}
-					
-				}
-				if (r.getChildReferences()==null) {
-					r.setChildReferences(new HashMap<String, Reference[]>());
-				}
-				r.getChildReferences().put(DescriptionGrammarImpl.class.getName(), gSubrefs);
-			}
-			
-			
-			
-		}
-				
-		if (subelements!=null && subelements.size()>0) {
-			if (r.getChildReferences()==null) {
-				r.setChildReferences(new HashMap<String, Reference[]>());
-			}
-			
-			List<Reference> subreferences = new ArrayList<Reference>();
-			for (int i=0; i<subelements.size(); i++) {
-				Reference rSub = saveElementsInHierarchy(subelements.get(i), saveElements);
-				if (rSub!=null) {
-					subreferences.add(rSub);
-				}
-			}
-			if (subreferences.size()>0) {
-				r.getChildReferences().put(subelementClass.getName(), subreferences.toArray(new Reference[0]));
-			}
-		}
-		
-		
-		r.setId(e.getId());		
-		return r;
-	}
-
 	@Override
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label, AuthPojo auth) {
 		Reference rRoot = this.findReferenceById(schemaId);

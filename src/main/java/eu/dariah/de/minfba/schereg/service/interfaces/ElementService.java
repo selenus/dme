@@ -21,7 +21,7 @@ public interface ElementService extends BaseService {
 	/*public void deleteByRootElementId(String rootElementId);
 	public void deleteBySchemaId(String schemaId);*/
 
-	public Reference saveElementHierarchy(Element e, AuthPojo auth);
+	
 	public Element saveElement(Element e, AuthPojo auth);
 	
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label, AuthPojo auth);

@@ -86,6 +86,27 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 	}
 	
 	@Override
+	public Reference findById(Reference reference, String referenceId) {
+		if (reference.getId().equals(referenceId)) {
+			return reference; // No filter
+		}
+		Reference result = null;
+		if (reference.getChildReferences()!=null) {
+			for (String type : reference.getChildReferences().keySet()) {
+				if (reference.getChildReferences().get(type)!=null) {
+					for (Reference r : reference.getChildReferences().get(type)) {
+						result = findById(r, referenceId);
+						if (result!=null) {
+							return result;
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
+	
+	@Override
 	public void deleteAll(Map<String, Reference[]> idMap, String userId, String sessionId) throws IllegalArgumentException, ClassNotFoundException {
 		if (idMap==null) {
 			return;

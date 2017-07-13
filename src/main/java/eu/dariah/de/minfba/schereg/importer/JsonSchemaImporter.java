@@ -18,19 +18,19 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
+import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
 import eu.dariah.de.minfba.core.util.Stopwatch;
-import eu.dariah.de.minfba.schereg.importer.model.ImportAwareNonterminal;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
 
@@ -67,7 +67,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 	}
 
 	@Override
-	public List<? extends Identifiable> getElementsByTypes(List<Class<? extends Identifiable>> allowedSubtreeRoots) {
+	public List<? extends ModelElement> getElementsByTypes(List<Class<? extends ModelElement>> allowedSubtreeRoots) {
 		try {
 			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
 
@@ -91,12 +91,18 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 			}
 		}
 		
-		this.setRootElements(new ArrayList<Identifiable>());
+		if (this.getRootElementType()==null) {
+			this.setRootElementType(NonterminalImpl.class.getName());
+		}
 		
-
-		this.getRootElements().add(s.getRoot());
-
-
+		List<ModelElement> possibleElements = IdentifiableServiceImpl.extractAllByType(s.getRoot(), this.getRootElementType());
+		if (possibleElements!=null) {
+			for (ModelElement i : possibleElements) {
+				if (i.getName().equals(this.getRootElementName())) {
+					this.getRootElements().add(i);
+				}
+			}
+		}
 		this.setSchema(s.getSchema());
 	}
 
@@ -119,10 +125,13 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 		try {
 			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
 			
-			List<Element> rootElements = new ArrayList<Element>();
-			rootElements.addAll(ElementServiceImpl.extractAllNonterminals((Nonterminal)s.getRoot()));
+			this.getRootElements().addAll(ElementServiceImpl.extractAllNonterminals((Nonterminal)s.getRoot()));
 			
-			return rootElements;
+			List<Element> result = new ArrayList<Element>(); 
+			for (ModelElement me : this.getRootElements()) {
+				result.add((Element)me);
+			}
+			return result;
 		} catch (Exception e) {
 			logger.error("Failed to retrieve possible root elements for schema", e);
 			return null;

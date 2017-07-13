@@ -3,7 +3,7 @@ package eu.dariah.de.minfba.schereg.pojo.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.BaseModelElement;
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
 import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
@@ -25,7 +25,7 @@ public class ModelElementPojoConverter {
 		return results;
 	}
 	
-	public static ModelElementPojo convertModelElement(BaseModelElement modelElement, boolean staticElementsOnly) throws GenericScheregException {
+	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly) throws GenericScheregException {
 		if (modelElement==null) {
 			return null;
 		} else if (Nonterminal.class.isAssignableFrom(modelElement.getClass())) {

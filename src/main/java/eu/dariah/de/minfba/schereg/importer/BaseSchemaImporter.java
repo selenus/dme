@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
@@ -24,8 +25,8 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	
 	private AuthPojo auth;
 	
-	private List<Identifiable> rootElements = new ArrayList<Identifiable>();
-	private List<Identifiable> additionalRootElements;
+	private List<ModelElement> rootElements = new ArrayList<ModelElement>();
+	private List<ModelElement> additionalRootElements;
 	
 	
 	@Override public Schema getSchema() { return schema; }
@@ -43,11 +44,11 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	public String getElementId() { return elementId; }
 	@Override public void setElementId(String elementId) { this.elementId = elementId; }
 	
-	@Override public List<Identifiable> getRootElements() { return rootElements; }
-	public void setRootElements(List<Identifiable> rootElements) { this.rootElements = rootElements; }
+	@Override public List<ModelElement> getRootElements() { return rootElements; }
+	public void setRootElements(List<ModelElement> rootElements) { this.rootElements = rootElements; }
 	
-	@Override public List<Identifiable> getAdditionalRootElements() { return additionalRootElements; }
-	public void setAdditionalRootElements(List<Identifiable> additionalRootElements) { this.additionalRootElements = additionalRootElements; }
+	@Override public List<ModelElement> getAdditionalRootElements() { return additionalRootElements; }
+	public void setAdditionalRootElements(List<ModelElement> additionalRootElements) { this.additionalRootElements = additionalRootElements; }
 	
 	protected SchemaImportListener getListener() { return listener; }
 	@Override public void setListener(SchemaImportListener listener) { this.listener = listener; }

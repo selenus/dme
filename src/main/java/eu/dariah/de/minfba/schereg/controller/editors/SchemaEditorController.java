@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import eu.dariah.de.minfba.core.metamodel.ModelElement;
 import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
 import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
 import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
@@ -303,7 +304,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			if (elementId==null) {
 				result.setPojo(importWorker.getPossibleRootElements(temporaryFilesMap.get(fileId)));
 			} else {
-				List<Class<? extends Identifiable>> allowedSubtreeRoots = identifiableService.getAllowedSubelementTypes(elementId);
+				List<Class<? extends ModelElement>> allowedSubtreeRoots = identifiableService.getAllowedSubelementTypes(elementId);
 				result.setPojo(importWorker.getElementsByTypes(temporaryFilesMap.get(fileId), allowedSubtreeRoots));
 			}
 			
@@ -329,7 +330,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, @RequestParam(required=false, value="elementId") String elementId, 
-			@RequestParam(value="schema_root_qn") String schemaRoot, @RequestParam(required=false, value="schema_root_tyoe") String schemaRootType, 
+			@RequestParam(value="schema_root_qn") String schemaRoot, @RequestParam(required=false, value="schema_root_type") String schemaRootType, 
 			Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
@@ -424,10 +425,10 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			s.setVersionId(ch.getId());
 		}
 		
-		List<Identifiable> relevantGrammarsI = IdentifiableServiceImpl.extractAllByTypes(expE, IdentifiableServiceImpl.getGrammarClasses());
+		List<ModelElement> relevantGrammarsI = IdentifiableServiceImpl.extractAllByTypes(expE, IdentifiableServiceImpl.getGrammarClasses());
 		if (relevantGrammarsI!=null && relevantGrammarsI.size()>0) {
 			List<DescriptionGrammar> relevantGrammars = new ArrayList<DescriptionGrammar>(relevantGrammarsI.size());
-			for (Identifiable g : relevantGrammarsI) {
+			for (ModelElement g : relevantGrammarsI) {
 				if (!relevantGrammars.contains(g)) {
 					relevantGrammars.add((DescriptionGrammar)g);
 				}

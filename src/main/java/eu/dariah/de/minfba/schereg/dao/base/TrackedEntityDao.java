@@ -16,6 +16,8 @@ public interface TrackedEntityDao<T extends TrackedEntity> extends BaseDao<T> {
 	public T findOne(Query q);
 	
 	public <S extends T> S save(S element, String userId, String sessionId);
+	public void saveNew(List<T> saveElements, String userId, String sessionId);
+	
 	public void delete(T element, String userId, String sessionId);
 	public int delete(Collection<String> id, String userId, String sessionId);
 }

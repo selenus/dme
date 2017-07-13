@@ -13,7 +13,9 @@ SchemaEditor.prototype.importSchema = function(elementId) {
 		                ],
 		additionalModalClasses: "wide-modal",
 		completeCallback: function() { 
-			_this.reloadElementHierarchy(); 
+			_this.reloadElementHierarchy(function() {
+				_this.area.expandFromElement(elementId, true)
+			});
 		}
 	});
 	
@@ -70,13 +72,22 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 				}
 			},
 			function(t, suggestion) {
-				$("#schema_root_qn").val("{" + suggestion.namespace + "}:" + suggestion.name);
+				if (suggestion.namespace===undefined) {
+					$("#schema_root_qn").val(suggestion.name);
+				} else {
+					$("#schema_root_qn").val("{" + suggestion.namespace + "}:" + suggestion.name);
+				}
+				$("#schema_root_type").val(suggestion.type);
 			},
 			function(t, value) {
 				for (var i=0; i<data.pojo.length; i++) {
 					if (value===data.pojo[i].name) {
-						$("#schema_root_qn").val("{" + data.pojo[i].namespace + "}:" + data.pojo[i].name);
-						$("#schema_root_type").val(data.pojo[i].simpleType);
+						if (data.pojo[i].namespace===undefined) {
+							$("#schema_root_qn").val(data.pojo[i].name);
+						} else {
+							$("#schema_root_qn").val("{" + data.pojo[i].namespace + "}:" + data.pojo[i].name);
+						}
+						$("#schema_root_type").val(data.pojo[i].type);
 						return;
 					}
 				}
