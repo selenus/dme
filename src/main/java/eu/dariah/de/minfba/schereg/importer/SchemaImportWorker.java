@@ -155,13 +155,15 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		}
 		referenceService.saveRoot(root);
 		
-		for (SchemaNature n : importedSchema.getNatures()) {
-			SchemaNature existN = s.getNature(n.getClass());
-			if (existN!=null) {			
-				try {
-					existN.merge(n);
-				} catch (MetamodelConsistencyException e) {
-					logger.error("Failed to merge schema natures");
+		if (importedSchema.getNatures()!=null) {
+			for (SchemaNature n : importedSchema.getNatures()) {
+				SchemaNature existN = s.getNature(n.getClass());
+				if (existN!=null) {			
+					try {
+						existN.merge(n);
+					} catch (MetamodelConsistencyException e) {
+						logger.error("Failed to merge schema natures");
+					}
 				}
 			}
 		}
