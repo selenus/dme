@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
 <ul class="breadcrumb">
 	<li>Lorem ipsum dolor</li>
 	<li class="active">sit amet</li>
@@ -15,7 +17,7 @@
 	data-focus-on="input:first" style="display: none;">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal"
-			aria-hidden="true">×</button>
+			aria-hidden="true">Ã—</button>
 		<h4 class="modal-title">Stack One</h4>
 	</div>
 	<div class="modal-body">
@@ -37,7 +39,7 @@
 	data-focus-on="input:first" style="display: none;">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal"
-			aria-hidden="true">×</button>
+			aria-hidden="true">Ã—</button>
 		<h4 class="modal-title">Stack Two</h4>
 	</div>
 	<div class="modal-body">
@@ -58,7 +60,7 @@
 	data-focus-on="input:first" style="display: none;">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal"
-			aria-hidden="true">×</button>
+			aria-hidden="true">Ã—</button>
 		<h4 class="modal-title">Stack Three</h4>
 	</div>
 	<div class="modal-body">
