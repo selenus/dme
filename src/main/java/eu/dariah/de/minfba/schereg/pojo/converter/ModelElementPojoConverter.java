@@ -59,7 +59,23 @@ public class ModelElementPojoConverter {
 			}
 		}
 		
-		List<Label> producedLabels = n.getProducedLabels();
+		return convertElement(p, n, staticElementsOnly); 
+	}
+	
+	private static ModelElementPojo convertLabel(Label l, boolean staticElementsOnly) {
+		ModelElementPojo p = new ModelElementPojo();
+		p.setState(ModelElementState.OK);
+		p.setType("Label");
+
+		return convertElement(p, l, staticElementsOnly); 
+	}
+	
+	private static ModelElementPojo convertElement(ModelElementPojo p, Element e, boolean staticElementsOnly) {
+		p.setId(e.getId());
+		p.setLabel(e.getName());
+		p.setDisabled(e.isDisabled());
+		
+		List<Label> producedLabels = e.getProducedLabels();
 		if (staticElementsOnly && producedLabels!=null && producedLabels.size()>0) {
 			if (p.getChildElements()==null) {
 				p.setChildElements(new ArrayList<ModelElementPojo>());
@@ -69,28 +85,6 @@ public class ModelElementPojoConverter {
 			}
 		}
 		
-		return convertElement(p, n, staticElementsOnly); 
-	}
-	
-	private static ModelElementPojo convertLabel(Label l, boolean staticElementsOnly) {
-		ModelElementPojo p = new ModelElementPojo();
-		p.setState(ModelElementState.OK);
-		p.setType("Label");
-
-		if (l.getSubLabels()!=null && l.getSubLabels().size()>0) {
-			p.setChildElements(new ArrayList<ModelElementPojo>());
-			for (Label childL : l.getSubLabels()) {
-				p.getChildElements().add(convertLabel(childL, staticElementsOnly));
-			}
-		}
-		return convertElement(p, l, staticElementsOnly); 
-	}
-	
-	private static ModelElementPojo convertElement(ModelElementPojo p, Element e, boolean staticElementsOnly) {
-		p.setId(e.getId());
-		p.setLabel(e.getName());
-		p.setDisabled(e.isDisabled());
-				
 		if (!staticElementsOnly && e.getGrammars()!=null && e.getGrammars().size()>0) {
 			if (p.getChildElements()==null) {
 				p.setChildElements(new ArrayList<ModelElementPojo>());
