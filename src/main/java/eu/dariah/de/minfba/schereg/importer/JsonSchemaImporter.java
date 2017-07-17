@@ -25,6 +25,7 @@ import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
 import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
 import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
@@ -150,7 +151,13 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 		nonterminalIdMap.put(element.getId(), newId);
 		element.setId(newId);
 		
-		List<Element> children = element.getAllChildElements();
+		List<? extends Element> children = null;
+		if (Nonterminal.class.isAssignableFrom(element.getClass())) {
+			children = ((Nonterminal)element).getChildNonterminals();
+		} else if (Label.class.isAssignableFrom(element.getClass())) {
+			children = ((Label)element).getSubLabels();
+		}
+		
 		if (children!=null) {
 			for (Element child : children) {
 				this.regenerateElementIds(schema, child, nonterminalIdMap, grammarContainerMap);
@@ -174,6 +181,12 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 						newId = new ObjectId().toString();
 						nonterminalIdMap.put(f.getId(), newId);
 						f.setId(newId);
+						
+						if (f.getOutputElements()!=null) {
+							for (Label fOut : f.getOutputElements()) {
+								this.regenerateElementIds(schema, fOut, nonterminalIdMap, grammarContainerMap);
+							}
+						}
 					}
 				}
 			}
