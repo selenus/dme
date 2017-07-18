@@ -67,6 +67,15 @@ public class ModelElementPojoConverter {
 		p.setState(ModelElementState.OK);
 		p.setType("Label");
 
+		if (!staticElementsOnly && l.getSubLabels()!=null && l.getSubLabels().size()>0) {
+			if (p.getChildElements()==null) {
+				p.setChildElements(new ArrayList<ModelElementPojo>());
+			}
+			for (Label childL : l.getSubLabels()) {
+				p.getChildElements().add(convertLabel(childL, staticElementsOnly));
+			}
+		}
+		
 		return convertElement(p, l, staticElementsOnly); 
 	}
 	
