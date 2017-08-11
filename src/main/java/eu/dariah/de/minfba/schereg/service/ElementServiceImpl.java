@@ -140,7 +140,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Override
 	public void saveOrReplaceRoot(String schemaId, Nonterminal element, AuthPojo auth) {
 		this.clearElementTree(schemaId, auth);
-		element.setId(null);
+		element.setId(null);;
 		
 		Reference r = identifiableService.saveHierarchy(element, auth);
 		Reference root = this.findReferenceById(schemaId);

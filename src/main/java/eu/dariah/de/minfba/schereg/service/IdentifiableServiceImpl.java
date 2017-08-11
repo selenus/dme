@@ -224,13 +224,12 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 	
 	private Reference saveElementsInHierarchy(ModelElement me, List<Element> saveElements, List<Grammar> saveGrammars, List<Function> saveFunctions) {
 		Reference r = new Reference();
-		r.setId(me.getId());
-		
 		Map<String, List<? extends ModelElement>> subElementsMap = new HashMap<String, List<? extends ModelElement>>();
 		
 		if (me.getId()==null) {
 			me.setId(DaoImpl.createNewObjectId());
 		}
+		r.setId(me.getId());
 		
 		if (saveElements.contains(me) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
 			logger.debug("Recursion at " + me.getName());

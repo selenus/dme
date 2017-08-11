@@ -36,7 +36,7 @@
 				<div class="row">
 					<div class="col-xs-12">
 						<h2 class="pull-left">
-						<small><s:message code="~eu.dariah.de.minfba.schereg.model.schema.schema" />:</small>&nbsp;${schema.pojo.label}
+						<small><s:message code="~eu.dariah.de.minfba.schereg.model.schema.schema" />:</small>&nbsp;${schema.pojo.name}
 							<c:if test="${!schema.own && !schema.write}"> <small></small></c:if>
 						&nbsp;</h2>
 

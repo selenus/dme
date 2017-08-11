@@ -13,10 +13,10 @@
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="grammar_grammarName"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.name" />:</label>
+			<label class="col-sm-3 control-label" for="grammar_name"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.name" />:</label>
 			<div class="col-sm-8">
-				<sf:input path="grammarName" class="form-control" id="descriptionGrammarImpl_grammarName" />
-				<sf:errors path="grammarName" cssClass="error" />
+				<sf:input path="name" class="form-control" id="grammar_name" />
+				<sf:errors path="name" cssClass="error" />
 			</div>
 		</div>		
 	</div>

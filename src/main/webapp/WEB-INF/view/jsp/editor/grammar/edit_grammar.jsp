@@ -19,10 +19,10 @@
 			<div class="form-group row">
 				<div class="col-sm-6">
 					<fieldset<c:if test="${readonly}"> disabled</c:if>>
-						<label class="control-label" for="grammar_name"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.name" />:</label>
+						<label class="control-label" for="name"><s:message code="~eu.dariah.de.minfba.schereg.model.grammar.name" />:</label>
 						<div>
-							<sf:input path="grammarName" class="form-control" />
-							<sf:errors path="grammarName" cssClass="error" />
+							<sf:input path="name" class="form-control" />
+							<sf:errors path="name" cssClass="error" />
 						</div>
 					</fieldset>
 				</div>

@@ -13,7 +13,7 @@
 		<sf:hidden path="error" />
 		<sf:hidden path="entityId" />
 		<input type="hidden" class="grammar_id" name="grammar_id" value="${grammar.id}" />
-		<input type="hidden" class="grammar_name" name="grammar_name" value="${grammar.grammarName}" />
+		<input type="hidden" class="grammar_name" name="grammar_name" value="${grammar.name}" />
 		<input type="hidden" class="grammar_error" name="grammar_error" value="${grammar.error}" />
 	</div>
 	<div class="form-content row" style="padding-bottom: 0px;">
@@ -43,7 +43,7 @@
 			</div>
 			<div class="form-group">
 				<label class="control-label"><s:message code="~eu.dariah.de.minfba.schereg.model.function.grammar" />:</label>
-				<span>${grammar.grammarName}</span> (<span class="grammar_state">
+				<span>${grammar.name}</span> (<span class="grammar_state">
 					<c:choose>
 						<c:when test="${grammar.passthrough}">
 							<span class="glyphicon glyphicon-forward" aria-hidden="true"></span> <s:message code="~eu.dariah.de.minfba.schereg.model.grammar.passthrough" />
