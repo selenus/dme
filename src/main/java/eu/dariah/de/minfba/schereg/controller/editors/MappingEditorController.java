@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.mapping.model.MappingExecGroup;
@@ -122,7 +122,7 @@ public class MappingEditorController extends BaseMainEditorController {
 		mapExecGroup.setTargetSchemaId(m.getTargetId());
 		
 		// TODO: Sources really needed?
-		for (DescriptionGrammar g : grammarService.findByEntityId(m.getEntityId(), true)) {
+		for (Grammar g : grammarService.findByEntityId(m.getId(), true)) {
 			mapExecGroup.addGrammar(g);
 		}
 		

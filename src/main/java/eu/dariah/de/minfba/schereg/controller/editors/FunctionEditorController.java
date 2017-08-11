@@ -28,6 +28,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.exceptions.GrammarProcessingException;
 import de.unibamberg.minf.gtf.result.FunctionExecutionResult;
@@ -37,15 +46,6 @@ import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunction;
 import de.unibamberg.minf.gtf.transformation.CompiledTransformationFunctionImpl;
 import de.unibamberg.minf.gtf.transformation.processing.params.OutputParam;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseFunctionController;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
@@ -77,7 +77,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody TransformationFunction removeElement(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody Function removeElement(@PathVariable String entityId, @PathVariable String functionId, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -94,7 +94,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			return new ModelActionPojo(false);
 		}
 		
-		TransformationFunctionImpl f = (TransformationFunctionImpl)functionService.findById(functionId);
+		FunctionImpl f = (FunctionImpl)functionService.findById(functionId);
 		f.setDisabled(disabled);
 		
 		functionService.saveFunction(f, authInfoHelper.getAuth(request));
@@ -102,7 +102,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
-	public @ResponseBody TransformationFunction getElement(@PathVariable String entityId, @PathVariable String functionId) {
+	public @ResponseBody Function getElement(@PathVariable String entityId, @PathVariable String functionId) {
 		return functionService.findById(functionId);
 	}
 	
@@ -132,7 +132,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		List<Object> inputElementIds = new ArrayList<Object>();
 		List<Object> inputGrammarIds = new ArrayList<Object>();
 		
-		if (Schema.class.isAssignableFrom(entity.getClass())) {
+		if (Datamodel.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceByChildId(entityId, functionId).getId();
 			model.addAttribute("grammar", grammarService.findById(grammarId));
 			
@@ -164,12 +164,12 @@ public class FunctionEditorController extends BaseFunctionController {
 			}
 		}
 		
-		List<DescriptionGrammar> grammars = grammarService.findByIds(inputGrammarIds);
+		List<Grammar> grammars = grammarService.findByIds(inputGrammarIds);
 		List<String> availableRules = new ArrayList<String>();
 		List<String> availablePassthroughGrammars = new ArrayList<String>();
-		for (DescriptionGrammar g : grammars) {
+		for (Grammar g : grammars) {
 			if (g.isPassthrough()) {
-				availablePassthroughGrammars.add("@" + g.getGrammarName());
+				availablePassthroughGrammars.add("@" + g.getName());
 			} else {
 				try {
 					for (String rule : mainEngine.getDescriptionEngine().getParserRuleNames(g)) {
@@ -211,7 +211,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		ModelActionPojo result = new ModelActionPojo();
 		
 		try {
-			TransformationFunctionImpl f = new TransformationFunctionImpl(entityId, functionId);
+			FunctionImpl f = new FunctionImpl(entityId, functionId);
 			f.setFunction(func);
 			
 			CompiledTransformationFunction fCompiled = mainEngine.getTransformationEngine().compileOutputFunction(f, true);
@@ -227,7 +227,7 @@ public class FunctionEditorController extends BaseFunctionController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String entityId, @PathVariable String functionId, @Valid TransformationFunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveFunction(@PathVariable String entityId, @PathVariable String functionId, @Valid FunctionImpl function, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -242,7 +242,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			function.setId(null);
 		}
 		
-		TransformationFunction fSave = null;
+		Function fSave = null;
 		if (function.getId()!=null) {
 			fSave = functionService.findById(function.getId());
 			if (fSave!=null) {
@@ -266,7 +266,7 @@ public class FunctionEditorController extends BaseFunctionController {
 			}		
 		}
 		
-		functionService.saveFunction((TransformationFunctionImpl)fSave, authInfoHelper.getAuth(request));
+		functionService.saveFunction((FunctionImpl)fSave, authInfoHelper.getAuth(request));
 		return result;
 	}
 	
@@ -287,15 +287,15 @@ public class FunctionEditorController extends BaseFunctionController {
 		
 		Identifiable entity = this.getEntity(entityId);
 
-		TransformationFunctionImpl f;
+		FunctionImpl f;
 		ModelActionPojo result = new ModelActionPojo();
 
 		List<SyntaxTreeNode> values = new ArrayList<SyntaxTreeNode>();
-		List<DescriptionGrammar> grammars = new ArrayList<DescriptionGrammar>();
+		List<Grammar> grammars = new ArrayList<Grammar>();
 				
-		if (Schema.class.isAssignableFrom(entity.getClass())) {
+		if (Datamodel.class.isAssignableFrom(entity.getClass())) {
 			String grammarId = referenceService.findReferenceBySchemaAndChildId(entityId, functionId).getId();
-			DescriptionGrammar g = grammarService.findById(grammarId);
+			Grammar g = grammarService.findById(grammarId);
 			
 			String elementId = referenceService.findReferenceByChildId(entityId, grammarId).getId();
 			//Element e = elementService.findById(elementId);
@@ -303,10 +303,10 @@ public class FunctionEditorController extends BaseFunctionController {
 			values.add(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, null));
 			grammars.add(g);
 			
-			f = (TransformationFunctionImpl)elementService.getElementSubtree(entityId, functionId);
+			f = (FunctionImpl)elementService.getElementSubtree(entityId, functionId);
 		} else { // Mappings
 			Mapping m = (Mapping)entity;
-			Schema target = schemaService.findSchemaById(m.getTargetId());
+			Datamodel target = schemaService.findSchemaById(m.getTargetId());
 			
 			Reference parentConceptReference = referenceService.findReferenceByChildId(entity.getId(), functionId);
 			MappedConcept mc = mappedConceptService.findById(parentConceptReference.getId());
@@ -321,7 +321,7 @@ public class FunctionEditorController extends BaseFunctionController {
 				values.add(new TerminalSyntaxTreeNode(providedSamples.containsKey(elementId) ? providedSamples.get(elementId) : null, null));
 			}
 
-			f = (TransformationFunctionImpl)functionService.findById(functionId);
+			f = (FunctionImpl)functionService.findById(functionId);
 			
 			//f = new TransformationFunctionImpl(entityId, functionId);
 			f.setOutputElements(elementService.convertToLabels(targetElements));

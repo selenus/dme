@@ -11,10 +11,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.MappingDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
@@ -105,17 +105,16 @@ public class MappingServiceImpl extends BaseEntityServiceImpl implements Mapping
 		qSchema.fields().include("id");
 		qSchema.fields().include("element");
 		qSchema.addCriteria(Criteria.where("id").in(schemaIds));
-		List<RightsContainer<Schema>> requiredSchemas = schemaDao.find(qSchema);
+		List<RightsContainer<Datamodel>> requiredSchemas = schemaDao.find(qSchema);
 		HashMap<String, String> schemaIdLabelMap = new HashMap<String, String>(requiredSchemas.size());
-		for (RightsContainer<Schema> s : requiredSchemas) {
-			schemaIdLabelMap.put(s.getId(), s.getElement().getLabel());
+		for (RightsContainer<Datamodel> s : requiredSchemas) {
+			schemaIdLabelMap.put(s.getId(), s.getElement().getName());
 		}
 		
 		for (RightsContainer<Mapping> m : mappings) {
 			MappingWithSchemasImpl mExt = new MappingWithSchemasImpl();
 			mExt.setId(m.getElement().getId());
 			mExt.setDescription(m.getElement().getDescription());
-			mExt.setEntityId(m.getElement().getEntityId());
 			mExt.setSourceId(m.getElement().getSourceId());
 			mExt.setSourceLabel(schemaIdLabelMap.get(mExt.getSourceId()));
 			mExt.setTargetId(m.getElement().getTargetId());

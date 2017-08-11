@@ -6,18 +6,18 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 
 public abstract class BaseSchemaImporter implements SchemaImporter {
 	protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	private SchemaImportListener listener;
 	
-	private Schema schema;
+	private Datamodel schema;
 	private String schemaFilePath;
 	private String rootElementName; 
 	private String rootElementType;
@@ -29,8 +29,8 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	private List<ModelElement> additionalRootElements;
 	
 	
-	@Override public Schema getSchema() { return schema; }
-	@Override public void setSchema(Schema schema) { this.schema = schema; }
+	@Override public Datamodel getSchema() { return schema; }
+	@Override public void setSchema(Datamodel schema) { this.schema = schema; }
 	
 	protected String getSchemaFilePath() { return schemaFilePath; }
 	@Override public void setSchemaFilePath(String schemaFilePath) { this.schemaFilePath = schemaFilePath; }

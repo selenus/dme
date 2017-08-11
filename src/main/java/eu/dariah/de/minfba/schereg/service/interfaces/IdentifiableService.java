@@ -2,9 +2,9 @@ package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
 
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.ModelElement;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 
 public interface IdentifiableService {

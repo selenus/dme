@@ -2,16 +2,16 @@ package eu.dariah.de.minfba.schereg.importer;
 
 import java.util.List;
 
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
 
 public interface SchemaImporter extends Runnable {
 	
-	public Schema getSchema();
-	public void setSchema(Schema schema);
+	public Datamodel getSchema();
+	public void setSchema(Datamodel schema);
 	
 	public void setSchemaFilePath(String schemaFilePath);
 	

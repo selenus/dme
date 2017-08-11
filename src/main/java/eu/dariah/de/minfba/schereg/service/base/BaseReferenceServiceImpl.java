@@ -9,17 +9,19 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.LabelImpl;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ReferenceDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
@@ -266,22 +268,22 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 				}	
 			}
 			if ( (e instanceof Nonterminal || e instanceof Label) && 
-					r.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
+					r.getChildReferences().containsKey(GrammarImpl.class.getName())) {
 				Element elem = (Element)e;
-				elem.setGrammars(new ArrayList<DescriptionGrammarImpl>());
-				for (Reference rChild : r.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
-					elem.getGrammars().add((DescriptionGrammarImpl)fillElement(rChild, elementMap));
+				elem.setGrammars(new ArrayList<Grammar>());
+				for (Reference rChild : r.getChildReferences().get(GrammarImpl.class.getName())) {
+					elem.getGrammars().add((GrammarImpl)fillElement(rChild, elementMap));
 				}	
 			}
-			if (e instanceof DescriptionGrammarImpl && r.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
-				DescriptionGrammarImpl g = (DescriptionGrammarImpl)e;
-				g.setTransformationFunctions(new ArrayList<TransformationFunctionImpl>());
-				for (Reference rChild : r.getChildReferences().get(TransformationFunctionImpl.class.getName())) {
-					g.getTransformationFunctions().add((TransformationFunctionImpl)fillElement(rChild, elementMap));
+			if (e instanceof GrammarImpl && r.getChildReferences().containsKey(FunctionImpl.class.getName())) {
+				GrammarImpl g = (GrammarImpl)e;
+				g.setFunctions(new ArrayList<Function>());
+				for (Reference rChild : r.getChildReferences().get(FunctionImpl.class.getName())) {
+					g.getFunctions().add((FunctionImpl)fillElement(rChild, elementMap));
 				}	
 			}
-			if (e instanceof TransformationFunctionImpl && r.getChildReferences().containsKey(LabelImpl.class.getName())) {
-				TransformationFunctionImpl f = (TransformationFunctionImpl)e;
+			if (e instanceof FunctionImpl && r.getChildReferences().containsKey(LabelImpl.class.getName())) {
+				FunctionImpl f = (FunctionImpl)e;
 				f.setOutputElements(new ArrayList<Label>());
 				for (Reference rChild : r.getChildReferences().get(LabelImpl.class.getName())) {
 					f.getOutputElements().add((Label)fillElement(rChild, elementMap));

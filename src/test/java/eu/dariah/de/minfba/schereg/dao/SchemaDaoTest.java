@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
+import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
@@ -25,14 +25,14 @@ public class SchemaDaoTest {
 	
 	//@Test
 	public void testCreateSchema() {
-		Schema s = new SchemaImpl();
+		Datamodel s = new DatamodelImpl();
 		
-		XmlSchemaNature xmlN = new XmlSchemaNature();
+		XmlDatamodelNature xmlN = new XmlDatamodelNature();
 		
-		s.addOrReplaceSchemaNature(xmlN);
+		s.addOrReplaceNature(xmlN);
 		
 		xmlN.setExternalLabel("lblExt");
-		s.setLabel("lbl");
+		s.setName("lbl");
 		xmlN.setNamespaces(new ArrayList<XmlNamespace>());
 		
 		XmlNamespace xs = new XmlNamespace();

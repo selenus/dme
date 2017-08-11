@@ -10,8 +10,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
-import eu.dariah.de.minfba.core.metamodel.BaseIdentifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
+import de.unibamberg.minf.dme.model.base.Identifiable;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.base.Dao;

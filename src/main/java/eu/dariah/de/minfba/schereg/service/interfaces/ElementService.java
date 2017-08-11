@@ -1,12 +1,13 @@
 package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
+
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Terminal;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseService;
 

@@ -8,22 +8,22 @@ import org.springframework.stereotype.Repository;
 
 import com.mongodb.WriteResult;
 
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.tracking.Change;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.tracking.Change;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 
 @Repository
-public class GrammarDaoImpl extends TrackedEntityDaoImpl<DescriptionGrammar> implements GrammarDao {
+public class GrammarDaoImpl extends TrackedEntityDaoImpl<Grammar> implements GrammarDao {
 	public GrammarDaoImpl() {
-		super(DescriptionGrammar.class);
+		super(Grammar.class);
 	}
 	
 	@Override
-	public List<DescriptionGrammar> findByEntityId(String entityId) {		
+	public List<Grammar> findByEntityId(String entityId) {		
 		Query q = Query.query(Criteria.where("entityId").is(entityId));
 		
 		// Exclude the verbous grammars when loading whole schema
@@ -33,9 +33,9 @@ public class GrammarDaoImpl extends TrackedEntityDaoImpl<DescriptionGrammar> imp
 	}
 	
 	@Override
-	public <S extends DescriptionGrammar> S save(S element, String userId, String sessionId) {
+	public <S extends Grammar> S save(S element, String userId, String sessionId) {
 		List<Change> changes;
-		DescriptionGrammarImpl g = (DescriptionGrammarImpl)element;
+		GrammarImpl g = (GrammarImpl)element;
 		if (g.getGrammarContainer()!=null) {
 			changes = g.getGrammarContainer().flush();
 			if (changes!=null) {

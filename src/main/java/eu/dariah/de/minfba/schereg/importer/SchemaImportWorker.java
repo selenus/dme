@@ -16,13 +16,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
 import eu.dariah.de.minfba.schereg.exception.SchemaImportException;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -97,7 +97,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			throw new SchemaImportException("Schema id must exist (schema must be saved) before import");
 		}
 		
-		Schema s = schemaService.findSchemaById(entityId);
+		Datamodel s = schemaService.findSchemaById(entityId);
 		if (!this.processingSchemaIds.contains(entityId)) {
 			this.processingSchemaIds.add(entityId);
 		}
@@ -126,7 +126,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	}
 	
 	@Override
-	public void registerImportFinished(Schema importedSchema, String parentElementId, List<ModelElement> rootElements, List<ModelElement> additionalRootElements, AuthPojo auth) {
+	public void registerImportFinished(Datamodel importedSchema, String parentElementId, List<ModelElement> rootElements, List<ModelElement> additionalRootElements, AuthPojo auth) {
 		if (parentElementId==null) {
 			this.importSchema(importedSchema, (Nonterminal)rootElements.get(0), additionalRootElements, auth);
 		} else {
@@ -134,8 +134,8 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		}
 	}
 	
-	private synchronized void importSubtree(Schema importedSchema, String parentElementId, List<ModelElement> rootElements, List<ModelElement> additionalRootElements, AuthPojo auth) {
-		Schema s = schemaService.findSchemaById(importedSchema.getId());
+	private synchronized void importSubtree(Datamodel importedSchema, String parentElementId, List<ModelElement> rootElements, List<ModelElement> additionalRootElements, AuthPojo auth) {
+		Datamodel s = schemaService.findSchemaById(importedSchema.getId());
 		Reference root = referenceService.findReferenceBySchemaId(s.getId());
 		
 		Reference parent = referenceService.findReferenceById(root, parentElementId);
@@ -156,8 +156,8 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		referenceService.saveRoot(root);
 		
 		if (importedSchema.getNatures()!=null) {
-			for (SchemaNature n : importedSchema.getNatures()) {
-				SchemaNature existN = s.getNature(n.getClass());
+			for (DatamodelNature n : importedSchema.getNatures()) {
+				DatamodelNature existN = s.getNature(n.getClass());
 				if (existN!=null) {			
 					try {
 						existN.merge(n);
@@ -175,7 +175,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		}
 	}
 	
-	private synchronized void importSchema(Schema importedSchema, Nonterminal root, List<ModelElement> additionalRootElements, AuthPojo auth) {
+	private synchronized void importSchema(Datamodel importedSchema, Nonterminal root, List<ModelElement> additionalRootElements, AuthPojo auth) {
 		if (root!=null) {
 			elementService.clearElementTree(importedSchema.getId(), auth);
 		}
@@ -193,9 +193,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			}
 		}*/
 		
-		Schema s = schemaService.findSchemaById(importedSchema.getEntityId());
-		for (SchemaNature n : importedSchema.getNatures()) {
-			s.addOrReplaceSchemaNature(n);
+		Datamodel s = schemaService.findSchemaById(importedSchema.getId());
+		for (DatamodelNature n : importedSchema.getNatures()) {
+			s.addOrReplaceNature(n);
 		}
 		schemaService.saveSchema(s, rootNonterminals, auth);
 		
@@ -208,7 +208,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 	
 
 	@Override 
-	public synchronized void registerImportFailed(Schema schema) { 
+	public synchronized void registerImportFailed(Datamodel schema) { 
 		if (this.processingSchemaIds.contains(schema.getId())) {
 			this.processingSchemaIds.remove(schema.getId());
 		}

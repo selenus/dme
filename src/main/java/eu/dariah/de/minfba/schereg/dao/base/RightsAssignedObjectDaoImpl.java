@@ -6,7 +6,8 @@ import java.util.List;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.tracking.TrackedEntity;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 

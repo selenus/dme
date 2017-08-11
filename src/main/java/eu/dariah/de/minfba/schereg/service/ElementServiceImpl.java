@@ -10,21 +10,23 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.dme.model.base.BaseElement;
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.BaseElement;
-import eu.dariah.de.minfba.core.metamodel.LabelImpl;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
@@ -226,12 +228,12 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		// Produced subelements of the grammars/functions are contained in getAllChildElements() above
 		if (searchElement.getGrammars()!=null) {
-			for (DescriptionGrammarImpl g : searchElement.getGrammars()) {
+			for (Grammar g : searchElement.getGrammars()) {
 				if (g.getId().equals(matchElementId)) {
 					return g;
 				} else {
-					if (g.hasTransformationFunctions()) {
-						for (TransformationFunctionImpl f : g.getTransformationFunctions()) {
+					if (g.hasFunctions()) {
+						for (Function f : g.getFunctions()) {
 							if (f.getId().equals(matchElementId)) {
 								return f;
 							}
@@ -302,7 +304,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	@Override
 	public void clearElementTree(String schemaId, AuthPojo auth) {
-		Schema s = schemaDao.findEnclosedById(schemaId);
+		Datamodel s = schemaDao.findEnclosedById(schemaId);
 		
 		if (s!=null) {	
 			try {
@@ -331,10 +333,10 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 
 	@Override
 	public Terminal removeTerminal(String schemaId, String terminalId, AuthPojo auth) {
-		Schema s = schemaDao.findEnclosedById(schemaId);
+		Datamodel s = schemaDao.findEnclosedById(schemaId);
 		Terminal tRemove = null;
 		
-		List<XmlTerminal> terminals = s.getNature(XmlSchemaNature.class).getTerminals();
+		List<XmlTerminal> terminals = s.getNature(XmlDatamodelNature.class).getTerminals();
 		
 		if (terminals!=null) {
 			for (Terminal t : terminals) {
@@ -356,7 +358,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			if (elements!=null) {
 				for (Element e : elements) {
 					
-					s.getNature(XmlSchemaNature.class).removeTerminalFromMap(tRemove.getId());
+					s.getNature(XmlDatamodelNature.class).removeTerminalFromMap(tRemove.getId());
 					
 					elementDao.save(e, auth.getUserId(), auth.getSessionId());
 				}

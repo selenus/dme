@@ -2,9 +2,9 @@ package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 
 public interface MappedConceptService {

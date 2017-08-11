@@ -7,14 +7,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import eu.dariah.de.minfba.core.metamodel.LabelImpl;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import eu.dariah.de.minfba.schereg.model.PersistedSession;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;

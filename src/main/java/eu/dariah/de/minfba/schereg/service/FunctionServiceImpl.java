@@ -5,11 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.dme.model.base.BaseElement;
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.BaseElement;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
@@ -20,11 +21,11 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	@Autowired private FunctionDao functionDao;
 	
 	@Override
-	public TransformationFunction createAndAppendFunction(String schemaId, String grammarId, String label, AuthPojo auth) {
+	public Function createAndAppendFunction(String schemaId, String grammarId, String label, AuthPojo auth) {
 		Reference rRoot = this.findReferenceById(schemaId);
 		Reference rParent = findSubreference(rRoot, grammarId);
 		
-		TransformationFunction grammar = new TransformationFunctionImpl(schemaId, getNormalizedName(label));
+		Function grammar = new FunctionImpl(schemaId, getNormalizedName(label));
 		functionDao.save(grammar, auth.getUserId(), auth.getSessionId());
 		
 		addChildReference(rParent, grammar);
@@ -39,8 +40,8 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	}
 
 	@Override
-	public TransformationFunction deleteFunctionById(String schemaId, String id, AuthPojo auth) {
-		TransformationFunction function = functionDao.findById(id);
+	public Function deleteFunctionById(String schemaId, String id, AuthPojo auth) {
+		Function function = functionDao.findById(id);
 		if (function != null) {
 			try {
 				this.removeReference(schemaId, id, auth);
@@ -55,13 +56,13 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	}
 
 	@Override
-	public TransformationFunction findById(String functionId) {
+	public Function findById(String functionId) {
 		return functionDao.findById(functionId);
 	}
 
 	@Override
-	public void saveFunction(TransformationFunctionImpl function, AuthPojo auth) {
-		List<BaseElement> extElements = function.getExternalInputElements();
+	public void saveFunction(FunctionImpl function, AuthPojo auth) {
+		List<Element> extElements = function.getExternalInputElements();
 		function.setExternalInputElements(null);
 		
 		List<Label> outputElements = function.getOutputElements();
@@ -75,7 +76,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	}
 
 	@Override
-	public List<TransformationFunction> findByEntityId(String entityId) {
+	public List<Function> findByEntityId(String entityId) {
 		return functionDao.findByEntityId(entityId);
 	}
 }

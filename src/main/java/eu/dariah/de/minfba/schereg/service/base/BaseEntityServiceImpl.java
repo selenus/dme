@@ -2,7 +2,7 @@ package eu.dariah.de.minfba.schereg.service.base;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
+import de.unibamberg.minf.dme.model.tracking.TrackedEntity;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.MappingDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;

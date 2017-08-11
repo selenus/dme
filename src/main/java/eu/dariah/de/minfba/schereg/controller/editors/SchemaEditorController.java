@@ -36,22 +36,23 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
+import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseMainEditorController;
@@ -88,13 +89,13 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@RequestMapping(value="/query/{query}", method=RequestMethod.GET)
 	public @ResponseBody List<Identifiable> queryElements(@PathVariable String entityId, @PathVariable String query) {
-		return identifiableService.findByNameAndSchemaId(query, entityId, new Class<?>[] { Nonterminal.class, DescriptionGrammarImpl.class });
+		return identifiableService.findByNameAndSchemaId(query, entityId, new Class<?>[] { Nonterminal.class, GrammarImpl.class });
 	}
 	
 	@RequestMapping(method=GET, value="")
 	public String getEditor(@PathVariable String entityId, Model model, @ModelAttribute String sample, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, auth);
+		RightsContainer<Datamodel> schema = schemaService.findByIdAndAuth(entityId, auth);
 		if (schema==null) {
 			response.sendRedirect("/registry/");
 			return null;
@@ -133,7 +134,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		RightsContainer<Schema> schema = schemaService.findByIdAndAuth(entityId, authInfoHelper.getAuth(request));
+		RightsContainer<Datamodel> schema = schemaService.findByIdAndAuth(entityId, authInfoHelper.getAuth(request));
 		model.addAttribute("actionPath", "/schema/async/save");
 		model.addAttribute("schema", schema.getElement());
 		model.addAttribute("readOnly", schema.isReadOnly());
@@ -367,11 +368,11 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/export")
 	public @ResponseBody ModelActionPojo exportSchema(@PathVariable String entityId, Model model, Locale locale) {
-		Schema s = schemaService.findSchemaById(entityId);
+		Datamodel s = schemaService.findSchemaById(entityId);
 		Element r = elementService.findRootBySchemaId(entityId, true);
 		
-		SerializableSchemaContainer sp = new SerializableSchemaContainer();
-		sp.setSchema((SchemaImpl)s);
+		DatamodelContainer sp = new DatamodelContainer();
+		sp.setModel((DatamodelImpl)s);
 		sp.setRoot(r);
 		
 		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
@@ -389,35 +390,35 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/exportSubtree")
 	public @ResponseBody ModelActionPojo exportSubtree(@PathVariable String entityId, @RequestParam String elementId, Model model, Locale locale) {
-		Schema s = schemaService.findSchemaById(entityId);
+		Datamodel s = schemaService.findSchemaById(entityId);
 		Identifiable rootE = elementService.getElementSubtree(entityId, elementId);
 		Element expE;
 		if (Element.class.isAssignableFrom(rootE.getClass())) {
 			expE = (Element)rootE;
 		} else {
-			expE = new NonterminalImpl(s.getEntityId(), "EXPORT_CONTAINER");
-			expE.setGrammars(new ArrayList<DescriptionGrammarImpl>());
+			expE = new NonterminalImpl(s.getId(), "EXPORT_CONTAINER");
+			expE.setGrammars(new ArrayList<Grammar>());
 			
-			DescriptionGrammarImpl expG;
-			if (DescriptionGrammarImpl.class.isAssignableFrom(rootE.getClass())) {
-				expG = (DescriptionGrammarImpl)rootE;
+			GrammarImpl expG;
+			if (GrammarImpl.class.isAssignableFrom(rootE.getClass())) {
+				expG = (GrammarImpl)rootE;
 			} else {
-				expG = new DescriptionGrammarImpl(entityId, "EXPORT_CONTAINER");
-				expG.setTransformationFunctions(new ArrayList<TransformationFunctionImpl>());
+				expG = new GrammarImpl(entityId, "EXPORT_CONTAINER");
+				expG.setFunctions(new ArrayList<Function>());
 				
-				TransformationFunctionImpl expF;
-				if (TransformationFunctionImpl.class.isAssignableFrom(rootE.getClass())) {
-					expF = (TransformationFunctionImpl)rootE;
+				FunctionImpl expF;
+				if (FunctionImpl.class.isAssignableFrom(rootE.getClass())) {
+					expF = (FunctionImpl)rootE;
 				} else {
 					return null;
 				}
-				expG.getTransformationFunctions().add(expF);
+				expG.getFunctions().add(expF);
 			}
 			expE.getGrammars().add(expG);
 		}
 
-		SerializableSchemaContainer sp = new SerializableSchemaContainer();
-		sp.setSchema(schemaService.cloneSchemaForSubtree(s, expE));
+		DatamodelContainer sp = new DatamodelContainer();
+		sp.setModel(schemaService.cloneSchemaForSubtree(s, expE));
 		sp.setRoot(expE);
 		
 		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
@@ -427,10 +428,10 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		
 		List<ModelElement> relevantGrammarsI = IdentifiableServiceImpl.extractAllByTypes(expE, IdentifiableServiceImpl.getGrammarClasses());
 		if (relevantGrammarsI!=null && relevantGrammarsI.size()>0) {
-			List<DescriptionGrammar> relevantGrammars = new ArrayList<DescriptionGrammar>(relevantGrammarsI.size());
+			List<Grammar> relevantGrammars = new ArrayList<Grammar>(relevantGrammarsI.size());
 			for (ModelElement g : relevantGrammarsI) {
 				if (!relevantGrammars.contains(g)) {
-					relevantGrammars.add((DescriptionGrammar)g);
+					relevantGrammars.add((Grammar)g);
 				}
 			}
 			sp.setGrammars(grammarService.serializeGrammarSources(relevantGrammars));
@@ -453,10 +454,10 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")
 	public @ResponseBody List<? extends Terminal> getTerminals(@PathVariable String entityId) {
-		Schema s = schemaService.findSchemaById(entityId);
+		Datamodel s = schemaService.findSchemaById(entityId);
 		
-		if (s.getNature(XmlSchemaNature.class)!=null) {
-			return s.getNature(XmlSchemaNature.class).getTerminals();
+		if (s.getNature(XmlDatamodelNature.class)!=null) {
+			return s.getNature(XmlDatamodelNature.class).getTerminals();
 		}
 		return null;
 	}

@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.tracking.ChangeType;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -61,8 +61,8 @@ public class TerminalEditorController extends BaseScheregController {
 			model.addAttribute("readonly", false);
 		}
 		
-		Schema s = schemaService.findSchemaById(schemaId);
-		XmlSchemaNature xmlSchemaNature = s.getNature(XmlSchemaNature.class);
+		Datamodel s = schemaService.findSchemaById(schemaId);
+		XmlDatamodelNature xmlSchemaNature = s.getNature(XmlDatamodelNature.class);
 		
 		XmlTerminal terminal = null;
 		if (terminalId != "-1") {
@@ -83,9 +83,9 @@ public class TerminalEditorController extends BaseScheregController {
 		
 		
 		List<String> availableNamespaces = new ArrayList<String>();
-		if (s instanceof XmlSchemaNature) {	
-			if (((XmlSchemaNature)s).getNamespaces()!=null) {
-				for (XmlNamespace ns : ((XmlSchemaNature)s).getNamespaces()) {
+		if (s instanceof XmlDatamodelNature) {	
+			if (((XmlDatamodelNature)s).getNamespaces()!=null) {
+				for (XmlNamespace ns : ((XmlDatamodelNature)s).getNamespaces()) {
 					availableNamespaces.add(ns.getUrl());
 				}
 			}
@@ -109,8 +109,8 @@ public class TerminalEditorController extends BaseScheregController {
 				element.setId(null);
 			}
 			
-			Schema s = schemaService.findSchemaById(schemaId);
-			XmlSchemaNature xmlSchemaNature = s.getNature(XmlSchemaNature.class);
+			Datamodel s = schemaService.findSchemaById(schemaId);
+			XmlDatamodelNature xmlSchemaNature = s.getNature(XmlDatamodelNature.class);
 					
 			if (xmlSchemaNature.getTerminals()!=null) {
 				for (int i=0; i<xmlSchemaNature.getTerminals().size(); i++) {

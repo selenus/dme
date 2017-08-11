@@ -3,12 +3,12 @@ package eu.dariah.de.minfba.schereg.pojo.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo;
 import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo.ModelElementState;
@@ -32,16 +32,16 @@ public class ModelElementPojoConverter {
 			return convertNonterminal((Nonterminal)modelElement, staticElementsOnly);
 		} else if (Label.class.isAssignableFrom(modelElement.getClass())) {
 			return convertLabel((Label)modelElement, staticElementsOnly);
-		} else if (DescriptionGrammar.class.isAssignableFrom(modelElement.getClass())) {
+		} else if (Grammar.class.isAssignableFrom(modelElement.getClass())) {
 			if (staticElementsOnly) {
 				return null;
 			}
-			return convertGrammar((DescriptionGrammar)modelElement);
-		} else if (TransformationFunction.class.isAssignableFrom(modelElement.getClass())) {
+			return convertGrammar((Grammar)modelElement);
+		} else if (Function.class.isAssignableFrom(modelElement.getClass())) {
 			if (staticElementsOnly) {
 				return null;
 			}
-			return convertFunction((TransformationFunction)modelElement);
+			return convertFunction((Function)modelElement);
 		}
 		throw new GenericScheregException("Failed to convert model element; conversion not supported for " + modelElement.getClass().getName());
 	}
@@ -98,24 +98,24 @@ public class ModelElementPojoConverter {
 			if (p.getChildElements()==null) {
 				p.setChildElements(new ArrayList<ModelElementPojo>());
 			}
-			for (DescriptionGrammar g : e.getGrammars()) {
+			for (Grammar g : e.getGrammars()) {
 				p.getChildElements().add(convertGrammar(g));
 			}
 		}
 		return p;
 	}
 	 	
-	private static ModelElementPojo convertGrammar(DescriptionGrammar g) {
+	private static ModelElementPojo convertGrammar(Grammar g) {
 		ModelElementPojo p = new ModelElementPojo();
 		p.setId(g.getId());
-		p.setLabel(g.getGrammarName());
+		p.setLabel(g.getName());
 		p.setState(ModelElementState.OK);
 		p.setType("Grammar");
 		p.setDisabled(g.isDisabled());
 		
-		if (g.getTransformationFunctions()!=null && g.getTransformationFunctions().size()>0) {
+		if (g.getFunctions()!=null && g.getFunctions().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
-			for (TransformationFunction f : g.getTransformationFunctions()) {
+			for (Function f : g.getFunctions()) {
 				p.getChildElements().add(convertFunction(f));
 			}
 		}
@@ -123,7 +123,7 @@ public class ModelElementPojoConverter {
 		return p;
 	}
 	
-	private static ModelElementPojo convertFunction(TransformationFunction f) {
+	private static ModelElementPojo convertFunction(Function f) {
 		ModelElementPojo p = new ModelElementPojo();
 		p.setId(f.getId());
 		p.setLabel(f.getName());

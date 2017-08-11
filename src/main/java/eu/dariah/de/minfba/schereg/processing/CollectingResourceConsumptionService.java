@@ -3,7 +3,7 @@ package eu.dariah.de.minfba.schereg.processing;
 import java.util.ArrayList;
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import eu.dariah.de.minfba.processing.consumption.ResourceConsumptionService;
 import eu.dariah.de.minfba.processing.model.base.Resource;
 

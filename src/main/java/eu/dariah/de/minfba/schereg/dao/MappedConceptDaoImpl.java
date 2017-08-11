@@ -7,8 +7,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.MappedConceptDao;
 

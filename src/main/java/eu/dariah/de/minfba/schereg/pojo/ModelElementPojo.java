@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import de.unibamberg.minf.dme.model.base.Identifiable;
 
 public class ModelElementPojo implements Identifiable {
 	private static final long serialVersionUID = -2307699438052322526L;

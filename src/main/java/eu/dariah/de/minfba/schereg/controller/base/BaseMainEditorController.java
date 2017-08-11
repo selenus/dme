@@ -44,11 +44,11 @@ import com.fasterxml.jackson.databind.node.IntNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.core.web.pojo.MessagePojo;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
@@ -188,12 +188,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/forms/download_output")
 	public String getAssignChildForm(@PathVariable String entityId, Model model, HttpServletRequest request) throws GenericScheregException {
 		Identifiable entity = this.getEntity(entityId);
-		if (Schema.class.isAssignableFrom(entity.getClass())) {
-			model.addAttribute("sourceModel", this.getLimitedString(((Schema)entity).getLabel(), 50));
+		if (Datamodel.class.isAssignableFrom(entity.getClass())) {
+			model.addAttribute("sourceModel", this.getLimitedString(((Datamodel)entity).getName(), 50));
 		} else {
 			Mapping m = (Mapping)entity;
-			model.addAttribute("sourceModel", this.getLimitedString(schemaService.findSchemaById(m.getSourceId()).getLabel(), 50));
-			model.addAttribute("targetModel", this.getLimitedString(schemaService.findSchemaById(m.getTargetId()).getLabel(), 50));
+			model.addAttribute("sourceModel", this.getLimitedString(schemaService.findSchemaById(m.getSourceId()).getName(), 50));
+			model.addAttribute("targetModel", this.getLimitedString(schemaService.findSchemaById(m.getTargetId()).getName(), 50));
 		}
 		
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
@@ -317,7 +317,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	
 	private String getModelId(String entityId, boolean target) {
 		Identifiable entity = this.getEntity(entityId);
-		if (Schema.class.isAssignableFrom(entity.getClass())) {
+		if (Datamodel.class.isAssignableFrom(entity.getClass())) {
 			return entity.getId();
 		} else {
 			Mapping m = (Mapping)entity;
@@ -476,7 +476,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			return null;
 		}
 		
-		Schema s = schemaService.findSchemaById(entityId);
+		Datamodel s = schemaService.findSchemaById(entityId);
 		if (s==null) {
 			Mapping m = mappingService.findMappingById(entityId);
 			s = schemaService.findSchemaById(m.getSourceId());

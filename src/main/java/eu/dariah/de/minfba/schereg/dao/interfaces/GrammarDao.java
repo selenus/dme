@@ -2,11 +2,11 @@ package eu.dariah.de.minfba.schereg.dao.interfaces;
 
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
+import de.unibamberg.minf.dme.model.base.Grammar;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDao;
 
-public interface GrammarDao extends TrackedEntityDao<DescriptionGrammar> {
-	public List<DescriptionGrammar> findByEntityId(String entityId);
+public interface GrammarDao extends TrackedEntityDao<Grammar> {
+	public List<Grammar> findByEntityId(String entityId);
 	
 	public int deleteAll(String entityId);
 }

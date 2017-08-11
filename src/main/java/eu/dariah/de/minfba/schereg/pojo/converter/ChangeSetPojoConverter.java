@@ -9,10 +9,10 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import de.unibamberg.minf.dme.model.tracking.Change;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
+import de.unibamberg.minf.dme.model.tracking.ChangeType;
 import eu.dariah.de.dariahsp.model.User;
-import eu.dariah.de.minfba.core.metamodel.tracking.Change;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
 import eu.dariah.de.minfba.schereg.dao.interfaces.UserDao;
 import eu.dariah.de.minfba.schereg.pojo.ChangeSetPojo;
 

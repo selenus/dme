@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.LabelImpl;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
@@ -125,7 +125,7 @@ public class ElementEditorController extends BaseScheregController {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		model.addAttribute("grammar", new DescriptionGrammarImpl(schemaId, null));
+		model.addAttribute("grammar", new GrammarImpl(schemaId, null));
 		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewGrammar");
 		return "grammarEditor/form/new";
 	}
@@ -201,14 +201,14 @@ public class ElementEditorController extends BaseScheregController {
 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/saveNewGrammar")
-	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String elementId, @Valid DescriptionGrammarImpl grammar, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveNewGrammar(@PathVariable String schemaId, @PathVariable String elementId, @Valid GrammarImpl grammar, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (result.isSuccess()) {
-			grammarService.createAndAppendGrammar(schemaId, elementId, grammar.getGrammarName(), authInfoHelper.getAuth(request));
+			grammarService.createAndAppendGrammar(schemaId, elementId, grammar.getName(), authInfoHelper.getAuth(request));
 		}
 		return result;
 	}
@@ -224,8 +224,8 @@ public class ElementEditorController extends BaseScheregController {
 		String terminalId = null;
 		
 		
-		Schema s = schemaService.findSchemaById(schemaId);
-		XmlSchemaNature sn = s.getNature(XmlSchemaNature.class);
+		Datamodel s = schemaService.findSchemaById(schemaId);
+		XmlDatamodelNature sn = s.getNature(XmlDatamodelNature.class);
 		
 		if (sn!=null) {
 			if (e instanceof Nonterminal) {

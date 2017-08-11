@@ -28,16 +28,16 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlNamespace;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
+import de.unibamberg.minf.dme.model.tracking.ChangeType;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.schereg.importer.model.ImportAwareNonterminal;
 import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
@@ -52,7 +52,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	private Map<String, List<ImportAwareNonterminal>> extensionIdNonterminalMap;
 	private Map<String, ImportAwareNonterminal> terminalIdNonterminalMap;
 
-	private XmlSchemaNature xmlNature;
+	private XmlDatamodelNature xmlNature;
 	
 	@Override public String[] getNamespaces() { return namespaces; }
 	public void setNamespaces(String[] namespaces) { this.namespaces = namespaces; }
@@ -61,7 +61,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	public void run() {
 		try {
 			Stopwatch sw = new Stopwatch().start();
-			logger.debug(String.format("Started importing schema %s", this.getSchema().getEntityId()));
+			logger.debug(String.format("Started importing schema %s", this.getSchema().getId()));
 			
 			this.prepareXmlNature();
 			
@@ -79,7 +79,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 				}				
 				xmlNature.setTerminals(new ArrayList<XmlTerminal>(this.existingTerminalQNs.values()));
 				
-				logger.info(String.format("Finished importing schema %s in %sms", xmlNature.getEntityId(), sw.getElapsedTime()));
+				logger.info(String.format("Finished importing schema %s in %sms", xmlNature.getId(), sw.getElapsedTime()));
 				
 				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootElements(), this.getAdditionalRootElements(), this.getAuth());
 			}
@@ -140,13 +140,12 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	}
 	
 	private void prepareXmlNature() {
-		if (this.getSchema().getNature(XmlSchemaNature.class)!=null) {
-			xmlNature = this.getSchema().getNature(XmlSchemaNature.class);
+		if (this.getSchema().getNature(XmlDatamodelNature.class)!=null) {
+			xmlNature = this.getSchema().getNature(XmlDatamodelNature.class);
 		} else {
-			xmlNature = new XmlSchemaNature();
-			xmlNature.setSchema(this.getSchema());
+			xmlNature = new XmlDatamodelNature();
 			xmlNature.setId(this.getSchema().getId());
-			this.getSchema().addOrReplaceSchemaNature(xmlNature);
+			this.getSchema().addOrReplaceNature(xmlNature);
 		}
 		
 		XmlTerminal rootTerminal = null;

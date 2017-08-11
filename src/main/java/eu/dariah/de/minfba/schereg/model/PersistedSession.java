@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
-import eu.dariah.de.minfba.core.metamodel.BaseIdentifiable;
+import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
 import eu.dariah.de.minfba.processing.model.base.Resource;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo;
 import eu.dariah.de.minfba.schereg.pojo.LogEntryPojo.LogType;

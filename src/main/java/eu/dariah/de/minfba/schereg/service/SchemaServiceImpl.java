@@ -10,17 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.SchemaImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlSchemaNature;
-import eu.dariah.de.minfba.core.metamodel.xml.XmlTerminal;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
@@ -36,22 +36,22 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	@Autowired private ElementService elementService;
 	
 	@Override
-	public List<Schema> findAllSchemas() {
+	public List<Datamodel> findAllSchemas() {
 		return schemaDao.findAllEnclosed();
 	}
 
 	@Override
-	public void saveSchema(AuthWrappedPojo<? extends Schema> schema, AuthPojo auth) {		
+	public void saveSchema(AuthWrappedPojo<? extends Datamodel> schema, AuthPojo auth) {		
 		this.innerSaveSchema(schema.getPojo(), schema.isDraft(), schema.isReadOnly(), auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
-	public void saveSchema(Schema schema, AuthPojo auth) {
+	public void saveSchema(Datamodel schema, AuthPojo auth) {
 		this.innerSaveSchema(schema, null, null, auth.getUserId(), auth.getSessionId());
 	}
 	
 	@Override
-	public void saveSchema(Schema schema, List<Reference> rootNonterminals, AuthPojo auth) {
+	public void saveSchema(Datamodel schema, List<Reference> rootNonterminals, AuthPojo auth) {
 		this.innerSaveSchema(schema, null, null, auth.getUserId(), auth.getSessionId());
 		
 		Reference root = this.findReferenceById(schema.getId());
@@ -67,8 +67,8 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		this.saveRootReference(root);
 	}
 	
-	private void innerSaveSchema(Schema schema, Boolean draft, Boolean readOnly, String userId, String sessionId) {
-		RightsContainer<Schema> container = null;
+	private void innerSaveSchema(Datamodel schema, Boolean draft, Boolean readOnly, String userId, String sessionId) {
+		RightsContainer<Datamodel> container = null;
 		boolean isNew = schema.getId()==null || schema.getId().equals("") || schema.getId().equals("undefined"); 
 		if (isNew) {
 			container = createContainer(userId);
@@ -88,8 +88,8 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		}
 	}
 	
-	private RightsContainer<Schema> createContainer(String userId) {
-		RightsContainer<Schema> container = new RightsContainer<Schema>();
+	private RightsContainer<Datamodel> createContainer(String userId) {
+		RightsContainer<Datamodel> container = new RightsContainer<Datamodel>();
 		container.setOwnerId(userId);
 		container.setId(new ObjectId().toString());
 		container.setDraft(true);
@@ -97,13 +97,13 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	}
 
 	@Override
-	public Schema findSchemaById(String id) {
+	public Datamodel findSchemaById(String id) {
 		return schemaDao.findEnclosedById(id);
 	}
 
 	@Override
 	public void deleteSchemaById(String id, AuthPojo auth) {
-		RightsContainer<Schema> s = schemaDao.findById(id);
+		RightsContainer<Datamodel> s = schemaDao.findById(id);
 		if (s != null) {
 			if (this.getUserCanWriteEntity(s, auth.getUserId())) {
 				elementService.clearElementTree(id, auth);
@@ -129,9 +129,9 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	@Override
 	public Map<String, String> getAvailableTerminals(String schemaId) {
 		Map<String,String> availableTerminals = new HashMap<String,String>();
-		Schema s = this.findSchemaById(schemaId);
+		Datamodel s = this.findSchemaById(schemaId);
 		
-		XmlSchemaNature sn = s.getNature(XmlSchemaNature.class); 
+		XmlDatamodelNature sn = s.getNature(XmlDatamodelNature.class); 
 		if (sn!=null) {	
 			if (sn.getTerminals()!=null) {
 				for (XmlTerminal t : sn.getTerminals()) {
@@ -143,12 +143,12 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	}
 
 	@Override
-	public List<RightsContainer<Schema>> findAllByAuth(AuthPojo auth) {
+	public List<RightsContainer<Datamodel>> findAllByAuth(AuthPojo auth) {
 		return schemaDao.findAllByUserId(auth.getUserId());
 	}
 
 	@Override
-	public RightsContainer<Schema> findByIdAndAuth(String schemaId, AuthPojo auth) {
+	public RightsContainer<Datamodel> findByIdAndAuth(String schemaId, AuthPojo auth) {
 		return schemaDao.findByIdAndUserId(schemaId, auth.getUserId());
 	}
 	
@@ -156,10 +156,10 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	public List<ChangeSet> getChangeSetForAllSchemas() {
 		Query q = new Query();
 		q.fields().include("_id");
-		List<RightsContainer<Schema>> schemas = schemaDao.find(q);
+		List<RightsContainer<Datamodel>> schemas = schemaDao.find(q);
 		List<String> ids = new ArrayList<String>();
 		if (schemas!=null) {
-			for (RightsContainer<Schema> s : schemas) {
+			for (RightsContainer<Datamodel> s : schemas) {
 				ids.add(s.getId());
 			}
 		}
@@ -177,18 +177,17 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 	}
 	
 	@Override
-	public SchemaImpl cloneSchemaForSubtree(Schema s, Element subtree) {
-		SchemaImpl expSchema = new SchemaImpl();
+	public DatamodelImpl cloneSchemaForSubtree(Datamodel s, Element subtree) {
+		DatamodelImpl expSchema = new DatamodelImpl();
 		expSchema.setDescription(s.getDescription());
-		expSchema.setEntityId(s.getEntityId());
 		expSchema.setId(s.getId());
-		expSchema.setLabel(s.getId());
+		expSchema.setName(s.getId());
 		
 		List<Nonterminal> nonterminals = ElementServiceImpl.extractAllNonterminals(subtree);
 		try {
-			SchemaNature expNature;
-			for (SchemaNature nature : s.getNatures()) {
-				expNature = (SchemaNature)nature.clone();
+			DatamodelNature expNature;
+			for (DatamodelNature nature : s.getNatures()) {
+				expNature = (DatamodelNature)nature.clone();
 				
 				List<String> remNonterminalIds = new ArrayList<String>();
 				for (String nId : nature.getNonterminalTerminalIdMap().keySet()) {
@@ -206,7 +205,7 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 				for (String rId : remNonterminalIds) {
 					expNature.removeNonterminalBinding(rId);
 				}
-				expSchema.addOrReplaceSchemaNature(expNature);				
+				expSchema.addOrReplaceNature(expNature);				
 			}
 		} catch (Exception e) {
 			logger.error("Failed to clone schema nature", e);

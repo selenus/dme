@@ -2,7 +2,7 @@ package eu.dariah.de.minfba.schereg.service.base;
 
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 
 public interface BaseService {
 	public List<ChangeSet> getChangeSetForEntity(String entityId);

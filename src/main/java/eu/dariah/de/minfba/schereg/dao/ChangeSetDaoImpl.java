@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ChangeSetDao;
 

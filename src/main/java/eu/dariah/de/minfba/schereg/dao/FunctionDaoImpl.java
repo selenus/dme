@@ -8,18 +8,18 @@ import org.springframework.stereotype.Repository;
 
 import com.mongodb.WriteResult;
 
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
+import de.unibamberg.minf.dme.model.base.Function;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
 
 @Repository
-public class FunctionDaoImpl extends TrackedEntityDaoImpl<TransformationFunction> implements FunctionDao {
+public class FunctionDaoImpl extends TrackedEntityDaoImpl<Function> implements FunctionDao {
 	public FunctionDaoImpl() {
-		super(TransformationFunction.class);
+		super(Function.class);
 	}
 	
 	@Override
-	public List<TransformationFunction> findByEntityId(String entityId) {		
+	public List<Function> findByEntityId(String entityId) {		
 		Query q = Query.query(Criteria.where("entityId").is(entityId));
 		return this.find(q);
 	}

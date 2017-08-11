@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Query;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
+import de.unibamberg.minf.dme.model.tracking.TrackedEntity;
 
 public interface TrackedEntityDao<T extends TrackedEntity> extends BaseDao<T> {
 	public List<T> findAll();

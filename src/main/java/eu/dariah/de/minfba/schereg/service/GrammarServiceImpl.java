@@ -20,15 +20,16 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.gtf.MainEngine;
 import de.unibamberg.minf.gtf.compilation.GrammarCompiler;
 import de.unibamberg.minf.gtf.exceptions.GrammarProcessingException;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
 import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
@@ -45,11 +46,11 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	
 		
 	@Override
-	public DescriptionGrammar createAndAppendGrammar(String schemaId, String parentElementId, String label, AuthPojo auth) {
+	public Grammar createAndAppendGrammar(String schemaId, String parentElementId, String label, AuthPojo auth) {
 		Reference rRoot = this.findReferenceById(schemaId);
 		Reference rParent = findSubreference(rRoot, parentElementId);
 		
-		DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(schemaId, getNormalizedName(label));
+		GrammarImpl grammar = new GrammarImpl(schemaId, getNormalizedName(label));
 		grammar.setPassthrough(true);
 		grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 		
@@ -68,14 +69,14 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 	
 	@Override
-	public void clearGrammar(DescriptionGrammar g) {
+	public void clearGrammar(Grammar g) {
 		logger.info(String.format("Clearing %s grammar %s", g.isTemporary() ? "temporary" : "persistent", g.getIdentifier()));
 		engine.getDescriptionEngine().unloadGrammar(g.getIdentifier());
 		engine.getDescriptionEngine().deleteGrammar(g.getIdentifier());
 	}
 	
 	@Override
-	public Collection<String> saveTemporaryGrammar(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar) throws IOException {
+	public Collection<String> saveTemporaryGrammar(Grammar grammar, String lexerGrammar, String parserGrammar) throws IOException {
 		saveGrammarToFilesystem(grammar, lexerGrammar, parserGrammar, true);
 		
 		File dirPath = new File(getGrammarDirectory(grammar.getIdentifier(), true));
@@ -83,7 +84,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 		
 	@Override
-	public Collection<String> parseTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException {
+	public Collection<String> parseTemporaryGrammar(Grammar grammar) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
 		File dirPath = new File(getGrammarDirectory(grammar.getIdentifier(), true));
 		grammarCompiler.init(dirPath, grammar.getIdentifier());
@@ -92,7 +93,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 	
 	@Override
-	public Collection<String> compileTemporaryGrammar(DescriptionGrammar grammar) throws GrammarProcessingException, IOException {
+	public Collection<String> compileTemporaryGrammar(Grammar grammar) throws GrammarProcessingException, IOException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
 		File dirPath = new File(getGrammarDirectory(grammar.getIdentifier(), true));
 		grammarCompiler.init(dirPath, grammar.getIdentifier());
@@ -101,7 +102,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 	
 	@Override
-	public List<String> getParserRules(DescriptionGrammar grammar) throws GrammarProcessingException {
+	public List<String> getParserRules(Grammar grammar) throws GrammarProcessingException {
 		GrammarCompiler grammarCompiler = new GrammarCompiler();
 		grammarCompiler.init(new File(getGrammarDirectory(grammar.getIdentifier(), true)), grammar.getIdentifier());		
 		return grammarCompiler.getParserRules();
@@ -129,8 +130,8 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public void deleteGrammarsBySchemaId(String schemaId, AuthPojo auth) {}
 
 	@Override
-	public DescriptionGrammar deleteGrammarById(String schemaId, String id, AuthPojo auth) {
-		DescriptionGrammar grammar = grammarDao.findById(id);
+	public Grammar deleteGrammarById(String schemaId, String id, AuthPojo auth) {
+		Grammar grammar = grammarDao.findById(id);
 		if (grammar != null) {
 			try {
 				this.removeReference(schemaId, id, auth);
@@ -152,7 +153,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		Reference parentReference = referenceDao.findParentByChildId(entityReference, grammarId);
 		Assert.notNull(parentReference);
 		
-		Reference[] gRefs = parentReference.getChildReferences().get(DescriptionGrammarImpl.class.getName());
+		Reference[] gRefs = parentReference.getChildReferences().get(GrammarImpl.class.getName());
 		for (int i=0; i<gRefs.length; i++) {
 			if (gRefs[i].getId().equals(grammarId)) {
 				boolean change = false;				
@@ -169,7 +170,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 				}
 				
 				if (change) {
-					parentReference.getChildReferences().put(DescriptionGrammarImpl.class.getName(), gRefs);
+					parentReference.getChildReferences().put(GrammarImpl.class.getName(), gRefs);
 					referenceDao.save(entityReference);
 				}
 				return;
@@ -178,24 +179,24 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 	
 	@Override
-	public DescriptionGrammar findById(String grammarId) {
+	public Grammar findById(String grammarId) {
 		return grammarDao.findById(grammarId);
 	}
 
 	@Override
-	public void saveGrammar(DescriptionGrammarImpl grammar, AuthPojo auth) {
-		List<TransformationFunctionImpl> transformationFunctions = grammar.getTransformationFunctions();
-		grammar.setTransformationFunctions(null);
+	public void saveGrammar(GrammarImpl grammar, AuthPojo auth) {
+		List<Function> transformationFunctions = grammar.getFunctions();
+		grammar.setFunctions(null);
 		grammar.setLocked(true);
 		grammar.setTemporary(false);
-		grammar.setGrammarName(getNormalizedName(grammar.getGrammarName()));
+		grammar.setName(getNormalizedName(grammar.getName()));
 		if (auth!=null) {
 			grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 		} else {
 			grammarDao.save(grammar);
 		}
 		
-		grammar.setTransformationFunctions(transformationFunctions);
+		grammar.setFunctions(transformationFunctions);
 		
 		if (grammar.isPassthrough()) {
 			grammar.setError(false);
@@ -233,7 +234,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 
 
-	private void saveGrammarToFilesystem(DescriptionGrammar grammar, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
+	private void saveGrammarToFilesystem(Grammar grammar, String lexerGrammar, String parserGrammar, boolean temporary) throws IOException {
 		String dirPath = getGrammarDirectory(grammar.getIdentifier(), temporary);
 		String filePathPrefix = getGrammarFilePrefix(grammar.getIdentifier(), temporary);
 		
@@ -257,7 +258,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 
 	@Override
-	public List<DescriptionGrammar> findByEntityId(String entityId, boolean includeSources) {
+	public List<Grammar> findByEntityId(String entityId, boolean includeSources) {
 		if (!includeSources) {		
 			return grammarDao.findByEntityId(entityId);
 		} else {
@@ -266,28 +267,28 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	}
 
 	@Override
-	public List<DescriptionGrammar> findByIds(List<Object> grammarIds) {
+	public List<Grammar> findByIds(List<Object> grammarIds) {
 		return grammarDao.find(Query.query(Criteria.where("_id").in(grammarIds)));
 	}
 
 	@Override
 	public Map<String, GrammarContainer> serializeGrammarSources(String entityId) {
-		List<DescriptionGrammar> grammars = this.findByEntityId(entityId, false);
+		List<Grammar> grammars = this.findByEntityId(entityId, false);
 		return serializeGrammarSources(grammars);
 	}
 
 	@Override
-	public Map<String, GrammarContainer> serializeGrammarSources(List<DescriptionGrammar> grammars) {
+	public Map<String, GrammarContainer> serializeGrammarSources(List<Grammar> grammars) {
 		Map<String, GrammarContainer> containers = new HashMap<String, GrammarContainer>();
 		if (grammars!=null) {
-			for (DescriptionGrammar g : grammars) {
+			for (Grammar g : grammars) {
 				if (g.isPassthrough() || g.isError() || g.isTemporary()) {
 					continue;
 				}
 				
-				if (DescriptionGrammarImpl.class.isAssignableFrom(g.getClass())) {
+				if (GrammarImpl.class.isAssignableFrom(g.getClass())) {
 					g = this.findById(g.getId());
-					containers.put(g.getId(), ((DescriptionGrammarImpl)g).getGrammarContainer());
+					containers.put(g.getId(), ((GrammarImpl)g).getGrammarContainer());
 				}
 			}
 		}

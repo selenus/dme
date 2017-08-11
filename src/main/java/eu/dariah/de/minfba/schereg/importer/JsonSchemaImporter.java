@@ -18,19 +18,21 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.exception.MetamodelConsistencyException;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Schema;
-import eu.dariah.de.minfba.core.metamodel.interfaces.SchemaNature;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Terminal;
-import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContainer;
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
 import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
@@ -52,7 +54,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 	@Override
 	public void run() {
 		Stopwatch sw = new Stopwatch().start();
-		logger.debug(String.format("Started importing schema %s", this.getSchema().getEntityId()));
+		logger.debug(String.format("Started importing schema %s", this.getSchema().getId()));
 		try {
 			this.importSerializedJsonSchema();
 			if (this.getListener()!=null) {
@@ -70,7 +72,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 	@Override
 	public List<? extends ModelElement> getElementsByTypes(List<Class<? extends ModelElement>> allowedSubtreeRoots) {
 		try {
-			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
+			DatamodelContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), DatamodelContainer.class);
 
 			return IdentifiableServiceImpl.extractAllByTypes(s.getRoot(), allowedSubtreeRoots);
 		} catch (Exception e) {
@@ -80,14 +82,14 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 	}
 	
 	private void importSerializedJsonSchema() throws JsonParseException, JsonMappingException, IOException, MetamodelConsistencyException {
-		SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
-		s.getSchema().setId(this.getSchema().getId());
+		DatamodelContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), DatamodelContainer.class);
+		s.getModel().setId(this.getSchema().getId());
 
 		Map<String, String> nonterminalIdMap = new HashMap<String, String>();
 		this.regenerateElementIds(this.getSchema(), s.getRoot(), nonterminalIdMap, s.getGrammars());
 		
-		if (s.getSchema().getNatures()!=null) {
-			for (SchemaNature nature : s.getSchema().getNatures()) {
+		if (s.getModel().getNatures()!=null) {
+			for (DatamodelNature nature : s.getModel().getNatures()) {
 				this.regenerateTerminalIds(nature, this.getSchema().getId(), nonterminalIdMap);
 			}
 		}
@@ -104,7 +106,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 				}
 			}
 		}
-		this.setSchema(s.getSchema());
+		this.setSchema(s.getModel());
 	}
 
 	@Override
@@ -124,7 +126,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 	@Override
 	public List<Element> getPossibleRootElements() {
 		try {
-			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
+			DatamodelContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), DatamodelContainer.class);
 			
 			this.getRootElements().addAll(ElementServiceImpl.extractAllNonterminals((Nonterminal)s.getRoot()));
 			
@@ -144,7 +146,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 		return new String[]{""};
 	}
 	
-	private void regenerateElementIds(Schema schema, Element element, Map<String, String> nonterminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
+	private void regenerateElementIds(Datamodel schema, Element element, Map<String, String> nonterminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
 		element.setEntityId(schema.getId());
 		
 		String newId = new ObjectId().toString();		
@@ -164,7 +166,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 			}
 		}
 		if (element.getGrammars()!=null) {
-			for (DescriptionGrammarImpl g : element.getGrammars()) {
+			for (Grammar g : element.getGrammars()) {
 				g.setEntityId(schema.getId());
 				
 				if (grammarContainerMap!=null && grammarContainerMap.containsKey(g.getId())) {
@@ -175,8 +177,8 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 				nonterminalIdMap.put(g.getId(), newId);
 				g.setId(newId);
 				
-				if (g.getTransformationFunctions()!=null) {
-					for (TransformationFunctionImpl f : g.getTransformationFunctions()) {
+				if (g.getFunctions()!=null) {
+					for (Function f : g.getFunctions()) {
 						f.setEntityId(schema.getId());
 						newId = new ObjectId().toString();
 						nonterminalIdMap.put(f.getId(), newId);
@@ -193,7 +195,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 		}
 	}
 	
-	private void regenerateTerminalIds(SchemaNature nature, String entityId, Map<String, String> nonterminalIdMap) throws MetamodelConsistencyException {
+	private void regenerateTerminalIds(DatamodelNature nature, String entityId, Map<String, String> nonterminalIdMap) throws MetamodelConsistencyException {
 		Map<String, String> oldNonterminalTerminalIdMap = new HashMap<String, String>(nature.getNonterminalTerminalIdMap());
 		nature.setNonterminalTerminalIdMap(new HashMap<String, String>());
 		

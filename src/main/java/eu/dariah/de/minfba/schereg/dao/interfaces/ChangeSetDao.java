@@ -2,7 +2,7 @@ package eu.dariah.de.minfba.schereg.dao.interfaces;
 
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 
 public interface ChangeSetDao extends BaseDao<ChangeSet> {

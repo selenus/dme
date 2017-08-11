@@ -1,6 +1,6 @@
 package eu.dariah.de.minfba.schereg.model;
 
-import eu.dariah.de.minfba.core.metamodel.mapping.MappingImpl;
+import de.unibamberg.minf.dme.model.mapping.MappingImpl;
 
 public class MappingWithSchemasImpl extends MappingImpl {
 	private static final long serialVersionUID = 6683075539087257860L;

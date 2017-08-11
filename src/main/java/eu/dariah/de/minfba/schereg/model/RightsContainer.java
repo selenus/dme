@@ -2,9 +2,9 @@ package eu.dariah.de.minfba.schereg.model;
 
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.Change;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
-import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
+import de.unibamberg.minf.dme.model.tracking.Change;
+import de.unibamberg.minf.dme.model.tracking.ChangeType;
+import de.unibamberg.minf.dme.model.tracking.TrackedEntity;
 
 public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 	private static final long serialVersionUID = -1272567909444423065L;
@@ -93,16 +93,5 @@ public class RightsContainer<T extends TrackedEntity> implements TrackedEntity {
 	@Override
 	public boolean isChanged() {
 		return element==null ? false : element.isChanged();
-	}
-	
-	@Override
-	public String getEntityId() {
-		if (this.element!=null) {
-			return this.element.getEntityId();
-		}
-		return null;
-	}
-	
-	@Override public void setEntityId(String entityId) {}
-	
+	}	
 }

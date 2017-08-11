@@ -2,7 +2,7 @@ package eu.dariah.de.minfba.schereg.serialization;
 
 import java.util.Map;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import de.unibamberg.minf.dme.model.base.Identifiable;
 
 public class Reference implements Identifiable {
 	private static final long serialVersionUID = -7751339169245617143L;

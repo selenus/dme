@@ -11,18 +11,18 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.LabelImpl;
-import eu.dariah.de.minfba.core.metamodel.ModelElement;
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Label;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Nonterminal;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
@@ -47,7 +47,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		Pattern searchPattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
 		
 		if (entityTypes==null) {
-			entityTypes = new Class<?>[]{ Nonterminal.class, Label.class, DescriptionGrammarImpl.class, TransformationFunctionImpl.class };
+			entityTypes = new Class<?>[]{ Nonterminal.class, Label.class, GrammarImpl.class, FunctionImpl.class };
 		}
 		for (Class<?> entityType : entityTypes) {
 			if (entityType.equals(Nonterminal.class)) {
@@ -60,11 +60,11 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 						Criteria.where("entityId").is(schemaId),
 						Criteria.where("_class").is(Label.class.getName()),
 						Criteria.where("name").regex(searchPattern)))));
-			} else if (entityType.equals(DescriptionGrammarImpl.class)) {
+			} else if (entityType.equals(GrammarImpl.class)) {
 				result.addAll(grammarDao.find(Query.query((new Criteria()).andOperator(
 						Criteria.where("entityId").is(schemaId), 
 						Criteria.where("grammarName").regex(searchPattern)))));
-			} else if (entityType.equals(TransformationFunctionImpl.class)) {
+			} else if (entityType.equals(FunctionImpl.class)) {
 				result.addAll(functionDao.find(Query.query((new Criteria()).andOperator(
 						Criteria.where("entityId").is(schemaId), 
 						Criteria.where("name").regex(searchPattern)))));
@@ -101,9 +101,9 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 				allowedSubelementTypes.addAll(getGrammarClasses());
 				allowedSubelementTypes.addAll(getLabelClasses());
 				return allowedSubelementTypes;
-			} else if (DescriptionGrammar.class.isAssignableFrom(i.getClass())) {
+			} else if (Grammar.class.isAssignableFrom(i.getClass())) {
 				return getFunctionClasses();
-			} else if (TransformationFunction.class.isAssignableFrom(i.getClass())) {
+			} else if (Function.class.isAssignableFrom(i.getClass())) {
 				return getLabelClasses();
 			}
 		}
@@ -126,15 +126,15 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 	
 	public static List<Class<? extends ModelElement>> getGrammarClasses() {
 		List<Class<? extends ModelElement>> result = new ArrayList<Class<? extends ModelElement>>();
-		result.add(DescriptionGrammarImpl.class);
-		result.add(DescriptionGrammar.class);
+		result.add(GrammarImpl.class);
+		result.add(Grammar.class);
 		return result;
 	}
 	
 	public static List<Class<? extends ModelElement>> getFunctionClasses() {
 		List<Class<? extends ModelElement>> result = new ArrayList<Class<? extends ModelElement>>();
-		result.add(TransformationFunctionImpl.class);
-		result.add(TransformationFunction.class);
+		result.add(FunctionImpl.class);
+		result.add(Function.class);
 		return result;
 	}
 
@@ -152,7 +152,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 					}
 				}
 				if (n.getGrammars()!=null) {
-					for (DescriptionGrammar g : n.getGrammars()) {
+					for (Grammar g : n.getGrammars()) {
 						result.addAll(extractAllByTypes(g, allowedSubtreeRoots));
 					}
 				}
@@ -164,19 +164,19 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 					}
 				}
 				if (l.getGrammars()!=null) {
-					for (DescriptionGrammar g : l.getGrammars()) {
+					for (Grammar g : l.getGrammars()) {
 						result.addAll(extractAllByTypes(g, allowedSubtreeRoots));
 					}
 				}
-			} else if (DescriptionGrammar.class.isAssignableFrom(i.getClass())) {
-				DescriptionGrammar g = (DescriptionGrammar)i;
-				if (g.getTransformationFunctions()!=null) {
-					for (TransformationFunction t : g.getTransformationFunctions()) {
+			} else if (Grammar.class.isAssignableFrom(i.getClass())) {
+				Grammar g = (Grammar)i;
+				if (g.getFunctions()!=null) {
+					for (Function t : g.getFunctions()) {
 						result.addAll(extractAllByTypes(t, allowedSubtreeRoots));
 					}
 				}
-			} else if (TransformationFunction.class.isAssignableFrom(i.getClass())) {
-				TransformationFunction t = (TransformationFunction)i;
+			} else if (Function.class.isAssignableFrom(i.getClass())) {
+				Function t = (Function)i;
 				if (t.getOutputElements()!=null) {
 					for (Label l : t.getOutputElements()) {
 						result.addAll(extractAllByTypes(l, allowedSubtreeRoots));
@@ -192,7 +192,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 			return extractAllByTypes(i, getNonterminalClasses());
 		} else if (rootElementType.equals(Label.class.getName()) || rootElementType.equals(LabelImpl.class.getName())) {
 			return extractAllByTypes(i, getLabelClasses());
-		} else if (rootElementType.equals(DescriptionGrammar.class.getName()) || rootElementType.equals(DescriptionGrammarImpl.class.getName())) {
+		} else if (rootElementType.equals(Grammar.class.getName()) || rootElementType.equals(GrammarImpl.class.getName())) {
 			return extractAllByTypes(i, getGrammarClasses());
 		} else if (rootElementType.equals(Nonterminal.class.getName()) || rootElementType.equals(NonterminalImpl.class.getName())) {
 			return extractAllByTypes(i, getFunctionClasses());
@@ -204,16 +204,16 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 	public Reference saveHierarchy(ModelElement me, AuthPojo auth) {
 
 		List<Element> saveElements = new ArrayList<Element>();
-		List<DescriptionGrammar> saveGrammars = new ArrayList<DescriptionGrammar>();
-		List<TransformationFunction> saveFunctions = new ArrayList<TransformationFunction>();
+		List<Grammar> saveGrammars = new ArrayList<Grammar>();
+		List<Function> saveFunctions = new ArrayList<Function>();
 		Reference r = this.saveElementsInHierarchy(me, saveElements, saveGrammars, saveFunctions);
 		
 		if (!saveElements.isEmpty()) {
 			elementDao.saveNew(saveElements, auth.getUserId(), auth.getSessionId());
 		}
 		if (!saveGrammars.isEmpty()) {
-			for (DescriptionGrammar g : saveGrammars) {
-				grammarService.saveGrammar((DescriptionGrammarImpl)g, auth);
+			for (Grammar g : saveGrammars) {
+				grammarService.saveGrammar((GrammarImpl)g, auth);
 			}
 		}
 		if (!saveFunctions.isEmpty()) {
@@ -222,7 +222,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		return r;
 	}
 	
-	private Reference saveElementsInHierarchy(ModelElement me, List<Element> saveElements, List<DescriptionGrammar> saveGrammars, List<TransformationFunction> saveFunctions) {
+	private Reference saveElementsInHierarchy(ModelElement me, List<Element> saveElements, List<Grammar> saveGrammars, List<Function> saveFunctions) {
 		Reference r = new Reference();
 		r.setId(me.getId());
 		
@@ -240,7 +240,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		if (Element.class.isAssignableFrom(me.getClass())) {
 			Element e = (Element)me;
 			if (e.getGrammars()!=null) {
-				subElementsMap.put(DescriptionGrammarImpl.class.getName(), e.getGrammars());
+				subElementsMap.put(GrammarImpl.class.getName(), e.getGrammars());
 				e.setGrammars(null);
 			}
 			if (Nonterminal.class.isAssignableFrom(me.getClass())) {
@@ -257,15 +257,15 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 				}
 			}
 			saveElements.add(e);
-		} else if (DescriptionGrammar.class.isAssignableFrom(me.getClass())) {
-			DescriptionGrammar g = (DescriptionGrammar)me;
-			if (g.getTransformationFunctions()!=null) {
-				subElementsMap.put(TransformationFunctionImpl.class.getName(), g.getTransformationFunctions());
-				g.setTransformationFunctions(null);
+		} else if (Grammar.class.isAssignableFrom(me.getClass())) {
+			Grammar g = (Grammar)me;
+			if (g.getFunctions()!=null) {
+				subElementsMap.put(FunctionImpl.class.getName(), g.getFunctions());
+				g.setFunctions(null);
 			}
 			saveGrammars.add(g);
-		} else if (TransformationFunction.class.isAssignableFrom(me.getClass())) {
-			TransformationFunction f = (TransformationFunction)me;
+		} else if (Function.class.isAssignableFrom(me.getClass())) {
+			Function f = (Function)me;
 			if (f.getOutputElements()!=null) {
 				subElementsMap.put(LabelImpl.class.getName(), f.getOutputElements());
 				f.setOutputElements(null);

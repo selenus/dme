@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
+import de.unibamberg.minf.dme.model.serialization.MappingContainer;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.dariahsp.web.AuthInfoHelper;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.serialization.SerializableMappingContainer;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
@@ -39,14 +39,14 @@ public class MappingApiController extends BaseApiController {
 	@Autowired private FunctionService functionService;
 	
 	@RequestMapping(method = RequestMethod.GET, value = "")
-	public @ResponseBody List<SerializableMappingContainer> getMappings(HttpServletRequest request) {
+	public @ResponseBody List<MappingContainer> getMappings(HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		List<RightsContainer<Mapping>> mappings = mappingService.findAllByAuth(auth, false);
-		List<SerializableMappingContainer> result = new ArrayList<SerializableMappingContainer>();
+		List<MappingContainer> result = new ArrayList<MappingContainer>();
 		
 		if (mappings!=null) {
 			for (RightsContainer<Mapping> m : mappings) {
-				SerializableMappingContainer mc = new SerializableMappingContainer();
+				MappingContainer mc = new MappingContainer();
 				mc.setMapping(m.getElement());
 				result.add(mc);
 			}
@@ -56,36 +56,36 @@ public class MappingApiController extends BaseApiController {
 	}
 		
 	@RequestMapping(method = RequestMethod.GET, value = "/by-source/{sourceId}")
-	public @ResponseBody List<SerializableMappingContainer> getMappingsBySource(@PathVariable String sourceId, HttpServletRequest request) {
+	public @ResponseBody List<MappingContainer> getMappingsBySource(@PathVariable String sourceId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		return this.processMappings(mappingService.findAllByAuthAndSourceId(auth, sourceId));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/by-target/{targetId}")
-	public @ResponseBody List<SerializableMappingContainer> getMappingsByTarget(@PathVariable String targetId, HttpServletRequest request) {
+	public @ResponseBody List<MappingContainer> getMappingsByTarget(@PathVariable String targetId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		return this.processMappings(mappingService.findAllByAuthAndTargetId(auth, targetId));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/by-source-and-target/{sourceId}/{targetId}")
-	public @ResponseBody SerializableMappingContainer getMappingBySourceAndTarget(@PathVariable String sourceId, @PathVariable String targetId, HttpServletRequest request) {
+	public @ResponseBody MappingContainer getMappingBySourceAndTarget(@PathVariable String sourceId, @PathVariable String targetId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		return this.processMappingWithDetails(mappingService.findByAuthAndSourceAndTargetId(auth, sourceId, targetId));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/{entityId}")
-	public @ResponseBody SerializableMappingContainer getMapping(@PathVariable String entityId, HttpServletRequest request) {
+	public @ResponseBody MappingContainer getMapping(@PathVariable String entityId, HttpServletRequest request) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		return this.processMappingWithDetails(mappingService.findByIdAndAuth(entityId, auth));
 	}
 	
 	
-	private List<SerializableMappingContainer> processMappings(List<RightsContainer<Mapping>> mappings) {
-		List<SerializableMappingContainer> result = new ArrayList<SerializableMappingContainer>();
+	private List<MappingContainer> processMappings(List<RightsContainer<Mapping>> mappings) {
+		List<MappingContainer> result = new ArrayList<MappingContainer>();
 		if (mappings!=null) {
 			ChangeSet ch;
 			for (RightsContainer<Mapping> m : mappings) {
-				SerializableMappingContainer mc = new SerializableMappingContainer();
+				MappingContainer mc = new MappingContainer();
 				
 				ch = mappingService.getLatestChangeSetForEntity(m.getId());
 				if (ch!=null) {
@@ -101,9 +101,9 @@ public class MappingApiController extends BaseApiController {
 		return result;
 	}
 	
-	private SerializableMappingContainer processMappingWithDetails(RightsContainer<Mapping> mapping) {
+	private MappingContainer processMappingWithDetails(RightsContainer<Mapping> mapping) {
 		if (mapping!=null) {
-			SerializableMappingContainer result = new SerializableMappingContainer();
+			MappingContainer result = new MappingContainer();
 			result.setMapping(mapping.getElement()); 
 			mapping.getElement().setConcepts(mappedConceptService.findAllByMappingId(mapping.getId(), true));
 			mapping.getElement().flush();
@@ -119,8 +119,8 @@ public class MappingApiController extends BaseApiController {
 			
 			Map<String, String> serializedFunctions = new HashMap<String, String>();
 			
-			List<TransformationFunction> functions = functionService.findByEntityId(mapping.getId());
-			for (TransformationFunction f : functions) {
+			List<Function> functions = functionService.findByEntityId(mapping.getId());
+			for (Function f : functions) {
 				serializedFunctions.put(f.getId(), f.getFunction());
 			}
 			

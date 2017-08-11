@@ -2,7 +2,7 @@ package eu.dariah.de.minfba.schereg.importer.model;
 
 import java.util.List;
 
-import eu.dariah.de.minfba.core.metamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 
 public class ImportAwareNonterminal extends NonterminalImpl {
 	private static final long serialVersionUID = 908834748940289151L;

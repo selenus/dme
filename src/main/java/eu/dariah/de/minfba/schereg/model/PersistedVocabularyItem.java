@@ -1,8 +1,8 @@
 package eu.dariah.de.minfba.schereg.model;
 
+import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.gtf.model.vocabulary.VocabularyItem;
 import de.unibamberg.minf.gtf.serialization.JsonSyntaxTreeDeserializer;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
 
 public class PersistedVocabularyItem extends VocabularyItem implements Identifiable {
 	private static final long serialVersionUID = -8004767190967069592L;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
+import de.unibamberg.minf.dme.model.tracking.TrackedEntity;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 

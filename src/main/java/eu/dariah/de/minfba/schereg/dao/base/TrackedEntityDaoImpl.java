@@ -12,11 +12,12 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import com.mongodb.WriteResult;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.Change;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeImpl;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeType;
-import eu.dariah.de.minfba.core.metamodel.tracking.TrackedEntity;
+import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.tracking.Change;
+import de.unibamberg.minf.dme.model.tracking.ChangeImpl;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
+import de.unibamberg.minf.dme.model.tracking.ChangeType;
+import de.unibamberg.minf.dme.model.tracking.TrackedEntity;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ChangeSetDao;
 
 public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends BaseDaoImpl<T> implements TrackedEntityDao<T> {
@@ -45,7 +46,13 @@ public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends Base
 					c = new ChangeSet();
 					c.setUserId(userId);
 					c.setSessionId(sessionId);
-					c.setEntityId(e.getEntityId());
+					
+					String entityId = null;
+					if (ModelElement.class.isAssignableFrom(e.getClass())) {
+						entityId = ((ModelElement)e).getEntityId();
+					}
+					
+					c.setEntityId(entityId);
 					c.setElementId(e.getId());
 					c.setChanges(changes);
 					
@@ -146,7 +153,13 @@ public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends Base
 		element.addChange(ChangeType.DELETE_OBJECT, this.getCollectionName(), element.getId(), null);
 		List<Change> changes = element.flush();
 		String elementId = element.getId();
-		String parentEntityId = element.getEntityId();
+		
+		String entityId = null;
+		if (ModelElement.class.isAssignableFrom(element.getClass())) {
+			entityId = ((ModelElement)element).getEntityId();
+		}
+		
+		String parentEntityId = entityId;
 		
 		mongoTemplate.remove(element, this.getCollectionName());
 		
@@ -172,7 +185,12 @@ public abstract class TrackedEntityDaoImpl<T extends TrackedEntity> extends Base
 			changes.add(new ChangeImpl<String>(ChangeType.NEW_OBJECT, this.getCollectionName(), null, element.getId(), DateTime.now()));
 		}
 		
-		this.createAndSaveChangeSet(changes, element.getId(), element.getEntityId(), userId, sessionId);
+		String entityId = null;
+		if (ModelElement.class.isAssignableFrom(element.getClass())) {
+			entityId = ((ModelElement)element).getEntityId();
+		}
+		
+		this.createAndSaveChangeSet(changes, element.getId(), entityId, userId, sessionId);
 		return element;
 	}
 	

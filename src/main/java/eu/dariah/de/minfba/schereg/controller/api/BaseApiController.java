@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import eu.dariah.de.minfba.core.metamodel.function.GrammarContainer;
+import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 
 public abstract class BaseApiController {

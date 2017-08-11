@@ -21,12 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
+import de.unibamberg.minf.dme.model.mapping.TargetElementGroup;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
-import eu.dariah.de.minfba.core.metamodel.mapping.TargetElementGroup;
 import eu.dariah.de.minfba.core.web.pojo.ModelActionPojo;
 import eu.dariah.de.minfba.schereg.controller.base.BaseScheregController;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
@@ -166,8 +167,8 @@ public class MappedConceptEditorController extends BaseScheregController {
 		for (String sourceId : mc.getElementGrammarIdsMap().keySet()) {
 			for (Element sourceElement : sourceElements) {
 				if (sourceId.equals(sourceElement.getId())) {
-					sourceElement.setGrammars(new ArrayList<DescriptionGrammarImpl>());
-					sourceElement.getGrammars().add((DescriptionGrammarImpl) grammarService.findById(mc.getElementGrammarIdsMap().get(sourceId)));
+					sourceElement.setGrammars(new ArrayList<Grammar>());
+					sourceElement.getGrammars().add((GrammarImpl) grammarService.findById(mc.getElementGrammarIdsMap().get(sourceId)));
 					
 					break;
 				}

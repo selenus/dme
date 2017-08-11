@@ -11,15 +11,15 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.model.function.FunctionImpl;
+import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
+import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.function.DescriptionGrammarImpl;
-import eu.dariah.de.minfba.core.metamodel.function.TransformationFunctionImpl;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.DescriptionGrammar;
-import eu.dariah.de.minfba.core.metamodel.function.interfaces.TransformationFunction;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.MappedConcept;
-import eu.dariah.de.minfba.core.metamodel.mapping.MappedConceptImpl;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.FunctionDao;
@@ -51,7 +51,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		if (isNew) {
 			refConcept = this.addChildReference(root, mappedConcept);
 			
-			TransformationFunction function = new TransformationFunctionImpl(mappingId, "fMapping");
+			Function function = new FunctionImpl(mappingId, "fMapping");
 			functionDao.save(function, auth.getUserId(), auth.getSessionId());
 			
 			mappedConcept.setFunctionId(function.getId());
@@ -66,7 +66,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			if (mappedConcept.getElementGrammarIdsMap().get(sourceElementId)==null) {
 				Element source = elementDao.findById(sourceElementId);
 				
-				DescriptionGrammarImpl grammar = new DescriptionGrammarImpl(mappingId, source.getName());
+				GrammarImpl grammar = new GrammarImpl(mappingId, source.getName());
 				grammar.setPassthrough(true);
 				grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 				
@@ -131,11 +131,11 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		for (Reference rConcept : reference.getChildReferences().get(MappedConceptImpl.class.getName())) {
 			if (rConcept.getId().equals(mappedConceptId)) {
 				r = rConcept;
-				if (rConcept.getChildReferences()!=null && rConcept.getChildReferences().containsKey(DescriptionGrammarImpl.class.getName())) {
-					for (Reference rGrammar : rConcept.getChildReferences().get(DescriptionGrammarImpl.class.getName())) {
+				if (rConcept.getChildReferences()!=null && rConcept.getChildReferences().containsKey(GrammarImpl.class.getName())) {
+					for (Reference rGrammar : rConcept.getChildReferences().get(GrammarImpl.class.getName())) {
 						grammarIds.add(rGrammar.getId());
-						if (rGrammar.getChildReferences()!=null && rGrammar.getChildReferences().containsKey(TransformationFunctionImpl.class.getName())) {
-							for (Reference rFunction : rGrammar.getChildReferences().get(TransformationFunctionImpl.class.getName())) {
+						if (rGrammar.getChildReferences()!=null && rGrammar.getChildReferences().containsKey(FunctionImpl.class.getName())) {
+							for (Reference rFunction : rGrammar.getChildReferences().get(FunctionImpl.class.getName())) {
 								functionIds.add(rFunction.getId());
 							}
 						}

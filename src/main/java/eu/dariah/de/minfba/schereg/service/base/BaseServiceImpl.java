@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ChangeSetDao;
 
 public abstract class BaseServiceImpl implements BaseService {

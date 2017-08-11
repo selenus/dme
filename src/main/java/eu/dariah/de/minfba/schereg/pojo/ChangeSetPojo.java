@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
-import eu.dariah.de.minfba.core.metamodel.tracking.Change;
+import de.unibamberg.minf.dme.model.tracking.Change;
 
 public class ChangeSetPojo {
 	private String user;

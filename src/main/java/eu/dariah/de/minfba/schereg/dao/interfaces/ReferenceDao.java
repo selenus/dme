@@ -3,8 +3,8 @@ package eu.dariah.de.minfba.schereg.dao.interfaces;
 import java.util.List;
 import java.util.Map;
 
-import eu.dariah.de.minfba.core.metamodel.BaseIdentifiable;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
+import de.unibamberg.minf.dme.model.base.Identifiable;
 import eu.dariah.de.minfba.schereg.dao.base.BaseDao;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 

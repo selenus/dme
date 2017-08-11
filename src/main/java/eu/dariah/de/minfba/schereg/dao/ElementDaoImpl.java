@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.mongodb.WriteResult;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Element;
+import de.unibamberg.minf.dme.model.base.Element;
 import eu.dariah.de.minfba.schereg.dao.base.TrackedEntityDaoImpl;
 import eu.dariah.de.minfba.schereg.dao.interfaces.ElementDao;
 

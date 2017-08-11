@@ -2,9 +2,9 @@ package eu.dariah.de.minfba.schereg.service.interfaces;
 
 import java.util.List;
 
+import de.unibamberg.minf.dme.model.mapping.base.Mapping;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
-import eu.dariah.de.minfba.core.metamodel.interfaces.Mapping;
-import eu.dariah.de.minfba.core.metamodel.tracking.ChangeSet;
 import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.pojo.AuthWrappedPojo;
 import eu.dariah.de.minfba.schereg.service.base.BaseEntityService;

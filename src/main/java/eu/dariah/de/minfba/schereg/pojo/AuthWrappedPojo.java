@@ -1,6 +1,6 @@
 package eu.dariah.de.minfba.schereg.pojo;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import de.unibamberg.minf.dme.model.base.Identifiable;
 
 public class AuthWrappedPojo<T extends Identifiable> implements Identifiable {
 	private static final long serialVersionUID = -9121158238035864927L;

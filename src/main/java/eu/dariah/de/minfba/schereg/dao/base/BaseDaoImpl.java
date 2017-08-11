@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import eu.dariah.de.minfba.core.metamodel.interfaces.Identifiable;
+import de.unibamberg.minf.dme.model.base.Identifiable;
 
 
 public abstract class BaseDaoImpl<T extends Identifiable> extends DaoImpl<T> implements BaseDao<T> {	
