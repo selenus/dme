@@ -47,7 +47,7 @@ SchemaTable.prototype.createTable = function() {
 	           "data": function (row, type, val, meta) { return schemaTable.renderBadgeColumn(row, type, val, meta); }
 	       }, {
 	    	   "targets": [1],
-	    	   "data" : "entity.pojo.label",
+	    	   "data" : "entity.pojo.name",
 	    	   "width" : "100%"
 	       }, {
 	    	   "targets": [2],

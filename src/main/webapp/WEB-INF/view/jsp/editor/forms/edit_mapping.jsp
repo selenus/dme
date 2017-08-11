@@ -21,14 +21,14 @@
 			<div class="form-group">
 				<label class="control-label col-sm-3" for="mapping_source"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.source" />:</label>
 				<div class="col-sm-9">
-					<sf:select path="sourceId" cssClass="form-control read-only" items="${schemas}" itemLabel="element.label" itemValue="id" />
+					<sf:select path="sourceId" cssClass="form-control read-only" items="${schemas}" itemLabel="element.name" itemValue="id" />
 					<sf:errors path="sourceId" cssClass="error" />
 				</div>
 			</div>
 			<div class="form-group">
 				<label class="control-label col-sm-3" for="mapping_source"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.target" />:</label>
 				<div class="col-sm-9">
-					<sf:select path="targetId" cssClass="form-control" items="${schemas}" itemLabel="element.label" itemValue="id" />
+					<sf:select path="targetId" cssClass="form-control" items="${schemas}" itemLabel="element.name" itemValue="id" />
 					<sf:errors path="targetId" cssClass="error" />
 				</div>
 			</div>

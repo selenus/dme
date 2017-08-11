@@ -18,10 +18,10 @@
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="control-label col-sm-3" for="schema_label"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" />:</label>
+			<label class="control-label col-sm-3" for="schema_name"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" />:</label>
 			<div class="col-sm-9">
-				<sf:input path="label" class="form-control" id="schema_label" />
-				<sf:errors path="label" cssClass="error" />
+				<sf:input path="name" class="form-control" id="schema_name" />
+				<sf:errors path="name" cssClass="error" />
 			</div>
 		</div>
 		<div class="form-group">
