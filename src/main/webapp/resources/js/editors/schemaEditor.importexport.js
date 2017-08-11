@@ -62,13 +62,15 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 	});
 	
 	_this.registerTypeahead(rootSelector, "importedelements", elements, "name", 8, 
-			function(e) { 
-				if (e.namespace===undefined || e.namespace===null || e.namespace==="") {
+			function(e) {
+				if (e.namespace!==undefined && e.namespace!==null && e.namespace!=="") {
+					return '<p><strong>' + e.name + '</strong><br/ >' + e.namespace + '<p>';
+				} else if (e.simpleType!==undefined && e.simpleType!==null && e.simpleType!=="") {
 					return '<p><strong>' + e.name + '</strong> ' +
 							'<small><em>' + __translator.translate("~eu.dariah.de.minfba.common.model.types." + e.simpleType.toLowerCase()) + '</em></small>' +
-						   '<p>';
+						'<p>';
 				} else {
-					return '<p><strong>' + e.name + '</strong><br/ >' + e.namespace + '<p>';
+					return '<p><strong>' + e.name + '</strong>';
 				}
 			},
 			function(t, suggestion) {
