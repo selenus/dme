@@ -13,7 +13,7 @@
 			<!-- Notifications -->
 			<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 			<div class="xs-hidden sm-visible col-sm-3 col-lg-2 col-sm-offset-1">
-				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title" /></div>
+				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title_short" /></div>
 			</div>
 			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
 				<h1><s:message code="~eu.dariah.de.minfba.schereg.view.mapping_editor" /></h1>
