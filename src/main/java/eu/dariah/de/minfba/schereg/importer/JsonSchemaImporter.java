@@ -94,7 +94,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 			}
 		}
 		
-		if (this.getRootElementType()==null) {
+		if (this.getRootElementType()==null || this.getRootElementType().isEmpty()) {
 			this.setRootElementType(NonterminalImpl.class.getName());
 		}
 		

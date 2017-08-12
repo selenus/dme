@@ -40,7 +40,7 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 	
 	// No root elements
 	if (data==null || data.pojo==null || data.pojo.length==0) {
-		select.prop("disabled", "disabled");
+		rootSelector.prop("disabled", "disabled");
 		$("#btn-submit-schema-elements").prop("disabled", "disabled");
 		return;
 	}

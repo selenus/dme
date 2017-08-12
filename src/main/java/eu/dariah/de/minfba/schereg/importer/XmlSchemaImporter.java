@@ -259,7 +259,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		
 		rootN = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootElements().get(0), serializedNonterminals);
 		rootN.setProcessingRoot(true);
-		this.getRootElements().add(rootN);
+		this.getRootElements().set(0, rootN);
 		
 		for (int i=0; i<this.getAdditionalRootElements().size(); i++) {
 			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getAdditionalRootElements().get(i));
