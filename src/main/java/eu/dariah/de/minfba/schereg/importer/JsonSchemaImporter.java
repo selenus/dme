@@ -23,6 +23,7 @@ import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.base.Label;
 import de.unibamberg.minf.dme.model.base.ModelElement;
+import de.unibamberg.minf.dme.model.base.NamedModelElement;
 import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
@@ -101,7 +102,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 		List<ModelElement> possibleElements = IdentifiableServiceImpl.extractAllByType(s.getRoot(), this.getRootElementType());
 		if (possibleElements!=null) {
 			for (ModelElement i : possibleElements) {
-				if (i.getName().equals(this.getRootElementName())) {
+				if (NamedModelElement.class.isAssignableFrom(i.getClass()) && ((NamedModelElement)i).getName().equals(this.getRootElementName())) {
 					this.getRootElements().add(i);
 				}
 			}

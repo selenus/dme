@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
-import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
@@ -41,7 +39,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 	public void saveMappedConcept(MappedConcept mappedConcept, String mappingId, AuthPojo auth) {		
 		boolean isNew = DaoImpl.isNewId(mappedConcept.getId()); 
 		
-		mappedConcept.setEntityId(mappingId);
+		mappedConcept.setEntityId(mappingId);		
 		mappedConceptDao.save(mappedConcept, auth.getUserId(), auth.getSessionId());
 		
 		Reference root = this.findReferenceById(mappingId);

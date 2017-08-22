@@ -38,7 +38,7 @@
 				<div class="row">
 					<div class="col-xs-12">
 						<h2 class="pull-left"><small><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.source" />:</small>
-						${source.pojo.label} <small><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.target" />:</small> ${target.pojo.label} 
+						${source.pojo.name} <small><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.target" />:</small> ${target.pojo.name} 
 							<c:if test="${!mapping.own && !mapping.write}"></c:if>
 						&nbsp;</h2>
 						

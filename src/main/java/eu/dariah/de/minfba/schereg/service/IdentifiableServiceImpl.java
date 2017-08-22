@@ -232,7 +232,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		r.setId(me.getId());
 		
 		if (saveElements.contains(me) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
-			logger.debug("Recursion at " + me.getName());
+			logger.debug("Recursion at " + me.getId());
 			return null;
 		}
 				
