@@ -21,7 +21,7 @@ public class ElementDaoImpl extends TrackedEntityDaoImpl<Element> implements Ele
 
 	@Override
 	public List<Element> findByEntityId(String entityId) {		
-		Query q = Query.query(Criteria.where("entityId").is(entityId));
+		Query q = Query.query(Criteria.where(ENTITY_ID_FIELD).is(entityId));
 		return this.find(q);
 	}
 

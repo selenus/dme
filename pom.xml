@@ -16,7 +16,7 @@
 
 		<eu.dariah.de.minfba.core-web.version>1.6.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
 		<eu.dariah.de.minfba.core-util.version>1.1.0-SNAPSHOT</eu.dariah.de.minfba.core-util.version>
-		<eu.dariah.de.minfba.core-metamodel.version>4.0.0-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
+		<eu.dariah.de.minfba.core-metamodel.version>4.0.1-SNAPSHOT</eu.dariah.de.minfba.core-metamodel.version>
 		<eu.dariah.de.minfba.processing.version>3.0.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
 		<de.unibamberg.minf.gtf-version>1.0.0-SNAPSHOT</de.unibamberg.minf.gtf-version>
 
@@ -239,7 +239,7 @@
 		<dependency>
 		    <groupId>org.mongodb</groupId>
 		    <artifactId>mongo-java-driver</artifactId>
-		    <version>3.5.0</version>
+		    <version>3.4.2</version>
 		</dependency>
 		
 		<!-- Model validation -->
