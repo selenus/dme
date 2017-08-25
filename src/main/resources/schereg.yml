@@ -11,6 +11,10 @@ editors:
   samples:
     maxTravelSize: 50000
 
+processing:
+  transformation:
+    debug: false
+
 db:
   host: 127.0.0.1
   port: 27017

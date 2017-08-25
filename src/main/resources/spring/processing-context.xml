@@ -64,6 +64,7 @@
 			<bean class="de.unibamberg.minf.gtf.TransformationEngineImpl">
 				<property name="commandDispatcher" ref="commandDispatcher" />		
 				<property name="objMapper" ref="objectMapper" />
+				<property name="debugTransformation" value="${processing.transformation.debug:false}" />
 			</bean>
 		</property>
 	</bean>
