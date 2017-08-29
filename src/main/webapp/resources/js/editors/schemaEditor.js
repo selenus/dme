@@ -5,7 +5,8 @@ $(document).ready(function() {
 		footerOffset: 70,
 		icons: {
 			warning: __util.getBaseUrl() + "resources/img/warning.png",
-			error: __util.getBaseUrl() + "resources/img/error.png"
+			error: __util.getBaseUrl() + "resources/img/error.png",
+			reuse: __util.getBaseUrl() + "resources/img/recursion.png"
 		}
 	});
 	$('[data-toggle="tooltip"]').tooltip( { container: 'body' });

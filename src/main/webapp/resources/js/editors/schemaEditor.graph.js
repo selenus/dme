@@ -322,6 +322,8 @@ SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSou
 				icon = this.options.icons.error;
 			} else if (elements[i].state==="WARNING") {
 				icon = this.options.icons.warning;
+			} else if (elements[i].state==="REUSE") {
+				icon = this.options.icons.reuse;
 			}
 			var childProcessed = (processed || elements[i].pRoot) && !elements[i].disabled;
 			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon, childProcessed, elements[i].disabled);

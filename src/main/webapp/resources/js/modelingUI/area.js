@@ -218,7 +218,7 @@ Area.prototype.setActive = function(active) {
 
 Area.prototype.setSize = function() {}; // Dummy placeholder...remove
 
-Area.prototype.addElement = function(templateKey, parent, id, label, icons, processed, disabled) {
+Area.prototype.addElement = function(templateKey, parent, id, label, icons, processed, disabled) {	
 	var template = null;
 	for (var i=0; i<this.elementTemplates.length; i++) {
 		if (this.elementTemplates[i].options.key===templateKey) {
