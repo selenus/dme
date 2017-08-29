@@ -231,10 +231,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		}
 		r.setId(me.getId());
 		
-		if (saveElements.contains(me) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
-			logger.debug("Recursion at " + me.getId());
-			return null;
-		}
+		
 				
 		if (Element.class.isAssignableFrom(me.getClass())) {
 			Element e = (Element)me;
@@ -255,21 +252,35 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 					l.setSubLabels(null); // or empty?
 				}
 			}
-			saveElements.add(e);
+			if (saveElements.contains(e) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
+				logger.debug("Recursion at " + e.getId());
+			} else {
+				saveElements.add(e);
+			}
 		} else if (Grammar.class.isAssignableFrom(me.getClass())) {
 			Grammar g = (Grammar)me;
 			if (g.getFunctions()!=null) {
 				subElementsMap.put(FunctionImpl.class.getName(), g.getFunctions());
 				g.setFunctions(null);
 			}
-			saveGrammars.add(g);
+			if (saveGrammars.contains(me)) {
+				logger.debug("Recursion at " + g.getId());
+			} else {
+				saveGrammars.add(g);
+			}
+			
 		} else if (Function.class.isAssignableFrom(me.getClass())) {
 			Function f = (Function)me;
 			if (f.getOutputElements()!=null) {
 				subElementsMap.put(LabelImpl.class.getName(), f.getOutputElements());
 				f.setOutputElements(null);
 			}
-			saveFunctions.add(f);
+			if (saveFunctions.contains(f)) {
+				logger.debug("Recursion at " + f.getId());
+			} else {
+				saveFunctions.add(f);
+			}
+			
 		}
 		
 		if (!subElementsMap.isEmpty()) {

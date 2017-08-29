@@ -202,13 +202,14 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		}
 		
 		Map<String, NonterminalImpl> serializedNonterminals = new HashMap<String, NonterminalImpl>();
+		List<ImportAwareNonterminal> processedN = new ArrayList<ImportAwareNonterminal>();
 		
 		// No "additional roots" possible
 		if (rootTerminals.size()==0) {
 			this.combineExtensionNonterminals();
 			
 			// We expect that no abstract element can be selected as root!
-			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootElements().get(0));
+			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootElements().get(0), processedN);
 			
 			
 			rootN = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootElements().get(0), serializedNonterminals);
@@ -255,14 +256,14 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		
 		
 		// We expect that no abstract element can be selected as root!
-		this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootElements().get(0));
+		this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getRootElements().get(0), processedN);
 		
 		rootN = this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getRootElements().get(0), serializedNonterminals);
 		rootN.setProcessingRoot(true);
 		this.getRootElements().set(0, rootN);
 		
 		for (int i=0; i<this.getAdditionalRootElements().size(); i++) {
-			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getAdditionalRootElements().get(i));
+			this.resolveExtensionHierarchy((ImportAwareNonterminal)this.getAdditionalRootElements().get(i), processedN);
 			this.getAdditionalRootElements().set(i, this.convertToSerializableNonterminals((ImportAwareNonterminal)this.getAdditionalRootElements().get(i), serializedNonterminals));
 		}
 		logger.debug("Schema import took {}ms", sw.getElapsedTime());
@@ -286,7 +287,11 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		return nResult;
 	}
 	
-	private void resolveExtensionHierarchy(ImportAwareNonterminal n) {
+	private void resolveExtensionHierarchy(ImportAwareNonterminal n, List<ImportAwareNonterminal> processedN) {
+		if (processedN.contains(n)) {
+			return;
+		} 
+		processedN.add(n);
 		if (n.getChildNonterminals()!=null) {
 			ImportAwareNonterminal childN;
 			List<ImportAwareNonterminal> extensionChildren = new ArrayList<ImportAwareNonterminal>();
@@ -297,7 +302,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 					childN.setParentCount(childN.getParentCount()-1);
 					abstractChildren.add(childN);
 				}
-				this.resolveExtensionHierarchy(childN);
+				this.resolveExtensionHierarchy(childN, processedN);
 				
 				if (extensionIdNonterminalMap.containsKey(childN.getTerminalQN())) {
 					for (ImportAwareNonterminal extN : extensionIdNonterminalMap.get(childN.getTerminalQN())) {
@@ -374,7 +379,11 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		
 		if (terminalIdNonterminalMap.containsKey(terminalQN)) {
 			logger.debug("Reusing existing nonterminal for qn: " + terminalQN);
-			return terminalIdNonterminalMap.get(terminalQN);
+			
+			ImportAwareNonterminal n = terminalIdNonterminalMap.get(terminalQN);
+			
+			addChildNonterminal(parentNonterminal, n);
+			return n;
 		}
 		
 		ImportAwareNonterminal n = this.createNonterminal(element.getNamespace(), element.getName(), false, element.getAbstract());
