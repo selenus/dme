@@ -9,7 +9,7 @@ import de.unibamberg.minf.dme.model.base.Identifiable;
 public class ModelElementPojo implements Identifiable {
 	private static final long serialVersionUID = -2307699438052322526L;
 	
-	public enum ModelElementState { OK, ERROR, WARNING }
+	public enum ModelElementState { OK, ERROR, WARNING, REUSE }
 	
 	private String id;
 	private String label;

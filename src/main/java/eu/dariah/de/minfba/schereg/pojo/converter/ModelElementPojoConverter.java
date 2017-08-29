@@ -1,7 +1,9 @@
 package eu.dariah.de.minfba.schereg.pojo.converter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
@@ -16,20 +18,32 @@ import eu.dariah.de.minfba.schereg.pojo.ModelElementPojo.ModelElementState;
 public class ModelElementPojoConverter {
 
 	public static List<ModelElementPojo> convertModelElements(List<Element> modelElements, boolean staticElementsOnly) throws GenericScheregException {
+		return convertModelElements(modelElements, staticElementsOnly, new HashMap<Element, ModelElementPojo>());
+	}
+	
+	public static List<ModelElementPojo> convertModelElements(List<Element> modelElements, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted) throws GenericScheregException {
 		List<ModelElementPojo> results = new ArrayList<ModelElementPojo>();
+		ModelElementPojo mep;
 		if (modelElements!=null) {
 			for (Element e : modelElements) {
-				results.add(convertModelElement(e, staticElementsOnly));
+				mep = convertModelElement(e, staticElementsOnly, converted);
+				if (mep!=null) {
+					results.add(mep);
+				}
 			}
 		}
 		return results;
 	}
 	
 	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly) throws GenericScheregException {
+		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>());
+	}
+	
+	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted) throws GenericScheregException {
 		if (modelElement==null) {
 			return null;
 		} else if (Nonterminal.class.isAssignableFrom(modelElement.getClass())) {
-			return convertNonterminal((Nonterminal)modelElement, staticElementsOnly);
+			return convertNonterminal((Nonterminal)modelElement, staticElementsOnly, converted);
 		} else if (Label.class.isAssignableFrom(modelElement.getClass())) {
 			return convertLabel((Label)modelElement, staticElementsOnly);
 		} else if (Grammar.class.isAssignableFrom(modelElement.getClass())) {
@@ -46,16 +60,28 @@ public class ModelElementPojoConverter {
 		throw new GenericScheregException("Failed to convert model element; conversion not supported for " + modelElement.getClass().getName());
 	}
 	
-	private static ModelElementPojo convertNonterminal(Nonterminal n, boolean staticElementsOnly) {
+	private static ModelElementPojo convertNonterminal(Nonterminal n, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted) {
+		if (converted.containsKey(n)) {
+			//return converted.get(n);
+			ModelElementPojo p = new ModelElementPojo();
+			p.setState(ModelElementState.REUSE);
+			p.setType("Nonterminal");
+			p.setId(n.getId());
+			p.setLabel(n.getName());
+			return p;
+		}
+		
 		ModelElementPojo p = new ModelElementPojo();
 		p.setState(ModelElementState.OK);
 		p.setType("Nonterminal");
 		p.setProcessingRoot(n.isProcessingRoot());
 		
+		converted.put(n, p);
+		
 		if (n.getChildNonterminals()!=null && n.getChildNonterminals().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
 			for (Nonterminal childN : n.getChildNonterminals()) {
-				p.getChildElements().add(convertNonterminal(childN, staticElementsOnly));
+				p.getChildElements().add(convertNonterminal(childN, staticElementsOnly, converted));
 			}
 		}
 		
