@@ -40,4 +40,5 @@ public interface ElementService extends BaseService {
 	public Reference assignChildTreeToParent(String entityId, String elementId, String childId);
 		
 	public void unsetSchemaProcessingRoot(String schemaId);
+	public void cloneElement(String elementId, String[] path, AuthPojo auth);
 }

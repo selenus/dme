@@ -62,9 +62,10 @@ public class ModelElementPojoConverter {
 	
 	private static ModelElementPojo convertNonterminal(Nonterminal n, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted) {
 		if (converted.containsKey(n)) {
-			//return converted.get(n);
+			converted.get(n).setState(ModelElementState.REUSED);
+			
 			ModelElementPojo p = new ModelElementPojo();
-			p.setState(ModelElementState.REUSE);
+			p.setState(ModelElementState.REUSING);
 			p.setType("Nonterminal");
 			p.setId(n.getId());
 			p.setLabel(n.getName());

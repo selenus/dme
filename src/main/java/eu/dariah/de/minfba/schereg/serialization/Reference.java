@@ -10,6 +10,7 @@ public class Reference implements Identifiable {
 	private String id;
 	private Map<String, Reference[]> childReferences;
 	private boolean root;
+	private boolean reuse;
 	
 	public Reference() {}
 	public Reference(String id) {
@@ -23,5 +24,8 @@ public class Reference implements Identifiable {
 	public void setChildReferences(Map<String, Reference[]> childReferences) { this.childReferences = childReferences; }
 	
 	public boolean isRoot() { return root; }
-	public void setRoot(boolean root) { this.root = root; }	
+	public void setRoot(boolean root) { this.root = root; }
+	
+	public boolean isReuse() { return reuse; }
+	public void setReuse(boolean reuse) { this.reuse = reuse; }	
 }

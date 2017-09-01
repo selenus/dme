@@ -84,15 +84,35 @@ Area.prototype.expandAll = function(expand) {
 
 Area.prototype.expandFromElement = function(element, expand) {
 	if (typeof element !== 'object') {
-		element = this.findElementById(this.root, element);
+		element = this.findElementsById(this.root, element);
+		for (var i=0; i<element.length; i++) {
+			this.expand(element[i], expand);
+		}
+	} else {
+		this.expand(element, expand);
 	}
-	this.expand(element, expand);
 	this.invalidate();
 	this.model.paint();
 	
 	// To make sure that area bounds are respected
 	this.moveByDelta(0, 0);
 	this.model.paint();
+};
+
+Area.prototype.ensureExpandedTo = function(elementId) {
+	var elements = this.findElementsById(this.root, elementId);
+	for (var i=0; i<elements.length; i++) {
+		this.expandTo(elements[i], false);
+	}
+	this.invalidate();
+	this.model.paint();
+};
+
+Area.prototype.expandTo = function(element, expand) {
+	element.setExpanded(expand);
+	if (element.parent!==null && element.parent!==undefined) {
+		this.expandTo(element.parent, true);
+	}
 };
 
 Area.prototype.expand = function(element, expand) {
@@ -103,7 +123,24 @@ Area.prototype.expand = function(element, expand) {
 	}
 };
 
-Area.prototype.findElementById = function(parent, id) {
+Area.prototype.findElementsById = function(parent, id) {
+	var elements = [];
+	if (parent.id==id) {
+		elements.push(parent);
+	}
+	if (parent.children!=null) {
+		var result = null;
+		for (var i=0; i<parent.children.length; i++) {
+			result = this.findElementsById(parent.children[i], id);
+			for (var j=0; j<result.length; j++) {
+				elements.push(result[j]);
+			}
+		}
+	}
+	return elements;
+};
+
+/*Area.prototype.findElementById = function(parent, id) {
 	if (parent.id==id) {
 		return parent;
 	}
@@ -116,7 +153,7 @@ Area.prototype.findElementById = function(parent, id) {
 			}
 		}
 	}
-};
+};*/
 
 Area.prototype.resetView = function() {
 	this.expandAll(false);
@@ -410,6 +447,17 @@ Area.prototype.deselectAll = function() {
 	}
 };
 
+Area.prototype.getElementPath = function(element) {
+	var path = [];
+	path.push(element.id);
+	if (element.parent!==null && element.parent!==undefined) {
+		var parentPath = this.getElementPath(element.parent);
+		for (var i=0; i<parentPath.length; i++) {
+			path.push(parentPath[i]);
+		} 
+	}
+	return path;
+};
 
 Area.prototype.getElements = function(element, visibleOnly) {
 	var result = []

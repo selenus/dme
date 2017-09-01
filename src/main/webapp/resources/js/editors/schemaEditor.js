@@ -6,7 +6,8 @@ $(document).ready(function() {
 		icons: {
 			warning: __util.getBaseUrl() + "resources/img/warning.png",
 			error: __util.getBaseUrl() + "resources/img/error.png",
-			reuse: __util.getBaseUrl() + "resources/img/recursion.png"
+			reusing: __util.getBaseUrl() + "resources/img/reuse.png",
+			reused: __util.getBaseUrl() + "resources/img/reuse.png"
 		}
 	});
 	$('[data-toggle="tooltip"]').tooltip( { container: 'body' });

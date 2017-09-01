@@ -10,11 +10,17 @@ SchemaEditor.prototype.initGraph = function() {
 			key: "Nonterminal",
 			primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
 			getContextMenuItems: function(element) { 
-				var items = [
-				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
-				    _this.graph.createContextMenuSeparator()
-				];
+				var items = [];
+				items.push(_this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key));
+				items.push(_this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key));
+				
+				if (element.reusing || element.reused) {
+					items.push(_this.graph.createContextMenuItem("showReused", "~eu.dariah.de.minfba.schereg.button.show_reused", "resize-full", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("modelIndividually", "~eu.dariah.de.minfba.schereg.button.model_individually", "asterisk", element, element.template.options.key));
+				}
+				
+				items.push(_this.graph.createContextMenuSeparator());
+
 				if (_this.schema.owned || _this.schema.write) {
 					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key));
@@ -30,6 +36,7 @@ SchemaEditor.prototype.initGraph = function() {
 					} else {
 						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
 					}
+					
 					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
 					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
@@ -186,6 +193,9 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "reload" : return this.reloadElementHierarchy();
 	    case "reset" : return this.area.resetView();
 	    
+	    case "showReused" : return this.showReuseOccurrences(elementId);
+	    case "modelIndividually" : return this.modelIndividually(elementId);
+	    
 	    case "exportSchema" : return this.exportSchema();
 	    case "importSchema" : return this.importSchema();
 	    case "createRoot" : return this.createRoot();
@@ -193,6 +203,35 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    default:
 	        throw new Error("Unknown tree action requested: " + action);
 	}  
+};
+
+SchemaEditor.prototype.showReuseOccurrences = function(elementId) {
+	this.area.ensureExpandedTo(elementId);
+	//this.area.selectElementsByIds(this.area.root, [elementId]);
+};
+
+SchemaEditor.prototype.modelIndividually = function(elementId) {
+	var _this = this;
+	bootbox.confirm({
+		title: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.head"),
+		message: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.body"),
+		callback: function(result) {
+			if(result) {
+				var path = _this.area.getElementPath(_this.graph.selectedItems[0]);
+				$.ajax({
+				    url: _this.pathname + "/element/" + _this.graph.selectedItems[0].id + "/async/clone",
+				    type: "POST",
+				    data: {path: path.reverse()},
+				    dataType: "json",
+				    //contentType: "application/json; charset=UTF-8",
+				    success: function(data) {
+				    	_this.reloadElementHierarchy();
+				    },
+				    error: __util.processServerError
+				});
+			}
+		}
+	});
 };
 
 SchemaEditor.prototype.loadElementHierarchy = function() {
@@ -322,11 +361,15 @@ SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSou
 				icon = this.options.icons.error;
 			} else if (elements[i].state==="WARNING") {
 				icon = this.options.icons.warning;
-			} else if (elements[i].state==="REUSE") {
-				icon = this.options.icons.reuse;
+			} else if (elements[i].state==="REUSING") {
+				icon = this.options.icons.reusing;
+			} else if (elements[i].state==="REUSED") {
+				icon = this.options.icons.reused;
 			}
 			var childProcessed = (processed || elements[i].pRoot) && !elements[i].disabled;
 			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon, childProcessed, elements[i].disabled);
+			e.reusing = elements[i].state==="REUSING";
+			e.reused = elements[i].state==="REUSED";
 			
 			this.generateTree(area, e, elements[i].childElements, isSource, childProcessed);
 		}

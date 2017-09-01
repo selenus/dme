@@ -253,6 +253,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 				}
 			}
 			if (saveElements.contains(e) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
+				r.setReuse(true);
 				logger.debug("Recursion at " + e.getId());
 			} else {
 				saveElements.add(e);
@@ -264,6 +265,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 				g.setFunctions(null);
 			}
 			if (saveGrammars.contains(me)) {
+				r.setReuse(true);
 				logger.debug("Recursion at " + g.getId());
 			} else {
 				saveGrammars.add(g);
@@ -276,6 +278,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 				f.setOutputElements(null);
 			}
 			if (saveFunctions.contains(f)) {
+				r.setReuse(true);
 				logger.debug("Recursion at " + f.getId());
 			} else {
 				saveFunctions.add(f);

@@ -29,4 +29,7 @@ public interface ReferenceDao extends BaseDao<Reference> {
 	public Identifiable findIdentifiableById(String id);
 
 	public Reference findById(Reference root, String referenceId);
+	
+	public List<Reference> findParentsByChildId(Reference reference, String childId, List<String> parentClassNames);
+	public List<Reference> findParentsByChildId(String rootId, String childId);
 }

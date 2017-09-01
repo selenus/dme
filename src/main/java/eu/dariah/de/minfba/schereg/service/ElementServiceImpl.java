@@ -16,6 +16,7 @@ import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.base.Label;
+import de.unibamberg.minf.dme.model.base.ModelElement;
 import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
@@ -23,8 +24,6 @@ import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
-import de.unibamberg.minf.dme.model.function.FunctionImpl;
-import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
@@ -37,7 +36,6 @@ import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
-import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 
 @Service
@@ -140,7 +138,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Override
 	public void saveOrReplaceRoot(String schemaId, Nonterminal element, AuthPojo auth) {
 		this.clearElementTree(schemaId, auth);
-		element.setId(null);;
+		element.setId(null);
 		
 		Reference r = identifiableService.saveHierarchy(element, auth);
 		Reference root = this.findReferenceById(schemaId);
@@ -386,5 +384,151 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Override
 	public void unsetSchemaProcessingRoot(String schemaId) {
 		elementDao.updateByQuery(Query.query(Criteria.where(DaoImpl.ENTITY_ID_FIELD).is(schemaId).and("_class").is(NonterminalImpl.class.getName())), Update.update("processingRoot", false));
+	}
+
+	@Override
+	public void cloneElement(String elementId, String[] path, AuthPojo auth) {
+		Element e = elementDao.findById(elementId);
+		
+		
+		
+		Reference rRoot = referenceDao.findById(e.getEntityId());
+		
+		Reference rCloneRef = null;
+		
+		List<Reference> parents = referenceDao.findParentsByChildId(rRoot, elementId, null);
+		for (Reference parent : parents) {
+			
+			for (String type : parent.getChildReferences().keySet()) {
+				for (Reference child : parent.getChildReferences().get(type)) {
+					if (child.getId().equals(elementId) && !child.isReuse()) {
+						rCloneRef = child;
+						break;
+					}
+				}
+			}
+			
+		}
+		
+		
+		
+		
+		Map<String, Integer> referenceUsageMap = new HashMap<String, Integer>();
+		this.countReferenceUsage(rRoot, referenceUsageMap);
+		
+		
+	
+		logger.debug(referenceUsageMap.get(elementId) + "");
+		
+		Reference rParent = rRoot;
+		Reference rChild;
+		
+		for (int i=0; i<path.length-1; i++) {
+			rParent = this.navigateChild(rParent, path[i]);
+		}
+		rChild = this.navigateChild(rParent, path[path.length-1]);
+		
+		List<Identifiable> elements = this.getAllElements(e.getEntityId());		
+		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
+		for (Identifiable idE : elements) {
+			elementMap.put(idE.getId(), idE);
+		}
+		Element r = (Element)fillElement(rCloneRef, elementMap);
+		
+		
+		ModelElement clonedE = this.cloneElementHierarchy(r, referenceUsageMap);
+		
+	
+		
+		Reference clonedR = identifiableService.saveHierarchy(clonedE, auth);
+		
+		
+		
+		logger.debug("Chosen parent " + rParent.getId());
+		logger.debug("Chosen child " + rChild.getId());
+		
+	
+		
+
+		
+	}
+	
+	private ModelElement cloneElementHierarchy(ModelElement me, Map<String, Integer> referenceUsageMap) {
+		if (me==null) {
+			return null;
+		}
+		
+		ModelElement clone = me.cloneElement();
+		if (Element.class.isAssignableFrom(me.getClass())) {
+			((Element)clone).setGrammars(this.cloneElementList(((Element)me).getGrammars(), referenceUsageMap));
+			if (Nonterminal.class.isAssignableFrom(me.getClass())) {
+				((Nonterminal)clone).setChildNonterminals(this.cloneElementList(((Nonterminal)me).getChildNonterminals(), referenceUsageMap));
+			} else {
+				((Label)clone).setSubLabels(this.cloneElementList(((Label)me).getSubLabels(), referenceUsageMap));
+			}
+		} else if (Grammar.class.isAssignableFrom(me.getClass())) {
+			((Grammar)clone).setFunctions(this.cloneElementList(((Grammar)me).getFunctions(), referenceUsageMap));
+		} else if (Function.class.isAssignableFrom(me.getClass())) {
+			((Function)clone).setOutputElements(this.cloneElementList(((Function)me).getOutputElements(), referenceUsageMap));
+		}
+		return clone;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	private <T extends ModelElement> List<T> cloneElementList(List<T> labels, Map<String, Integer> referenceUsageMap) {
+		List<T> clones = null;
+
+		if (labels!=null) {
+			clones = new ArrayList<T>(labels.size());
+			for (T childL : labels) {
+				if (referenceUsageMap.containsKey(childL.getId()) && referenceUsageMap.get(childL.getId()).intValue()>1) {
+					// Another reuse here: Cloning terminates
+					clones.add(childL);
+				} else {
+					clones.add((T)this.cloneElementHierarchy(childL.cloneElement(), referenceUsageMap));
+				}
+			}
+		}
+		return clones;
+	}
+	
+	
+	private void countReferenceUsage(Reference parent, Map<String, Integer> referenceUsageMap) {
+		if (!referenceUsageMap.containsKey(parent.getId())) {
+			referenceUsageMap.put(parent.getId(), new Integer(1));
+		} else {
+			referenceUsageMap.put(parent.getId(), new Integer(referenceUsageMap.get(parent.getId())+1));
+		}
+		if (parent.getChildReferences()!=null) {
+			for (String type : parent.getChildReferences().keySet()) {
+				for (Reference rChild : parent.getChildReferences().get(type)) {
+					countReferenceUsage(rChild, referenceUsageMap);
+				}
+			}
+		}
+	}
+	
+	private Reference navigateChild(Reference parent, String childId) {
+		for (String type : parent.getChildReferences().keySet()) {
+			for (Reference r : parent.getChildReferences().get(type)) {
+				if (r.getId().equals(childId)) {
+					return r;
+				}
+			}
+		}
+		return null;
+	}
+	
+	private void replaceClonedChild(Reference parent, String originalChildId, Reference clonedChild) {
+		for (String type : parent.getChildReferences().keySet()) {
+			Reference[] refs = parent.getChildReferences().get(type);
+			for (int i=0; i<refs.length; i++) {
+				if (refs[i].getId().equals(originalChildId)) {
+					refs[i] = clonedChild;
+					return;
+				}
+			}
+		}
 	}
 }

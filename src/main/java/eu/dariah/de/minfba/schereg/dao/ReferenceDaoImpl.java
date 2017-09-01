@@ -166,4 +166,46 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 		}
 		return null;
 	}
+
+	@Override
+	public List<Reference> findParentsByChildId(String rootId, String childId) {
+		return this.findParentsByChildId(this.findById(rootId), childId, null);
+	}
+	
+	@Override
+	public List<Reference> findParentsByChildId(Reference reference, String childId, List<String> parentClassNames) {
+		if (reference.getChildReferences()!=null) {
+			List<Reference> result = new ArrayList<Reference>();
+			for (String type : reference.getChildReferences().keySet()) {
+				if (reference.getChildReferences().get(type)!=null) {
+					for (Reference r : reference.getChildReferences().get(type)) {
+						if (r.getId().equals(childId)) {
+							result.add(reference); // Returning the parent, not the found element 
+						} else {
+							List<Reference> subRs = findParentsByChildId(r, childId, parentClassNames);
+							if (subRs!=null) {
+								for (Reference subR : subRs) {
+									
+									if (parentClassNames==null || parentClassNames.size()==0) {
+										result.add(subR); // No filter
+									} else if (subR.equals(r)) {
+										if (parentClassNames.contains(type)) {
+											result.add(subR); // Type matches
+										} /*else {
+											return reference; // Type does not match, try with next level
+										} */
+									} else {
+										result.add(subR); // Type already validated
+									}
+									
+								}
+							}
+						}
+					}
+				}
+			}
+			return result;
+		}
+		return null;
+	}
 }
