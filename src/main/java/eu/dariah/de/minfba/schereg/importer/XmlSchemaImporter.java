@@ -235,14 +235,14 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		}
 		
 		List<ModelElement> compareN = new ArrayList<ModelElement>(potentialRootElements);
-		
+		List<Nonterminal> checkedReuseN = new ArrayList<Nonterminal>();
 		// Check for each potential root if it is a child in any other potential tree
 		for (Nonterminal addRoot : potentialRootElements) {
 			for (ModelElement compareRoot : compareN) {
 				if (addRoot.equals(compareRoot)) {
 					continue;
 				}
-				if (this.getChildrenContainTerminalId(compareRoot, this.xmlNature.getTerminalId(addRoot.getId()))) {
+				if (this.getChildrenContainTerminalId(compareRoot, this.xmlNature.getTerminalId(addRoot.getId()), checkedReuseN)) {
 					compareN.remove(addRoot);
 					break;
 				}
@@ -339,7 +339,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		}
 	}
 	
-	private boolean getChildrenContainTerminalId(Identifiable parent, String terminalId) {
+	private boolean getChildrenContainTerminalId(Identifiable parent, String terminalId, List<Nonterminal> checkedReuseN) {
 		
 		if (this.xmlNature.getTerminalId(parent.getId()).equals(terminalId)) {
 			return true;
@@ -348,8 +348,11 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 			Nonterminal parentN = (Nonterminal)parent;
 			if (parentN.getChildNonterminals()!=null && !parentN.getChildNonterminals().isEmpty()) {
 				for (Nonterminal child : parentN.getChildNonterminals()) {
-					if (this.getChildrenContainTerminalId(child, terminalId)) {
-						return true;
+					if (!checkedReuseN.contains(child)) {
+						checkedReuseN.add(child);
+						if (this.getChildrenContainTerminalId(child, terminalId, checkedReuseN)) {
+							return true;
+						}	
 					}
 				}
 			}
