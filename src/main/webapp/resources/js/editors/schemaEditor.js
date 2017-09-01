@@ -82,6 +82,11 @@ var SchemaEditor = function(options) {
 	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar",
 	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured",
 	                              
+	                              "~eu.dariah.de.minfba.schereg.button.show_reused",
+	                              "~eu.dariah.de.minfba.schereg.button.model_individually",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.head",
+	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.body",
+	                              
 	                              "~eu.dariah.de.minfba.schereg.button.expand_all",
 	                              "~eu.dariah.de.minfba.schereg.button.collapse_all",
 	                              "~eu.dariah.de.minfba.schereg.button.expand_from_here",

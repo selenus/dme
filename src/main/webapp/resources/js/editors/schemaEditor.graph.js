@@ -16,7 +16,9 @@ SchemaEditor.prototype.initGraph = function() {
 				
 				if (element.reusing || element.reused) {
 					items.push(_this.graph.createContextMenuItem("showReused", "~eu.dariah.de.minfba.schereg.button.show_reused", "resize-full", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("modelIndividually", "~eu.dariah.de.minfba.schereg.button.model_individually", "asterisk", element, element.template.options.key));
+					if (element.reusing) {
+						items.push(_this.graph.createContextMenuItem("modelIndividually", "~eu.dariah.de.minfba.schereg.button.model_individually", "asterisk", element, element.template.options.key));
+					}
 				}
 				
 				items.push(_this.graph.createContextMenuSeparator());

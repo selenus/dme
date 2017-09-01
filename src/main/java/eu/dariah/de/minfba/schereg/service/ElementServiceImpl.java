@@ -22,8 +22,10 @@ import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import eu.dariah.de.minfba.schereg.dao.base.DaoImpl;
@@ -33,6 +35,7 @@ import eu.dariah.de.minfba.schereg.dao.interfaces.GrammarDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.MappedConceptDao;
 import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 import eu.dariah.de.minfba.schereg.exception.GenericScheregException;
+import eu.dariah.de.minfba.schereg.model.RightsContainer;
 import eu.dariah.de.minfba.schereg.serialization.Reference;
 import eu.dariah.de.minfba.schereg.service.base.BaseReferenceServiceImpl;
 import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
@@ -386,97 +389,120 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		elementDao.updateByQuery(Query.query(Criteria.where(DaoImpl.ENTITY_ID_FIELD).is(schemaId).and("_class").is(NonterminalImpl.class.getName())), Update.update("processingRoot", false));
 	}
 
-	@Override
-	public void cloneElement(String elementId, String[] path, AuthPojo auth) {
-		Element e = elementDao.findById(elementId);
-		
-		
-		
-		Reference rRoot = referenceDao.findById(e.getEntityId());
-		
-		Reference rCloneRef = null;
-		
-		List<Reference> parents = referenceDao.findParentsByChildId(rRoot, elementId, null);
+	private Reference findCloneReference(Reference root, String elementId) {
+		List<Reference> parents = referenceDao.findParentsByChildId(root, elementId, null);
 		for (Reference parent : parents) {
-			
 			for (String type : parent.getChildReferences().keySet()) {
 				for (Reference child : parent.getChildReferences().get(type)) {
 					if (child.getId().equals(elementId) && !child.isReuse()) {
-						rCloneRef = child;
-						break;
+						return child;
 					}
 				}
 			}
-			
 		}
+		return null;
+	}
+	
+	@Override
+	public void cloneElement(String elementId, String[] path, AuthPojo auth) {
+		Element e = elementDao.findById(elementId);
+		RightsContainer<Datamodel> m = schemaDao.findById(e.getEntityId());
+		Reference rRoot = referenceDao.findById(e.getEntityId());
 		
+		/* Find subtree that should be cloned. The subtree might be any other occurance 
+		 *  of the reused element or the to-clone element itself */
+		Reference rCloneRef = this.findCloneReference(rRoot, elementId);
 		
-		
-		
+		/* Within the whole datamodel count the occurence of any element
+		 *  This is required in order to determine when to stop clone
+		 *  (as soon as a reoccurring subelement is found) */
 		Map<String, Integer> referenceUsageMap = new HashMap<String, Integer>();
 		this.countReferenceUsage(rRoot, referenceUsageMap);
 		
-		
-	
-		logger.debug(referenceUsageMap.get(elementId) + "");
-		
-		Reference rParent = rRoot;
-		Reference rChild;
-		
-		for (int i=0; i<path.length-1; i++) {
-			rParent = this.navigateChild(rParent, path[i]);
-		}
-		rChild = this.navigateChild(rParent, path[path.length-1]);
-		
+
+		/* Load all elements of the datamodel in order to fill the element tree to clone
+		 *  TODO: We could also not load all elements but only the ones within the relevant rCloneRef */
 		List<Identifiable> elements = this.getAllElements(e.getEntityId());		
 		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
 		for (Identifiable idE : elements) {
 			elementMap.put(idE.getId(), idE);
 		}
-		Element r = (Element)fillElement(rCloneRef, elementMap);
+		
+		// Fill element hierarchy for our clone blueprint
+		Element eCloneRef = (Element)fillElement(rCloneRef, elementMap);
+		
+		/* Track association between original element ids and cloned nonterminals
+		 *  This is required to later associate the new nonterminal ids to 
+		 *  terminal ids in the datamodel natures */
+		Map<String, Nonterminal> originalIdClonedNonterminalMap = new HashMap<String, Nonterminal>();
+		
+		// Clone the hierarchy keeping 
+		ModelElement clonedE = this.cloneElementHierarchy(eCloneRef, referenceUsageMap, originalIdClonedNonterminalMap);
+		
+		// Save all cloned elements receiving a reference to put in the existing tree later 
+		Reference clonedR = identifiableService.saveHierarchy(clonedE, auth, true);
+		
+		// Reassign terminal ids to cloned nonterminals
+		this.assignTerminalIdsToClones(m.getElement(), originalIdClonedNonterminalMap);
+		
+		// Set references for the element to clone and its parent
+		Reference rParent = rRoot;
+		for (int i=0; i<path.length-1; i++) {
+			rParent = this.navigateChild(rParent, path[i]);
+		}
+		
+		// Replace old reused with cloned child in reference tree
+		this.replaceClonedChild(rParent, elementId, clonedR);
 		
 		
-		ModelElement clonedE = this.cloneElementHierarchy(r, referenceUsageMap);
-		
-	
-		
-		Reference clonedR = identifiableService.saveHierarchy(clonedE, auth);
-		
-		
-		
-		logger.debug("Chosen parent " + rParent.getId());
-		logger.debug("Chosen child " + rChild.getId());
-		
-	
-		
-
-		
+		// Save reference tree and schema (terminalId mappings)
+		this.referenceDao.save(rRoot);
+		this.schemaDao.save(m);
 	}
 	
-	private ModelElement cloneElementHierarchy(ModelElement me, Map<String, Integer> referenceUsageMap) {
+	private void assignTerminalIdsToClones(Datamodel m, Map<String, Nonterminal> originalIdClonedNonterminalMap) {
+		String terminalId;
+		for (String originalId : originalIdClonedNonterminalMap.keySet()) {
+			for (DatamodelNature sn : m.getNatures()) {
+				terminalId = sn.getTerminalId(originalId);
+				if (terminalId!=null) {
+					try {
+						sn.mapNonterminal(originalIdClonedNonterminalMap.get(originalId).getId(), terminalId);
+					} catch (MetamodelConsistencyException e1) {
+						logger.warn("Failed to reassign terminal to cloned nonterminal");
+					}
+				} else {
+					logger.warn("No terminal id detected for existing nonterminal [{}]", originalId);
+				}
+			}
+			
+		}
+	}
+	
+	private ModelElement cloneElementHierarchy(ModelElement me, Map<String, Integer> referenceUsageMap, Map<String, Nonterminal> originalIdClonedNonterminalMap) {
 		if (me==null) {
 			return null;
 		}
-		
 		ModelElement clone = me.cloneElement();
 		if (Element.class.isAssignableFrom(me.getClass())) {
-			((Element)clone).setGrammars(this.cloneElementList(((Element)me).getGrammars(), referenceUsageMap));
+			((Element)clone).setGrammars(this.cloneElementList(((Element)me).getGrammars(), referenceUsageMap, originalIdClonedNonterminalMap));
 			if (Nonterminal.class.isAssignableFrom(me.getClass())) {
-				((Nonterminal)clone).setChildNonterminals(this.cloneElementList(((Nonterminal)me).getChildNonterminals(), referenceUsageMap));
+				originalIdClonedNonterminalMap.put(me.getId(), (Nonterminal)clone);
+				((Nonterminal)clone).setChildNonterminals(this.cloneElementList(((Nonterminal)me).getChildNonterminals(), referenceUsageMap, originalIdClonedNonterminalMap));
 			} else {
-				((Label)clone).setSubLabels(this.cloneElementList(((Label)me).getSubLabels(), referenceUsageMap));
+				((Label)clone).setSubLabels(this.cloneElementList(((Label)me).getSubLabels(), referenceUsageMap, originalIdClonedNonterminalMap));
 			}
 		} else if (Grammar.class.isAssignableFrom(me.getClass())) {
-			((Grammar)clone).setFunctions(this.cloneElementList(((Grammar)me).getFunctions(), referenceUsageMap));
+			((Grammar)clone).setFunctions(this.cloneElementList(((Grammar)me).getFunctions(), referenceUsageMap, originalIdClonedNonterminalMap));
 		} else if (Function.class.isAssignableFrom(me.getClass())) {
-			((Function)clone).setOutputElements(this.cloneElementList(((Function)me).getOutputElements(), referenceUsageMap));
+			((Function)clone).setOutputElements(this.cloneElementList(((Function)me).getOutputElements(), referenceUsageMap, originalIdClonedNonterminalMap));
 		}
 		return clone;
 	}
 
 	
 	@SuppressWarnings("unchecked")
-	private <T extends ModelElement> List<T> cloneElementList(List<T> labels, Map<String, Integer> referenceUsageMap) {
+	private <T extends ModelElement> List<T> cloneElementList(List<T> labels, Map<String, Integer> referenceUsageMap, Map<String, Nonterminal> originalIdClonedNonterminalMap) {
 		List<T> clones = null;
 
 		if (labels!=null) {
@@ -486,7 +512,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 					// Another reuse here: Cloning terminates
 					clones.add(childL);
 				} else {
-					clones.add((T)this.cloneElementHierarchy(childL.cloneElement(), referenceUsageMap));
+					clones.add((T)this.cloneElementHierarchy(childL, referenceUsageMap, originalIdClonedNonterminalMap));
 				}
 			}
 		}

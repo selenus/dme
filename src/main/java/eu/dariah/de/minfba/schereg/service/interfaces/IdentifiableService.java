@@ -12,4 +12,5 @@ public interface IdentifiableService {
 	public List<Class<? extends ModelElement>> getAllowedSubelementTypes(String elementId);
 	public Identifiable findById(String id);
 	public Reference saveHierarchy(ModelElement me, AuthPojo auth);
+	public Reference saveHierarchy(ModelElement me, AuthPojo auth, boolean skipIdExisting);
 }

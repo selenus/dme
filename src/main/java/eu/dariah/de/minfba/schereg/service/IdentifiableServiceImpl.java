@@ -199,14 +199,18 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		}
 		return null;
 	}
-
+	
 	@Override
 	public Reference saveHierarchy(ModelElement me, AuthPojo auth) {
+		return this.saveHierarchy(me, auth, false);
+	}
 
+	@Override
+	public Reference saveHierarchy(ModelElement me, AuthPojo auth, boolean skipIdExisting) {
 		List<Element> saveElements = new ArrayList<Element>();
 		List<Grammar> saveGrammars = new ArrayList<Grammar>();
 		List<Function> saveFunctions = new ArrayList<Function>();
-		Reference r = this.saveElementsInHierarchy(me, saveElements, saveGrammars, saveFunctions);
+		Reference r = this.saveElementsInHierarchy(me, saveElements, saveGrammars, saveFunctions, skipIdExisting);
 		
 		if (!saveElements.isEmpty()) {
 			elementDao.saveNew(saveElements, auth.getUserId(), auth.getSessionId());
@@ -222,16 +226,19 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		return r;
 	}
 	
-	private Reference saveElementsInHierarchy(ModelElement me, List<Element> saveElements, List<Grammar> saveGrammars, List<Function> saveFunctions) {
+
+	
+	private Reference saveElementsInHierarchy(ModelElement me, List<Element> saveElements, List<Grammar> saveGrammars, List<Function> saveFunctions, boolean skipIdExisting) {
 		Reference r = new Reference();
 		Map<String, List<? extends ModelElement>> subElementsMap = new HashMap<String, List<? extends ModelElement>>();
 		
+		boolean skip = false;
 		if (me.getId()==null) {
 			me.setId(DaoImpl.createNewObjectId());
+		} else {
+			skip = skipIdExisting;
 		}
 		r.setId(me.getId());
-		
-		
 				
 		if (Element.class.isAssignableFrom(me.getClass())) {
 			Element e = (Element)me;
@@ -255,6 +262,9 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 			if (saveElements.contains(e) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
 				r.setReuse(true);
 				logger.debug("Recursion at " + e.getId());
+			} else if (skip) {
+				r.setReuse(true);
+				logger.debug("Skipping existing...implied recursion at " + e.getId());
 			} else {
 				saveElements.add(e);
 			}
@@ -292,7 +302,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 			for (String subclass : subElementsMap.keySet()) {
 				subreferences = new ArrayList<Reference>();
 				for (ModelElement childMe : subElementsMap.get(subclass)) {
-					subreferences.add(this.saveElementsInHierarchy(childMe, saveElements, saveGrammars, saveFunctions));
+					subreferences.add(this.saveElementsInHierarchy(childMe, saveElements, saveGrammars, saveFunctions, skipIdExisting));
 				}
 				r.getChildReferences().put(subclass, subreferences.toArray(new Reference[0]));
 			}
