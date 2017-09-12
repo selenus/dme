@@ -36,7 +36,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.FunctionService;
 import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 
 @Controller
-@RequestMapping(value={"/schema/editor/{entityId}/grammar/{grammarId}", "/mapping/editor/{entityId}/grammar/{grammarId}"})
+@RequestMapping(value={"/model/editor/{entityId}/grammar/{grammarId}", "/mapping/editor/{entityId}/grammar/{grammarId}"})
 public class GrammarEditorController extends BaseFunctionController {
 	
 	@Autowired private GrammarService grammarService;

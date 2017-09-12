@@ -243,7 +243,7 @@ SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
 				__translator.translate("~eu.dariah.de.minfba.schereg.button.import") + 
 			"</button> ");*/
 	buttonBar.append(
-			"<a href='" + __util.getBaseUrl() + "schema/editor/" + id + "' class='btn btn-link btn-sm' type='button'>" + 
+			"<a href='" + __util.getBaseUrl() + "model/editor/" + id + "' class='btn btn-link btn-sm' type='button'>" + 
 				__translator.translate("~eu.dariah.de.minfba.schereg.button.editor") + 
 			" <span class='glyphicon glyphicon-new-window'></span></a> ");
 	

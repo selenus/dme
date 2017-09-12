@@ -42,7 +42,7 @@ import eu.dariah.de.minfba.schereg.pojo.converter.ChangeSetPojoConverter;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value="/schema")
+@RequestMapping(value="/model")
 public class SchemaController extends BaseScheregController {
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	
@@ -81,7 +81,7 @@ public class SchemaController extends BaseScheregController {
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {		
 		model.addAttribute("schema", new DatamodelImpl());
-		model.addAttribute("actionPath", "/schema/async/save");
+		model.addAttribute("actionPath", "/model/async/save");
 		return "schema/form/edit";
 	}
 		

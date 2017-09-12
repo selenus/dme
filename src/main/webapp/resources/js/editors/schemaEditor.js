@@ -24,7 +24,7 @@ var SchemaEditor = function(options) {
 			write: $("#schema-write").val()==="true"
 	}
 	
-	this.pathname = __util.getBaseUrl() + "schema/editor/" + this.schema.id + "/";
+	this.pathname = __util.getBaseUrl() + "model/editor/" + this.schema.id + "/";
 	this.context = document.getElementById("schema-editor-canvas").getContext("2d");
 
 	this.layout = null;
@@ -171,15 +171,14 @@ SchemaEditor.prototype.initLayout = function() {
 			minHeight : 200
 		},
 		east : {
-			size : initEastClosed ? "0%" : "30%",
+			size : "30%",
 			paneSelector : ".layout-east",
 			initClosed : initEastClosed,
 		},
 		west : {
 			size : initWestClosed ? "40%" : "30%",
 			paneSelector : ".layout-west",
-			initClosed : initWestClosed,
-			onopen_start: function () { _this.sample_onPaneOpenStart(); }
+			initClosed : initWestClosed
 		},
 		south : { 
 			size : 100, 

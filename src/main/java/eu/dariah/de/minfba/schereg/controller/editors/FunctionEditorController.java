@@ -58,7 +58,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.MappedConceptService;
 import eu.dariah.de.minfba.schereg.service.interfaces.ReferenceService;
 
 @Controller
-@RequestMapping(value={"/schema/editor/{entityId}/function/{functionId}",
+@RequestMapping(value={"/model/editor/{entityId}/function/{functionId}",
 		"/mapping/editor/{entityId}/function/{functionId}"})
 public class FunctionEditorController extends BaseFunctionController {
 	@Autowired private ReferenceService referenceService;

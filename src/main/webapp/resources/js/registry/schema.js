@@ -35,7 +35,7 @@ var SchemaTable = function() {
 	this.createTable();
 };
 
-SchemaTable.prototype = new BaseTable(__util.getBaseUrl() + "schema/async/getData", "#schema-table-container");
+SchemaTable.prototype = new BaseTable(__util.getBaseUrl() + "model/async/getData", "#schema-table-container");
 
 SchemaTable.prototype.createTable = function() {
 	this._base.table = $('#schema-table').DataTable($.extend(true, {
@@ -96,11 +96,11 @@ SchemaTable.prototype.renderActionColumn = function(row, type, val, meta) {
 	
 	if (type==="display") {
 		if (row.entity.own || row.entity.write || row.entity.share) {
-			result += '<a href="' + __util.getBaseUrl() + 'schema/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
+			result += '<a href="' + __util.getBaseUrl() + 'model/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
 				__translator.translate("~eu.dariah.de.minfba.common.link.edit") +
 			'</a> ';
 		} else {
-			result += '<a href="' + __util.getBaseUrl() + 'schema/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
+			result += '<a href="' + __util.getBaseUrl() + 'model/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
 				__translator.translate("~eu.dariah.de.minfba.common.link.view") +
 			'</a> ';
 		}
@@ -129,7 +129,7 @@ SchemaTable.prototype.triggerEdit = function(schemaId) {
 	
 	var _this = this;
 	var form_identifier = "edit-schema-" + schemaId;
-	var url = __util.getBaseUrl() + "schema/" + (schemaId!=undefined ? ("forms/edit/" + schemaId) : "forms/add");
+	var url = __util.getBaseUrl() + "model/" + (schemaId!=undefined ? ("forms/edit/" + schemaId) : "forms/add");
 	
 	modalFormHandler = new ModalFormHandler({
 		formFullUrl: url,
@@ -153,7 +153,7 @@ SchemaTable.prototype.triggerPublish = function(schemaId) {
 	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_publish"), schemaId), function(result) {
 		if(result) {
 			$.ajax({
-		        url: __util.getBaseUrl() + "schema/async/publish/" + schemaId,
+		        url: __util.getBaseUrl() + "model/async/publish/" + schemaId,
 		        type: "GET",
 		        dataType: "json",
 		        success: function(data) { 
@@ -187,7 +187,7 @@ SchemaTable.prototype.triggerDelete = function(schemaId) {
 	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), schemaId), function(result) {
 		if(result) {
 			$.ajax({
-		        url: __util.getBaseUrl() + "schema/async/delete/" + schemaId,
+		        url: __util.getBaseUrl() + "model/async/delete/" + schemaId,
 		        type: "GET",
 		        dataType: "json",
 		        success: function(data) { 

@@ -33,7 +33,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value="/schema/editor/{schemaId}/terminal/{terminalId}")
+@RequestMapping(value="/model/editor/{schemaId}/terminal/{terminalId}")
 public class TerminalEditorController extends BaseScheregController {
 	@Autowired private ElementService elementService;
 	

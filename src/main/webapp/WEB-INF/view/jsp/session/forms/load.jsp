@@ -17,8 +17,9 @@
 				<select id="sessionId" name="sessionId" class="form-control">
 					<c:if test="${fn:length(savedSessions)>0}">
 						<optgroup label="<s:message code="~eu.dariah.de.minfba.schereg.model.session.persisted_sessions" />">
-							<c:forEach items="${savedSessions}" var="s">					
-								<option value="${s.id}"<c:if test="${s.id==currentSessionId}"> selected="selected"</c:if>>
+							<c:forEach items="${savedSessions}" var="s">
+								<c:if test="${s.id==currentSessionId}"><c:set var="selected">selected="selected"</c:set></c:if>	
+								<option ${selected} value="${s.id}">
 									<c:if test="${s.label!=null && s.label!=''}">${s.label} - </c:if>
 									<joda:format value="${s.created}" locale="${locale}" style="LM" />
 								</option>
@@ -28,7 +29,8 @@
 					<c:if test="${fn:length(transientSessions)>0}">
 						<optgroup label="<s:message code="~eu.dariah.de.minfba.schereg.model.session.temporary_sessions" />">
 							<c:forEach items="${transientSessions}" var="s">					
-								<option value="${s.id}"<c:if test="${s.id==currentSessionId}"> selected="selected"</c:if>>
+								<c:if test="${s.id==currentSessionId}"><c:set var="selected">selected="selected"</c:set></c:if>	
+								<option value="${s.id}" ${selected}>
 									<joda:format value="${s.created}" locale="${locale}" style="LM" />
 								</option>
 							</c:forEach>

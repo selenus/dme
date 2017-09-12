@@ -69,7 +69,7 @@ import eu.dariah.de.minfba.schereg.service.interfaces.GrammarService;
 import eu.dariah.de.minfba.schereg.service.interfaces.IdentifiableService;
 
 @Controller
-@RequestMapping(value="/schema/editor/{entityId}/")
+@RequestMapping(value="/model/editor/{entityId}/")
 public class SchemaEditorController extends BaseMainEditorController implements InitializingBean {	
 	@Autowired private SchemaImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
@@ -135,7 +135,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			return null;
 		}
 		RightsContainer<Datamodel> schema = schemaService.findByIdAndAuth(entityId, authInfoHelper.getAuth(request));
-		model.addAttribute("actionPath", "/schema/async/save");
+		model.addAttribute("actionPath", "/model/async/save");
 		model.addAttribute("schema", schema.getElement());
 		model.addAttribute("readOnly", schema.isReadOnly());
 		return "schema/form/edit";
@@ -188,7 +188,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/import");
+		model.addAttribute("actionPath", "/model/editor/" + entityId + "/async/import");
 		model.addAttribute("schema", schemaService.findSchemaById(entityId));
 		if (elementId!=null){
 			model.addAttribute("elementId", elementId);
@@ -212,7 +212,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		}
 		model.addAttribute("element", new NonterminalImpl());
 		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(entityId));
-		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/async/saveNewRoot");
+		model.addAttribute("actionPath", "/model/editor/" + entityId + "/async/saveNewRoot");
 		return "elementEditor/form/edit_nonterminal";
 	}
 	

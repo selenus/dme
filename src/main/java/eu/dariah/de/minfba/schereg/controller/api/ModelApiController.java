@@ -27,9 +27,9 @@ import eu.dariah.de.minfba.schereg.service.interfaces.ElementService;
 import eu.dariah.de.minfba.schereg.service.interfaces.SchemaService;
 
 @Controller
-@RequestMapping(value="/api/schemas")
-public class SchemaApiController extends BaseApiController {
-	protected static final Logger logger = LoggerFactory.getLogger(SchemaApiController.class);
+@RequestMapping(value="/api/models")
+public class ModelApiController extends BaseApiController {
+	protected static final Logger logger = LoggerFactory.getLogger(ModelApiController.class);
 	
 	@Autowired protected AuthInfoHelper authInfoHelper;
 	
