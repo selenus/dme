@@ -13,4 +13,5 @@ public interface IdentifiableService {
 	public Identifiable findById(String id);
 	public Reference saveHierarchy(ModelElement me, AuthPojo auth);
 	public Reference saveHierarchy(ModelElement me, AuthPojo auth, boolean skipIdExisting);
+	public List<Reference> saveHierarchies(List<ModelElement> elements, AuthPojo auth);
 }

@@ -179,25 +179,29 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		if (root!=null) {
 			elementService.clearElementTree(importedSchema.getId(), auth);
 		}
-		List<Reference> rootNonterminals = new ArrayList<Reference>();
 		
-		Reference rootNonterminal = identifiableService.saveHierarchy(root, auth);
+		List<ModelElement> rootElements = new ArrayList<ModelElement>();
+		rootElements.add(root);
+
+		if (additionalRootElements!=null && additionalRootElements.size()>0) {
+			rootElements.addAll(additionalRootElements);
+		}
+		
+		List<Reference> rootRefs = identifiableService.saveHierarchies(rootElements, auth);
 		
 		//Reference rootNonterminal = elementService.saveElementHierarchy(root, auth);
-		rootNonterminal.setRoot(true);
-		
-		rootNonterminals.add(rootNonterminal);
-		/*if (additionalRootElements!=null && additionalRootElements.size()>0) {
-			for (Nonterminal addRoot : additionalRootElements) {
-				rootNonterminals.add(elementService.saveElementHierarchy(addRoot, auth));
+		for (Reference rootRef : rootRefs) {
+			rootRef.setRoot(false);
+			if (rootRef.getId().equals(root.getId())) {
+				rootRef.setRoot(true);
 			}
-		}*/
+		}
 		
 		Datamodel s = schemaService.findSchemaById(importedSchema.getId());
 		for (DatamodelNature n : importedSchema.getNatures()) {
 			s.addOrReplaceNature(n);
 		}
-		schemaService.saveSchema(s, rootNonterminals, auth);
+		schemaService.saveSchema(s, rootRefs, auth);
 		
 		
 		

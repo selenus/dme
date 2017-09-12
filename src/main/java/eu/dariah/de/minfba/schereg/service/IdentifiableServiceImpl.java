@@ -204,6 +204,31 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 	public Reference saveHierarchy(ModelElement me, AuthPojo auth) {
 		return this.saveHierarchy(me, auth, false);
 	}
+	
+	@Override
+	public List<Reference> saveHierarchies(List<ModelElement> elements, AuthPojo auth) {
+		List<Reference> references = new ArrayList<Reference>();
+		List<Element> saveElements = new ArrayList<Element>();
+		List<Grammar> saveGrammars = new ArrayList<Grammar>();
+		List<Function> saveFunctions = new ArrayList<Function>();
+		
+		for (ModelElement me : elements) {
+			references.add(this.saveElementsInHierarchy(me, saveElements, saveGrammars, saveFunctions, true));
+		}
+		
+		if (!saveElements.isEmpty()) {
+			elementDao.saveNew(saveElements, auth.getUserId(), auth.getSessionId());
+		}
+		if (!saveGrammars.isEmpty()) {
+			for (Grammar g : saveGrammars) {
+				grammarService.saveGrammar((GrammarImpl)g, auth);
+			}
+		}
+		if (!saveFunctions.isEmpty()) {
+			functionDao.saveNew(saveFunctions, auth.getUserId(), auth.getSessionId());
+		}
+		return references;
+	}
 
 	@Override
 	public Reference saveHierarchy(ModelElement me, AuthPojo auth, boolean skipIdExisting) {
