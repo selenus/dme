@@ -72,7 +72,7 @@ public class ElementEditorController extends BaseScheregController {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}		
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/assignChild");
+		model.addAttribute("actionPath", "/model/editor/" + schemaId + "/element/" + elementId + "/assignChild");
 		return "elementEditor/form/assign_child";
 	}
 	
@@ -88,10 +88,10 @@ public class ElementEditorController extends BaseScheregController {
 		}
 		if (elem instanceof Nonterminal) {
 			model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
-			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");
+			model.addAttribute("actionPath", "/model/editor/" + schemaId + "/element/" + elementId + "/async/saveNonterminal");
 			return "elementEditor/form/edit_nonterminal";
 		} else {
-			model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveLabel");
+			model.addAttribute("actionPath", "/model/editor/" + schemaId + "/element/" + elementId + "/async/saveLabel");
 			return "elementEditor/form/edit_label";
 		}
 	}
@@ -105,7 +105,7 @@ public class ElementEditorController extends BaseScheregController {
 		}
 		model.addAttribute("element", new NonterminalImpl(schemaId, null));
 		model.addAttribute("availableTerminals", schemaService.getAvailableTerminals(schemaId));
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewNonterminal");
+		model.addAttribute("actionPath", "/model/editor/" + schemaId + "/element/" + elementId + "/async/saveNewNonterminal");
 		return "elementEditor/form/edit_nonterminal";
 	}
 	
@@ -117,7 +117,7 @@ public class ElementEditorController extends BaseScheregController {
 			return null;
 		}
 		model.addAttribute("element", new LabelImpl(schemaId, null));
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewLabel");
+		model.addAttribute("actionPath", "/model/editor/" + schemaId + "/element/" + elementId + "/async/saveNewLabel");
 		return "elementEditor/form/edit_label";
 	}
 	
@@ -129,7 +129,7 @@ public class ElementEditorController extends BaseScheregController {
 			return null;
 		}
 		model.addAttribute("grammar", new GrammarImpl(schemaId, null));
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/element/" + elementId + "/async/saveNewGrammar");
+		model.addAttribute("actionPath", "/model/editor/" + schemaId + "/element/" + elementId + "/async/saveNewGrammar");
 		return "grammarEditor/form/new";
 	}
 	

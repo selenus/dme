@@ -91,7 +91,7 @@ public class TerminalEditorController extends BaseScheregController {
 			}
 		}
 		model.addAttribute("availableNamespaces", availableNamespaces);
-		model.addAttribute("actionPath", "/schema/editor/" + schemaId + "/terminal/" + terminal.getId() + "/async/saveTerminal");
+		model.addAttribute("actionPath", "/model/editor/" + schemaId + "/terminal/" + terminal.getId() + "/async/saveTerminal");
 		return "elementEditor/form/edit_terminal";
 	}
 	

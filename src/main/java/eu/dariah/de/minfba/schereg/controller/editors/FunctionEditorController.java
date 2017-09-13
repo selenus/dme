@@ -191,7 +191,7 @@ public class FunctionEditorController extends BaseFunctionController {
 		model.addAttribute("sampleInputMap", sampleInputs);		
 		model.addAttribute("function", functionService.findById(functionId));
 		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
-		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/function/" + functionId + "/async/save");
+		model.addAttribute("actionPath", "/model/editor/" + entityId + "/function/" + functionId + "/async/save");
 		return "functionEditor/form/edit";
 		
 	}

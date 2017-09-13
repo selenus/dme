@@ -464,6 +464,6 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 
 	@Override
 	protected String getPrefix() {
-		return "/schema/editor/";
+		return "/model/editor/";
 	}
 }

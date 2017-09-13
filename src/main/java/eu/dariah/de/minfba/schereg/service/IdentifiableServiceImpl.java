@@ -53,17 +53,17 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 			if (entityType.equals(Nonterminal.class)) {
 				result.addAll(elementDao.find(Query.query((new Criteria()).andOperator(
 						Criteria.where("entityId").is(schemaId),
-						Criteria.where("_class").is(Nonterminal.class.getName()),
+						//Criteria.where("_class").is(NonterminalImpl.class.getName()),
 						Criteria.where("name").regex(searchPattern)))));
 			} else if (entityType.equals(Label.class)) {
 				result.addAll(elementDao.find(Query.query((new Criteria()).andOperator(
 						Criteria.where("entityId").is(schemaId),
-						Criteria.where("_class").is(Label.class.getName()),
+						//Criteria.where("_class").is(LabelImpl.class.getName()),
 						Criteria.where("name").regex(searchPattern)))));
 			} else if (entityType.equals(GrammarImpl.class)) {
 				result.addAll(grammarDao.find(Query.query((new Criteria()).andOperator(
 						Criteria.where("entityId").is(schemaId), 
-						Criteria.where("grammarName").regex(searchPattern)))));
+						Criteria.where("name").regex(searchPattern)))));
 			} else if (entityType.equals(FunctionImpl.class)) {
 				result.addAll(functionDao.find(Query.query((new Criteria()).andOperator(
 						Criteria.where("entityId").is(schemaId), 
@@ -213,7 +213,7 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		List<Function> saveFunctions = new ArrayList<Function>();
 		
 		for (ModelElement me : elements) {
-			references.add(this.saveElementsInHierarchy(me, saveElements, saveGrammars, saveFunctions, true));
+			references.add(this.saveElementsInHierarchy(me, saveElements, saveGrammars, saveFunctions, false));
 		}
 		
 		if (!saveElements.isEmpty()) {

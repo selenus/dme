@@ -84,7 +84,7 @@ public class GrammarEditorController extends BaseFunctionController {
 			return null;
 		}
 		model.addAttribute("function", new FunctionImpl(entityId, null));
-		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/saveNewFunction");
+		model.addAttribute("actionPath", "/model/editor/" + entityId + "/grammar/" + grammarId + "/async/saveNewFunction");
 		return "functionEditor/form/new";
 	}
 	
@@ -136,7 +136,7 @@ public class GrammarEditorController extends BaseFunctionController {
 		}
 		model.addAttribute("grammar", g);	
 		model.addAttribute("readonly", this.getIsReadOnly(entity, auth.getUserId()));
-		model.addAttribute("actionPath", "/schema/editor/" + entityId + "/grammar/" + grammarId + "/async/save");
+		model.addAttribute("actionPath", "/model/editor/" + entityId + "/grammar/" + grammarId + "/async/save");
 		return "grammarEditor/form/edit";
 		
 	}
