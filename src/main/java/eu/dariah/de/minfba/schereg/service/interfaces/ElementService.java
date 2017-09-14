@@ -41,4 +41,5 @@ public interface ElementService extends BaseService {
 		
 	public void unsetSchemaProcessingRoot(String schemaId);
 	public void cloneElement(String elementId, String[] path, AuthPojo auth);
+	public void moveMainReferencesToProcessedRoot(Reference entityReference);
 }

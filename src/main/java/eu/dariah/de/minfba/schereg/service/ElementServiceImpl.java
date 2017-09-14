@@ -91,6 +91,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 				}
 				if (child!=null && parent!=null) {
 					addChildReference(parent, child);
+					this.moveMainReferencesToProcessedRoot(rootRef);
 					saveRootReference(rootRef);
 					return parent;
 				}
@@ -98,7 +99,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		return null;
 	}
-
+	
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
 		Reference reference = this.findReferenceById(schemaId);
@@ -458,6 +459,88 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		// Save reference tree and schema (terminalId mappings)
 		this.referenceDao.save(rRoot);
 		this.schemaDao.save(m);
+	}
+	
+	@Override
+	public void moveMainReferencesToProcessedRoot(Reference entityReference) {
+		if (entityReference.getChildReferences()==null) {
+			return;
+		}
+		
+		Reference rootRef = null;
+		List<Reference> altRoots = new ArrayList<Reference>();
+		for (String type : entityReference.getChildReferences().keySet()) {
+			for (Reference rChild : entityReference.getChildReferences().get(type)) {
+				// Either first or designated root is assumed root
+				if (rootRef==null || rChild.isRoot()) {
+					rootRef = rChild;
+				} else {
+					altRoots.add(rChild);
+				}
+			}
+		}
+		
+		if (rootRef==null || altRoots.size()==0) {
+			// Nothing to move
+			return;
+		}
+		
+		for (String type : rootRef.getChildReferences().keySet()) {
+			for (Reference r : rootRef.getChildReferences().get(type)) {
+				this.detectAndMoveMissingReference(r, rootRef, rootRef, altRoots);
+			}
+		}
+		
+	}
+	
+	private void detectAndMoveMissingReference(Reference r, Reference parent, Reference root, List<Reference> altRoots) {
+		
+		if (r.isReuse()) {
+			Reference rCloneRef = this.findReusedReferenceParent(root, r.getId());
+			Reference rSwitch;
+			if (rCloneRef==null) {
+				// Need to move
+				for (Reference altRoot : altRoots) {
+					rCloneRef = this.findReusedReferenceParent(altRoot, r.getId());
+					if (rCloneRef!=null) {
+						rSwitch = this.navigateChild(rCloneRef, r.getId());
+						
+						this.replaceClonedChild(rCloneRef, r.getId(), r);
+						this.replaceClonedChild(parent, r.getId(), rSwitch);
+						
+						logger.debug("Switched hidden reused nonterminal reference to visible position");
+					}
+				}
+			}
+			
+		}
+		
+		if (r.getChildReferences()!=null && r.getChildReferences().size()>0) {
+			for (String type : r.getChildReferences().keySet()) {
+				for (Reference rChild : r.getChildReferences().get(type)) {
+					this.detectAndMoveMissingReference(rChild, r, root, altRoots);
+				}
+			}
+		}
+		
+	}
+	
+	private Reference findReusedReferenceParent(Reference searchRoot, String elementId) {
+		if (searchRoot.getChildReferences()!=null) {
+			Reference r;
+			for (String type : searchRoot.getChildReferences().keySet()) {
+				for (Reference rChild : searchRoot.getChildReferences().get(type)) {
+					if (rChild.getId().equals(elementId) && !rChild.isReuse()) {
+						return searchRoot;
+					}
+					r = this.findReusedReferenceParent(rChild, elementId);
+					if (r!=null) {
+						return r;
+					}
+				}
+			}
+		}
+		return null;
 	}
 	
 	private void assignTerminalIdsToClones(Datamodel m, Map<String, Nonterminal> originalIdClonedNonterminalMap) {
