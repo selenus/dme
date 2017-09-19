@@ -362,7 +362,7 @@ SchemaEditor.prototype.editGrammar = function() {
 		                ],
 		setupCallback: function(modal) { 
 			grammarEditor = new GrammarEditor(modal, {
-				pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
+				pathPrefix: __util.getBaseUrl() + "model/editor/" + _this.schema.id,
 				entityId : _this.schema.id,
 				grammarId : _this.graph.selectedItems[0].id
 			}); 
@@ -387,7 +387,7 @@ SchemaEditor.prototype.editFunction = function() {
 		                ],
         setupCallback: function(modal) { 
         	functionEditor = new FunctionEditor(modal, {
-				pathPrefix: __util.getBaseUrl() + "schema/editor/" + _this.schema.id,
+				pathPrefix: __util.getBaseUrl() + "model/editor/" + _this.schema.id,
 				entityId : _this.schema.id,
 				functionId : _this.graph.selectedItems[0].id
 			}); 
@@ -635,7 +635,7 @@ SchemaEditor.prototype.triggerPublish = function() {
 	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_publish"), _this.schema.id), function(result) {
 		if(result) {
 			$.ajax({
-		        url: __util.getBaseUrl() + "schema/async/publish/" + _this.schema.id,
+		        url: __util.getBaseUrl() + "model/async/publish/" + _this.schema.id,
 		        type: "GET",
 		        dataType: "json",
 		        success: function(data) { 

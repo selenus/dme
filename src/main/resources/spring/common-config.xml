@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 	
 	<bean id="configLocation" class="java.lang.String">
-		<constructor-arg value="file:${schereg.yml}" />
+		<constructor-arg value="file:${dme.yml}" />
 	</bean>
 	<bean id="properties" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">
 	    <property name="resources" ref="configLocation"/>

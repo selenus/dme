@@ -24,8 +24,8 @@ var MappingEditor = function(options) {
 	this.mappingWrite = $("#mapping-write").val()==="true";
 	
 	this.mappingPath = __util.getBaseUrl() + "mapping/editor/" + this.mappingId + "/";
-	this.sourcePath = __util.getBaseUrl() + "schema/editor/" + this.sourceId + "/";
-	this.targetPath = __util.getBaseUrl() + "schema/editor/" + this.targetId + "/";
+	this.sourcePath = __util.getBaseUrl() + "model/editor/" + this.sourceId + "/";
+	this.targetPath = __util.getBaseUrl() + "model/editor/" + this.targetId + "/";
 	
 	this.layoutContainer = $(".editor-layout-container");
 	this.editorContainer = $(".editor-container");
