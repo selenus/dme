@@ -6,9 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.base.ModelElement;
-import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
@@ -22,6 +20,8 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	private String rootElementName; 
 	private String rootElementType;
 	private String elementId;
+	
+	private boolean keepImportedIds;
 	
 	private AuthPojo auth;
 	
@@ -52,6 +52,9 @@ public abstract class BaseSchemaImporter implements SchemaImporter {
 	
 	protected SchemaImportListener getListener() { return listener; }
 	@Override public void setListener(SchemaImportListener listener) { this.listener = listener; }
+	
+	@Override public boolean isKeepImportedIds() { return keepImportedIds; }
+	@Override public void setKeepImportedIds(boolean keepImportedIds) { this.keepImportedIds = keepImportedIds; }
 	
 	@Override public void setAuth(AuthPojo auth) { this.auth = auth; }
 	@Override public AuthPojo getAuth() { return this.auth; }

@@ -30,9 +30,7 @@ import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
-import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
-import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
 import eu.dariah.de.minfba.core.util.Stopwatch;
 import eu.dariah.de.minfba.schereg.service.ElementServiceImpl;
@@ -47,7 +45,7 @@ import eu.dariah.de.minfba.schereg.service.IdentifiableServiceImpl;
  */
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImporter {
+public class JsonDatamodelImporter extends BaseSchemaImporter implements SchemaImporter {
 
 	@Autowired private ObjectMapper objectMapper;
 	
@@ -73,11 +71,10 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 	@Override
 	public List<? extends ModelElement> getElementsByTypes(List<Class<? extends ModelElement>> allowedSubtreeRoots) {
 		try {
-			DatamodelContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), DatamodelContainer.class);
-
+			DatamodelContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), DatamodelContainer.class);			
 			return IdentifiableServiceImpl.extractAllByTypes(s.getRoot(), allowedSubtreeRoots);
 		} catch (Exception e) {
-			logger.error("Failed to deserialize JSON schema", e);
+			logger.error("Attempting legacy schema deserialization", e);
 			return null;
 		}
 	}
@@ -117,6 +114,7 @@ public class JsonSchemaImporter extends BaseSchemaImporter implements SchemaImpo
 			final JsonParser parser = objectMapper.getFactory().createParser(new File(this.getSchemaFilePath()));
 			while (parser.nextToken() != null) {
 			}
+			objectMapper.readValue(new File(this.getSchemaFilePath()), DatamodelContainer.class);
 			validJson = true;
 		} catch (Exception e) {
 			validJson = false;			

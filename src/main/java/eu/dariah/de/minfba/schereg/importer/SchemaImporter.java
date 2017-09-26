@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.base.ModelElement;
-import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
@@ -31,5 +30,7 @@ public interface SchemaImporter extends Runnable {
 	
 	public List<? extends Identifiable> getPossibleRootElements();
 	public List<? extends ModelElement> getElementsByTypes(List<Class<? extends ModelElement>> allowedSubtreeRoots);
-
+	
+	public boolean isKeepImportedIds();
+	public void setKeepImportedIds(boolean keepImportedIds);
 }
