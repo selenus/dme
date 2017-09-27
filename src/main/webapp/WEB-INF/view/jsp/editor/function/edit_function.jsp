@@ -24,7 +24,7 @@
 					<fieldset<c:if test="${readonly}"> disabled</c:if>>
 						<label class="control-label" for="function_name"><s:message code="~de.unibamberg.minf.dme.model.function.name" />:</label>
 						<div>
-							<sf:input path="name" class="form-control function_name" />
+							<sf:input path="name" id="functionImpl_name" class="form-control function_name" />
 							<sf:errors path="name" cssClass="error" />
 						</div>
 					</fieldset>

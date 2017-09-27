@@ -21,7 +21,7 @@
 					<fieldset<c:if test="${readonly}"> disabled</c:if>>
 						<label class="control-label" for="name"><s:message code="~de.unibamberg.minf.dme.model.grammar.name" />:</label>
 						<div>
-							<sf:input path="name" class="form-control" />
+							<sf:input path="name" id="grammarImpl_name" class="form-control" />
 							<sf:errors path="name" cssClass="error" />
 						</div>
 					</fieldset>

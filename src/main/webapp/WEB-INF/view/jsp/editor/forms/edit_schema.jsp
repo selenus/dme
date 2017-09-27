@@ -14,7 +14,6 @@
 				<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.schema.create" /></h3>
 			</c:otherwise>
 		</c:choose>		
-		<sf:hidden path="id" />
 	</div>
 	<div class="form-content">
 		<div class="form-group">
@@ -35,6 +34,7 @@
 			    </div>
 				<div class="alert alert-sm alert-warning" role="alert"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.id_rename_hint" /></div>
 				<sf:errors path="id" cssClass="error" />
+				<input type="hidden" name="currentId" id="datamodelImpl_currentId" value="${datamodelImpl.id}" />
 			</div>
 		</div>
 		<div class="form-group">

@@ -148,8 +148,8 @@ public class GrammarEditorController extends BaseFunctionController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/save")
-	public @ResponseBody ModelActionPojo saveGrammar(@PathVariable String entityId, @Valid GrammarImpl grammar, 
-			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveGrammar(@PathVariable String entityId, @Valid GrammarImpl grammar, BindingResult bindingResult, 
+			@RequestParam(value="lexer-parser-options", defaultValue="combined") String lexerParserOption, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {

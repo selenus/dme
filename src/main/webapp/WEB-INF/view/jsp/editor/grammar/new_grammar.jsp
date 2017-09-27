@@ -15,7 +15,7 @@
 		<div class="form-group">
 			<label class="col-sm-3 control-label" for="grammar_name"><s:message code="~de.unibamberg.minf.dme.model.grammar.name" />:</label>
 			<div class="col-sm-8">
-				<sf:input path="name" class="form-control" id="grammar_name" />
+				<sf:input path="name" class="form-control" id="grammarImpl_name" />
 				<sf:errors path="name" cssClass="error" />
 			</div>
 		</div>		

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -87,9 +88,9 @@ public class SchemaController extends BaseScheregController {
 		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl datamodelImpl, BindingResult bindingResult, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl datamodelImpl, BindingResult bindingResult, @RequestParam String currentId, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getUserCanWriteEntity(datamodelImpl.getId(), auth.getUserId())) {
+		if(!schemaService.getUserCanWriteEntity(currentId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
@@ -97,11 +98,11 @@ public class SchemaController extends BaseScheregController {
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (!result.isSuccess()) {
 			return result;
-		} else if (datamodelImpl.getId().isEmpty()) {
+		} else if (currentId.isEmpty()) {
 			datamodelImpl.setId(null);
 		}
 		
-		RightsContainer<Datamodel> existSchema = schemaService.findByIdAndAuth(datamodelImpl.getId(), auth); 
+		RightsContainer<Datamodel> existSchema = schemaService.findByIdAndAuth(currentId, auth); 
 		Datamodel saveSchema = existSchema==null ? null : existSchema.getElement();
 		boolean draft = existSchema==null ? true : existSchema.isDraft();
 		

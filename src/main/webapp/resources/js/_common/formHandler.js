@@ -355,7 +355,7 @@ ModalFormHandler.prototype.processSubmitResponse = function(data) {
 		if (data.fieldErrors !== null) {
 			$(data.fieldErrors).each(function() {
 				$(_this.form).find("#" + this.field).closest(".form-group").addClass("has-error");
-				var msgContainer = $(_this.form).find("#" + this.field).closest("div");
+				var msgContainer = $(_this.form).find("#" + this.field).closest("div:not('.input-group')");
 				$(this.errors).each(function() {
     				msgContainer.append($("<span class='help-block'>").text(this));            				
     			});
