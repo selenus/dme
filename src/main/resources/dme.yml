@@ -1,9 +1,8 @@
-path: /tmp/
-
 paths:
-  logging: /data/_srv/schereg/log
-  grammars: /data/_srv/schereg/grammars
-  models: /data/_srv/schereg/models
+  main: /data/_srv/dme
+  logging: ${paths.main}/log
+  grammars: ${paths.main}/grammars
+  models: ${paths.main}/models
   tmpUploadDir: /tmp/schereg_uploads/
   sampleFilesDir: /tmp/schereg_sample_files/
 
