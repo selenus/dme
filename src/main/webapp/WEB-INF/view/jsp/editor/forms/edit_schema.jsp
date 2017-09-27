@@ -4,10 +4,10 @@
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 
 <s:url value="${actionPath}" var="saveUrl" />
-<sf:form method="POST" action="${saveUrl}" modelAttribute="schema" class="form-horizontal" >
+<sf:form method="POST" action="${saveUrl}" modelAttribute="datamodelImpl" class="form-horizontal" >
 	<div class="form-header">
 		<c:choose>
-			<c:when test="${schema.id!=null && schema.id!=''}">
+			<c:when test="${datamodelImpl.id!=null && datamodelImpl.id!=''}">
 				<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.schema.edit" /></h3>
 			</c:when>
 			<c:otherwise>
@@ -18,16 +18,29 @@
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="control-label col-sm-3" for="schema_name"><s:message code="~de.unibamberg.minf.dme.model.schema.label" />:</label>
+			<label class="control-label col-sm-3" for="datamodelImpl_name"><s:message code="~de.unibamberg.minf.dme.model.schema.label" />:</label>
 			<div class="col-sm-9">
-				<sf:input path="name" class="form-control" id="schema_name" />
+				<sf:input path="name" class="form-control" id="datamodelImpl_name" />
 				<sf:errors path="name" cssClass="error" />
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="control-label col-sm-3" for="schema_description"><s:message code="~de.unibamberg.minf.dme.model.schema.description" />:</label>
+			<label class="control-label col-sm-3" for="datamodelImpl_id"><s:message code="~de.unibamberg.minf.common.model.id" />:</label>
 			<div class="col-sm-9">
-				<sf:textarea path="description" class="form-control" rows="4" id="schema_description" />
+				<div class="input-group">
+			      <input type="text" class="form-control" id="datamodelImpl_id" name="id" value="${datamodelImpl.id}" disabled="disabled" />
+			      <span class="input-group-btn">
+			        <button class="btn btn-default" onclick="$('#datamodelImpl_id').removeProp('disabled');" type="button"><s:message code="~de.unibamberg.minf.common.link.edit" /></button>
+			      </span>
+			    </div>
+				<div class="alert alert-sm alert-warning" role="alert"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.id_rename_hint" /></div>
+				<sf:errors path="id" cssClass="error" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="control-label col-sm-3" for="datamodelImpl_description"><s:message code="~de.unibamberg.minf.dme.model.schema.description" />:</label>
+			<div class="col-sm-9">
+				<sf:textarea path="description" class="form-control" rows="4" id="datamodelImpl_description" />
 			</div>
 		</div>
 		<div class="form-group">
@@ -38,8 +51,8 @@
 			</div>
 		</div>	
 	</div>
-	<div class="form-footer form-group">
-		<div class="col-sm-12">
+	<div class="form-footer control-group">
+		<div class="controls">
 			<button class="btn btn-default cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.cancel" /></button>
 			<button class="btn btn-primary start form-btn-submit" type="submit"><s:message code="~de.unibamberg.minf.common.link.save" /></button>
 		</div>

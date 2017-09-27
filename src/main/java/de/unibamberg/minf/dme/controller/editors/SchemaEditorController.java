@@ -136,7 +136,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		}
 		RightsContainer<Datamodel> schema = schemaService.findByIdAndAuth(entityId, authInfoHelper.getAuth(request));
 		model.addAttribute("actionPath", "/model/async/save");
-		model.addAttribute("schema", schema.getElement());
+		model.addAttribute("datamodelImpl", schema.getElement());
 		model.addAttribute("readOnly", schema.isReadOnly());
 		return "schema/form/edit";
 	}

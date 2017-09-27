@@ -29,7 +29,9 @@
 	
 	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
 	
-	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
 	<bean id="validatingMongoEventListener" class="org.springframework.data.mongodb.core.mapping.event.ValidatingMongoEventListener">
 		<constructor-arg name="validator" ref="validator" />
 	</bean>

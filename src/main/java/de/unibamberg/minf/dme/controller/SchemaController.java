@@ -80,34 +80,36 @@ public class SchemaController extends BaseScheregController {
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/add"})
 	public String getAddForm(Model model, Locale locale) {		
-		model.addAttribute("schema", new DatamodelImpl());
+		model.addAttribute("datamodelImpl", new DatamodelImpl());
 		model.addAttribute("actionPath", "/model/async/save");
 		return "schema/form/edit";
 	}
 		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl schema, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl datamodelImpl, BindingResult bindingResult, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getUserCanWriteEntity(schema.getId(), auth.getUserId())) {
+		if(!schemaService.getUserCanWriteEntity(datamodelImpl.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
 		
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
-		if (schema.getId().isEmpty()) {
-			schema.setId(null);
+		if (!result.isSuccess()) {
+			return result;
+		} else if (datamodelImpl.getId().isEmpty()) {
+			datamodelImpl.setId(null);
 		}
 		
-		RightsContainer<Datamodel> existSchema = schemaService.findByIdAndAuth(schema.getId(), auth); 
+		RightsContainer<Datamodel> existSchema = schemaService.findByIdAndAuth(datamodelImpl.getId(), auth); 
 		Datamodel saveSchema = existSchema==null ? null : existSchema.getElement();
 		boolean draft = existSchema==null ? true : existSchema.isDraft();
 		
 		if (saveSchema==null) {
-			saveSchema = schema;
+			saveSchema = datamodelImpl;
 		} else {
-			saveSchema.setName(schema.getName());
-			saveSchema.setDescription(schema.getDescription());
+			saveSchema.setName(datamodelImpl.getName());
+			saveSchema.setDescription(datamodelImpl.getDescription());
 		}
 		
 		schemaService.saveSchema(new AuthWrappedPojo<Datamodel>(saveSchema, true, false, false, draft, readOnly), auth);
