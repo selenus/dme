@@ -88,7 +88,7 @@ public class SchemaController extends BaseScheregController {
 		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl datamodelImpl, BindingResult bindingResult, @RequestParam String currentId, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl datamodelImpl, BindingResult bindingResult, @RequestParam String currentId, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(currentId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -114,6 +114,14 @@ public class SchemaController extends BaseScheregController {
 		}
 		
 		schemaService.saveSchema(new AuthWrappedPojo<Datamodel>(saveSchema, true, false, false, draft, readOnly), auth);
+		
+		if (!currentId.equals(datamodelImpl.getId())) {
+			if (!schemaService.changeId(currentId, datamodelImpl.getId())) {
+				result.setSuccess(false);
+				result.addObjectError("~Labamba");
+			}
+		}
+		
 		return result;
 	}
 	

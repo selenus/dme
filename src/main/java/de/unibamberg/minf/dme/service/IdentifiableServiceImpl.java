@@ -42,6 +42,25 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 	@Autowired private GrammarService grammarService;
 	
 	@Override
+	public List<Identifiable> findByEntityId(String entityId) {
+		List<Identifiable> result = new ArrayList<Identifiable>();
+
+		Class<?>[] entityTypes = new Class<?>[]{ Nonterminal.class, Label.class, GrammarImpl.class, FunctionImpl.class };
+		for (Class<?> entityType : entityTypes) {
+			if (entityType.equals(Nonterminal.class)) {
+				result.addAll(elementDao.find(Query.query(Criteria.where("entityId").is(entityId))));
+			} else if (entityType.equals(Label.class)) {
+				result.addAll(elementDao.find(Query.query(Criteria.where("entityId").is(entityId))));
+			} else if (entityType.equals(GrammarImpl.class)) {
+				result.addAll(grammarDao.find(Query.query(Criteria.where("entityId").is(entityId))));
+			} else if (entityType.equals(FunctionImpl.class)) {
+				result.addAll(functionDao.find(Query.query(Criteria.where("entityId").is(entityId))));
+			}
+		}
+		return result;
+	}
+	
+	@Override
 	public List<Identifiable> findByNameAndSchemaId(String query, String schemaId, Class<?>[] entityTypes) {
 		List<Identifiable> result = new ArrayList<Identifiable>();
 		Pattern searchPattern = Pattern.compile(query, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);

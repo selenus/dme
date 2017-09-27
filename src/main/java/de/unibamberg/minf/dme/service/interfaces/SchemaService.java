@@ -34,5 +34,7 @@ public interface SchemaService extends BaseEntityService {
 	public void saveSchema(Datamodel schema, List<Reference> rootNonterminals, AuthPojo auth);
 	
 	public void setProcessingRoot(String schemaId, String elementId, AuthPojo auth);
-	public DatamodelImpl cloneSchemaForSubtree(Datamodel s, Element subtree);	
+	public DatamodelImpl cloneSchemaForSubtree(Datamodel s, Element subtree);
+	
+	public boolean changeId(String currentId, String id);	
 }

@@ -8,12 +8,12 @@ import org.springframework.stereotype.Repository;
 
 import com.mongodb.WriteResult;
 
-import de.unibamberg.minf.dme.dao.base.TrackedEntityDaoImpl;
+import de.unibamberg.minf.dme.dao.base.ModelElementDaoImpl;
 import de.unibamberg.minf.dme.dao.interfaces.FunctionDao;
 import de.unibamberg.minf.dme.model.base.Function;
 
 @Repository
-public class FunctionDaoImpl extends TrackedEntityDaoImpl<Function> implements FunctionDao {
+public class FunctionDaoImpl extends ModelElementDaoImpl<Function> implements FunctionDao {
 	public FunctionDaoImpl() {
 		super(Function.class);
 	}

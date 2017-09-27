@@ -8,16 +8,14 @@ import org.springframework.stereotype.Repository;
 
 import com.mongodb.WriteResult;
 
-import de.unibamberg.minf.dme.dao.base.TrackedEntityDaoImpl;
+import de.unibamberg.minf.dme.dao.base.ModelElementDaoImpl;
 import de.unibamberg.minf.dme.dao.interfaces.GrammarDao;
 import de.unibamberg.minf.dme.model.base.Grammar;
-import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
-import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.tracking.Change;
 
 @Repository
-public class GrammarDaoImpl extends TrackedEntityDaoImpl<Grammar> implements GrammarDao {
+public class GrammarDaoImpl extends ModelElementDaoImpl<Grammar> implements GrammarDao {
 	public GrammarDaoImpl() {
 		super(Grammar.class);
 	}

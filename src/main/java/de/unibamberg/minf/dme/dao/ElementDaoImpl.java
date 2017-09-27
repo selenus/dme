@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import com.mongodb.WriteResult;
 
-import de.unibamberg.minf.dme.dao.base.TrackedEntityDaoImpl;
+import de.unibamberg.minf.dme.dao.base.ModelElementDaoImpl;
 import de.unibamberg.minf.dme.dao.interfaces.ElementDao;
 import de.unibamberg.minf.dme.model.base.Element;
 
 @Repository
-public class ElementDaoImpl extends TrackedEntityDaoImpl<Element> implements ElementDao {
+public class ElementDaoImpl extends ModelElementDaoImpl<Element> implements ElementDao {
 	public ElementDaoImpl() {
 		super(Element.class);
 	}
