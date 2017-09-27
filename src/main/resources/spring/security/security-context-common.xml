@@ -62,7 +62,7 @@
     <bean id="metadataDisplayFilter" class="org.springframework.security.saml.metadata.MetadataDisplayFilter"/>
     
     <!-- This probably needs to be changed to a persisting extension of BaseUserService -->
-    <bean id="userDetailsService" class="eu.dariah.de.minfba.schereg.service.UserServiceImpl">
+    <bean id="userDetailsService" class="de.unibamberg.minf.dme.service.UserServiceImpl">
     	<property name="defaultAuthority" value="Authenticated User" />
     </bean>
     

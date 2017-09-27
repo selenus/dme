@@ -8,30 +8,30 @@ $(document).ready(function() {
 });
 
 var VocabularyTable = function() {
-	this.prepareTranslations(["~eu.dariah.de.minfba.common.link.delete",
-	                          "~eu.dariah.de.minfba.common.link.view",
-	                          "~eu.dariah.de.minfba.common.link.edit",
-	                          "~eu.dariah.de.minfba.common.link.publish",
-	                          "~eu.dariah.de.minfba.common.link.ok",
-	                          "~eu.dariah.de.minfba.common.model.id",
+	this.prepareTranslations(["~de.unibamberg.minf.common.link.delete",
+	                          "~de.unibamberg.minf.common.link.view",
+	                          "~de.unibamberg.minf.common.link.edit",
+	                          "~de.unibamberg.minf.common.link.publish",
+	                          "~de.unibamberg.minf.common.link.ok",
+	                          "~de.unibamberg.minf.common.model.id",
 	                          
-	                          "~eu.dariah.de.minfba.common.model.stub",
-	                          "~eu.dariah.de.minfba.common.model.draft",
-	                          "~eu.dariah.de.minfba.common.model.public",
-	                          "~eu.dariah.de.minfba.common.model.readonly",
+	                          "~de.unibamberg.minf.common.model.stub",
+	                          "~de.unibamberg.minf.common.model.draft",
+	                          "~de.unibamberg.minf.common.model.public",
+	                          "~de.unibamberg.minf.common.model.readonly",
 	                          
-	                          "~eu.dariah.de.minfba.common.view.forms.servererror.head",
-	                          "~eu.dariah.de.minfba.common.view.forms.servererror.body",
+	                          "~de.unibamberg.minf.common.view.forms.servererror.head",
+	                          "~de.unibamberg.minf.common.view.forms.servererror.body",
 	                          
-	                          "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
-	                          "~eu.dariah.de.minfba.schereg.notification.deleted.head",
-	                          "~eu.dariah.de.minfba.schereg.notification.deleted.body",
+	                          "~de.unibamberg.minf.dme.dialog.confirm_delete",
+	                          "~de.unibamberg.minf.dme.notification.deleted.head",
+	                          "~de.unibamberg.minf.dme.notification.deleted.body",
 	                          
-	                          "~eu.dariah.de.minfba.schereg.dialog.confirm_publish",
-	                          "~eu.dariah.de.minfba.schereg.notification.published.head",
-	                          "~eu.dariah.de.minfba.schereg.notification.published.body",
-	                          "~eu.dariah.de.minfba.schereg.notification.publish_error.head",
-	                          "~eu.dariah.de.minfba.schereg.notification.publish_error.body"
+	                          "~de.unibamberg.minf.dme.dialog.confirm_publish",
+	                          "~de.unibamberg.minf.dme.notification.published.head",
+	                          "~de.unibamberg.minf.dme.notification.published.body",
+	                          "~de.unibamberg.minf.dme.notification.publish_error.head",
+	                          "~de.unibamberg.minf.dme.notification.publish_error.body"
 	                          ]);
 	this.itemTable = null;
 	this.createTable();
@@ -88,9 +88,9 @@ VocabularyTable.prototype.createTable = function() {
 VocabularyTable.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	var result = "";	
 	if (type==="display") {
-		result += '<span class="label label-info">' + __translator.translate("~eu.dariah.de.minfba.common.link.ok") + '</span> ';
+		result += '<span class="label label-info">' + __translator.translate("~de.unibamberg.minf.common.link.ok") + '</span> ';
 	} else if (type==="filter" || type==="sort") {
-		result += __translator.translate("~eu.dariah.de.minfba.common.link.ok" + " ");
+		result += __translator.translate("~de.unibamberg.minf.common.link.ok" + " ");
 	}
 	return result;
 };
@@ -101,19 +101,19 @@ VocabularyTable.prototype.renderActionColumn = function(row, type, val, meta) {
 	if (type==="display") {
 		//if (row.entity.own || row.entity.write || row.entity.share) {
 			result += '<button onclick="vocabularyTable.triggerEdit(\'' + row.entity.id + '\');" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.edit") +
+				__translator.translate("~de.unibamberg.minf.common.link.edit") +
 			'</button> ';
 		/*} else {
 			result += '<a href="' + __util.getBaseUrl() + 'schema/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.view") +
+				__translator.translate("~de.unibamberg.minf.common.link.view") +
 			'</a> ';
 		}*/
 		/*if (row.entity.draft) {
 			result += '<button class="btn btn-xs btn-default hint-tooltip" onclick="schemaTable.triggerPublish(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Publish draft..."><span class="glyphicon glyphicon-export" aria-hidden="true"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.publish") +
+				__translator.translate("~de.unibamberg.minf.common.link.publish") +
 			'</button> ';
 			result += '<button class="btn btn-xs btn-danger hint-tooltip" onclick="schemaTable.triggerDelete(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Delete draft..."><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
+				__translator.translate("~de.unibamberg.minf.common.link.delete") +
 			'</button> ';
 		}*/
 	}
@@ -139,8 +139,8 @@ VocabularyTable.prototype.triggerEdit = function(vocabularyId) {
 		formFullUrl: url,
 		identifier: form_identifier,
 		additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});
@@ -189,9 +189,9 @@ VocabularyItemTable.prototype.createTable = function(id) {
 VocabularyItemTable.prototype.renderBadgeColumn = function(row, type, val, meta) {
 	var result = "";	
 	if (type==="display") {
-		result += '<span class="label label-info">' + __translator.translate("~eu.dariah.de.minfba.common.link.ok") + '</span> ';
+		result += '<span class="label label-info">' + __translator.translate("~de.unibamberg.minf.common.link.ok") + '</span> ';
 	} else if (type==="filter" || type==="sort") {
-		result += __translator.translate("~eu.dariah.de.minfba.common.link.ok" + " ");
+		result += __translator.translate("~de.unibamberg.minf.common.link.ok" + " ");
 	}
 	return result;
 };
@@ -202,19 +202,19 @@ VocabularyItemTable.prototype.renderActionColumn = function(row, type, val, meta
 	if (type==="display") {
 		//if (row.entity.own || row.entity.write || row.entity.share) {
 			result += '<button onclick="vocabularyTable.itemTable.triggerEdit(\'' + row.entity.id + '\');" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.edit") +
+				__translator.translate("~de.unibamberg.minf.common.link.edit") +
 			'</button> ';
 		/*} else {
 			result += '<a href="' + __util.getBaseUrl() + 'schema/editor/' + row.entity.id + '/" class="btn btn-xs btn-default" type="button"><span class="glyphicon glyphicon-pencil"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.view") +
+				__translator.translate("~de.unibamberg.minf.common.link.view") +
 			'</a> ';
 		}*/
 		/*if (row.entity.draft) {
 			result += '<button class="btn btn-xs btn-default hint-tooltip" onclick="schemaTable.triggerPublish(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Publish draft..."><span class="glyphicon glyphicon-export" aria-hidden="true"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.publish") +
+				__translator.translate("~de.unibamberg.minf.common.link.publish") +
 			'</button> ';
 			result += '<button class="btn btn-xs btn-danger hint-tooltip" onclick="schemaTable.triggerDelete(\'' + row.entity.id + '\'); return false;" data-toggle="tooltip" data-placement="top" title="Delete draft..."><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> ' + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
+				__translator.translate("~de.unibamberg.minf.common.link.delete") +
 			'</button> ';
 		}*/
 	}
@@ -240,8 +240,8 @@ VocabularyItemTable.prototype.triggerEdit = function(itemId) {
 		formFullUrl: url,
 		identifier: form_identifier,
 		additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});

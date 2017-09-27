@@ -27,9 +27,9 @@ var MappedConceptEditor = function(owner, container, modal, options) {
 	this.owningEditor = owner;
 	
 	__translator.addTranslations([
-		"~eu.dariah.de.minfba.common.link.edit",
-		"~eu.dariah.de.minfba.common.link.delete",
-		"~eu.dariah.de.minfba.common.link.view"]);
+		"~de.unibamberg.minf.common.link.edit",
+		"~de.unibamberg.minf.common.link.delete",
+		"~de.unibamberg.minf.common.link.view"]);
 	__translator.getTranslations();
 	
 	this.init();
@@ -174,8 +174,8 @@ MappedConceptEditor.prototype.editGrammar = function(grammarId) {
 		data: { sample: sampleData },
 		identifier: form_identifier,
 		additionalModalClasses: "max-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		setupCallback: function(modal) { 
 			grammarEditor = new GrammarEditor(modal, {
@@ -218,8 +218,8 @@ MappedConceptEditor.prototype.editFunction = function(connectionId) {
 	    		formUrl: "/function/" + functionId + "/form/editWdata",
 	    		identifier: form_identifier,
 	    		additionalModalClasses: "max-modal",
-	    		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-	    		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+	    		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+	    		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 	    		                ],
 	            setupCallback: function(modal) { functionEditor = new FunctionEditor(modal, {
 	    			pathPrefix: __util.getBaseUrl() + "mapping/editor/" + _this.owningEditor.mappingId,
@@ -246,7 +246,7 @@ MappedConceptEditor.prototype.removeElement = function(elementId, isSource) {
 	}
 	
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), elementId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), elementId), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.options.path + (isSource===true ? "/source/" : "/target/") + elementId + "/remove",
@@ -274,11 +274,11 @@ MappedConceptEditor.prototype.getGrammarContextMenu = function(element) {
 		var items = [
 		];
 		if (editor.mappingOwn || editor.mappingWrite) {
-			items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editGrammar", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
 			items.push(_this.graph.createContextMenuSeparator());
-			items.push(_this.graph.createContextMenuItem("removeSourceGrammar", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("removeSourceGrammar", "~de.unibamberg.minf.common.link.delete", "trash", element.id, element.template.options.key));
 		} else {
-			items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editGrammar", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
 		}
 		return items; 
 };
@@ -288,9 +288,9 @@ MappedConceptEditor.prototype.getFunctionContextMenu = function(element) {
 		var items = [
 		];
 		if (editor.mappingOwn || editor.mappingWrite) {
-			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editFunction", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
 		} else {
-			items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+			items.push(_this.graph.createContextMenuItem("editFunction", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
 		}
 		return items; 
 };
@@ -301,9 +301,9 @@ MappedConceptEditor.prototype.getElementContextMenu = function(element) {
 		];
 		if (editor.mappingOwn || editor.mappingWrite) {
 			if (element.template.area.isSource) {
-				items.push(_this.graph.createContextMenuItem("removeSource", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+				items.push(_this.graph.createContextMenuItem("removeSource", "~de.unibamberg.minf.common.link.delete", "trash", element.id, element.template.options.key));
 			} else {
-				items.push(_this.graph.createContextMenuItem("removeTarget", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+				items.push(_this.graph.createContextMenuItem("removeTarget", "~de.unibamberg.minf.common.link.delete", "trash", element.id, element.template.options.key));
 			}
 		}
 		return items; 

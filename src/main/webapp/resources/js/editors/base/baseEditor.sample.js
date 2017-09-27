@@ -65,10 +65,10 @@ BaseEditor.prototype.uploadAndExecuteSample = function() {
 		formUrl: "forms/uploadSample/",
 		additionalModalClasses: "wide-modal",
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"},
-		                {placeholder: "~*file.uploadcomplete.head", key: "~eu.dariah.de.minfba.schereg.editor.forms.sample_uploaded.head"},
-		                {placeholder: "~*file.uploadcomplete.body", key: "~eu.dariah.de.minfba.schereg.editor.forms.sample_uploaded.body"}	
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"},
+		                {placeholder: "~*file.uploadcomplete.head", key: "~de.unibamberg.minf.dme.editor.forms.sample_uploaded.head"},
+		                {placeholder: "~*file.uploadcomplete.body", key: "~de.unibamberg.minf.dme.editor.forms.sample_uploaded.body"}	
 		                ],
 		completeCallback: function() { 
 			_this.logArea.refresh();
@@ -157,7 +157,7 @@ BaseEditor.prototype.downloadSampleInput = function() {
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.content===null || data.content.length==0) {
-	    		bootbox.alert(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"));
+	    		bootbox.alert(__translator.translate("~de.unibamberg.minf.dme.editor.sample.notice.empty_sample"));
 	    	} else {
 		    	if (data.extension==="json") {
 		    		data.content = JSON.stringify(data.content);
@@ -195,12 +195,12 @@ BaseEditor.prototype.createDownload = function() {
 	    	$("#download-link-container").html(
 	    			"<span>" +
 		    			(data.count==1 ? 
-		    					__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.file_count") :
-		    					String.format(__translator.translate("~eu.dariah.de.minfba.schereg.editor.sample.download.files_count"), data.count)
+		    					__translator.translate("~de.unibamberg.minf.dme.editor.sample.download.file_count") :
+		    					String.format(__translator.translate("~de.unibamberg.minf.dme.editor.sample.download.files_count"), data.count)
 		    			) + ": " +
 	    				"<a target=\"_blank\" href=\"" + _this.pathname + "/async/download_output/\">" +
 	    					"<i class=\"fa fa-download\" aria-hidden=\"true\"></i> " + 
-	    					__translator.translate("~eu.dariah.de.minfba.common.link.download") +
+	    					__translator.translate("~de.unibamberg.minf.common.link.download") +
 	    				"</a>  " +
 	    			"</span>");
 	    	

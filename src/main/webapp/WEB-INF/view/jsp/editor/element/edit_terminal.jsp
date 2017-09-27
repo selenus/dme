@@ -7,13 +7,13 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="terminal" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.terminal.edit" /></h3>	
+		<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.terminal.edit" /></h3>	
 		<sf:hidden path="id" />
 	</div>
 	<div class="form-content">
 		<fieldset<c:if test="${readonly}"> disabled</c:if>>
 			<div class="form-group">
-				<label class="col-sm-3 control-label" for="xmlTerminal_namespace"><s:message code="~eu.dariah.de.minfba.schereg.model.element.namespace" />:</label>
+				<label class="col-sm-3 control-label" for="xmlTerminal_namespace"><s:message code="~de.unibamberg.minf.dme.model.element.namespace" />:</label>
 				<div class="col-sm-8">
 					<sf:select path="namespace" class="form-control" id="xmlTerminal_namespace">
 	   					<sf:options items="${availableNamespaces}" />
@@ -22,7 +22,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-3 control-label" for="xmlTerminal_name"><s:message code="~eu.dariah.de.minfba.schereg.model.element.name" />:</label>
+				<label class="col-sm-3 control-label" for="xmlTerminal_name"><s:message code="~de.unibamberg.minf.dme.model.element.name" />:</label>
 				<div class="col-sm-8">
 					<sf:input path="name" class="form-control" id="xmlTerminal_name" />
 					<sf:errors path="name" cssClass="error" />
@@ -31,7 +31,7 @@
 			<div class="form-group">
 				<div class="col-sm-8 col-sm-offset-3">
 					<div class="checkbox">
-						<label><sf:checkbox path="attribute" /> <s:message code="~eu.dariah.de.minfba.schereg.model.element.attribute" /></label>
+						<label><sf:checkbox path="attribute" /> <s:message code="~de.unibamberg.minf.dme.model.element.attribute" /></label>
 					</div>
 				</div>
 			</div>
@@ -41,11 +41,11 @@
 		<div class="controls">
 			<c:choose>
 				<c:when test="${readonly}">
-					<button class="btn btn-primary btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
+					<button class="btn btn-primary btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.close" /></button>
 				</c:when>
 				<c:otherwise>
-					<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
-					<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+					<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.cancel" /></button>
+					<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~de.unibamberg.minf.common.link.save" /></button>
 				</c:otherwise>
 			</c:choose>
 		</div>

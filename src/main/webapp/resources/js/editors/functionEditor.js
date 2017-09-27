@@ -18,14 +18,14 @@ var FunctionEditor = function(modal, options) {
 	this.grammarError = ($(this.modal).find(".grammar_error").val()=="true");
 	this.validated = false;
 		
-	__translator.addTranslations(["~eu.dariah.de.minfba.common.link.ok",
-	                              "~eu.dariah.de.minfba.common.link.error",
-	                              "~eu.dariah.de.minfba.common.link.validated",
-	                              "~eu.dariah.de.minfba.common.link.modified",
-	                              "~eu.dariah.de.minfba.common.link.validation_required",
+	__translator.addTranslations(["~de.unibamberg.minf.common.link.ok",
+	                              "~de.unibamberg.minf.common.link.error",
+	                              "~de.unibamberg.minf.common.link.validated",
+	                              "~de.unibamberg.minf.common.link.modified",
+	                              "~de.unibamberg.minf.common.link.validation_required",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.model.function.error_in_grammar",
-	                              "~eu.dariah.de.minfba.schereg.model.function.validation.validation_succeeded"]);
+	                              "~de.unibamberg.minf.dme.model.function.error_in_grammar",
+	                              "~de.unibamberg.minf.dme.model.function.validation.validation_succeeded"]);
 	__translator.getTranslations();
 	
 	this.init();
@@ -47,15 +47,15 @@ FunctionEditor.prototype.init = function() {
 FunctionEditor.prototype.updateFunctionState = function() {
 	var state = "";
 	if (this.modified) {
-		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.modified") + "; " + __translator.translate("~eu.dariah.de.minfba.common.link.validation_required");
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.modified") + "; " + __translator.translate("~de.unibamberg.minf.common.link.validation_required");
 	} else if (this.error) {
-		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.error");
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.error");
 	} else if (this.grammarError) {
-		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-warning\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.schereg.model.function.error_in_grammar");
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-warning\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.dme.model.function.error_in_grammar");
 	} else if (this.validated) {
-		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.validated");
+		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.validated");
 	} else {
-		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.ok");
+		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.ok");
 	}
 	$(this.modal).find(".function_state").html(state);
 };
@@ -71,8 +71,8 @@ FunctionEditor.prototype.processFunction = function() {
 	this.processFunctionModal = new ModalFormHandler({
 		formUrl: "/function/" + _this.functionId + "/async/process",
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		displayCallback: function() { 
 			_this.validateFunction($(_this.modal).find(".function_function").val());
@@ -129,7 +129,7 @@ FunctionEditor.prototype.showValidationResult = function(data) {
 		this.validated = false;
 		this.modified = false;
 	} else {
-		alert.text(__translator.translate("~eu.dariah.de.minfba.schereg.model.function.validation.validation_succeeded"));
+		alert.text(__translator.translate("~de.unibamberg.minf.dme.model.function.validation.validation_succeeded"));
 		alert.addClass("alert-success");
 		this.error = false;
 		this.validated = true;

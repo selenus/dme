@@ -7,13 +7,13 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="function" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.create" /></h3>	
+		<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.function.create" /></h3>	
 		<sf:hidden path="id" />
 		<sf:hidden path="entityId" />
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="function_name"><s:message code="~eu.dariah.de.minfba.schereg.model.function.name" />:</label>
+			<label class="col-sm-3 control-label" for="function_name"><s:message code="~de.unibamberg.minf.dme.model.function.name" />:</label>
 			<div class="col-sm-8">
 				<sf:input path="name" class="form-control" id="transformationFunctionImpl_name" />
 				<sf:errors path="name" cssClass="error" />
@@ -22,8 +22,8 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
-			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.cancel" /></button>
+			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~de.unibamberg.minf.common.link.save" /></button>
 		</div>
 	</div>
 </sf:form>

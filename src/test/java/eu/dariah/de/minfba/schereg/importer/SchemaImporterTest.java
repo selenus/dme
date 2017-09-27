@@ -5,6 +5,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.unibamberg.minf.dme.importer.SchemaImporter;
+import de.unibamberg.minf.dme.importer.XmlSchemaImporter;
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.base.Nonterminal;
 

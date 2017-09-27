@@ -5,8 +5,8 @@ $(document).ready(function() {
 
 var SessionHandler = function() {
 	__translator.addTranslations([
-								"~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.head",
-								"~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.body"
+								"~de.unibamberg.minf.dme.dialog.confirm_delete_session.head",
+								"~de.unibamberg.minf.dme.dialog.confirm_delete_session.body"
 		]);
 	//__translator.getTranslations();
 	this.pathname = __util.getBaseUrl() + "sessions";
@@ -30,8 +30,8 @@ SessionHandler.prototype.newSession = function(entityId, callback) {
 SessionHandler.prototype.deleteSession = function(entityId, callback) {
 	var _this = this;
 	bootbox.confirm({
-		title: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.head"),
-		message: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete_session.body"),
+		title: __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete_session.head"),
+		message: __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete_session.body"),
 		callback: function(result) {
 			if(result) {
 				$.ajax({
@@ -63,8 +63,8 @@ SessionHandler.prototype.loadSession = function(entityId, callback) {
 		formFullUrl: _this.pathname + "/form/loadSession?entityId=" + entityId,
 		identifier: form_identifier,
 		//additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() { window.location.reload(); }
 	});
@@ -85,8 +85,8 @@ SessionHandler.prototype.saveSession = function(entityId, callback) {
 		formFullUrl: _this.pathname + "/form/saveSession?entityId=" + entityId,
 		identifier: form_identifier,
 		//additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		//completeCallback: function() { window.location.reload(); }
 	});

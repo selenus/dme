@@ -4,7 +4,7 @@
 
 <div class="form-horizontal" >
 	<div class="form-header">
-		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.show_processed_svg" /></h3>	
+		<h3 class="form-header-title"><s:message code="~de.unibamberg.minf.dme.editor.sample.show_processed_svg" /></h3>	
 	</div>
 	<div class="form-content">
 		<div class="maximized-svg-container">
@@ -18,7 +18,7 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.close" /></button>
 		</div>
 	</div>
 </div>

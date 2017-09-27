@@ -5,18 +5,18 @@ $(document).ready(function() {
 });
 
 var SchemaEditor = function() {
-	this.prepareTranslations(["~eu.dariah.de.minfba.common.link.delete",
-	                          "~eu.dariah.de.minfba.common.link.edit",
-	                          "~eu.dariah.de.minfba.common.model.id",
-	                          "~eu.dariah.de.minfba.common.view.forms.servererror.head",
-	                          "~eu.dariah.de.minfba.common.view.forms.servererror.body",
-	                          "~eu.dariah.de.minfba.schereg.button.editor",
-	                          "~eu.dariah.de.minfba.schereg.dialog.confirm_detete",
-	                          "~eu.dariah.de.minfba.schereg.model.schema.description",
-	                          "~eu.dariah.de.minfba.schereg.model.schema.label",
-	                          "~eu.dariah.de.minfba.schereg.model.schema.draft",
-	                          "~eu.dariah.de.minfba.schereg.notification.deleted.head",
-	                          "~eu.dariah.de.minfba.schereg.notification.deleted.body"]);
+	this.prepareTranslations(["~de.unibamberg.minf.common.link.delete",
+	                          "~de.unibamberg.minf.common.link.edit",
+	                          "~de.unibamberg.minf.common.model.id",
+	                          "~de.unibamberg.minf.common.view.forms.servererror.head",
+	                          "~de.unibamberg.minf.common.view.forms.servererror.body",
+	                          "~de.unibamberg.minf.dme.button.editor",
+	                          "~de.unibamberg.minf.dme.dialog.confirm_detete",
+	                          "~de.unibamberg.minf.dme.model.schema.description",
+	                          "~de.unibamberg.minf.dme.model.schema.label",
+	                          "~de.unibamberg.minf.dme.model.schema.draft",
+	                          "~de.unibamberg.minf.dme.notification.deleted.head",
+	                          "~de.unibamberg.minf.dme.notification.deleted.body"]);
 	this.loadChanges();
 	this.createTable();
 	this.assignTableEvents();
@@ -132,8 +132,8 @@ SchemaEditor.prototype.handleSelection = function(id) {
 	        success: function(data) { _this.renderSchemaMetadataTab(id, data); },
 	        error: function(textStatus) {
 	        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-	        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-	        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+	        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+	        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 	        }
 		});
 		
@@ -144,8 +144,8 @@ SchemaEditor.prototype.handleSelection = function(id) {
 	        success: function(data) { _this.renderSchemaElementsTab(id, data); },
 	        error: function(textStatus) {
 	        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-	        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-	        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+	        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+	        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 	        }
 		});
 		
@@ -169,8 +169,8 @@ SchemaEditor.prototype.loadChanges = function(id) {
         success: function(data) { __util.renderActivities("#schema-activity", id, data); },
         error: function(textStatus) {
         	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
         }
 	});
 }
@@ -185,20 +185,20 @@ SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	if (true || data.write || data.own) {
 		buttonBar.append(
 			"<button onclick='editor.triggerEditSchema(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.edit") + 
+				__translator.translate("~de.unibamberg.minf.common.link.edit") + 
 			"</button> ");
 		buttonBar.append(
 			"<button onclick='editor.triggerDeleteSchema(\"" + id + "\");' class='btn btn-danger btn-sm' type='button'><span class='glyphicon glyphicon-trash'></span> " +
-				__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
+				__translator.translate("~de.unibamberg.minf.common.link.delete") +
 			"</button>");
 	} else {
 		buttonBar.append(
 			"<button class='btn btn-default btn-sm disabled' type='button'><span class='glyphicon glyphicon-lock'></span> " + 
-				__translator.translate("~eu.dariah.de.minfba.common.link.edit") + 
+				__translator.translate("~de.unibamberg.minf.common.link.edit") + 
 			"</button> ");
 		buttonBar.append(
 			"<button class='btn btn-danger btn-sm disabled' type='button'><span class='glyphicon glyphicon-lock'></span> " +
-				__translator.translate("~eu.dariah.de.minfba.common.link.delete") +
+				__translator.translate("~de.unibamberg.minf.common.link.delete") +
 			"</button>");
 	}
 	
@@ -209,10 +209,10 @@ SchemaEditor.prototype.renderSchemaMetadataTab = function(id, data) {
 	$("#schema-metadata").append(buttonBarContainer);
 	
 	var details = $("<div class=\"clearfix\">");
-	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.common.model.id"), data.pojo.id));
-	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.label"), data.pojo.label));
-	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.description"), data.pojo.description));
-	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~eu.dariah.de.minfba.schereg.model.schema.draft"), data.draft));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~de.unibamberg.minf.common.model.id"), data.pojo.id));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~de.unibamberg.minf.dme.model.schema.label"), data.pojo.label));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~de.unibamberg.minf.dme.model.schema.description"), data.pojo.description));
+	details.append(this.renderSchemaMetadataTabDetail( __translator.translate("~de.unibamberg.minf.dme.model.schema.draft"), data.draft));
 		
 	$("#schema-metadata").append(details);
 
@@ -240,11 +240,11 @@ SchemaEditor.prototype.renderSchemaElementsTab = function(id, data) {
 	// TODO: Move import behavior
 	/*buttonBar.append(
 			"<button onclick='editor.triggerUploadFile(\"" + id + "\");'class='btn btn-default btn-sm' type='button'><span class='glyphicon glyphicon-edit'></span> " + 
-				__translator.translate("~eu.dariah.de.minfba.schereg.button.import") + 
+				__translator.translate("~de.unibamberg.minf.dme.button.import") + 
 			"</button> ");*/
 	buttonBar.append(
 			"<a href='" + __util.getBaseUrl() + "model/editor/" + id + "' class='btn btn-link btn-sm' type='button'>" + 
-				__translator.translate("~eu.dariah.de.minfba.schereg.button.editor") + 
+				__translator.translate("~de.unibamberg.minf.dme.button.editor") + 
 			" <span class='glyphicon glyphicon-new-window'></span></a> ");
 	
 	buttonBarContainer.append(buttonBar);
@@ -291,8 +291,8 @@ SchemaEditor.prototype.triggerEditSchema = function(schemaId) {
 		formUrl: (schemaId!=undefined ? ("/forms/edit/" + schemaId) : "/forms/add"),
 		identifier: form_identifier,
 		additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});
@@ -306,7 +306,7 @@ SchemaEditor.prototype.triggerDeleteSchema = function(schemaId) {
 		return;
 	}
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_detete"), schemaId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_detete"), schemaId), function(result) {
 		if(result) {
 			$.ajax({
 		        url: window.location.pathname + "/async/delete/" + schemaId,
@@ -314,14 +314,14 @@ SchemaEditor.prototype.triggerDeleteSchema = function(schemaId) {
 		        dataType: "json",
 		        success: function(data) { 
 		        	__notifications.showMessage(NOTIFICATION_TYPES.INFO, 
-		        			__translator.translate("~eu.dariah.de.minfba.schereg.notification.deleted.head"), 
-		        			String.format(__translator.translate("~eu.dariah.de.minfba.schereg.notification.deleted.body"), schemaId));
+		        			__translator.translate("~de.unibamberg.minf.dme.notification.deleted.head"), 
+		        			String.format(__translator.translate("~de.unibamberg.minf.dme.notification.deleted.body"), schemaId));
 		        	_this.refresh();
 		        },
 		        error: function(textStatus) {
 		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 		        }
 			});
 		}

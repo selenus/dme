@@ -1,5 +1,5 @@
 <%@ tag description="Recursively display top navigation items" pageEncoding="UTF-8"%>
-<%@ attribute name="navItem" type="eu.dariah.de.minfba.core.web.navigation.NavigationItem" required="true" %>
+<%@ attribute name="navItem" type="de.unibamberg.minf.core.web.navigation.NavigationItem" required="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>

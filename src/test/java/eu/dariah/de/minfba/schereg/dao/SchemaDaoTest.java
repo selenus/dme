@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import de.unibamberg.minf.dme.dao.interfaces.SchemaDao;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
-import eu.dariah.de.minfba.schereg.dao.interfaces.SchemaDao;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"classpath:orm-test-context.xml"})

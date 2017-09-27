@@ -16,7 +16,7 @@
 		<appender-ref ref="console" />
 	</root>
 	
-	<logger name="eu.dariah.de.minfba.schereg">
+	<logger name="de.unibamberg.minf.dme">
 		<level value="debug" />
 	</logger>
 </configuration>

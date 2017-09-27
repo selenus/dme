@@ -8,15 +8,15 @@
 
 <form method="GET" action="${saveUrl}" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.button.load_session" /></h3>	
+		<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.button.load_session" /></h3>	
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-5 control-label" for="sessionId"><s:message code="~eu.dariah.de.minfba.schereg.model.session.previous_sessions" />: </label>
+			<label class="col-sm-5 control-label" for="sessionId"><s:message code="~de.unibamberg.minf.dme.model.session.previous_sessions" />: </label>
 			<div class="col-sm-7">
 				<select id="sessionId" name="sessionId" class="form-control">
 					<c:if test="${fn:length(savedSessions)>0}">
-						<optgroup label="<s:message code="~eu.dariah.de.minfba.schereg.model.session.persisted_sessions" />">
+						<optgroup label="<s:message code="~de.unibamberg.minf.dme.model.session.persisted_sessions" />">
 							<c:forEach items="${savedSessions}" var="s">
 								<c:if test="${s.id==currentSessionId}"><c:set var="selected">selected="selected"</c:set></c:if>	
 								<option ${selected} value="${s.id}">
@@ -27,7 +27,7 @@
 						</optgroup>
 					</c:if>
 					<c:if test="${fn:length(transientSessions)>0}">
-						<optgroup label="<s:message code="~eu.dariah.de.minfba.schereg.model.session.temporary_sessions" />">
+						<optgroup label="<s:message code="~de.unibamberg.minf.dme.model.session.temporary_sessions" />">
 							<c:forEach items="${transientSessions}" var="s">					
 								<c:if test="${s.id==currentSessionId}"><c:set var="selected">selected="selected"</c:set></c:if>	
 								<option value="${s.id}" ${selected}>
@@ -42,8 +42,8 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
-			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.load" /></button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.cancel" /></button>
+			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~de.unibamberg.minf.common.link.load" /></button>
 		</div>
 	</div>
 </form>

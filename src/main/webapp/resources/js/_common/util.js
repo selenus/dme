@@ -60,16 +60,16 @@ String.prototype.startsWith = function(start) {
 };
 
 var Util = function() {
-        __translator.addTranslations(["~eu.dariah.de.minfba.common.view.notifications.login_required.head",
-                                      "~eu.dariah.de.minfba.common.view.notifications.login_required.body",
-                                      "~eu.dariah.de.minfba.common.link.yes",
-                                      "~eu.dariah.de.minfba.common.link.no",
-                                      "~eu.dariah.de.minfba.common.view.forms.servererror.head",
-                                      "~eu.dariah.de.minfba.common.view.forms.servererror.body",
-                                      "~eu.dariah.de.minfba.common.error.insufficient_rights.head",
-                                      "~eu.dariah.de.minfba.common.error.insufficient_rights.body",
-                                      "~eu.dariah.de.minfba.common.error.page_reload_required.head",
-                                      "~eu.dariah.de.minfba.common.error.page_reload_required.body"])
+        __translator.addTranslations(["~de.unibamberg.minf.common.view.notifications.login_required.head",
+                                      "~de.unibamberg.minf.common.view.notifications.login_required.body",
+                                      "~de.unibamberg.minf.common.link.yes",
+                                      "~de.unibamberg.minf.common.link.no",
+                                      "~de.unibamberg.minf.common.view.forms.servererror.head",
+                                      "~de.unibamberg.minf.common.view.forms.servererror.body",
+                                      "~de.unibamberg.minf.common.error.insufficient_rights.head",
+                                      "~de.unibamberg.minf.common.error.insufficient_rights.body",
+                                      "~de.unibamberg.minf.common.error.page_reload_required.head",
+                                      "~de.unibamberg.minf.common.error.page_reload_required.body"])
         // We depend on the view's main js for this call
     //__translator.getTranslations();
         this.entityMap = {
@@ -94,15 +94,15 @@ Util.prototype.showLoginNote = function() {
 	var _this = this;
 
     bootbox.dialog({
-            message : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.body"),
-            title : __translator.translate("~eu.dariah.de.minfba.common.view.notifications.login_required.head"),
+            message : __translator.translate("~de.unibamberg.minf.common.view.notifications.login_required.body"),
+            title : __translator.translate("~de.unibamberg.minf.common.view.notifications.login_required.head"),
             buttons : {
                     no : {
-                            label : __translator.translate("~eu.dariah.de.minfba.common.link.no"),
+                            label : __translator.translate("~de.unibamberg.minf.common.link.no"),
                             className : "btn-default"
                     },
                     yes : {
-                            label : __translator.translate("~eu.dariah.de.minfba.common.link.yes"),
+                            label : __translator.translate("~de.unibamberg.minf.common.link.yes"),
                             className : "btn-primary",
                             callback : function() {
                                     window.location = $("#login a").prop("href");
@@ -123,16 +123,16 @@ Util.prototype.processServerError = function(jqXHR, textStatus) {
 		}
 		if (jqXHR.status===403) {
 			if (_this.isLoggedIn()) {
-				_this.showErrorAlert("~eu.dariah.de.minfba.common.error.insufficient_rights.head",
-						"~eu.dariah.de.minfba.common.error.insufficient_rights.body", $(errorContainer).html());
+				_this.showErrorAlert("~de.unibamberg.minf.common.error.insufficient_rights.head",
+						"~de.unibamberg.minf.common.error.insufficient_rights.body", $(errorContainer).html());
 			} else {
 				_this.showLoginNote();
 			}
 			return;
 		}
 		if (jqXHR.status===205) {
-			_this.showErrorAlert("~eu.dariah.de.minfba.common.error.page_reload_required.head",
-					"~eu.dariah.de.minfba.common.error.page_reload_required.body", $(errorContainer).html(),
+			_this.showErrorAlert("~de.unibamberg.minf.common.error.page_reload_required.head",
+					"~de.unibamberg.minf.common.error.page_reload_required.body", $(errorContainer).html(),
 					function() { location.reload(true); });
 			return;
 		}
@@ -156,8 +156,8 @@ Util.prototype.processServerError = function(jqXHR, textStatus) {
 	
 	//$(errorContainer).append(jqXHR.responseText);
 	
-	_this.showErrorAlert("~eu.dariah.de.minfba.common.view.forms.servererror.head",
-			"~eu.dariah.de.minfba.common.view.forms.servererror.body", $(errorContainer).html());
+	_this.showErrorAlert("~de.unibamberg.minf.common.view.forms.servererror.head",
+			"~de.unibamberg.minf.common.view.forms.servererror.body", $(errorContainer).html());
 };
 
 Util.prototype.showErrors = function(modelActionPojo) {	

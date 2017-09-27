@@ -4,7 +4,7 @@
 
 <div class="form-horizontal" >
 	<div class="form-header">
-		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.function.process.title" /></h3>	
+		<h3 class="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.function.process.title" /></h3>	
 	</div>
 	<div class="form-content">
 		<div class="panel-group accordion-validate-function" role="tablist" aria-multiselectable="true">
@@ -15,7 +15,7 @@
 						<span class="glyphicon glyphicon-console function-waiting hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok function-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign function-error hide" aria-hidden="true"></span>
-						 <s:message code="~eu.dariah.de.minfba.schereg.form.function.process.parsing_function" />
+						 <s:message code="~de.unibamberg.minf.dme.form.function.process.parsing_function" />
 					</h4>
 				</div>
 				<div class="panel-collapse collapse-function-parsing" role="tabpanel" aria-labelledby="heading-function-parsing">
@@ -39,7 +39,7 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.close" /></button>
 		</div>
 	</div>
 </div>

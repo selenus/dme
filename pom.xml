@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>eu.dariah.de.minfba</groupId>
+	<groupId>de.unibamberg.minf</groupId>
 	<artifactId>dme</artifactId>
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
@@ -14,10 +14,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-		<eu.dariah.de.minfba.core-web.version>1.6.0-SNAPSHOT</eu.dariah.de.minfba.core-web.version>
-		<eu.dariah.de.minfba.core-util.version>1.1.0-SNAPSHOT</eu.dariah.de.minfba.core-util.version>
-		<de.unibamberg.minf.dme.core-metamodel.version>4.1.0-SNAPSHOT</de.unibamberg.minf.dme.core-metamodel.version>
-		<eu.dariah.de.minfba.processing.version>3.1.0-SNAPSHOT</eu.dariah.de.minfba.processing.version>
+		<de.unibamberg.minf.core.core-metamodel.version>4.1.0-SNAPSHOT</de.unibamberg.minf.core.core-metamodel.version>
+		<de.unibamberg.minf.core.core-util.version>2.0.0-SNAPSHOT</de.unibamberg.minf.core.core-util.version>
+		<de.unibamberg.minf.core.core-web.version>2.0.0-SNAPSHOT</de.unibamberg.minf.core.core-web.version>
+		<de.unibamberg.minf.processing.processing-version>3.3.0-SNAPSHOT</de.unibamberg.minf.processing.processing-version>
 		<de.unibamberg.minf.gtf-version>1.1.0-SNAPSHOT</de.unibamberg.minf.gtf-version>
 
 		<eu.dariah.de.dariahsp-version>1.0.0-SNAPSHOT</eu.dariah.de.dariahsp-version>
@@ -90,28 +90,29 @@
  -->
 		<!-- DARIAH -->
 		<dependency>
-			<groupId>de.unibamberg.minf.dme.core</groupId>
+			<groupId>de.unibamberg.minf.core</groupId>
 			<artifactId>core-metamodel</artifactId>
-			<version>${de.unibamberg.minf.dme.core-metamodel.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.dariah.de.minfba.core</groupId>
-			<artifactId>core-web</artifactId>
-			<version>${eu.dariah.de.minfba.core-web.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>eu.dariah.de.minfba.core</groupId>
-			<artifactId>core-util</artifactId>
-			<version>${eu.dariah.de.minfba.core-util.version}</version>
+			<version>${de.unibamberg.minf.core.core-metamodel.version}</version>
 		</dependency>
 		
 		<!-- To import old schemas for migration -->
 		<dependency>
-			<groupId>eu.dariah.de.minfba.core</groupId>
+			<groupId>eu.dariah.de.minfba.core-legacy</groupId>
 			<artifactId>core-metamodel</artifactId>
 			<version>3.3.0-SNAPSHOT</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>de.unibamberg.minf.core</groupId>
+			<artifactId>core-web</artifactId>
+			<version>${de.unibamberg.minf.core.core-web.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unibamberg.minf.core</groupId>
+			<artifactId>core-util</artifactId>
+			<version>${de.unibamberg.minf.core.core-util.version}</version>
+		</dependency>
+				
 		<dependency>
 			<groupId>de.unibamberg.minf.gtf</groupId>
 			<artifactId>gtf-base</artifactId>
@@ -149,9 +150,9 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>eu.dariah.de.minfba.processing</groupId>
+			<groupId>de.unibamberg.minf.processing</groupId>
 			<artifactId>processing</artifactId>
-			<version>${eu.dariah.de.minfba.processing.version}</version>
+			<version>${de.unibamberg.minf.processing.processing-version}</version>
 		</dependency>
 
 		<!-- Spring -->
@@ -385,7 +386,7 @@
 		</dependency> -->
 		
 	</dependencies>
-	
+		
 	 <distributionManagement>
 		<repository>
 			<id>central</id>

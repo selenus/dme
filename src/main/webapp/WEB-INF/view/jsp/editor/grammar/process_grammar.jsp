@@ -4,7 +4,7 @@
 
 <div class="form-horizontal" >
 	<div class="form-header">
-		<h3 class="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.title" /></h3>	
+		<h3 class="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.grammar.process.title" /></h3>	
 	</div>
 	<div class="form-content">
 		<div class="panel-group accordion-validate-grammar" role="tablist" aria-multiselectable="true">
@@ -15,7 +15,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.uploading" />
+						 <s:message code="~de.unibamberg.minf.dme.form.grammar.process.uploading" />
 					</h4>
 				</div>
 				<div class="collapse-grammar-uploading panel-collapse collapse" role="tabpanel" aria-labelledby="heading-grammar-uploading">
@@ -30,7 +30,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.java_creation" />
+						 <s:message code="~de.unibamberg.minf.dme.form.grammar.process.java_creation" />
 					</h4>
 				</div>
 				<div class="panel-collapse collapse collapse-grammar-parsing" role="tabpanel" aria-labelledby="heading-grammar-parsing">
@@ -45,7 +45,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.compiling" />
+						 <s:message code="~de.unibamberg.minf.dme.form.grammar.process.compiling" />
 					</h4>
 				</div>
 				<div class="collapse-grammar-compiling panel-collapse collapse" role="tabpanel" aria-labelledby="heading-grammar-compiling">
@@ -60,7 +60,7 @@
 						<span class="glyphicon glyphicon-console grammar-waiting" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-ok grammar-ok hide" aria-hidden="true"></span>
 						<span class="glyphicon glyphicon-exclamation-sign grammar-error hide" aria-hidden="true"></span>
-						 <s:message code="~eu.dariah.de.minfba.schereg.form.grammar.process.sandboxing" />
+						 <s:message code="~de.unibamberg.minf.dme.form.grammar.process.sandboxing" />
 					</h4>
 				</div>
 				<div class="panel-collapse collapse collapse-grammar-sandboxing" role="tabpanel" aria-labelledby="heading-grammar-sandboxing">
@@ -73,7 +73,7 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.close" /></button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.close" /></button>
 		</div>
 	</div>
 </div>

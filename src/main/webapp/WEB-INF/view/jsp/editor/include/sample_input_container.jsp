@@ -14,12 +14,12 @@
 		
 			<c:choose>
 				<c:when test="${!sampleInputSet}">
-					<p><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder" /></p>
+					<p><s:message code="~de.unibamberg.minf.dme.editor.sample.placeholder" /></p>
 				</c:when>
 				<c:otherwise>
-					<c:set var="showlink"><a onclick="editor.loadSampleInput(); return false;"><i class="fa fa-eye" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set.show" /></a></c:set>
-					<c:set var="downlink"><a onclick="editor.downloadSampleInput(); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set.download" /></a></c:set>
-					<p><s:message code="~eu.dariah.de.minfba.schereg.editor.sample.placeholder_set" arguments="${showlink}, ${downlink}" /></p>				
+					<c:set var="showlink"><a onclick="editor.loadSampleInput(); return false;"><i class="fa fa-eye" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.editor.sample.placeholder_set.show" /></a></c:set>
+					<c:set var="downlink"><a onclick="editor.downloadSampleInput(); return false;"><i class="fa fa-download" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.editor.sample.placeholder_set.download" /></a></c:set>
+					<p><s:message code="~de.unibamberg.minf.dme.editor.sample.placeholder_set" arguments="${showlink}, ${downlink}" /></p>				
 				</c:otherwise>
 			</c:choose>										
 		</div>

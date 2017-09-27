@@ -57,27 +57,27 @@ var MappingEditor = function(options) {
 	
 	this.contextMenuClickEventHandler = this.handleContextMenuClicked.bind(this);
 	
-	__translator.addTranslations(["~eu.dariah.de.minfba.schereg.model.schema.schema",
-	                              "~eu.dariah.de.minfba.schereg.editor.element_model",
-	                              "~eu.dariah.de.minfba.schereg.model.mapping.mapping",
-	                              "~eu.dariah.de.minfba.schereg.model.element.element",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
+	__translator.addTranslations(["~de.unibamberg.minf.dme.model.schema.schema",
+	                              "~de.unibamberg.minf.dme.editor.element_model",
+	                              "~de.unibamberg.minf.dme.model.mapping.mapping",
+	                              "~de.unibamberg.minf.dme.model.element.element",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_delete",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.button.expand_all",
-	                              "~eu.dariah.de.minfba.schereg.button.collapse_all",
-	                              "~eu.dariah.de.minfba.schereg.button.expand_from_here",
-	                              "~eu.dariah.de.minfba.schereg.button.collapse_from_here",
-	                              "~eu.dariah.de.minfba.common.link.reload_data",
-	                              "~eu.dariah.de.minfba.common.link.reset_view",
-	                              "~eu.dariah.de.minfba.common.link.delete",
+	                              "~de.unibamberg.minf.dme.button.expand_all",
+	                              "~de.unibamberg.minf.dme.button.collapse_all",
+	                              "~de.unibamberg.minf.dme.button.expand_from_here",
+	                              "~de.unibamberg.minf.dme.button.collapse_from_here",
+	                              "~de.unibamberg.minf.common.link.reload_data",
+	                              "~de.unibamberg.minf.common.link.reset_view",
+	                              "~de.unibamberg.minf.common.link.delete",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.reset_position",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.edit_connection",
-	                              "~eu.dariah.de.minfba.schereg.editor.actions.show_connection",
+	                              "~de.unibamberg.minf.dme.editor.actions.ensure_connected_visible",
+	                              "~de.unibamberg.minf.dme.editor.actions.reset_position",
+	                              "~de.unibamberg.minf.dme.editor.actions.edit_connection",
+	                              "~de.unibamberg.minf.dme.editor.actions.show_connection",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_publish",
-	                              "~eu.dariah.de.minfba.schereg.model.mapping.validation.no_pub_schema_drafts"]);
+	                              "~de.unibamberg.minf.dme.dialog.confirm_publish",
+	                              "~de.unibamberg.minf.dme.model.mapping.validation.no_pub_schema_drafts"]);
 	__translator.getTranslations();
 	
 	this.initLayout();
@@ -213,12 +213,12 @@ MappingEditor.prototype.initGraphs = function() {
 MappingEditor.prototype.getAreaContextMenu = function(area) {
 	var _this = editor;
 	var items = [
-	    area.model.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.schema.schema"),
-	    area.model.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", area.index, "area"),
-	    area.model.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", area.index, "area"),
-	    area.model.createContextMenuHeading("~eu.dariah.de.minfba.schereg.editor.element_model"),
-	    area.model.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat"),
-	    area.model.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh"),
+	    area.model.createContextMenuHeading("~de.unibamberg.minf.dme.model.schema.schema"),
+	    area.model.createContextMenuItem("expandAll", "~de.unibamberg.minf.dme.button.expand_all", "resize-full", area.index, "area"),
+	    area.model.createContextMenuItem("collapseAll", "~de.unibamberg.minf.dme.button.collapse_all", "resize-small", area.index, "area"),
+	    area.model.createContextMenuHeading("~de.unibamberg.minf.dme.editor.element_model"),
+	    area.model.createContextMenuItem("reset", "~de.unibamberg.minf.common.link.reset_view", "repeat"),
+	    area.model.createContextMenuItem("reload", "~de.unibamberg.minf.common.link.reload_data", "refresh"),
 	];
 	return items;
 };
@@ -226,9 +226,9 @@ MappingEditor.prototype.getAreaContextMenu = function(area) {
 MappingEditor.prototype.getElementContextMenu = function(element) {
 	var _this = editor;
 	var items = [
-	        _this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.element.element"),
-	        _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-			_this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key)	
+	        _this.graph.createContextMenuHeading("~de.unibamberg.minf.dme.model.element.element"),
+	        _this.graph.createContextMenuItem("expandFromHere", "~de.unibamberg.minf.dme.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+			_this.graph.createContextMenuItem("collapseFromHere", "~de.unibamberg.minf.dme.button.collapse_from_here", "resize-small", element.id, element.template.options.key)	
 	]; 
 	return items;
 };
@@ -236,17 +236,17 @@ MappingEditor.prototype.getElementContextMenu = function(element) {
 MappingEditor.prototype.getConnectionContextMenu = function(connection) {
 	var _this = editor;
 	var items = [
-	        _this.graph.createContextMenuHeading("~eu.dariah.de.minfba.schereg.model.mapping.mapping"),
-		    _this.graph.createContextMenuItem("ensureConnectedVisible", "~eu.dariah.de.minfba.schereg.editor.actions.ensure_connected_visible", "resize-full", connection.id),
-		    _this.graph.createContextMenuItem("resetPosition", "~eu.dariah.de.minfba.schereg.editor.actions.reset_position", "repeat", connection.id),
+	        _this.graph.createContextMenuHeading("~de.unibamberg.minf.dme.model.mapping.mapping"),
+		    _this.graph.createContextMenuItem("ensureConnectedVisible", "~de.unibamberg.minf.dme.editor.actions.ensure_connected_visible", "resize-full", connection.id),
+		    _this.graph.createContextMenuItem("resetPosition", "~de.unibamberg.minf.dme.editor.actions.reset_position", "repeat", connection.id),
 	];
 	if (_this.mappingOwn || _this.mappingWrite) {
 		items.push(_this.graph.createContextMenuSeparator(),
-			    _this.graph.createContextMenuItem("editConnection", "~eu.dariah.de.minfba.schereg.editor.actions.edit_connection", "edit", connection.id),
-			    _this.graph.createContextMenuItem("removeMapping", "~eu.dariah.de.minfba.common.link.delete", "trash", connection.id, undefined, "danger"))
+			    _this.graph.createContextMenuItem("editConnection", "~de.unibamberg.minf.dme.editor.actions.edit_connection", "edit", connection.id),
+			    _this.graph.createContextMenuItem("removeMapping", "~de.unibamberg.minf.common.link.delete", "trash", connection.id, undefined, "danger"))
 	} else {
 		items.push(_this.graph.createContextMenuSeparator(),
-				_this.graph.createContextMenuItem("editConnection", "~eu.dariah.de.minfba.schereg.editor.actions.show_connection", "edit", connection.id));
+				_this.graph.createContextMenuItem("editConnection", "~de.unibamberg.minf.dme.editor.actions.show_connection", "edit", connection.id));
 	}
 	return items;
 };
@@ -298,8 +298,8 @@ MappingEditor.prototype.editConnection = function(connectionId) {
 		formUrl: "mappedConcept/" + connectionId + "/form/edit",
 		identifier: form_identifier,
 		additionalModalClasses: "max-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],     
 		displayCallback: function(container, modal) { 
 			if (_this.conceptEditor!==undefined && _this.conceptEditor!==null) {
@@ -595,7 +595,7 @@ MappingEditor.prototype.removeConceptMapping = function(conceptMappingId) {
 	}
 	
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), conceptMappingId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), conceptMappingId), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.mappingPath + "mappedConcept/" + conceptMappingId + "/async/remove",
@@ -652,8 +652,8 @@ MappingEditor.prototype.triggerEdit = function() {
 		formFullUrl: url,
 		identifier: form_identifier,
 		//additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() { 
 			if (data.success) {
@@ -675,7 +675,7 @@ MappingEditor.prototype.triggerPublish = function() {
 		return;
 	}
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_publish"), _this.mappingId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_publish"), _this.mappingId), function(result) {
 		if(result) {
 			$.ajax({
 		        url: __util.getBaseUrl() + "mapping/async/publish/" + _this.mappingId,
@@ -692,8 +692,8 @@ MappingEditor.prototype.triggerPublish = function() {
 		        },
 		        error: function(textStatus) {
 		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 		        }
 			});
 		}
@@ -706,7 +706,7 @@ MappingEditor.prototype.triggerDelete = function() {
 		return;
 	}
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), _this.mappingId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), _this.mappingId), function(result) {
 		if(result) {
 			$.ajax({
 		        url: __util.getBaseUrl() + "mapping/async/delete/" + _this.mappingId,
@@ -723,8 +723,8 @@ MappingEditor.prototype.triggerDelete = function() {
 		        },
 		        error: function(textStatus) {
 		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 		        }
 			});
 		}

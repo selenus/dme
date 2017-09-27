@@ -7,7 +7,7 @@
     					http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
     					http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
         	
-    <bean id="xmlStringProcessor" class="eu.dariah.de.minfba.processing.service.xml.XmlStringProcessingService" scope="prototype">
+    <bean id="xmlStringProcessor" class="de.unibamberg.minf.processing.service.xml.XmlStringProcessingService" scope="prototype">
     	<property name="elementProcessors">
     		<list>
 				<ref bean="gtfElementProcessor" />
@@ -16,17 +16,17 @@
     	<property name="maxItems" value="100" />
     </bean>
     
-    <bean id="xmlFileOutputService" class="eu.dariah.de.minfba.processing.output.xml.XmlFileOutputService" scope="prototype">
+    <bean id="xmlFileOutputService" class="de.unibamberg.minf.processing.output.xml.XmlFileOutputService" scope="prototype">
     	<property name="outputBaseDirectory" value="${paths.sampleFilesDir:/tmp}" />
     	<property name="extensionNamespacePattern" value="https://schereg.de.dariah.eu/namespaces/%s/" />
     </bean>
     
-    <bean id="jsonFileOutputService" class="eu.dariah.de.minfba.processing.output.json.JsonFileOutputService" scope="prototype">
+    <bean id="jsonFileOutputService" class="de.unibamberg.minf.processing.output.json.JsonFileOutputService" scope="prototype">
     	<property name="outputBaseDirectory" value="${paths.sampleFilesDir:/tmp}" />
     	<property name="objMapper" ref="objectMapper" />
     </bean>
     
-    <bean id="textProcessor" class="eu.dariah.de.minfba.processing.service.text.TextStringProcessingService" scope="prototype">
+    <bean id="textProcessor" class="de.unibamberg.minf.processing.service.text.TextStringProcessingService" scope="prototype">
     	<property name="elementProcessors">
     		<list>
 				<ref bean="gtfElementProcessor" />
@@ -36,7 +36,7 @@
     </bean>
     
     
-   	<bean id="mappingExecutionService" class="eu.dariah.de.minfba.mapping.service.MappingExecutionServiceImpl" scope="prototype">
+   	<bean id="mappingExecutionService" class="de.unibamberg.minf.mapping.service.MappingExecutionServiceImpl" scope="prototype">
    		<property name="mappingProcessors">
     		<list>
 				<ref bean="gtfMappingProcessor" />
@@ -44,12 +44,12 @@
     	</property>
     </bean>
 
-    <bean id="gtfElementProcessor" class="eu.dariah.de.minfba.gtf.GtfElementProcessor">
+    <bean id="gtfElementProcessor" class="de.unibamberg.minf.gtf.GtfElementProcessor">
 		<property name="mainEngine" ref="mainEngine" />
 	</bean>
 	
 	
-	<bean id="gtfMappingProcessor" class="eu.dariah.de.minfba.gtf.GtfMappingProcessor">
+	<bean id="gtfMappingProcessor" class="de.unibamberg.minf.gtf.GtfMappingProcessor">
 		<property name="mainEngine" ref="mainEngine" />
 	</bean>
 	

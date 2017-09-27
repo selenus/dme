@@ -49,67 +49,67 @@ var SchemaEditor = function(options) {
 	
 	
 	
-	__translator.addTranslations(["~eu.dariah.de.minfba.common.model.id",
-	                              "~eu.dariah.de.minfba.common.model.label",
-	                              "~eu.dariah.de.minfba.common.model.type",
-	                              "~eu.dariah.de.minfba.common.link.edit",
-	                              "~eu.dariah.de.minfba.common.link.view",
-	                              "~eu.dariah.de.minfba.common.link.delete",
-	                              "~eu.dariah.de.minfba.common.link.disable",
-	                              "~eu.dariah.de.minfba.common.link.enable",
-	                              "~eu.dariah.de.minfba.common.link.move_down",
-	                              "~eu.dariah.de.minfba.common.link.move_up",
-	                              "~eu.dariah.de.minfba.schereg.button.add_nonterminal",
-	                              "~eu.dariah.de.minfba.schereg.button.add_label", 
-	                              "~eu.dariah.de.minfba.schereg.button.add_desc_function",
-	                              "~eu.dariah.de.minfba.schereg.button.add_trans_function",
-	                              "~eu.dariah.de.minfba.schereg.button.export_from_here",
-	                              "~eu.dariah.de.minfba.schereg.button.import_here",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_delete",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_disable",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_enable",
-	                              "~eu.dariah.de.minfba.schereg.dialog.element_label",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.head",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.body",
-	                              "~eu.dariah.de.minfba.common.view.forms.servererror.head",
-	                              "~eu.dariah.de.minfba.common.view.forms.servererror.body",
-	                              "~eu.dariah.de.minfba.schereg.model.element.element",
-	                              "~eu.dariah.de.minfba.schereg.model.element.name",
-	                              "~eu.dariah.de.minfba.schereg.model.element.namespace",
-	                              "~eu.dariah.de.minfba.schereg.model.element.attribute",
-	                              "~eu.dariah.de.minfba.schereg.model.element.transient",
-	                              "~eu.dariah.de.minfba.schereg.model.function.function",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar",
-	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured",
+	__translator.addTranslations(["~de.unibamberg.minf.common.model.id",
+	                              "~de.unibamberg.minf.common.model.label",
+	                              "~de.unibamberg.minf.common.model.type",
+	                              "~de.unibamberg.minf.common.link.edit",
+	                              "~de.unibamberg.minf.common.link.view",
+	                              "~de.unibamberg.minf.common.link.delete",
+	                              "~de.unibamberg.minf.common.link.disable",
+	                              "~de.unibamberg.minf.common.link.enable",
+	                              "~de.unibamberg.minf.common.link.move_down",
+	                              "~de.unibamberg.minf.common.link.move_up",
+	                              "~de.unibamberg.minf.dme.button.add_nonterminal",
+	                              "~de.unibamberg.minf.dme.button.add_label", 
+	                              "~de.unibamberg.minf.dme.button.add_desc_function",
+	                              "~de.unibamberg.minf.dme.button.add_trans_function",
+	                              "~de.unibamberg.minf.dme.button.export_from_here",
+	                              "~de.unibamberg.minf.dme.button.import_here",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_delete",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_disable",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_enable",
+	                              "~de.unibamberg.minf.dme.dialog.element_label",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_processing_root.head",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_processing_root.body",
+	                              "~de.unibamberg.minf.common.view.forms.servererror.head",
+	                              "~de.unibamberg.minf.common.view.forms.servererror.body",
+	                              "~de.unibamberg.minf.dme.model.element.element",
+	                              "~de.unibamberg.minf.dme.model.element.name",
+	                              "~de.unibamberg.minf.dme.model.element.namespace",
+	                              "~de.unibamberg.minf.dme.model.element.attribute",
+	                              "~de.unibamberg.minf.dme.model.element.transient",
+	                              "~de.unibamberg.minf.dme.model.function.function",
+	                              "~de.unibamberg.minf.dme.model.grammar.grammar",
+	                              "~de.unibamberg.minf.dme.notification.no_terminal_configured",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.button.show_reused",
-	                              "~eu.dariah.de.minfba.schereg.button.model_individually",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.head",
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.body",
+	                              "~de.unibamberg.minf.dme.button.show_reused",
+	                              "~de.unibamberg.minf.dme.button.model_individually",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_clone_tree.head",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_clone_tree.body",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.button.expand_all",
-	                              "~eu.dariah.de.minfba.schereg.button.collapse_all",
-	                              "~eu.dariah.de.minfba.schereg.button.expand_from_here",
-	                              "~eu.dariah.de.minfba.schereg.button.collapse_from_here",
-	                              "~eu.dariah.de.minfba.common.link.reload_data",
-	                              "~eu.dariah.de.minfba.common.link.reset_view",
-	                              "~eu.dariah.de.minfba.schereg.button.export",
-	                              "~eu.dariah.de.minfba.schereg.button.import",
-	                              "~eu.dariah.de.minfba.schereg.button.create_root",
-	                              "~eu.dariah.de.minfba.schereg.button.set_processing_root",
+	                              "~de.unibamberg.minf.dme.button.expand_all",
+	                              "~de.unibamberg.minf.dme.button.collapse_all",
+	                              "~de.unibamberg.minf.dme.button.expand_from_here",
+	                              "~de.unibamberg.minf.dme.button.collapse_from_here",
+	                              "~de.unibamberg.minf.common.link.reload_data",
+	                              "~de.unibamberg.minf.common.link.reset_view",
+	                              "~de.unibamberg.minf.dme.button.export",
+	                              "~de.unibamberg.minf.dme.button.import",
+	                              "~de.unibamberg.minf.dme.button.create_root",
+	                              "~de.unibamberg.minf.dme.button.set_processing_root",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.notification.import_error.head",
-	                              "~eu.dariah.de.minfba.schereg.notification.import_error.body",
-	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.head",
-	                              "~eu.dariah.de.minfba.schereg.notification.import_processing.body",
-	                              "~eu.dariah.de.minfba.schereg.button.assign_child",
+	                              "~de.unibamberg.minf.dme.notification.import_error.head",
+	                              "~de.unibamberg.minf.dme.notification.import_error.body",
+	                              "~de.unibamberg.minf.dme.notification.import_processing.head",
+	                              "~de.unibamberg.minf.dme.notification.import_processing.body",
+	                              "~de.unibamberg.minf.dme.button.assign_child",
 	                              
-	                              "~eu.dariah.de.minfba.common.model.types.descriptiongrammarimpl",
-	                              "~eu.dariah.de.minfba.common.model.types.labelimpl",
-	                              "~eu.dariah.de.minfba.common.model.types.nonterminalimpl",
-	                              "~eu.dariah.de.minfba.common.model.types.transformationfunctionimpl",
+	                              "~de.unibamberg.minf.common.model.types.descriptiongrammarimpl",
+	                              "~de.unibamberg.minf.common.model.types.labelimpl",
+	                              "~de.unibamberg.minf.common.model.types.nonterminalimpl",
+	                              "~de.unibamberg.minf.common.model.types.transformationfunctionimpl",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.dialog.confirm_publish"]);
+	                              "~de.unibamberg.minf.dme.dialog.confirm_publish"]);
 	__translator.getTranslations();
 	
 	this.init();
@@ -288,8 +288,8 @@ SchemaEditor.prototype.addNode = function(type, childType, id) {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/" + type + "/" + id + "/form/new_" + childType,
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],               
         completeCallback: function() {
 			_this.reloadElementHierarchy(function() {
@@ -308,8 +308,8 @@ SchemaEditor.prototype.createRoot = function() {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/form/createRoot",
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],               
 		completeCallback: function() {
 	    	_this.reloadElementHierarchy();
@@ -326,8 +326,8 @@ SchemaEditor.prototype.editElement = function(id) {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/element/" + id + "/form/element",
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],          
 		completeCallback: function() {_this.reloadElementHierarchy();}
 	});
@@ -357,8 +357,8 @@ SchemaEditor.prototype.editGrammar = function() {
 		formUrl: "/grammar/" + this.graph.selectedItems[0].id + "/form/edit",
 		identifier: form_identifier,
 		additionalModalClasses: "max-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		setupCallback: function(modal) { 
 			grammarEditor = new GrammarEditor(modal, {
@@ -382,8 +382,8 @@ SchemaEditor.prototype.editFunction = function() {
 		formUrl: "/function/" + this.graph.selectedItems[0].id + "/form/edit",
 		identifier: form_identifier,
 		additionalModalClasses: "max-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
         setupCallback: function(modal) { 
         	functionEditor = new FunctionEditor(modal, {
@@ -407,8 +407,8 @@ SchemaEditor.prototype.assignChild = function(elementId) {
 		formUrl: "/element/" + elementId + "/form/assignChild",
 		identifier: form_identifier,
 		additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],      
 		displayCallback: function(modal) { 
 			_this.registerElementTypeahead($(modal).find("#child-element"));
@@ -425,8 +425,8 @@ SchemaEditor.prototype.setProcessingRoot = function(elementId) {
 	var _this = this;
 	
 	bootbox.confirm({
-				title: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.head"),
-				message: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_processing_root.body"),
+				title: __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_processing_root.head"),
+				message: __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_processing_root.body"),
 				callback: function(result) {
 					if(result) {
 						$.ajax({
@@ -478,7 +478,7 @@ SchemaEditor.prototype.showTypeaheadFoundResult = function(data) {
 SchemaEditor.prototype.removeElement = function(type, id) { 
 	var _this = this;
 	
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), id), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), id), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.pathname + "/" + _this.getElementType(type) + "/" + id + "/async/remove",
@@ -497,7 +497,7 @@ SchemaEditor.prototype.removeElement = function(type, id) {
 SchemaEditor.prototype.toggleElementDisabled = function(type, id, disable) { 
 	var _this = this;
 	
-	bootbox.confirm(String.format((disable ? __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_disable") : __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_enable")), id), function(result) {
+	bootbox.confirm(String.format((disable ? __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_disable") : __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_enable")), id), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.pathname + "/" + _this.getElementType(type) + "/" + id + "/async/disable",
@@ -529,8 +529,8 @@ SchemaEditor.prototype.innerEditTerminal = function(id) {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/terminal/" + id + "/form/edit",
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],       
 		completeCallback: function() { _this.updateTerminalList(); }
 	});
@@ -542,7 +542,7 @@ SchemaEditor.prototype.removeTerminal = function() {
 	var terminalId = $("#terminalId").val();
 	
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), terminalId), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), terminalId), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.pathname + "/terminal/" + terminalId + "/async/remove",
@@ -592,8 +592,8 @@ SchemaEditor.prototype.triggerEditSchema = function() {
 		formUrl: "/forms/edit/",
 		identifier: form_identifier,
 		additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() { window.location.reload(); }
 	});
@@ -607,7 +607,7 @@ SchemaEditor.prototype.triggerDeleteSchema = function() {
 		return;
 	}
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_delete"), _this.schema.id), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), _this.schema.id), function(result) {
 		if(result) {
 			$.ajax({
 		        url: _this.pathname + "/async/delete/",
@@ -618,8 +618,8 @@ SchemaEditor.prototype.triggerDeleteSchema = function() {
 		        },
 		        error: function(textStatus) {
 		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 		        }
 			});
 		}
@@ -632,7 +632,7 @@ SchemaEditor.prototype.triggerPublish = function() {
 		return;
 	}
 	var _this = this;
-	bootbox.confirm(String.format(__translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_publish"), _this.schema.id), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_publish"), _this.schema.id), function(result) {
 		if(result) {
 			$.ajax({
 		        url: __util.getBaseUrl() + "model/async/publish/" + _this.schema.id,
@@ -643,8 +643,8 @@ SchemaEditor.prototype.triggerPublish = function() {
 		        },
 		        error: function(textStatus) {
 		        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-		        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+		        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 		        }
 			});
 		}

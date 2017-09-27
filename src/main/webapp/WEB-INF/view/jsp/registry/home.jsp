@@ -11,10 +11,10 @@
 			<!-- Notifications -->
 			<div id="notifications-area" class="col-sm-10 col-sm-offset-1"></div>
 			<div class="xs-hidden sm-visible col-sm-3 col-lg-2 col-sm-offset-1">
-				<div class="pull-right dariah-flower-white-45"><s:message code="~eu.dariah.de.minfba.schereg.title_short" /></div>
+				<div class="pull-right dariah-flower-white-45"><s:message code="~de.unibamberg.minf.dme.title_short" /></div>
 			</div>
 			<div class="col-sm-6 col-lg-7 col-sm-offset-1">
-				<h1><s:message code="~eu.dariah.de.minfba.schereg.registry.title" /></h1>
+				<h1><s:message code="~de.unibamberg.minf.dme.registry.title" /></h1>
 			</div>
 		</div>
 	</div>
@@ -23,19 +23,19 @@
 	<div class="row">
 		<div id="main-content-wrapper" class="col-sm-10 col-sm-offset-1">
 			<ul class="breadcrumb">
-				<li><a href='<s:url value="/" />' target="_self"><s:message code="~eu.dariah.de.minfba.schereg.title" /></a></li>
-				<li class="active"><s:message code="~eu.dariah.de.minfba.schereg.registry.title" /></li>
+				<li><a href='<s:url value="/" />' target="_self"><s:message code="~de.unibamberg.minf.dme.title" /></a></li>
+				<li class="active"><s:message code="~de.unibamberg.minf.dme.registry.title" /></li>
 			</ul>
 			<div id="main-content">
 				<div class="row">
 					<div id="schema-table-container" class="col-lg-5">
-						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.model.schema.title" />&nbsp;</h2>
+						<h2 class="pull-left"><s:message code="~de.unibamberg.minf.dme.model.schema.title" />&nbsp;</h2>
 						<div class="pull-right">
 							<button id="btn-add-schema" class="btn btn-default btn-sm pull-left">
-								<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_schema" />
+								<span class="glyphicon glyphicon-plus"></span> <s:message code="~de.unibamberg.minf.dme.button.add_schema" />
 							</button>
 							<div class="data-table-filter">
-								<input type="text" class="form-control input-sm" placeholder='<s:message code="~eu.dariah.de.minfba.common.link.filter"/>'>
+								<input type="text" class="form-control input-sm" placeholder='<s:message code="~de.unibamberg.minf.common.link.filter"/>'>
 							</div>
 							<div class="data-table-count">
 								<select class="form-control input-sm">
@@ -43,7 +43,7 @@
 								  <option>25</option>
 								  <option>50</option>
 								  <option>100</option>
-								  <option><s:message code="~eu.dariah.de.minfba.common.link.all"/></option>
+								  <option><s:message code="~de.unibamberg.minf.common.link.all"/></option>
 								</select>
 							</div>					
 						</div>
@@ -52,26 +52,26 @@
 								<thead>
 									<tr>
 										<th></th> <!-- Status -->
-										<th><s:message code="~eu.dariah.de.minfba.schereg.model.schema.label" /></th>
+										<th><s:message code="~de.unibamberg.minf.dme.model.schema.label" /></th>
 										<th></th> <!-- Actions -->
 									</tr>
 								</thead>
 								<tbody>
 								<tr>
-									<td colspan="3" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
+									<td colspan="3" align="center"><s:message code="~de.unibamberg.minf.common.view.no_data_fetched_yet" /></td>
 								</tr>
 								</tbody>
 							</table>
 						</div>
 					</div>
 					<div id="mapping-table-container" class="col-lg-7">
-						<h2 class="pull-left"><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.title" />&nbsp;</h2>
+						<h2 class="pull-left"><s:message code="~de.unibamberg.minf.dme.model.mapping.title" />&nbsp;</h2>
 						<div class="pull-right">
 							<button id="btn-add-mapping" class="btn btn-default btn-sm pull-left">
-								<span class="glyphicon glyphicon-plus"></span> <s:message code="~eu.dariah.de.minfba.schereg.button.add_mapping" />
+								<span class="glyphicon glyphicon-plus"></span> <s:message code="~de.unibamberg.minf.dme.button.add_mapping" />
 							</button>
 							<div class="data-table-filter">
-								<input type="text" class="form-control input-sm" placeholder='<s:message code="~eu.dariah.de.minfba.common.link.filter"/>'>
+								<input type="text" class="form-control input-sm" placeholder='<s:message code="~de.unibamberg.minf.common.link.filter"/>'>
 							</div>
 							<div class="data-table-count">
 								<select class="form-control input-sm">
@@ -79,7 +79,7 @@
 								  <option>25</option>
 								  <option>50</option>
 								  <option>100</option>
-								  <option><s:message code="~eu.dariah.de.minfba.common.link.all"/></option>
+								  <option><s:message code="~de.unibamberg.minf.common.link.all"/></option>
 								</select>
 							</div>					
 						</div>
@@ -88,14 +88,14 @@
 								<thead>
 									<tr>
 										<th></th> <!-- Status -->
-										<th><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.source" /></th>
-										<th><s:message code="~eu.dariah.de.minfba.schereg.model.mapping.target" /></th>
+										<th><s:message code="~de.unibamberg.minf.dme.model.mapping.source" /></th>
+										<th><s:message code="~de.unibamberg.minf.dme.model.mapping.target" /></th>
 										<th></th> <!-- Actions -->
 									</tr>
 								</thead>
 								<tbody>
 								<tr>
-									<td colspan="4" align="center"><s:message code="~eu.dariah.de.minfba.common.view.no_data_fetched_yet" /></td>
+									<td colspan="4" align="center"><s:message code="~de.unibamberg.minf.common.view.no_data_fetched_yet" /></td>
 								</tr>
 								</tbody>
 							</table>

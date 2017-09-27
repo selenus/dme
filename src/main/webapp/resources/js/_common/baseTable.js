@@ -16,9 +16,9 @@ function BaseTable(url, containerSelector) {
 	this.error = false;
 	this.containerSelector = containerSelector==undefined ? null : containerSelector;
 	
-	this.baseTranslations = ["~eu.dariah.de.minfba.common.view.notifications.async_general_error",
-	                         "~eu.dariah.de.minfba.common.view.notifications.async_timeout",
-	                         "~eu.dariah.de.minfba.common.view.notifications.session_expired_reload"];
+	this.baseTranslations = ["~de.unibamberg.minf.common.view.notifications.async_general_error",
+	                         "~de.unibamberg.minf.common.view.notifications.async_timeout",
+	                         "~de.unibamberg.minf.common.view.notifications.session_expired_reload"];
 	
 	this.options = {
 			refreshInterval: __properties.refreshIntervalMs,
@@ -95,13 +95,13 @@ BaseTable.prototype.assignTableEvents = function() {
 BaseTable.prototype.handleAjaxError = function(xhr, textStatus, error) {
     // Reload because the session has expired
 	if (xhr.status===403) {
-    	bootbox.alert(__translator.translate("~eu.dariah.de.minfba.common.view.notifications.session_expired_reload"), function(result) {
+    	bootbox.alert(__translator.translate("~de.unibamberg.minf.common.view.notifications.session_expired_reload"), function(result) {
     		window.location.reload();
     	});
 	} else if (textStatus==='timeout') {
-        alert(__translator.translate("~eu.dariah.de.minfba.common.view.notifications.async_timeout"));
+        alert(__translator.translate("~de.unibamberg.minf.common.view.notifications.async_timeout"));
     } else {
-        alert(__translator.translate("~eu.dariah.de.minfba.common.view.notifications.async_general_error"));
+        alert(__translator.translate("~de.unibamberg.minf.common.view.notifications.async_general_error"));
     }
 	this.error = true;
     this.table.fnProcessingIndicator(false);

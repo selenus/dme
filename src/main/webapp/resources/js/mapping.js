@@ -5,18 +5,18 @@ $(document).ready(function() {
 });
 
 var MappingEditor = function() {
-	this.prepareTranslations(["~eu.dariah.de.minfba.common.link.delete",
-	                          "~eu.dariah.de.minfba.common.link.edit",
-	                          "~eu.dariah.de.minfba.common.model.id",
-	                          "~eu.dariah.de.minfba.common.view.forms.servererror.head",
-	                          "~eu.dariah.de.minfba.common.view.forms.servererror.body",
-	                          /*"~eu.dariah.de.minfba.schereg.button.editor",
-	                          "~eu.dariah.de.minfba.schereg.dialog.confirm_detete",
-	                          "~eu.dariah.de.minfba.schereg.model.schema.description",
-	                          "~eu.dariah.de.minfba.schereg.model.schema.label",
-	                          "~eu.dariah.de.minfba.schereg.model.schema.draft",
-	                          "~eu.dariah.de.minfba.schereg.notification.deleted.head",
-	                          "~eu.dariah.de.minfba.schereg.notification.deleted.body"*/]);
+	this.prepareTranslations(["~de.unibamberg.minf.common.link.delete",
+	                          "~de.unibamberg.minf.common.link.edit",
+	                          "~de.unibamberg.minf.common.model.id",
+	                          "~de.unibamberg.minf.common.view.forms.servererror.head",
+	                          "~de.unibamberg.minf.common.view.forms.servererror.body",
+	                          /*"~de.unibamberg.minf.dme.button.editor",
+	                          "~de.unibamberg.minf.dme.dialog.confirm_detete",
+	                          "~de.unibamberg.minf.dme.model.schema.description",
+	                          "~de.unibamberg.minf.dme.model.schema.label",
+	                          "~de.unibamberg.minf.dme.model.schema.draft",
+	                          "~de.unibamberg.minf.dme.notification.deleted.head",
+	                          "~de.unibamberg.minf.dme.notification.deleted.body"*/]);
 	//this.loadChanges();
 	this.createTable();
 	this.assignTableEvents();
@@ -123,8 +123,8 @@ MappingEditor.prototype.loadChanges = function(id) {
         success: function(data) { __util.renderActivities("#mapping-activity", id, data); },
         error: function(textStatus) {
         	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
         }
 	});
 }
@@ -161,8 +161,8 @@ MappingEditor.prototype.handleSelection = function(id) {
 	        success: function(data) { _this.renderMappingTab(id, data); },
 	        error: function(textStatus) {
 	        	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-	        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-	        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+	        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+	        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
 	        }
 		});
 			
@@ -218,8 +218,8 @@ MappingEditor.prototype.triggerEdit = function(mappingId) {
 		formUrl: (mappingId!=undefined ? ("forms/edit/" + mappingId) : "forms/add"),
 		identifier: form_identifier,
 		//additionalModalClasses: "wide-modal",
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		completeCallback: function() {_this.refresh();}
 	});

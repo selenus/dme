@@ -11,37 +11,37 @@ SchemaEditor.prototype.initGraph = function() {
 			primaryColor: "#e6f1ff", secondaryColor: "#0049a6",
 			getContextMenuItems: function(element) { 
 				var items = [];
-				items.push(_this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key));
-				items.push(_this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key));
+				items.push(_this.graph.createContextMenuItem("expandFromHere", "~de.unibamberg.minf.dme.button.expand_from_here", "resize-full", element.id, element.template.options.key));
+				items.push(_this.graph.createContextMenuItem("collapseFromHere", "~de.unibamberg.minf.dme.button.collapse_from_here", "resize-small", element.id, element.template.options.key));
 				
 				if (element.reusing || element.reused) {
-					items.push(_this.graph.createContextMenuItem("showReused", "~eu.dariah.de.minfba.schereg.button.show_reused", "resize-full", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("showReused", "~de.unibamberg.minf.dme.button.show_reused", "resize-full", element.id, element.template.options.key));
 					if (element.reusing) {
-						items.push(_this.graph.createContextMenuItem("modelIndividually", "~eu.dariah.de.minfba.schereg.button.model_individually", "asterisk", element, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("modelIndividually", "~de.unibamberg.minf.dme.button.model_individually", "asterisk", element, element.template.options.key));
 					}
 				}
 				
 				items.push(_this.graph.createContextMenuSeparator());
 
 				if (_this.schema.owned || _this.schema.write) {
-					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("addNonterminal", "~eu.dariah.de.minfba.schereg.button.add_nonterminal", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editElement", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("addNonterminal", "~de.unibamberg.minf.dme.button.add_nonterminal", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("addDescription", "~de.unibamberg.minf.dme.button.add_desc_function", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("assignChild", "~de.unibamberg.minf.dme.button.assign_child", "link", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
-					items.push(_this.graph.createContextMenuItem("setProcessingRoot", "~eu.dariah.de.minfba.schereg.button.set_processing_root", "grain", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
-					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
+					items.push(_this.graph.createContextMenuItem("setProcessingRoot", "~de.unibamberg.minf.dme.button.set_processing_root", "grain", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("exportSubtree", "~de.unibamberg.minf.dme.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~de.unibamberg.minf.dme.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
-						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("enableElement", "~de.unibamberg.minf.common.link.enable", "plus", element.id, element.template.options.key));
 					} else {
-						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("disableElement", "~de.unibamberg.minf.common.link.disable", "minus", element.id, element.template.options.key));
 					}
 					
-					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("removeElement", "~de.unibamberg.minf.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
-					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editElement", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
 				}
 				return items; 
 			}, 
@@ -50,27 +50,27 @@ SchemaEditor.prototype.initGraph = function() {
 			primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
 			getContextMenuItems: function(element) { 
 				var items = [
-				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("expandFromHere", "~de.unibamberg.minf.dme.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("collapseFromHere", "~de.unibamberg.minf.dme.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
 				    _this.graph.createContextMenuSeparator()
 				];
 				if (_this.schema.owned || _this.schema.write) {
-					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("addDescription", "~eu.dariah.de.minfba.schereg.button.add_desc_function", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("assignChild", "~eu.dariah.de.minfba.schereg.button.assign_child", "link", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editElement", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("addLabel", "~de.unibamberg.minf.dme.button.add_label", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("addDescription", "~de.unibamberg.minf.dme.button.add_desc_function", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("assignChild", "~de.unibamberg.minf.dme.button.assign_child", "link", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
-					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
-					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
+					items.push(_this.graph.createContextMenuItem("exportSubtree", "~de.unibamberg.minf.dme.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~de.unibamberg.minf.dme.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
-						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("enableElement", "~de.unibamberg.minf.common.link.enable", "plus", element.id, element.template.options.key));
 					} else {
-						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("disableElement", "~de.unibamberg.minf.common.link.disable", "minus", element.id, element.template.options.key));
 					}
-					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("removeElement", "~de.unibamberg.minf.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
-					items.push(_this.graph.createContextMenuItem("editElement", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editElement", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
 				}
 				return items; 
 			}
@@ -79,26 +79,26 @@ SchemaEditor.prototype.initGraph = function() {
 			primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
 			getContextMenuItems: function(element) { 
 				var items = [
-				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("expandFromHere", "~de.unibamberg.minf.dme.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("collapseFromHere", "~de.unibamberg.minf.dme.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
 				    _this.graph.createContextMenuSeparator()
 				];
 				
 				if (_this.schema.owned || _this.schema.write) {
-					items.push(_this.graph.createContextMenuItem("addLabel", "~eu.dariah.de.minfba.schereg.button.add_label", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("addLabel", "~de.unibamberg.minf.dme.button.add_label", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editFunction", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
-					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
-					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
+					items.push(_this.graph.createContextMenuItem("exportSubtree", "~de.unibamberg.minf.dme.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~de.unibamberg.minf.dme.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
-						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("enableElement", "~de.unibamberg.minf.common.link.enable", "plus", element.id, element.template.options.key));
 					} else {
-						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("disableElement", "~de.unibamberg.minf.common.link.disable", "minus", element.id, element.template.options.key));
 					}
-					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("removeElement", "~de.unibamberg.minf.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
-					items.push(_this.graph.createContextMenuItem("editFunction", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editFunction", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
 				}
 				return items; 
 			}
@@ -107,27 +107,27 @@ SchemaEditor.prototype.initGraph = function() {
 			primaryColor: "#FFE173", secondaryColor: "#6d5603", radius: 5,
 			getContextMenuItems: function(element) { 
 				var items = [
-				    _this.graph.createContextMenuItem("expandFromHere", "~eu.dariah.de.minfba.schereg.button.expand_from_here", "resize-full", element.id, element.template.options.key),
-				    _this.graph.createContextMenuItem("collapseFromHere", "~eu.dariah.de.minfba.schereg.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("expandFromHere", "~de.unibamberg.minf.dme.button.expand_from_here", "resize-full", element.id, element.template.options.key),
+				    _this.graph.createContextMenuItem("collapseFromHere", "~de.unibamberg.minf.dme.button.collapse_from_here", "resize-small", element.id, element.template.options.key),
 				    _this.graph.createContextMenuSeparator()
 				];
 				if (_this.schema.owned || _this.schema.write) {
-					items.push(_this.graph.createContextMenuItem("addFunction", "~eu.dariah.de.minfba.schereg.button.add_trans_function", "asterisk", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.edit", "edit", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("moveUpGrammar", "~eu.dariah.de.minfba.common.link.move_up", "arrow-up", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuItem("moveDownGrammar", "~eu.dariah.de.minfba.common.link.move_down", "arrow-down", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("addFunction", "~de.unibamberg.minf.dme.button.add_trans_function", "asterisk", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editGrammar", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("moveUpGrammar", "~de.unibamberg.minf.common.link.move_up", "arrow-up", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("moveDownGrammar", "~de.unibamberg.minf.common.link.move_down", "arrow-down", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuSeparator());
-					items.push(_this.graph.createContextMenuItem("exportSubtree", "~eu.dariah.de.minfba.schereg.button.export_from_here", "cloud-download", element.id));
-					items.push(_this.graph.createContextMenuItem("importSubtree", "~eu.dariah.de.minfba.schereg.button.import_here", "leaf", element.id));
+					items.push(_this.graph.createContextMenuItem("exportSubtree", "~de.unibamberg.minf.dme.button.export_from_here", "cloud-download", element.id));
+					items.push(_this.graph.createContextMenuItem("importSubtree", "~de.unibamberg.minf.dme.button.import_here", "leaf", element.id));
 					items.push(_this.graph.createContextMenuSeparator());
 					if (element.disabled) {
-						items.push(_this.graph.createContextMenuItem("enableElement", "~eu.dariah.de.minfba.common.link.enable", "plus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("enableElement", "~de.unibamberg.minf.common.link.enable", "plus", element.id, element.template.options.key));
 					} else {
-						items.push(_this.graph.createContextMenuItem("disableElement", "~eu.dariah.de.minfba.common.link.disable", "minus", element.id, element.template.options.key));
+						items.push(_this.graph.createContextMenuItem("disableElement", "~de.unibamberg.minf.common.link.disable", "minus", element.id, element.template.options.key));
 					}
-					items.push(_this.graph.createContextMenuItem("removeElement", "~eu.dariah.de.minfba.common.link.delete", "trash", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("removeElement", "~de.unibamberg.minf.common.link.delete", "trash", element.id, element.template.options.key));
 				} else {
-					items.push(_this.graph.createContextMenuItem("editGrammar", "~eu.dariah.de.minfba.common.link.view", "edit", element.id, element.template.options.key));
+					items.push(_this.graph.createContextMenuItem("editGrammar", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
 				}
 				return items; 
 			}
@@ -137,17 +137,17 @@ SchemaEditor.prototype.initGraph = function() {
 	this.area = this.graph.addArea({
 		getContextMenuItems: function(area) { 
 			var items = [
-				_this.graph.createContextMenuItem("expandAll", "~eu.dariah.de.minfba.schereg.button.expand_all", "resize-full", area, "schema"),
-				_this.graph.createContextMenuItem("collapseAll", "~eu.dariah.de.minfba.schereg.button.collapse_all", "resize-small", area, "schema"),
-				_this.graph.createContextMenuItem("reset", "~eu.dariah.de.minfba.common.link.reset_view", "repeat", area, "schema"),
+				_this.graph.createContextMenuItem("expandAll", "~de.unibamberg.minf.dme.button.expand_all", "resize-full", area, "schema"),
+				_this.graph.createContextMenuItem("collapseAll", "~de.unibamberg.minf.dme.button.collapse_all", "resize-small", area, "schema"),
+				_this.graph.createContextMenuItem("reset", "~de.unibamberg.minf.common.link.reset_view", "repeat", area, "schema"),
 				_this.graph.createContextMenuSeparator(),
-				_this.graph.createContextMenuItem("reload", "~eu.dariah.de.minfba.common.link.reload_data", "refresh", area, "schema"),
-				_this.graph.createContextMenuItem("exportSchema", "~eu.dariah.de.minfba.schereg.button.export", "cloud-download", area, "schema"),
+				_this.graph.createContextMenuItem("reload", "~de.unibamberg.minf.common.link.reload_data", "refresh", area, "schema"),
+				_this.graph.createContextMenuItem("exportSchema", "~de.unibamberg.minf.dme.button.export", "cloud-download", area, "schema"),
 			]; 
 			if (_this.schema.owned || _this.schema.write) {
 				items.push(_this.graph.createContextMenuSeparator(),
-						_this.graph.createContextMenuItem("importSchema", "~eu.dariah.de.minfba.schereg.button.import", "cloud-upload", area, "schema"),
-						_this.graph.createContextMenuItem("createRoot", "~eu.dariah.de.minfba.schereg.button.create_root", "plus", area, "schema")); 
+						_this.graph.createContextMenuItem("importSchema", "~de.unibamberg.minf.dme.button.import", "cloud-upload", area, "schema"),
+						_this.graph.createContextMenuItem("createRoot", "~de.unibamberg.minf.dme.button.create_root", "plus", area, "schema")); 
 				
 			}
 			return items;
@@ -215,8 +215,8 @@ SchemaEditor.prototype.showReuseOccurrences = function(elementId) {
 SchemaEditor.prototype.modelIndividually = function(elementId) {
 	var _this = this;
 	bootbox.confirm({
-		title: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.head"),
-		message: __translator.translate("~eu.dariah.de.minfba.schereg.dialog.confirm_clone_tree.body"),
+		title: __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_clone_tree.head"),
+		message: __translator.translate("~de.unibamberg.minf.dme.dialog.confirm_clone_tree.body"),
 		callback: function(result) {
 			if(result) {
 				var path = _this.area.getElementPath(_this.graph.selectedItems[0]);
@@ -272,15 +272,15 @@ SchemaEditor.prototype.checkSchemaState = function() {
 	    	}
 	    	if (data.pojo.processing) {
 	    		_this.stateNotificationId = __notifications.showTranslatedMessage(NOTIFICATION_TYPES.INFO, 
-	    				"~eu.dariah.de.minfba.schereg.notification.import_processing.head", 
-	    				"~eu.dariah.de.minfba.schereg.notification.import_processing.body", 
+	    				"~de.unibamberg.minf.dme.notification.import_processing.head", 
+	    				"~de.unibamberg.minf.dme.notification.import_processing.body", 
 	    				_this.stateNotificationId, false);
 	    		$("#schema-editor-canvas").addClass("hide");
 	    	} else {
 	    		if (data.pojo.error) {
 		    		_this.stateNotificationId = __notifications.showTranslatedMessage(NOTIFICATION_TYPES.ERROR, 
-		    				"~eu.dariah.de.minfba.schereg.notification.import_error.head", 
-		    				"~eu.dariah.de.minfba.schereg.notification.import_error.body", 
+		    				"~de.unibamberg.minf.dme.notification.import_error.head", 
+		    				"~de.unibamberg.minf.dme.notification.import_error.body", 
 		    				_this.stateNotificationId, false);
 		    	} else if (data.pojo.ready) {
 		    		__notifications.quitMessage(_this.stateNotificationId);

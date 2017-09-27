@@ -1,28 +1,28 @@
 function BaseEditor() {
-	__translator.addTranslations(["~eu.dariah.de.minfba.common.model.id",
-	                              "~eu.dariah.de.minfba.common.model.label",
-	                              "~eu.dariah.de.minfba.schereg.model.element.name",
-	                              "~eu.dariah.de.minfba.schereg.model.element.transient",
-	                              "~eu.dariah.de.minfba.schereg.model.element.attribute",
-	                              "~eu.dariah.de.minfba.schereg.notification.no_terminal_configured",
+	__translator.addTranslations(["~de.unibamberg.minf.common.model.id",
+	                              "~de.unibamberg.minf.common.model.label",
+	                              "~de.unibamberg.minf.dme.model.element.name",
+	                              "~de.unibamberg.minf.dme.model.element.transient",
+	                              "~de.unibamberg.minf.dme.model.element.attribute",
+	                              "~de.unibamberg.minf.dme.notification.no_terminal_configured",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.model.mapped_concept.source",
-	                              "~eu.dariah.de.minfba.schereg.model.mapped_concept.targets",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar",
-	                              "~eu.dariah.de.minfba.schereg.model.function.function",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.state",
-	                              "~eu.dariah.de.minfba.schereg.model.function.state",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.base_rule",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.separate",
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.combined",
+	                              "~de.unibamberg.minf.dme.model.mapped_concept.source",
+	                              "~de.unibamberg.minf.dme.model.mapped_concept.targets",
+	                              "~de.unibamberg.minf.dme.model.grammar.grammar",
+	                              "~de.unibamberg.minf.dme.model.function.function",
+	                              "~de.unibamberg.minf.dme.model.grammar.state",
+	                              "~de.unibamberg.minf.dme.model.function.state",
+	                              "~de.unibamberg.minf.dme.model.grammar.base_rule",
+	                              "~de.unibamberg.minf.dme.model.grammar.grammar_layout",
+	                              "~de.unibamberg.minf.dme.model.grammar.separate",
+	                              "~de.unibamberg.minf.dme.model.grammar.combined",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.editor.sample.download.file_count",
-	                              "~eu.dariah.de.minfba.schereg.editor.sample.download.files_count",
-	                              "~eu.dariah.de.minfba.common.link.download",
-	                              "~eu.dariah.de.minfba.common.labels.no_match_found",
+	                              "~de.unibamberg.minf.dme.editor.sample.download.file_count",
+	                              "~de.unibamberg.minf.dme.editor.sample.download.files_count",
+	                              "~de.unibamberg.minf.common.link.download",
+	                              "~de.unibamberg.minf.common.labels.no_match_found",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.editor.sample.notice.empty_sample"]);
+	                              "~de.unibamberg.minf.dme.editor.sample.notice.empty_sample"]);
 	this.vocabularySources = new Array();
 };
 
@@ -65,7 +65,7 @@ BaseEditor.prototype.registerTypeahead = function(element, name, datasource, dis
 		limit: limit,
 		templates: {
 			empty: ['<div class="tt-empty-message">',
-			        	__translator.translate("~eu.dariah.de.minfba.common.labels.no_match_found"),
+			        	__translator.translate("~de.unibamberg.minf.common.labels.no_match_found"),
 			        '</div>'].join('\n'),
 			suggestion: function(data) { return suggestionCallback(data); }
 		}
@@ -138,7 +138,7 @@ BaseEditor.prototype.getElementType = function(originalType) {
 
 BaseEditor.prototype.processMappedConceptDetails = function(data, callback, container, pathPrefix) {
 	var details = $("<div class=\"clearfix\">");
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
 	
 	var _this = this;
 	var inputIds = [];
@@ -149,8 +149,8 @@ BaseEditor.prototype.processMappedConceptDetails = function(data, callback, cont
 		}
 	}
 	
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.source"), inputIds));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.mapped_concept.targets"), data.targetElementIds));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.mapped_concept.source"), inputIds));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.mapped_concept.targets"), data.targetElementIds));
 	
 	container.append(details);
 	
@@ -162,22 +162,22 @@ BaseEditor.prototype.processMappedConceptDetails = function(data, callback, cont
 BaseEditor.prototype.processGrammarDetails = function(data, callback, container, pathPrefix) { 
 	var details = $("<div class=\"clearfix\">");
 	
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.state"), 
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.grammar.state"), 
 			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.passthrough==true ? "<span class='glyphicon glyphicon-forward' aria-hidden='true'></span>&nbsp;" : "")
 	));
 	
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.grammarName));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.base_rule"), data.baseMethod));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.label"), data.grammarName));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.grammar.base_rule"), data.baseMethod));
 	
 	if (data.passthrough!=true && data.grammarContainer!=null) {
 		if (data.grammarContainer.lexerGrammar!==null && data.grammarContainer.lexerGrammar !=="") {
-			details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout"), __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.separate")));
+			details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.grammar.grammar_layout"), __translator.translate("~de.unibamberg.minf.dme.model.grammar.separate")));
 		} else {
-			details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.grammar_layout"), __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.combined")));
+			details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.grammar.grammar_layout"), __translator.translate("~de.unibamberg.minf.dme.model.grammar.combined")));
 		}
 	}
 	
@@ -191,14 +191,14 @@ BaseEditor.prototype.processGrammarDetails = function(data, callback, container,
 BaseEditor.prototype.processFunctionDetails = function(data, callback, container, pathPrefix) { 
 	var details = $("<div class=\"clearfix\">");
 	
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.function.state"), 
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.function.state"), 
 			(data.locked!=true && data.error!=true ? "<span class='glyphicon glyphicon-ok' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.locked==true ? "<span class='glyphicon glyphicon-wrench' aria-hidden='true'></span>&nbsp;" : "") +
 			(data.error==true ? "<span class='glyphicon glyphicon-exclamation-sign glyphicon-color-danger' aria-hidden='true'></span>&nbsp;" : "")
 	));
 	
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.label"), data.name));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.label"), data.name));
 	
 	container.append(details);
 	
@@ -209,9 +209,9 @@ BaseEditor.prototype.processFunctionDetails = function(data, callback, container
 
 BaseEditor.prototype.processElementDetails = function(data, callback, container, pathPrefix) { 
 	var details = $("<div class=\"clearfix\">");
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
-	details.append(this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.transient));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.name));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.transient"), data.transient));
 		
 	container.append(details); 
 	
@@ -230,10 +230,10 @@ BaseEditor.prototype.processTerminalElement = function(data, container, pathPref
 	        success: function(data) {
 	        	var details = $("<div class=\"clearfix tab-details-block\">");
 	        	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.common.model.id"), data.id));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.name"), data.name));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.transient"), data.namespace));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~eu.dariah.de.minfba.schereg.model.element.attribute"), data.attribute));
+	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
+	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.name));
+	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.transient"), data.namespace));
+	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.attribute"), data.attribute));
 	        		
 	        	container.append(details);
 	        },
@@ -243,7 +243,7 @@ BaseEditor.prototype.processTerminalElement = function(data, container, pathPref
 		var details = $("<div class=\"clearfix tab-details-block\">");
 		details.append("<div class='alert alert-sm alert-warning' role='alert'>" + 
 				"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +
-				__translator.translate("~eu.dariah.de.minfba.schereg.notification.no_terminal_configured") +
+				__translator.translate("~de.unibamberg.minf.dme.notification.no_terminal_configured") +
 				"</div>");
 		container.append(details);
 	}
@@ -298,8 +298,8 @@ BaseEditor.prototype.loadActivitiesForEntity = function(entityId, container) {
         success: function(data) { __util.renderActivities(container, null, data); },
         error: function(textStatus) {
         	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
         }
 	});
 };
@@ -313,8 +313,8 @@ BaseEditor.prototype.loadActivitiesForElement = function(elementId, container) {
         success: function(data) { __util.renderActivities(container, elementId, data); },
         error: function(textStatus) {
         	__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.head"), 
-        			__translator.translate("~eu.dariah.de.minfba.common.view.forms.servererror.body"));
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.head"), 
+        			__translator.translate("~de.unibamberg.minf.common.view.forms.servererror.body"));
         }
 	});
 };

@@ -8,8 +8,8 @@ SchemaEditor.prototype.importSchema = function(elementId) {
 		formUrl: "forms/import/",
 		data: data,
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		additionalModalClasses: "wide-modal",
 		completeCallback: function() { 
@@ -67,7 +67,7 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 					return '<p><strong>' + e.name + '</strong><br/ >' + e.namespace + '<p>';
 				} else if (e.simpleType!==undefined && e.simpleType!==null && e.simpleType!=="") {
 					return '<p><strong>' + e.name + '</strong> ' +
-							'<small><em>' + __translator.translate("~eu.dariah.de.minfba.common.model.types." + e.simpleType.toLowerCase()) + '</em></small>' +
+							'<small><em>' + __translator.translate("~de.unibamberg.minf.common.model.types." + e.simpleType.toLowerCase()) + '</em></small>' +
 						'<p>';
 				} else {
 					return '<p><strong>' + e.name + '</strong>';

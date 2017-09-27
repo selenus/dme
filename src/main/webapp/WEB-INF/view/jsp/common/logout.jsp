@@ -8,7 +8,7 @@
 	 <div class="container<c:if test="${fluidLayout==true}">-fluid</c:if>">
 		<div class="row">
 			<div class="xs-hidden sm-visible col-sm-3 col-lg-2 col-sm-offset-1">
-      			<div class="pull-right dariah-flower-white-83"><s:message code="~eu.dariah.de.minfba.schereg.title_short" /></div>
+      			<div class="pull-right dariah-flower-white-83"><s:message code="~de.unibamberg.minf.dme.title_short" /></div>
 			</div>
 		</div>
 	</div>

@@ -63,8 +63,8 @@ SvgViewer.prototype.maximizeView = function() {
 	modalFormHandler = new ModalFormHandler({
 		formFullUrl: _this.maximizeSvgPath,
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		setupCallback: function(modal) {
 			$(modal).find(_this.maximizedSvgContainerSelector).height(_this.maximizedHeight + "px");

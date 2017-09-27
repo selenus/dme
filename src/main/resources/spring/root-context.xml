@@ -35,22 +35,22 @@
 	</bean>
 	
 	<!-- i18n -->
-	<bean id="messageSource" class="eu.dariah.de.minfba.core.web.localization.MessageSource">
+	<bean id="messageSource" class="de.unibamberg.minf.core.web.localization.MessageSource">
 	    <property name="basename" value="classpath:i18n/messages" />
 	    <property name="loggingMode" value="true" />
 	    <property name="cacheSeconds" value="10" />
 	</bean>
 	
-	<bean class="eu.dariah.de.minfba.schereg.sessions.SessionCleanerService">
+	<bean class="de.unibamberg.minf.dme.sessions.SessionCleanerService">
 		<property name="defaultExpirationMins" value="86400" /> <!-- 60 days -->
 		<property name="intervalMins" value="2880" /> <!-- every two days -->
 	</bean>
 	
 	<context:component-scan base-package="eu.dariah.de.dariahsp.configuration" />
 	
-	<context:component-scan base-package="eu.dariah.de.minfba.schereg.dao"/>
-	<context:component-scan base-package="eu.dariah.de.minfba.schereg.service"/>
-	<context:component-scan base-package="eu.dariah.de.minfba.schereg.util"/>
-	<context:component-scan base-package="eu.dariah.de.minfba.schereg.importer"/>
-	<context:component-scan base-package="eu.dariah.de.minfba.schereg.pojo.converter"/>
+	<context:component-scan base-package="de.unibamberg.minf.dme.dao"/>
+	<context:component-scan base-package="de.unibamberg.minf.dme.service"/>
+	<context:component-scan base-package="de.unibamberg.minf.dme.util"/>
+	<context:component-scan base-package="de.unibamberg.minf.dme.importer"/>
+	<context:component-scan base-package="de.unibamberg.minf.dme.pojo.converter"/>
 </beans>

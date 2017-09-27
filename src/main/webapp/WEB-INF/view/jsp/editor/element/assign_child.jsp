@@ -6,19 +6,19 @@
 
 <form method="POST" action="${saveUrl}" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title"><s:message code="~eu.dariah.de.minfba.schereg.form.element.assign_child.title" /></h3>	
+		<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.element.assign_child.title" /></h3>	
 		<input type="hidden" id="child-element-id" />
 	</div>
 	<div class="form-content">
 		<fieldset>
 			<div class="form-group">
-				<label class="col-sm-4 control-label" for="child-element"><s:message code="~eu.dariah.de.minfba.schereg.form.element.assign_child.search_element" />:</label>
+				<label class="col-sm-4 control-label" for="child-element"><s:message code="~de.unibamberg.minf.dme.form.element.assign_child.search_element" />:</label>
 				<div class="col-sm-8">
 					<input type="text" class="form-control typeahead" id="child-element" />
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="col-sm-4 control-label" for="child-element"><s:message code="~eu.dariah.de.minfba.schereg.form.element.assign_child.chosen_element" />:</label>
+				<label class="col-sm-4 control-label" for="child-element"><s:message code="~de.unibamberg.minf.dme.form.element.assign_child.chosen_element" />:</label>
 				<div class="col-sm-8">
 					<input type="text" class="form-control" disabled id="element-name" />
 				</div>
@@ -33,8 +33,8 @@
 	</div>
 	<div class="form-footer">
 		<div class="controls">
-			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~eu.dariah.de.minfba.common.link.cancel" /></button>
-			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~eu.dariah.de.minfba.common.link.save" /></button>
+			<button class="btn btn-default btn-sm cancel form-btn-cancel" type="reset"><s:message code="~de.unibamberg.minf.common.link.cancel" /></button>
+			<button class="btn btn-primary btn-sm start form-btn-submit" type="submit"><s:message code="~de.unibamberg.minf.common.link.save" /></button>
 		</div>
 	</div>
 </form>

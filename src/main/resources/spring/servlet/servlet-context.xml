@@ -15,7 +15,7 @@
 	<mvc:resources location="/resources/" mapping="/resources/**" cache-period="31556926"/>
 	<sec:global-method-security pre-post-annotations="enabled" secured-annotations="enabled" />
 	
-	<bean id="initService" class="eu.dariah.de.minfba.core.web.init.LocaleAwareInitializationServiceImpl">
+	<bean id="initService" class="de.unibamberg.minf.core.web.init.LocaleAwareInitializationServiceImpl">
 		<property name="basename" value="classpath:i18n/messages" />
 	</bean>
 	
@@ -38,7 +38,7 @@
 		<property name="defaultLocale" value="de" />
 	</bean>
 	<mvc:interceptors>
-		<bean class="eu.dariah.de.minfba.core.web.interceptor.UserLocaleChangeInterceptor">
+		<bean class="de.unibamberg.minf.core.web.interceptor.UserLocaleChangeInterceptor">
 			<property name="paramName" value="lang" />
 			<property name="initService" ref="initService" />
 		</bean>
@@ -49,24 +49,24 @@
 		
 	<!-- Navigation configuration -->
 	<!-- The prototype scope is important as controllers adapt the active states of the items -->
-	<bean id="navigation" class="eu.dariah.de.minfba.core.web.navigation.Navigation" scope="prototype">
+	<bean id="navigation" class="de.unibamberg.minf.core.web.navigation.Navigation" scope="prototype">
 		<property name="rootItems">
 			<list>				
-				<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
+				<bean class="de.unibamberg.minf.core.web.navigation.NavigationItem">
 					<property name="id" value="registry" />
-					<property name="displayCode" value="~eu.dariah.de.minfba.schereg.title" />
+					<property name="displayCode" value="~de.unibamberg.minf.dme.title" />
 					<property name="groupHeader" value="true" />
 					<!-- <property name="glyphicon" value="glyphicon glyphicon-search" />  -->
 					<property name="subItems">
 						<list>
-							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
+							<bean class="de.unibamberg.minf.core.web.navigation.NavigationItem">
 								<property name="id" value="registry" />
-								<property name="displayCode" value="~eu.dariah.de.minfba.schereg.registry.title" />
+								<property name="displayCode" value="~de.unibamberg.minf.dme.registry.title" />
 								<property name="linkUrl" value="/registry/" />
 							</bean>
-							<bean class="eu.dariah.de.minfba.core.web.navigation.NavigationItem">
+							<bean class="de.unibamberg.minf.core.web.navigation.NavigationItem">
 								<property name="id" value="vocabulary" />
-								<property name="displayCode" value="~eu.dariah.de.minfba.schereg.vocabulary.title" />
+								<property name="displayCode" value="~de.unibamberg.minf.dme.vocabulary.title" />
 								<property name="linkUrl" value="/vocabulary/" />
 							</bean>
 						</list>
@@ -76,6 +76,6 @@
 		</property>
 	</bean>
 	
-	<context:component-scan base-package="eu.dariah.de.minfba.schereg.controller" />
+	<context:component-scan base-package="de.unibamberg.minf.dme.controller" />
 	<context:component-scan base-package="eu.dariah.de.dariahsp.saml.web.controller" />
 </beans>

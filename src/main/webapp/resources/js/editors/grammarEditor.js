@@ -22,13 +22,13 @@ var GrammarEditor = function(modal, options) {
 	
 	this.svg = null;
 	
-	__translator.addTranslations(["~eu.dariah.de.minfba.common.link.ok",
-	                              "~eu.dariah.de.minfba.common.link.error",
-	                              "~eu.dariah.de.minfba.common.link.validated",
-	                              "~eu.dariah.de.minfba.common.link.modified",
-	                              "~eu.dariah.de.minfba.common.link.validation_required",
+	__translator.addTranslations(["~de.unibamberg.minf.common.link.ok",
+	                              "~de.unibamberg.minf.common.link.error",
+	                              "~de.unibamberg.minf.common.link.validated",
+	                              "~de.unibamberg.minf.common.link.modified",
+	                              "~de.unibamberg.minf.common.link.validation_required",
 	                              
-	                              "~eu.dariah.de.minfba.schereg.model.grammar.passthrough"]);
+	                              "~de.unibamberg.minf.dme.model.grammar.passthrough"]);
 	__translator.getTranslations();
 	
 	this.init();
@@ -37,19 +37,19 @@ var GrammarEditor = function(modal, options) {
 GrammarEditor.prototype.updateGrammarState = function() {
 	var state = "";
 	if ($(this.modal).find("#passthrough").val()=="true") {
-		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.schereg.model.grammar.passthrough");
+		state = "<span class=\"glyphicon glyphicon-forward\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.dme.model.grammar.passthrough");
 		this.setSampleParseFunctionality(false);
 	} else if (this.originalModeModified || this.grammarModified) {
-		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.modified") + "; " + __translator.translate("~eu.dariah.de.minfba.common.link.validation_required");
+		state = "<span class=\"glyphicon glyphicon-info-sign glyphicon-color-info\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.modified") + "; " + __translator.translate("~de.unibamberg.minf.common.link.validation_required");
 		this.setSampleParseFunctionality(false);
 	} else if (this.error) {
-		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.error");
+		state = "<span class=\"glyphicon glyphicon-exclamation-sign glyphicon-color-danger\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.error");
 		this.setSampleParseFunctionality(false);
 	} else if (this.validated) {
-		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.validated");
+		state = "<span class=\"glyphicon glyphicon-ok-sign glyphicon-color-success\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.validated");
 		this.setSampleParseFunctionality(true);
 	} else {
-		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> " + __translator.translate("~eu.dariah.de.minfba.common.link.ok");
+		state = "<span class=\"glyphicon glyphicon-ok-sign\" aria-hidden=\"true\"></span> " + __translator.translate("~de.unibamberg.minf.common.link.ok");
 		this.setSampleParseFunctionality(true);
 	}
 	$(this.modal).find(".grammar_state").html(state);
@@ -115,8 +115,8 @@ GrammarEditor.prototype.showHelp = function() {
 	modalFormHandler = new ModalFormHandler({
 		formUrl: "/grammar/" + this.grammarId + "/async/help/editGrammar",
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		additionalModalClasses: "wider-modal"
 	});
@@ -175,8 +175,8 @@ GrammarEditor.prototype.validateGrammar = function() {
 	this.processGrammarModal = new ModalFormHandler({
 		formUrl: "/grammar/" + this.grammarId + "/async/processGrammarDialog",
 		identifier: form_identifier,
-		translations: [{placeholder: "~*servererror.head", key: "~eu.dariah.de.minfba.common.view.forms.servererror.head"},
-		                {placeholder: "~*servererror.body", key: "~eu.dariah.de.minfba.common.view.forms.servererror.body"}
+		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
+		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
 		displayCallback: function() { 
 			_this.validated = false;
