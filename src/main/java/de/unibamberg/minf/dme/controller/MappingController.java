@@ -107,7 +107,7 @@ public class MappingController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value="async/save")
-	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, @RequestParam(defaultValue="false") boolean readOnly, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, BindingResult bindingResult, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!mappingService.getUserCanWriteEntity(mapping.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);

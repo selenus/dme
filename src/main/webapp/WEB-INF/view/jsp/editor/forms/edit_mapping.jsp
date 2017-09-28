@@ -15,6 +15,7 @@
 			</c:otherwise>
 		</c:choose>		
 		<sf:hidden path="id" />
+		<input type="hidden" name="name" id="mapping_name" value="MappingNamePlaceholder" />
 	</div>
 	<div class="form-content">
 		<fieldset<c:if test="${mapping.id!=null && mapping.id!=''}"> disabled</c:if>>

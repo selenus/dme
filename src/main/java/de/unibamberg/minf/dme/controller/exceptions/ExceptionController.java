@@ -1,5 +1,6 @@
 package de.unibamberg.minf.dme.controller.exceptions;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import org.opensaml.common.SAMLException;
 import org.slf4j.Logger;
@@ -100,9 +101,11 @@ public class ExceptionController {
 			e = getException(httpRequest);
 		}
 		
+		String originalUri = (String)httpRequest.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+		
 		if ( (httpRequest.getHeader("accept")!=null && httpRequest.getHeader("accept").toLowerCase().contains("json")) || 
-				httpRequest.getServletPath().contains("/async/") || 
-				httpRequest.getServletPath().contains("/forms/")) {
+				httpRequest.getServletPath().contains("/async/") || originalUri.contains("/async/") ||
+				httpRequest.getServletPath().contains("/forms/") || originalUri.contains("/forms/")) {
 			ModelActionPojo result = new ModelActionPojo(false);
 			result.setMessage(new MessagePojo("error", "Code: " + httpErrorCode, null));
 			result.addObjectError(errorHeading + (errorDetail!=null ? (": " + errorDetail) : ""));

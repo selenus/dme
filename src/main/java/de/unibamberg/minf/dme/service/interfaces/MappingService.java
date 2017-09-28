@@ -23,4 +23,5 @@ public interface MappingService extends BaseEntityService {
 	public List<RightsContainer<Mapping>> findAllByAuthAndTargetId(AuthPojo auth, String targetId);
 	public RightsContainer<Mapping> findByAuthAndSourceAndTargetId(AuthPojo auth, String sourceId, String targetId);
 	public ChangeSet getLatestChangeSetForEntity(String id);
+	public void changeDatamodelId(String currentId, String newId);
 }

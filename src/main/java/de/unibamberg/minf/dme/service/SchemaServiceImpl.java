@@ -10,21 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import de.unibamberg.minf.dme.dao.base.BaseDaoImpl;
 import de.unibamberg.minf.dme.dao.interfaces.ElementDao;
 import de.unibamberg.minf.dme.dao.interfaces.FunctionDao;
 import de.unibamberg.minf.dme.dao.interfaces.GrammarDao;
 import de.unibamberg.minf.dme.dao.interfaces.ReferenceDao;
-import de.unibamberg.minf.dme.dao.interfaces.SchemaDao;
 import de.unibamberg.minf.dme.model.RightsContainer;
-import de.unibamberg.minf.dme.model.base.BaseModelElement;
 import de.unibamberg.minf.dme.model.base.Element;
-import de.unibamberg.minf.dme.model.base.Function;
-import de.unibamberg.minf.dme.model.base.Grammar;
-import de.unibamberg.minf.dme.model.base.Identifiable;
-import de.unibamberg.minf.dme.model.base.ModelElement;
 import de.unibamberg.minf.dme.model.base.Nonterminal;
-import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
@@ -35,9 +27,7 @@ import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.serialization.Reference;
 import de.unibamberg.minf.dme.service.base.BaseEntityServiceImpl;
-import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
-import de.unibamberg.minf.dme.service.interfaces.IdentifiableService;
 import de.unibamberg.minf.dme.service.interfaces.SchemaService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
@@ -232,11 +222,7 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 
 	@Override
 	public boolean changeId(String currentId, String id) {
-		RightsContainer<Datamodel> dm = schemaDao.findById(id);
-		if (dm!=null) {
-			return false;
-		}
-		dm = schemaDao.findById(currentId);
+		RightsContainer<Datamodel> dm = schemaDao.findById(currentId);
 		dm.setId(id);
 		schemaDao.save(dm);
 		

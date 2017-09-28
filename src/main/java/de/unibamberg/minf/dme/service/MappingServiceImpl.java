@@ -158,4 +158,10 @@ public class MappingServiceImpl extends BaseEntityServiceImpl implements Mapping
 		}
 		return mappings.get(0);
 	}
+
+	@Override
+	public void changeDatamodelId(String currentId, String newId) {
+		mappingDao.updateSourceModel(currentId, newId);
+		mappingDao.updateTargetModel(currentId, newId);
+	}
 }

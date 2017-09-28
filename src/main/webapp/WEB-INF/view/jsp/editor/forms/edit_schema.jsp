@@ -13,7 +13,8 @@
 			<c:otherwise>
 				<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.schema.create" /></h3>
 			</c:otherwise>
-		</c:choose>		
+		</c:choose>
+		<sf:hidden path="id"/>
 	</div>
 	<div class="form-content">
 		<div class="form-group">
@@ -27,14 +28,12 @@
 			<label class="control-label col-sm-3" for="datamodelImpl_id"><s:message code="~de.unibamberg.minf.common.model.id" />:</label>
 			<div class="col-sm-9">
 				<div class="input-group">
-			      <input type="text" class="form-control" id="datamodelImpl_id" name="id" value="${datamodelImpl.id}" disabled="disabled" />
+			      <input type="text" class="form-control" id="datamodelImpl_updateId" name="updateId" value="${datamodelImpl.id}" disabled="disabled" placeholder="<s:message code='~de.unibamberg.minf.common.view.new_id_onsave' />" />
 			      <span class="input-group-btn">
-			        <button class="btn btn-default" onclick="$('#datamodelImpl_id').removeProp('disabled');" type="button"><s:message code="~de.unibamberg.minf.common.link.edit" /></button>
+			        <button class="btn btn-default" onclick="$('#datamodelImpl_updateId').removeProp('disabled'); $('#id-rename-hint').removeClass('hide'); $('#datamodelImpl_updateId').focus();" type="button"><s:message code="~de.unibamberg.minf.common.link.edit" /></button>
 			      </span>
 			    </div>
-				<div class="alert alert-sm alert-warning" role="alert"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.id_rename_hint" /></div>
-				<sf:errors path="id" cssClass="error" />
-				<input type="hidden" name="currentId" id="datamodelImpl_currentId" value="${datamodelImpl.id}" />
+				<div id="id-rename-hint" class="alert alert-sm alert-warning hide" style="margin-top: 10px;" role="alert"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.id_rename_hint" /></div>
 			</div>
 		</div>
 		<div class="form-group">

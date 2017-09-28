@@ -4,22 +4,18 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,17 +23,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.dme.controller.base.BaseScheregController;
 import de.unibamberg.minf.dme.model.RightsContainer;
+import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
-import de.unibamberg.minf.dme.model.datamodel.TerminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
-import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
-import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
-import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
-import de.unibamberg.minf.dme.pojo.ChangeSetPojo;
 import de.unibamberg.minf.dme.pojo.converter.AuthWrappedPojoConverter;
-import de.unibamberg.minf.dme.pojo.converter.ChangeSetPojoConverter;
-import de.unibamberg.minf.dme.service.interfaces.SchemaService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.controller.DataTableList;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
@@ -88,21 +78,21 @@ public class SchemaController extends BaseScheregController {
 		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/save"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl datamodelImpl, BindingResult bindingResult, @RequestParam String currentId, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public @ResponseBody ModelActionPojo saveSchema(@Valid DatamodelImpl datamodelImpl, BindingResult bindingResult, @RequestParam(required=false) String updateId, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getUserCanWriteEntity(currentId, auth.getUserId())) {
+		if(!schemaService.getUserCanWriteEntity(datamodelImpl.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
-		}
-		
+		} 
+				
 		ModelActionPojo result = this.getActionResult(bindingResult, locale);
 		if (!result.isSuccess()) {
 			return result;
-		} else if (currentId.isEmpty()) {
+		} else if (datamodelImpl.getId().isEmpty()) {
 			datamodelImpl.setId(null);
 		}
-		
-		RightsContainer<Datamodel> existSchema = schemaService.findByIdAndAuth(currentId, auth); 
+
+		RightsContainer<Datamodel> existSchema = schemaService.findByIdAndAuth(datamodelImpl.getId(), auth); 
 		Datamodel saveSchema = existSchema==null ? null : existSchema.getElement();
 		boolean draft = existSchema==null ? true : existSchema.isDraft();
 		
@@ -113,15 +103,25 @@ public class SchemaController extends BaseScheregController {
 			saveSchema.setDescription(datamodelImpl.getDescription());
 		}
 		
-		schemaService.saveSchema(new AuthWrappedPojo<Datamodel>(saveSchema, true, false, false, draft, readOnly), auth);
-		
-		if (!currentId.equals(datamodelImpl.getId())) {
-			if (!schemaService.changeId(currentId, datamodelImpl.getId())) {
+		if (updateId!=null && !updateId.isEmpty() && !updateId.equals(saveSchema.getId())) {
+			if (!BaseIdentifiable.checkIdValid(updateId)) {
+				result.addFieldError("datamodelImpl_updateId", messageSource.getMessage(BaseIdentifiable.ID_INVALID_CODE, null, locale));
 				result.setSuccess(false);
-				result.addObjectError("~Labamba");
+			} else {
+				if (mappingService.findMappingById(updateId)!=null || schemaService.findSchemaById(updateId)!=null) {
+					result.addFieldError("datamodelImpl_updateId", messageSource.getMessage("~de.unibamberg.minf.dme.model.schema.validation.id_not_unique", null, locale));
+					result.setSuccess(false);
+				} else {
+					schemaService.saveSchema(new AuthWrappedPojo<Datamodel>(saveSchema, true, false, false, draft, readOnly), auth);
+					schemaService.changeId(saveSchema.getId(), updateId);
+					mappingService.changeDatamodelId(saveSchema.getId(), updateId);
+					
+					result.setStatusInfo(updateId);
+				}
 			}
+		} else {
+			schemaService.saveSchema(new AuthWrappedPojo<Datamodel>(saveSchema, true, false, false, draft, readOnly), auth);
 		}
-		
 		return result;
 	}
 	

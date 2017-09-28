@@ -595,7 +595,13 @@ SchemaEditor.prototype.triggerEditSchema = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
-		completeCallback: function() { window.location.reload(); }
+		completeCallback: function(d) {
+			if (d.statusInfo!==undefined && d.statusInfo!==null && d.statusInfo.length==24 && d.statusInfo!==_this.schema.id) {
+				window.location.replace(__util.composeUrl("model/editor/" + d.statusInfo + "/"));
+			} else {
+				window.location.reload();
+			}
+		}
 	});
 		
 	modalFormHandler.show(form_identifier);

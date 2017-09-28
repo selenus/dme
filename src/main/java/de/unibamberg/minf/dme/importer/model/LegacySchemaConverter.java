@@ -63,6 +63,7 @@ public class LegacySchemaConverter {
 		g.setBaseMethod(oldG.getBaseMethod());
 		g.setError(oldG.isError());
 		g.setLocked(oldG.isLocked());
+		g.setPassthrough(oldG.isPassthrough());
 		
 		if (oldG.getGrammarContainer()!=null) {
 			g.setGrammarContainer(convertLegacyGrammarContainer(oldG.getGrammarContainer()));

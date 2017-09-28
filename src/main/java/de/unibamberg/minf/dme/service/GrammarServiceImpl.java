@@ -202,6 +202,10 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 			grammar.setError(false);
 		} else {
 			try {
+				if (grammar.getGrammarContainer()==null) {
+					grammar.setGrammarContainer(new GrammarContainer());
+				}
+				
 				this.saveGrammarToFilesystem(grammar, grammar.getGrammarContainer().getLexerGrammar(), grammar.getGrammarContainer().getParserGrammar(), false);
 				
 				GrammarCompiler grammarCompiler = new GrammarCompiler();
