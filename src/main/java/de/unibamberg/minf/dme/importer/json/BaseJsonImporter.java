@@ -42,6 +42,9 @@ import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
 public abstract class BaseJsonImporter extends BaseSchemaImporter implements SchemaImporter {
 	@Autowired protected ObjectMapper objectMapper;
 	
+	@Override public boolean isKeepImportedIdsSupported() { return true; } 	
+	@Override public String getMainImporterType() { return "JSON"; }
+		
 	@Override
 	public void run() {
 		Stopwatch sw = new Stopwatch().start();
@@ -80,10 +83,10 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 	}
 		
 	protected void importModel(Datamodel m, Nonterminal root, Map<String, GrammarContainer> grammars) throws MetamodelConsistencyException {
+		Map<String, String> nonterminalIdMap = new HashMap<String, String>();
+		this.reworkElementHierarchy(this.getSchema(), root, nonterminalIdMap, grammars);
+		
 		if (!isKeepImportedIds()) {
-			Map<String, String> nonterminalIdMap = new HashMap<String, String>();
-			this.regenerateElementIds(this.getSchema(), root, nonterminalIdMap, grammars);
-			
 			if (m.getNatures()!=null) {
 				for (DatamodelNature nature : m.getNatures()) {
 					this.regenerateTerminalIds(nature, this.getSchema().getId(), nonterminalIdMap);
@@ -109,12 +112,15 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 	protected abstract void importJson() throws JsonParseException, JsonMappingException, IOException, MetamodelConsistencyException;
 	
 	
-	protected void regenerateElementIds(Datamodel schema, Element element, Map<String, String> nonterminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
+	protected void reworkElementHierarchy(Datamodel schema, Element element, Map<String, String> nonterminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
 		element.setEntityId(schema.getId());
+		String newId = null;
 		
-		String newId = new ObjectId().toString();		
-		nonterminalIdMap.put(element.getId(), newId);
-		element.setId(newId);
+		if (!this.isKeepImportedIds()) {
+			newId = new ObjectId().toString();		
+			nonterminalIdMap.put(element.getId(), newId);
+			element.setId(newId);
+		}
 		
 		List<? extends Element> children = null;
 		if (Nonterminal.class.isAssignableFrom(element.getClass())) {
@@ -125,7 +131,7 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 		
 		if (children!=null) {
 			for (Element child : children) {
-				this.regenerateElementIds(schema, child, nonterminalIdMap, grammarContainerMap);
+				this.reworkElementHierarchy(schema, child, nonterminalIdMap, grammarContainerMap);
 			}
 		}
 		if (element.getGrammars()!=null) {
@@ -136,20 +142,23 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 					g.setGrammarContainer(grammarContainerMap.get(g.getId()));
 				}
 				
-				newId = new ObjectId().toString();
-				nonterminalIdMap.put(g.getId(), newId);
-				g.setId(newId);
+				if (!this.isKeepImportedIds()) {
+					newId = new ObjectId().toString();
+					nonterminalIdMap.put(g.getId(), newId);
+					g.setId(newId);
+				}
 				
 				if (g.getFunctions()!=null) {
 					for (Function f : g.getFunctions()) {
 						f.setEntityId(schema.getId());
-						newId = new ObjectId().toString();
-						nonterminalIdMap.put(f.getId(), newId);
-						f.setId(newId);
-						
+						if (!this.isKeepImportedIds()) {
+							newId = new ObjectId().toString();
+							nonterminalIdMap.put(f.getId(), newId);
+							f.setId(newId);
+						}
 						if (f.getOutputElements()!=null) {
 							for (Label fOut : f.getOutputElements()) {
-								this.regenerateElementIds(schema, fOut, nonterminalIdMap, grammarContainerMap);
+								this.reworkElementHierarchy(schema, fOut, nonterminalIdMap, grammarContainerMap);
 							}
 						}
 					}

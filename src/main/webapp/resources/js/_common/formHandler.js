@@ -237,11 +237,11 @@ ModalFormHandler.prototype.addMessage = function(type, header, message) {
 	
 	// if only the latest alert should be displayed, remove existing one(s)
 	if (this.showOnlyLastestAlert==true) {
-		var existing = $(this.form).find(".form-content").find(".alert");
+		var existing = $(this.form).find(".form-content").find(".alert:not(.alert-persist)");
 		if ($(existing).length > 0) {
 			
 			$(_this.form).find(".form-content").prepend(msgContainer);
-			$(existing).delay(2000).fadeOut(400, function() {$(this).remove();});
+			$(existing).delay(2000).fadeOut(400, function() {$(this).remove(); $(window).trigger('resize');});
 		} else {
 			$(_this.form).find(".form-content").prepend(msgContainer);
 		}
@@ -250,7 +250,7 @@ ModalFormHandler.prototype.addMessage = function(type, header, message) {
 	}
 	
 	// Show the new alert
-	$(msgContainer).fadeIn(200);
+	$(msgContainer).fadeIn(200, function() { $(window).trigger('resize'); });
 };
 
 ModalFormHandler.prototype.close = function() {

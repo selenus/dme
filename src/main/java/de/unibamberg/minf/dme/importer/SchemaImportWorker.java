@@ -61,7 +61,18 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		return false;
 	}
 	
-	public List<? extends Identifiable> getPossibleRootElements(String filePath) {
+	public SchemaImporter getSupportingImporter(String filePath) {
+		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
+		for (SchemaImporter importer : importers.values()) {
+			importer.setSchemaFilePath(filePath);
+			if (importer.getIsSupported()) {
+				return importer;
+			}
+		}
+		return null;
+	}
+	
+	/*public List<? extends Identifiable> getPossibleRootElements(String filePath) {
 		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
 		for (SchemaImporter importer : importers.values()) {
 			importer.setSchemaFilePath(filePath);
@@ -70,9 +81,9 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			}
 		}
 		return null;
-	}
+	}*/
 	
-	public List<? extends ModelElement> getElementsByTypes(String filePath, List<Class<? extends ModelElement>> allowedSubtreeRoots) {
+	/*public List<? extends ModelElement> getElementsByTypes(String filePath, List<Class<? extends ModelElement>> allowedSubtreeRoots) {
 		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
 		for (SchemaImporter importer : importers.values()) {
 			importer.setSchemaFilePath(filePath);
@@ -81,17 +92,17 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			}
 		}
 		return null;
-	}
+	}*/
 	
 	public boolean isBeingProcessed(String schemaId) {
 		return schemaId!=null && this.processingSchemaIds.contains(schemaId);
 	}
 	
-	public void importSchema(String filePath, String schemaId, String schemaRoot, AuthPojo auth) throws SchemaImportException {
-		this.importSubtree(filePath, schemaId, null, schemaRoot, null, auth);
+	public void importSchema(String filePath, String schemaId, String schemaRoot, boolean keepImportedIds, AuthPojo auth) throws SchemaImportException {
+		this.importSubtree(filePath, schemaId, null, schemaRoot, null, keepImportedIds, auth);
 	}
 
-	public void importSubtree(String filePath, String entityId, String elementId, String schemaRoot, String schemaRootType, AuthPojo auth) throws SchemaImportException {
+	public void importSubtree(String filePath, String entityId, String elementId, String schemaRoot, String schemaRootType, boolean keepImportedIds, AuthPojo auth) throws SchemaImportException {
 		if (entityId==null || entityId.trim().isEmpty()) {
 			logger.error("Schema id must exist (schema must be saved) before import");
 			throw new SchemaImportException("Schema id must exist (schema must be saved) before import");
@@ -110,6 +121,7 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		for (SchemaImporter importer : importers.values()) {
 			importer.setSchemaFilePath(filePath);
 			if (importer.getIsSupported()) {
+				importer.setKeepImportedIds(keepImportedIds);
 				importer.setListener(this);
 				importer.setSchema(s);
 				importer.setRootElementName(schemaRoot); 

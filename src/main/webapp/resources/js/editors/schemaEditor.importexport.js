@@ -38,16 +38,30 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 	
 	rootSelector.val("");
 	
+	
+	
 	// No root elements
-	if (data==null || data.pojo==null || data.pojo.length==0) {
+	if (data==null || data.pojo==null || data.pojo.elements==null || data.pojo.elements.length==0) {
 		rootSelector.prop("disabled", "disabled");
 		$("#btn-submit-schema-elements").prop("disabled", "disabled");
+		$("#importer-options").addClass("hide");
 		return;
 	}
 	
-	if (data.pojo.length==1) {
-		$("#schema_root_qn").val("{" + data.pojo[0].namespace + "}:" + data.pojo[0].name);
-		rootSelector.val(data.pojo[0].name);
+	$("#importer-type").text(data.pojo.importerMainType);
+	$("#importer-subtype").text(data.pojo.importerSubtype);
+	
+	if (data.pojo.keepIdsAllowed===true) {
+		$("#importer-keep-ids").removeClass("hide");
+	} else {
+		$("#importer-keep-ids").addClass("hide");
+	}
+	
+	$("#importer-options").removeClass("hide");
+	
+	if (data.pojo.elements.length==1) {
+		$("#schema_root_qn").val("{" + data.pojo.elements[0].namespace + "}:" + data.pojo.elements[0].name);
+		rootSelector.val(data.pojo.elements[0].name);
 		return;
 	}
 	
@@ -58,7 +72,7 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 		  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
 		  queryTokenizer: Bloodhound.tokenizers.whitespace,
 		  identify: function(obj) { return (obj.namespace + ":" + obj.name); },
-		  local: data.pojo
+		  local: data.pojo.elements
 	});
 	
 	_this.registerTypeahead(rootSelector, "importedelements", elements, "name", 8, 
@@ -82,14 +96,14 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 				$("#schema_root_type").val(suggestion.type);
 			},
 			function(t, value) {
-				for (var i=0; i<data.pojo.length; i++) {
-					if (value===data.pojo[i].name) {
-						if (data.pojo[i].namespace===undefined) {
-							$("#schema_root_qn").val(data.pojo[i].name);
+				for (var i=0; i<data.pojo.elements.length; i++) {
+					if (value===data.pojo.elements[i].name) {
+						if (data.pojo.elements[i].namespace===undefined) {
+							$("#schema_root_qn").val(data.pojo.elements[i].name);
 						} else {
-							$("#schema_root_qn").val("{" + data.pojo[i].namespace + "}:" + data.pojo[i].name);
+							$("#schema_root_qn").val("{" + data.pojo.elements[i].namespace + "}:" + data.pojo.elements[i].name);
 						}
-						$("#schema_root_type").val(data.pojo[i].type);
+						$("#schema_root_type").val(data.pojo.elements[i].type);
 						return;
 					}
 				}

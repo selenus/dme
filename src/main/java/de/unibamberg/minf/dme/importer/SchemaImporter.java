@@ -33,4 +33,8 @@ public interface SchemaImporter extends Runnable {
 	
 	public boolean isKeepImportedIds();
 	public void setKeepImportedIds(boolean keepImportedIds);
+	
+	public boolean isKeepImportedIdsSupported();
+	public String getMainImporterType();
+	public String getImporterSubtype();
 }

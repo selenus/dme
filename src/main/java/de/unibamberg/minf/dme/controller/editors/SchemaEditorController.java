@@ -34,12 +34,15 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import de.unibamberg.minf.dme.controller.base.BaseMainEditorController;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
 import de.unibamberg.minf.dme.exception.SchemaImportException;
 import de.unibamberg.minf.dme.importer.SchemaImportWorker;
+import de.unibamberg.minf.dme.importer.SchemaImporter;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.base.Element;
@@ -302,20 +305,31 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			return new ModelActionPojo(false);
 		}		
 		if (temporaryFilesMap.containsKey(fileId)) {
+			JsonNode rootNodes;
+			
+			SchemaImporter importer = importWorker.getSupportingImporter(temporaryFilesMap.get(fileId));
+			
 			if (elementId==null) {
-				result.setPojo(importWorker.getPossibleRootElements(temporaryFilesMap.get(fileId)));
+				rootNodes = objectMapper.valueToTree(importer.getPossibleRootElements());
 			} else {
 				List<Class<? extends ModelElement>> allowedSubtreeRoots = identifiableService.getAllowedSubelementTypes(elementId);
-				result.setPojo(importWorker.getElementsByTypes(temporaryFilesMap.get(fileId), allowedSubtreeRoots));
+				rootNodes = objectMapper.valueToTree(importer.getElementsByTypes(allowedSubtreeRoots));
 			}
 			
-			if (result.getPojo()!=null) {
+			if (rootNodes!=null) {
 				result.setSuccess(true);
 				MessagePojo msg = new MessagePojo("success", 
 						messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.head", null, locale), 
 						messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.body", null, locale));
 				result.setMessage(msg);
 				
+				ObjectNode pojoNode = objectMapper.createObjectNode();
+				pojoNode.set("elements", rootNodes);
+				pojoNode.set("keepIdsAllowed", BooleanNode.valueOf(importer.isKeepImportedIdsSupported()));
+				pojoNode.set("importerMainType", TextNode.valueOf(importer.getMainImporterType()));
+				pojoNode.set("importerSubtype", TextNode.valueOf(importer.getImporterSubtype()));
+				
+				result.setPojo(pojoNode);
 				return result;
 			}
 		}
@@ -332,6 +346,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, @RequestParam(required=false, value="elementId") String elementId, 
 			@RequestParam(value="schema_root_qn") String schemaRoot, @RequestParam(required=false, value="schema_root_type") String schemaRootType, 
+			@RequestParam(defaultValue="false", value="keep-imported-ids") boolean keepImportedIds,			
 			Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
@@ -349,9 +364,9 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 				}
 				
 				if (elementId!=null) {
-					importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, schemaRoot, schemaRootType, authInfoHelper.getAuth(request));
+					importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, schemaRoot, schemaRootType, keepImportedIds, authInfoHelper.getAuth(request));
 				} else {
-					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, authInfoHelper.getAuth(request));
+					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, keepImportedIds, authInfoHelper.getAuth(request));
 				}
 				result.setSuccess(true);
 				return result;

@@ -33,7 +33,7 @@
 			        <button class="btn btn-default" onclick="$('#datamodelImpl_updateId').removeProp('disabled'); $('#id-rename-hint').removeClass('hide'); $('#datamodelImpl_updateId').focus();" type="button"><s:message code="~de.unibamberg.minf.common.link.edit" /></button>
 			      </span>
 			    </div>
-				<div id="id-rename-hint" class="alert alert-sm alert-warning hide" style="margin-top: 10px;" role="alert"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.id_rename_hint" /></div>
+				<div id="id-rename-hint" class="alert alert-sm alert-warning alert-persist hide" style="margin-top: 10px;"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.id_rename_hint" /></div>
 			</div>
 		</div>
 		<div class="form-group">

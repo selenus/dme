@@ -29,6 +29,8 @@ import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class JsonDatamodelImporter extends BaseJsonImporter {
 
+	@Override public String getImporterSubtype() { return "Datamodel"; }
+		
 	@Override
 	public boolean getIsSupported() {
 		if (super.getIsSupported()) {
@@ -78,6 +80,5 @@ public class JsonDatamodelImporter extends BaseJsonImporter {
 
 		this.importModel(s.getModel(), (Nonterminal)s.getRoot(), s.getGrammars());
 	}
-	
 	
 }

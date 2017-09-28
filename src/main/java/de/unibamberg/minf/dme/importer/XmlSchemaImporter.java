@@ -53,6 +53,10 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	private Map<String, ImportAwareNonterminal> terminalIdNonterminalMap;
 
 	private XmlDatamodelNature xmlNature;
+
+	@Override public boolean isKeepImportedIdsSupported() { return false; } 	
+	@Override public String getMainImporterType() { return "XML"; }
+	@Override public String getImporterSubtype() { return "XML Schema"; }
 	
 	@Override public String[] getNamespaces() { return namespaces; }
 	public void setNamespaces(String[] namespaces) { this.namespaces = namespaces; }

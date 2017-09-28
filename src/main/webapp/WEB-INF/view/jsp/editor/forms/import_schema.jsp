@@ -28,6 +28,20 @@
 				<input type="hidden" name="schema_root_type" id="schema_root_type" />
 			</div>
 		</div>
+		<div id="importer-options" class="form-group hide">
+			<label class="col-sm-4 control-label" for="schema_root"><s:message code="~de.unibamberg.minf.dme.notification.import.importer" />:</label>
+			<div class="col-sm-8">
+				<p class="form-control-static"><span id="importer-type"></span> (<span id="importer-subtype"></span>)</p>
+			</div>
+			<div class="col-sm-offset-4 col-sm-8 hide" id="importer-keep-ids">
+				<div class="checkbox">
+					<label> <input type="checkbox" value="true" name="keep-imported-ids" onclick="$('#id-keep-ids-hint').removeClass('hide'); $(window).trigger('resize');"> <s:message code="~de.unibamberg.minf.dme.notification.import.keep_ids" />
+					</label>
+				</div>
+				<div id="id-keep-ids-hint" class="alert alert-sm alert-warning alert-persist hide" style="margin-top: 10px;"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.import.keep_ids_hint" /></div>
+			</div>
+			
+		</div>
 	</div>
 	<div class="form-footer control-group">
 		<div class="controls">
