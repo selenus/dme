@@ -13,6 +13,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 import de.unibamberg.minf.dme.exception.MappingImportException;
 import de.unibamberg.minf.dme.exception.SchemaImportException;
@@ -26,6 +27,7 @@ import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.service.interfaces.MappingService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
+@Component
 public class MappingImportWorker extends BaseImportWorker<MappingImporter> implements MappingImportListener {
 	
 	@Override protected Class<MappingImporter> getBaseImporterType() { return MappingImporter.class; }

@@ -12,6 +12,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
+
 
 public abstract class BaseImportWorker<T extends Importer> implements ApplicationContextAware {
 	
@@ -44,6 +46,13 @@ public abstract class BaseImportWorker<T extends Importer> implements Applicatio
 			}
 		}
 		return null;
+	}
+	
+	protected void execute(String entityId, Importer importer) {
+		if (!this.processingEntityIds.contains(entityId)) {
+			this.processingEntityIds.add(entityId);
+			this.executor.execute(importer);
+		}
 	}
 	
 	protected abstract Class<T> getBaseImporterType();

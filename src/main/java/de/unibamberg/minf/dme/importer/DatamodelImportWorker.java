@@ -4,16 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import de.unibamberg.minf.dme.exception.SchemaImportException;
@@ -32,39 +23,16 @@ import de.unibamberg.minf.dme.service.interfaces.SchemaService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
 @Component
-public class DatamodelImportWorker implements ApplicationContextAware, DatamodelImportListener {
-	protected static final Logger logger = LoggerFactory.getLogger(DatamodelImportWorker.class);	
-	private final ExecutorService executor = Executors.newCachedThreadPool();
-	
+public class DatamodelImportWorker extends BaseImportWorker<DatamodelImporter> implements DatamodelImportListener {
 	@Autowired private SchemaService schemaService;
 	@Autowired private ElementService elementService;
 	@Autowired private IdentifiableService identifiableService;
 	
 	@Autowired private ReferenceService referenceService;
 	
-	private ApplicationContext appContext;
 	
-	private List<String> processingSchemaIds = new ArrayList<String>();
+	@Override protected Class<DatamodelImporter> getBaseImporterType() { return DatamodelImporter.class; }
 	
-	@Override
-	public void setApplicationContext(ApplicationContext appContext) throws BeansException {
-		this.appContext = appContext;
-	}
-	
-	public DatamodelImporter getSupportingImporter(String filePath) {
-		Map<String, DatamodelImporter> importers = appContext.getBeansOfType(DatamodelImporter.class);
-		for (DatamodelImporter importer : importers.values()) {
-			importer.setImportFilePath(filePath);
-			if (importer.getIsSupported()) {
-				return importer;
-			}
-		}
-		return null;
-	}
-	
-	public boolean isBeingProcessed(String schemaId) {
-		return schemaId!=null && this.processingSchemaIds.contains(schemaId);
-	}
 	
 	public void importSchema(String filePath, String schemaId, String schemaRoot, boolean keepImportedIds, AuthPojo auth) throws SchemaImportException {
 		this.importSubtree(filePath, schemaId, null, schemaRoot, null, keepImportedIds, auth);
@@ -77,34 +45,31 @@ public class DatamodelImportWorker implements ApplicationContextAware, Datamodel
 		}
 		
 		Datamodel s = schemaService.findSchemaById(entityId);
-		if (!this.processingSchemaIds.contains(entityId)) {
-			this.processingSchemaIds.add(entityId);
+		if (!this.processingEntityIds.contains(entityId)) {
+			this.processingEntityIds.add(entityId);
 		}
 		if (filePath==null || !(new File(filePath).exists())) {
 			logger.error("Schema import file not set or accessible [{}]", filePath);
 			throw new SchemaImportException("Schema import file not set or accessible [{}]");
 		}
 
-		Map<String, DatamodelImporter> importers = appContext.getBeansOfType(DatamodelImporter.class);
-		for (DatamodelImporter importer : importers.values()) {
-			importer.setImportFilePath(filePath);
-			if (importer.getIsSupported()) {
-				importer.setKeepImportedIds(keepImportedIds);
-				importer.setListener(this);
-				importer.setDatamodel(s);
-				importer.setRootElementName(schemaRoot); 
-				importer.setAuth(auth);
-				importer.setRootElementType(schemaRootType);
-				importer.setElementId(elementId);
-				
-				this.executor.execute(importer);
-				return;
-			}
+		DatamodelImporter importer = this.getSupportingImporter(filePath);
+		if (importer!=null) {
+			importer.setKeepImportedIds(keepImportedIds);
+			importer.setListener(this);
+			importer.setDatamodel(s);
+			importer.setRootElementName(schemaRoot); 
+			importer.setAuth(auth);
+			importer.setRootElementType(schemaRootType);
+			importer.setElementId(elementId);
+			
+			this.execute(entityId, importer);
+			return;
 		}
 		
 		throw new SchemaImportException("Failed to import schema due to no matching importer being available");
 	}
-	
+
 	@Override
 	public void registerImportFinished(Datamodel importedSchema, String parentElementId, List<ModelElement> rootElements, List<ModelElement> additionalRootElements, AuthPojo auth) {
 		if (parentElementId==null) {
@@ -150,8 +115,8 @@ public class DatamodelImportWorker implements ApplicationContextAware, Datamodel
 		
 		schemaService.saveSchema(s, auth);
 		
-		if (this.processingSchemaIds.contains(importedSchema.getId())) {
-			this.processingSchemaIds.remove(importedSchema.getId());
+		if (this.processingEntityIds.contains(importedSchema.getId())) {
+			this.processingEntityIds.remove(importedSchema.getId());
 		}
 	}
 	
@@ -185,16 +150,16 @@ public class DatamodelImportWorker implements ApplicationContextAware, Datamodel
 		
 		
 		
-		if (this.processingSchemaIds.contains(importedSchema.getId())) {
-			this.processingSchemaIds.remove(importedSchema.getId());
+		if (this.processingEntityIds.contains(importedSchema.getId())) {
+			this.processingEntityIds.remove(importedSchema.getId());
 		}
 	}
 	
 
 	@Override 
 	public synchronized void registerImportFailed(Datamodel schema) { 
-		if (this.processingSchemaIds.contains(schema.getId())) {
-			this.processingSchemaIds.remove(schema.getId());
+		if (this.processingEntityIds.contains(schema.getId())) {
+			this.processingEntityIds.remove(schema.getId());
 		}
 		logger.warn("Schema import failed");
 	}	
