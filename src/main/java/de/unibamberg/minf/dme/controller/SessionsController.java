@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.dme.exception.GenericScheregException;
+import de.unibamberg.minf.dme.model.LogEntry;
 import de.unibamberg.minf.dme.model.PersistedSession;
-import de.unibamberg.minf.dme.pojo.LogEntryPojo;
 import de.unibamberg.minf.dme.service.interfaces.PersistedSessionService;
 import eu.dariah.de.dariahsp.web.AuthInfoHelper;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
@@ -137,15 +137,15 @@ public class SessionsController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getLog")
-	public @ResponseBody Collection<LogEntryPojo> getLog(@RequestParam String entityId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody Collection<LogEntry> getLog(@RequestParam String entityId, @RequestParam(defaultValue="10") Integer maxEntries, @RequestParam(required=false) Long tsMin, HttpServletRequest request, HttpServletResponse response) {
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (session==null) {
 			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 			return null;
 		}
-		List<LogEntryPojo> log = session.getSortedSessionLog();
+		List<LogEntry> log = session.getSortedSessionLog();
 		if (tsMin!=null && log.size()>0 && log.get(0).getNumericTimestamp()<=tsMin) {
-			return new ArrayList<LogEntryPojo>();
+			return new ArrayList<LogEntry>();
 		}
 		
 		if (log.size() > maxEntries) {

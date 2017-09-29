@@ -50,17 +50,6 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		this.appContext = appContext;
 	}
 	
-	public boolean isSupported(String filePath) {
-		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
-		for (SchemaImporter importer : importers.values()) {
-			importer.setSchemaFilePath(filePath);
-			if (importer.getIsSupported()) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 	public SchemaImporter getSupportingImporter(String filePath) {
 		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
 		for (SchemaImporter importer : importers.values()) {
@@ -71,28 +60,6 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		}
 		return null;
 	}
-	
-	/*public List<? extends Identifiable> getPossibleRootElements(String filePath) {
-		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
-		for (SchemaImporter importer : importers.values()) {
-			importer.setSchemaFilePath(filePath);
-			if (importer.getIsSupported()) {
-				return importer.getPossibleRootElements();
-			}
-		}
-		return null;
-	}*/
-	
-	/*public List<? extends ModelElement> getElementsByTypes(String filePath, List<Class<? extends ModelElement>> allowedSubtreeRoots) {
-		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
-		for (SchemaImporter importer : importers.values()) {
-			importer.setSchemaFilePath(filePath);
-			if (importer.getIsSupported()) {
-				return importer.getElementsByTypes(allowedSubtreeRoots);
-			}
-		}
-		return null;
-	}*/
 	
 	public boolean isBeingProcessed(String schemaId) {
 		return schemaId!=null && this.processingSchemaIds.contains(schemaId);

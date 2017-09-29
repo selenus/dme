@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import de.unibamberg.minf.dme.dao.interfaces.PersistedSessionDao;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
 import de.unibamberg.minf.dme.model.PersistedSession;
-import de.unibamberg.minf.dme.pojo.LogEntryPojo.LogType;
+import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.service.interfaces.PersistedSessionService;
 
 @Service

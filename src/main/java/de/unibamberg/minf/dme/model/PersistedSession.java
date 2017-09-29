@@ -7,9 +7,8 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
-import de.unibamberg.minf.dme.pojo.LogEntryPojo;
-import de.unibamberg.minf.dme.pojo.LogEntryPojo.LogType;
 import de.unibamberg.minf.processing.model.base.Resource;
 
 /**
@@ -37,7 +36,7 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 	private int selectedOutputIndex;
 	private Map<String, String> selectedValueMap;
 	
-	private List<LogEntryPojo> sessionLog;
+	private List<LogEntry> sessionLog;
 	
 	
 	public String getHttpSessionId() { return httpSessionId; }
@@ -76,15 +75,15 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 	public Map<String, String> getSelectedValueMap() { return selectedValueMap; }
 	public void setSelectedValueMap(Map<String, String> selectedValueMap) { this.selectedValueMap = selectedValueMap; }
 
-	public List<LogEntryPojo> getSessionLog() { return sessionLog; }
-	public void setSessionLog(List<LogEntryPojo> sessionLog) { this.sessionLog = sessionLog; }
+	public List<LogEntry> getSessionLog() { return sessionLog; }
+	public void setSessionLog(List<LogEntry> sessionLog) { this.sessionLog = sessionLog; }
 	
 	public SessionSampleFile getSampleFile() { return sampleFile; }
 	public void setSampleFile(SessionSampleFile sampleFile) { this.sampleFile = sampleFile; }
 	
 	
-	public List<LogEntryPojo> getSortedSessionLog() {
-		List<LogEntryPojo> result = this.getSessionLog();
+	public List<LogEntry> getSortedSessionLog() {
+		List<LogEntry> result = this.getSessionLog();
 		if (result!=null) {
 			Collections.sort(result);
 			Collections.reverse(result);
@@ -93,13 +92,13 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 	}
 	
 	public void addLogEntry(LogType type, String message) {
-		LogEntryPojo entry = new LogEntryPojo();
+		LogEntry entry = new LogEntry();
 		entry.setTimestamp(DateTime.now());
 		entry.setLogType(type);
 		entry.setMessage(message);
 		
 		if (this.getSessionLog()==null) {
-			this.setSessionLog(new ArrayList<LogEntryPojo>());
+			this.setSessionLog(new ArrayList<LogEntry>());
 		}
 		this.getSessionLog().add(entry);
 	}
