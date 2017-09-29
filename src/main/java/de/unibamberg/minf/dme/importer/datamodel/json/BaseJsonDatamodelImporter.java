@@ -1,4 +1,4 @@
-package de.unibamberg.minf.dme.importer.json;
+package de.unibamberg.minf.dme.importer.datamodel.json;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.unibamberg.minf.core.util.Stopwatch;
-import de.unibamberg.minf.dme.importer.BaseSchemaImporter;
-import de.unibamberg.minf.dme.importer.SchemaImporter;
+import de.unibamberg.minf.dme.importer.datamodel.BaseDatamodelImporter;
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
 import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Grammar;
@@ -29,7 +29,6 @@ import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
-import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
 import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
 
 /**
@@ -39,7 +38,7 @@ import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
  * @author Tobias Gradl
  *
  */
-public abstract class BaseJsonImporter extends BaseSchemaImporter implements SchemaImporter {
+public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter implements DatamodelImporter {
 	@Autowired protected ObjectMapper objectMapper;
 	
 	@Override public boolean isKeepImportedIdsSupported() { return true; } 	
@@ -48,17 +47,17 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 	@Override
 	public void run() {
 		Stopwatch sw = new Stopwatch().start();
-		logger.debug(String.format("Started importing schema %s", this.getSchema().getId()));
+		logger.debug(String.format("Started importing datamodel %s", this.getDatamodel().getId()));
 		try {
 			this.importJson();
 			if (this.getListener()!=null) {
-				logger.info(String.format("Finished importing schema %s in %sms", this.getSchema().getId(), sw.getElapsedTime()));
-				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootElements(), this.getAdditionalRootElements(), this.getAuth());
+				logger.info(String.format("Finished importing datamodel %s in %sms", this.getDatamodel().getId(), sw.getElapsedTime()));
+				this.getListener().registerImportFinished(this.getDatamodel(), this.getElementId(), this.getRootElements(), this.getAdditionalRootElements(), this.auth);
 			}
 		} catch (Exception e) {
-			logger.error("Error while importing JSON Schema", e);
+			logger.error("Error while importing JSON Datamodel", e);
 			if (this.getListener()!=null) {
-				this.getListener().registerImportFailed(this.getSchema());
+				this.getListener().registerImportFailed(this.getDatamodel());
 			}
 		}
 	}
@@ -67,7 +66,7 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 	public boolean getIsSupported() {
 		boolean validJson = false;
 		try {
-			final JsonParser parser = objectMapper.getFactory().createParser(new File(this.getSchemaFilePath()));
+			final JsonParser parser = objectMapper.getFactory().createParser(new File(this.importFilePath));
 			while (parser.nextToken() != null) {
 			}
 			validJson = true;
@@ -84,12 +83,12 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 		
 	protected void importModel(Datamodel m, Nonterminal root, Map<String, GrammarContainer> grammars) throws MetamodelConsistencyException {
 		Map<String, String> nonterminalIdMap = new HashMap<String, String>();
-		this.reworkElementHierarchy(this.getSchema(), root, nonterminalIdMap, grammars);
+		this.reworkElementHierarchy(this.getDatamodel(), root, nonterminalIdMap, grammars);
 		
 		if (!isKeepImportedIds()) {
 			if (m.getNatures()!=null) {
 				for (DatamodelNature nature : m.getNatures()) {
-					this.regenerateTerminalIds(nature, this.getSchema().getId(), nonterminalIdMap);
+					this.regenerateTerminalIds(nature, this.getDatamodel().getId(), nonterminalIdMap);
 				}
 			}
 		}
@@ -106,7 +105,7 @@ public abstract class BaseJsonImporter extends BaseSchemaImporter implements Sch
 				}
 			}
 		}
-		this.setSchema(m);
+		this.setDatamodel(m);
 	}
 	
 	protected abstract void importJson() throws JsonParseException, JsonMappingException, IOException, MetamodelConsistencyException;

@@ -1,4 +1,4 @@
-package de.unibamberg.minf.dme.importer.mapping;
+package de.unibamberg.minf.dme.importer.mapping.json;
 
 import java.io.File;
 
@@ -11,25 +11,27 @@ import eu.dariah.de.minfba.core.metamodel.serialization.SerializableMappingConta
 
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class JsonLegacyMappingImporter extends JsonMappingImporter {
+public class JsonLegacyMappingImporter extends BaseJsonMappingImporter {
 
 	private Mapping legacyMapping;
 	
-	@Override
-	public boolean isKeepImportedIdsSupported() {
-		return true;
-	}
+	@Override public boolean isKeepImportedIdsSupported() { return true; }
+	@Override public String getImporterSubtype() { return "Legacy mapping"; }
 	
 	@Override
 	public boolean getIsSupported() {
 		if (super.getIsSupported()) {
 			try {
-				objectMapper.readValue(new File(this.getMappingFilePath()), SerializableMappingContainer.class);
+				objectMapper.readValue(new File(this.importFilePath), SerializableMappingContainer.class);
 				return true;
-			} catch (Exception e) {
-				return false;
-			}
+			} catch (Exception e) {}
 		}
 		return false;
+	}
+
+	@Override
+	protected void importJson() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -1,4 +1,4 @@
-package de.unibamberg.minf.dme.importer.mapping;
+package de.unibamberg.minf.dme.importer;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,8 +16,9 @@ import org.springframework.context.ApplicationContextAware;
 
 import de.unibamberg.minf.dme.exception.MappingImportException;
 import de.unibamberg.minf.dme.exception.SchemaImportException;
-import de.unibamberg.minf.dme.importer.MappingImporter;
-import de.unibamberg.minf.dme.importer.SchemaImporter;
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
+import de.unibamberg.minf.dme.importer.mapping.MappingImportListener;
+import de.unibamberg.minf.dme.importer.mapping.MappingImporter;
 import de.unibamberg.minf.dme.model.LogEntry;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
@@ -25,40 +26,20 @@ import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.service.interfaces.MappingService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
-public class MappingImportWorker implements ApplicationContextAware, MappingImportListener {
-	private static final String LogMessageNoEntityId = "Mapping id must exist (mapping must be saved) before import";
+public class MappingImportWorker extends BaseImportWorker<MappingImporter> implements MappingImportListener {
 	
-	protected static final Logger logger = LoggerFactory.getLogger(MappingImportWorker.class);
+	@Override protected Class<MappingImporter> getBaseImporterType() { return MappingImporter.class; }
 	
-	private final ExecutorService executor = Executors.newCachedThreadPool();
-
-	private ApplicationContext appContext;
-	
-	private List<String> processingMappingIds = new ArrayList<String>();
 	
 	
 	@Autowired private MappingService mappingService;
 	
 	
-	@Override
-	public void setApplicationContext(ApplicationContext appContext) throws BeansException {
-		this.appContext = appContext;
-	}
 	
-	public MappingImporter getSupportingImporter(String filePath) {
-		Map<String, MappingImporter> importers = appContext.getBeansOfType(MappingImporter.class);
-		for (MappingImporter importer : importers.values()) {
-			importer.setMappingFilePath(filePath);
-			if (importer.getIsSupported()) {
-				return importer;
-			}
-		}
-		return null;
-	}
 	
-	public boolean isBeingProcessed(String mappingId) {
-		return mappingId!=null && this.processingMappingIds.contains(mappingId);
-	}
+	
+	
+	
 	
 	public List<LogEntry> importMapping(String filePath, String entityId, boolean keepImportedIds, AuthPojo auth) throws MappingImportException {
 		List<LogEntry> result = new ArrayList<LogEntry>();
@@ -72,7 +53,7 @@ public class MappingImportWorker implements ApplicationContextAware, MappingImpo
 		if (rcM==null) {
 			return result;
 		}
-		if (this.processingMappingIds.contains(entityId)) {
+		if (this.processingEntityIds.contains(entityId)) {
 			
 		}
 		
@@ -122,6 +103,9 @@ public class MappingImportWorker implements ApplicationContextAware, MappingImpo
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	
 
 	
 	

@@ -1,4 +1,4 @@
-package de.unibamberg.minf.dme.importer.json;
+package de.unibamberg.minf.dme.importer.datamodel.json;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContai
 
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class JsonLegacySchemaImporter extends BaseJsonImporter {
+public class JsonLegacySchemaImporter extends BaseJsonDatamodelImporter {
 	
 	@Override public String getImporterSubtype() { return "Legacy datamodel"; }
 	
@@ -35,7 +35,7 @@ public class JsonLegacySchemaImporter extends BaseJsonImporter {
 	public boolean getIsSupported() {
 		if (super.getIsSupported()) {
 			try {
-				objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
+				objectMapper.readValue(new File(this.importFilePath), SerializableSchemaContainer.class);
 				return true;
 			} catch (Exception e) {
 				return false;
@@ -47,7 +47,7 @@ public class JsonLegacySchemaImporter extends BaseJsonImporter {
 	@Override
 	public List<? extends ModelElement> getElementsByTypes(List<Class<? extends ModelElement>> allowedSubtreeRoots) {
 		try {
-			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
+			SerializableSchemaContainer s = objectMapper.readValue(new File(this.importFilePath), SerializableSchemaContainer.class);
 			Nonterminal rootN = LegacySchemaConverter.convertLegacyNonterminal((eu.dariah.de.minfba.core.metamodel.Nonterminal)s.getRoot(), null);
 			
 			return IdentifiableServiceImpl.extractAllByTypes(rootN, allowedSubtreeRoots);
@@ -60,7 +60,7 @@ public class JsonLegacySchemaImporter extends BaseJsonImporter {
 	@Override
 	public List<Element> getPossibleRootElements() {
 		try {
-			SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
+			SerializableSchemaContainer s = objectMapper.readValue(new File(this.importFilePath), SerializableSchemaContainer.class);
 			
 			Nonterminal rootN = LegacySchemaConverter.convertLegacyNonterminal((eu.dariah.de.minfba.core.metamodel.Nonterminal)s.getRoot(), null);
 			this.getRootElements().addAll(ElementServiceImpl.extractAllNonterminals(rootN));
@@ -78,10 +78,10 @@ public class JsonLegacySchemaImporter extends BaseJsonImporter {
 	
 	@Override
 	protected void importJson() throws JsonParseException, JsonMappingException, IOException, MetamodelConsistencyException {
-		SerializableSchemaContainer s = objectMapper.readValue(new File(this.getSchemaFilePath()), SerializableSchemaContainer.class);
+		SerializableSchemaContainer s = objectMapper.readValue(new File(this.importFilePath), SerializableSchemaContainer.class);
 		
 		Datamodel m = LegacySchemaConverter.convertLegacySchema(s.getSchema());
-		m.setId(this.getSchema().getId());
+		m.setId(this.getDatamodel().getId());
 		
 		Map<String, String> nonterminalTerminalIdMap = new HashMap<String, String>();
 		Nonterminal root = LegacySchemaConverter.convertLegacyNonterminal((eu.dariah.de.minfba.core.metamodel.Nonterminal)s.getRoot(), nonterminalTerminalIdMap);

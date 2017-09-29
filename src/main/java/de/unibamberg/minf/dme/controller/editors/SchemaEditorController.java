@@ -41,8 +41,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.unibamberg.minf.dme.controller.base.BaseMainEditorController;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
 import de.unibamberg.minf.dme.exception.SchemaImportException;
-import de.unibamberg.minf.dme.importer.SchemaImportWorker;
-import de.unibamberg.minf.dme.importer.SchemaImporter;
+import de.unibamberg.minf.dme.importer.DatamodelImportWorker;
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.base.Element;
@@ -74,7 +74,7 @@ import de.unibamberg.minf.core.web.pojo.MessagePojo;
 @Controller
 @RequestMapping(value="/model/editor/{entityId}/")
 public class SchemaEditorController extends BaseMainEditorController implements InitializingBean {	
-	@Autowired private SchemaImportWorker importWorker;
+	@Autowired private DatamodelImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private GrammarService grammarService;
 	
@@ -307,7 +307,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		if (temporaryFilesMap.containsKey(fileId)) {
 			JsonNode rootNodes;
 			
-			SchemaImporter importer = importWorker.getSupportingImporter(temporaryFilesMap.get(fileId));
+			DatamodelImporter importer = importWorker.getSupportingImporter(temporaryFilesMap.get(fileId));
 			
 			if (elementId==null) {
 				rootNodes = objectMapper.valueToTree(importer.getPossibleRootElements());

@@ -17,7 +17,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import de.unibamberg.minf.dme.exception.SchemaImportException;
-import de.unibamberg.minf.dme.model.base.Identifiable;
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImportListener;
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
 import de.unibamberg.minf.dme.model.base.ModelElement;
 import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
@@ -31,8 +32,8 @@ import de.unibamberg.minf.dme.service.interfaces.SchemaService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
 @Component
-public class SchemaImportWorker implements ApplicationContextAware, SchemaImportListener {
-	protected static final Logger logger = LoggerFactory.getLogger(SchemaImportWorker.class);	
+public class DatamodelImportWorker implements ApplicationContextAware, DatamodelImportListener {
+	protected static final Logger logger = LoggerFactory.getLogger(DatamodelImportWorker.class);	
 	private final ExecutorService executor = Executors.newCachedThreadPool();
 	
 	@Autowired private SchemaService schemaService;
@@ -50,10 +51,10 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 		this.appContext = appContext;
 	}
 	
-	public SchemaImporter getSupportingImporter(String filePath) {
-		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
-		for (SchemaImporter importer : importers.values()) {
-			importer.setSchemaFilePath(filePath);
+	public DatamodelImporter getSupportingImporter(String filePath) {
+		Map<String, DatamodelImporter> importers = appContext.getBeansOfType(DatamodelImporter.class);
+		for (DatamodelImporter importer : importers.values()) {
+			importer.setImportFilePath(filePath);
 			if (importer.getIsSupported()) {
 				return importer;
 			}
@@ -84,13 +85,13 @@ public class SchemaImportWorker implements ApplicationContextAware, SchemaImport
 			throw new SchemaImportException("Schema import file not set or accessible [{}]");
 		}
 
-		Map<String, SchemaImporter> importers = appContext.getBeansOfType(SchemaImporter.class);
-		for (SchemaImporter importer : importers.values()) {
-			importer.setSchemaFilePath(filePath);
+		Map<String, DatamodelImporter> importers = appContext.getBeansOfType(DatamodelImporter.class);
+		for (DatamodelImporter importer : importers.values()) {
+			importer.setImportFilePath(filePath);
 			if (importer.getIsSupported()) {
 				importer.setKeepImportedIds(keepImportedIds);
 				importer.setListener(this);
-				importer.setSchema(s);
+				importer.setDatamodel(s);
 				importer.setRootElementName(schemaRoot); 
 				importer.setAuth(auth);
 				importer.setRootElementType(schemaRootType);

@@ -1,4 +1,4 @@
-package de.unibamberg.minf.dme.importer;
+package de.unibamberg.minf.dme.importer.datamodel.xml;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import de.unibamberg.minf.core.util.Stopwatch;
+import de.unibamberg.minf.dme.importer.datamodel.BaseDatamodelImporter;
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
 import de.unibamberg.minf.dme.importer.model.ImportAwareNonterminal;
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.base.ModelElement;
@@ -44,7 +46,7 @@ import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
 
 @Component
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImporter {
+public class XmlSchemaImporter extends BaseDatamodelImporter implements DatamodelImporter {
 	
 	private Map<String, XmlTerminal> existingTerminalQNs = new HashMap<String, XmlTerminal>();
 	private XSModel model;
@@ -65,7 +67,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	public void run() {
 		try {
 			Stopwatch sw = new Stopwatch().start();
-			logger.debug(String.format("Started importing schema %s", this.getSchema().getId()));
+			logger.debug(String.format("Started importing schema %s", this.getDatamodel().getId()));
 			
 			this.prepareXmlNature();
 			
@@ -85,12 +87,12 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 				
 				logger.info(String.format("Finished importing schema %s in %sms", xmlNature.getId(), sw.getElapsedTime()));
 				
-				this.getListener().registerImportFinished(this.getSchema(), this.getElementId(), this.getRootElements(), this.getAdditionalRootElements(), this.getAuth());
+				this.getListener().registerImportFinished(this.getDatamodel(), this.getElementId(), this.getRootElements(), this.getAdditionalRootElements(), this.auth);
 			}
 		} catch (Exception e) {
 			logger.error("Error while importing XML Schema", e);
 			if (this.getListener()!=null) {
-				this.getListener().registerImportFailed(this.getSchema());
+				this.getListener().registerImportFailed(this.getDatamodel());
 			}
 		}
 	}
@@ -106,7 +108,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		try {
 			XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 			XSLoader schemaLoader = impl.createXSLoader(null);
-			model = schemaLoader.loadURI(this.getSchemaFilePath());
+			model = schemaLoader.loadURI(this.importFilePath);
 			
 			if (model!=null) {
 				return true;
@@ -122,7 +124,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 			
 			XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 			XSLoader schemaLoader = impl.createXSLoader(null);
-			model = schemaLoader.loadURI(this.getSchemaFilePath());
+			model = schemaLoader.loadURI(this.importFilePath);
 			
 			XSNamedMap elements = this.model.getComponents(XSConstants.ELEMENT_DECLARATION);
 			List<XmlTerminal> rootTerminals = new ArrayList<XmlTerminal>(elements.getLength());
@@ -144,12 +146,12 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 	}
 	
 	private void prepareXmlNature() {
-		if (this.getSchema().getNature(XmlDatamodelNature.class)!=null) {
-			xmlNature = this.getSchema().getNature(XmlDatamodelNature.class);
+		if (this.getDatamodel().getNature(XmlDatamodelNature.class)!=null) {
+			xmlNature = this.getDatamodel().getNature(XmlDatamodelNature.class);
 		} else {
 			xmlNature = new XmlDatamodelNature();
-			xmlNature.setId(this.getSchema().getId());
-			this.getSchema().addOrReplaceNature(xmlNature);
+			xmlNature.setId(this.getDatamodel().getId());
+			this.getDatamodel().addOrReplaceNature(xmlNature);
 		}
 		
 		XmlTerminal rootTerminal = null;
@@ -170,7 +172,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		Stopwatch sw = new Stopwatch().start();
 		XSImplementation impl = (XSImplementation)(new DOMXSImplementationSourceImpl()).getDOMImplementation ("XS-Loader");
 		XSLoader schemaLoader = impl.createXSLoader(null);
-		model = schemaLoader.loadURI(this.getSchemaFilePath());
+		model = schemaLoader.loadURI(this.importFilePath);
 		
 		/* Namespace precollection */
 		XSNamespaceItemList nsList = model.getNamespaceItems();
@@ -501,7 +503,7 @@ public class XmlSchemaImporter extends BaseSchemaImporter implements SchemaImpor
 		
 		this.xmlNature.mapNonterminal(n.getId(), terminalId);
 		
-		n.setEntityId(this.getSchema().getId());
+		n.setEntityId(this.getDatamodel().getId());
 		
 		terminalIdNonterminalMap.put(terminalQN, n);
 		
