@@ -1,11 +1,19 @@
-package de.unibamberg.minf.dme.pojo;
+package de.unibamberg.minf.dme.model;
 
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class LogEntryPojo implements Comparable<LogEntryPojo> {
+public class LogEntry implements Comparable<LogEntry> {
 	public static enum LogType { SUCCESS, INFO, WARNING, ERROR }
+	
+	public static LogEntry createEntry(LogType logType, String message) {
+		LogEntry entry = new LogEntry();
+		entry.logType = logType;
+		entry.message = message;
+		entry.setTimestamp(DateTime.now());
+		return entry;
+	}
 	
 	private DateTime timestamp;
 	private LogType logType;
@@ -21,6 +29,7 @@ public class LogEntryPojo implements Comparable<LogEntryPojo> {
 	public String getMessage() { return message; }
 	public void setMessage(String message) { this.message = message; }
 	
+	
 	public long getNumericTimestamp() {
 		return timestamp.getMillis();
 	}
@@ -30,7 +39,7 @@ public class LogEntryPojo implements Comparable<LogEntryPojo> {
 	}
 	
 	@Override
-	public int compareTo(LogEntryPojo o) {
+	public int compareTo(LogEntry o) {
 		return this.timestamp.compareTo(o.getTimestamp());
 	}
 }
