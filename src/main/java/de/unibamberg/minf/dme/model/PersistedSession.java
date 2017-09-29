@@ -95,7 +95,7 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 		LogEntry entry = new LogEntry();
 		entry.setTimestamp(DateTime.now());
 		entry.setLogType(type);
-		entry.setMessage(message);
+		entry.setDefaultMessage(message);
 		
 		if (this.getSessionLog()==null) {
 			this.setSessionLog(new ArrayList<LogEntry>());

@@ -7,17 +7,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class LogEntry implements Comparable<LogEntry> {
 	public static enum LogType { SUCCESS, INFO, WARNING, ERROR }
 	
-	public static LogEntry createEntry(LogType logType, String message) {
+	public static LogEntry createEntry(LogType logType, String messageCode, Object[] args, String defaultMessage) {
 		LogEntry entry = new LogEntry();
 		entry.logType = logType;
-		entry.message = message;
+		entry.messageCode = messageCode;
+		entry.args = args;
+		entry.defaultMessage = defaultMessage;
 		entry.setTimestamp(DateTime.now());
 		return entry;
 	}
 	
 	private DateTime timestamp;
 	private LogType logType;
-	private String message;
+	private String defaultMessage;
+	private String messageCode;
+	private Object[] args;
 	
 	@JsonIgnore
 	public DateTime getTimestamp() { return timestamp; }
@@ -26,8 +30,14 @@ public class LogEntry implements Comparable<LogEntry> {
 	public LogType getLogType() { return logType; }
 	public void setLogType(LogType logType) { this.logType = logType; }
 	
-	public String getMessage() { return message; }
-	public void setMessage(String message) { this.message = message; }
+	protected Object[] getArgs() { return args; }
+	protected void setArgs(Object[] args) { this.args = args; }
+	
+	public String getDefaultMessage() { return defaultMessage; }
+	public void setDefaultMessage(String defaultMessage) { this.defaultMessage = defaultMessage; }
+	
+	protected String getMessageCode() { return messageCode; }
+	protected void setMessageCode(String messageCode) { this.messageCode = messageCode; }
 	
 	
 	public long getNumericTimestamp() {
