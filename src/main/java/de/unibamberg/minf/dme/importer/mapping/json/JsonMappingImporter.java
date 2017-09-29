@@ -19,7 +19,7 @@ public class JsonMappingImporter extends BaseJsonMappingImporter {
 
 	@Autowired protected ObjectMapper objectMapper;
 
-	@Override public boolean isKeepImportedIdsSupported() { return false; }
+	@Override public boolean isKeepImportedIdsSupported() { return true; }
 	@Override public String getImporterSubtype() { return "Mapping"; }
 	
 	@Override

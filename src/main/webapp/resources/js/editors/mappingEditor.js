@@ -76,6 +76,10 @@ var MappingEditor = function(options) {
 	                              "~de.unibamberg.minf.dme.editor.actions.edit_connection",
 	                              "~de.unibamberg.minf.dme.editor.actions.show_connection",
 	                              
+	                              "~de.unibamberg.minf.dme.button.export",
+	                              "~de.unibamberg.minf.dme.button.import",
+	                              "~de.unibamberg.minf.dme.editor.mapping",
+	                              
 	                              "~de.unibamberg.minf.dme.dialog.confirm_publish",
 	                              "~de.unibamberg.minf.dme.model.mapping.validation.no_pub_schema_drafts"]);
 	__translator.getTranslations();
@@ -219,6 +223,10 @@ MappingEditor.prototype.getAreaContextMenu = function(area) {
 	    area.model.createContextMenuHeading("~de.unibamberg.minf.dme.editor.element_model"),
 	    area.model.createContextMenuItem("reset", "~de.unibamberg.minf.common.link.reset_view", "repeat"),
 	    area.model.createContextMenuItem("reload", "~de.unibamberg.minf.common.link.reload_data", "refresh"),
+	    
+	    area.model.createContextMenuHeading("~de.unibamberg.minf.dme.editor.mapping"),
+	    area.model.createContextMenuItem("exportMapping", "~de.unibamberg.minf.dme.button.export", "cloud-download"),
+	    area.model.createContextMenuItem("importMapping", "~de.unibamberg.minf.dme.button.import", "cloud-upload"),
 	];
 	return items;
 };
@@ -284,6 +292,8 @@ MappingEditor.prototype.performTreeAction = function(action, elementId, elementK
 	    case "editConnection" : return this.editConnection(elementId);
 	    case "removeMapping" : return this.removeConceptMapping(elementId);
 	    
+	    case "importMapping" : return this.importMapping();
+	    case "exportMapping" : return this.exportMapping();
 	    
 	    /*default:
 	        throw new Error("Unknown tree action requested: " + action);*/

@@ -41,6 +41,7 @@
 		<put-attribute name="content" value="/WEB-INF/view/jsp/editor/mapping_editor.jsp" />
 		<put-list-attribute name="scripts" inherit="true">
 			<add-attribute type="string" value="editors/mappingEditor.js" />
+			<add-attribute type="string" value="editors/mappingEditor.importexport.js" />
 			<add-attribute type="string" value="editors/mappedConceptEditor.js" />
 		</put-list-attribute>
 	</definition>

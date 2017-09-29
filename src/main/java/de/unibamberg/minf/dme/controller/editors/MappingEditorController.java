@@ -1,7 +1,9 @@
 package de.unibamberg.minf.dme.controller.editors;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,9 +23,15 @@ import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
+import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
+import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
+import de.unibamberg.minf.dme.model.serialization.MappingContainer;
+import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.pojo.converter.AuthWrappedPojoConverter;
 import de.unibamberg.minf.dme.processing.CollectingResourceConsumptionService;
@@ -153,6 +161,41 @@ public class MappingEditorController extends BaseMainEditorController {
 		}
 		
 		sessionService.saveSession(session);
+		return result;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/async/export")
+	public @ResponseBody ModelActionPojo exportMapping(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!mappingService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
+		
+		Mapping m = mappingService.findMappingById(entityId);
+		m.setConcepts(mappedConceptService.findAllByMappingId(entityId, true));
+		m.flush();
+		
+		MappingContainer mc = new MappingContainer();
+		mc.setMapping(m);
+
+		ChangeSet ch = schemaService.getLatestChangeSetForEntity(m.getId());
+		if (ch!=null) {
+			m.setVersionId(ch.getId());
+		}
+
+		mc.setGrammars(grammarService.serializeGrammarSources(entityId));
+		
+		Map<String, String> serializedFunctions = new HashMap<String, String>();
+		
+		List<Function> functions = functionService.findByEntityId(entityId);
+		for (Function f : functions) {
+			serializedFunctions.put(f.getId(), f.getFunction());
+		}
+		mc.setFunctions(serializedFunctions);
+		
+		ModelActionPojo result = new ModelActionPojo(true);
+		result.setPojo(mc);
 		return result;
 	}
 	

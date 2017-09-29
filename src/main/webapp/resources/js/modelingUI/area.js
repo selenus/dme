@@ -108,6 +108,8 @@ Area.prototype.ensureExpandedTo = function(elementId) {
 	this.model.paint();
 };
 
+
+
 Area.prototype.expandTo = function(element, expand) {
 	element.setExpanded(expand);
 	if (element.parent!==null && element.parent!==undefined) {
@@ -140,20 +142,17 @@ Area.prototype.findElementsById = function(parent, id) {
 	return elements;
 };
 
-/*Area.prototype.findElementById = function(parent, id) {
-	if (parent.id==id) {
-		return parent;
-	}
-	if (parent.children!=null) {
-		var result = null;
-		for (var i=0; i<parent.children.length; i++) {
-			result = this.findElementById(parent.children[i], id);
-			if (result!=null) {
-				return result;
-			}
+Area.prototype.findElementById = function(parent, id) {
+	var elements = this.findElementsById(parent, id);
+	for (var i=0; i<elements.length; i++) {
+		/* Meaning either reuse is not in use or
+		 *  element is not a reuse of a primary element */ 
+		if (elements[i].reusing!==false) {
+			return elements[i];
 		}
 	}
-};*/
+	
+};
 
 Area.prototype.resetView = function() {
 	this.expandAll(false);
