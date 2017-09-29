@@ -17,7 +17,7 @@ processing:
 db:
   host: 127.0.0.1
   port: 27017
-  database: schereg
+  database: dme
 
 auth:
   local: 
@@ -30,7 +30,7 @@ auth:
         roles: ["ROLE_CONTRIBUTOR"]
   saml:
     keystore:
-      path: /data/_srv/schereg/key/dfa-de-dariah-eu.jks
+      path: ${paths.main}/key/dfa-de-dariah-eu.jks
       # Uncomment if keystore is protected by password
       #pass: 'somepass'
       alias: dfa.de.dariah.eu
