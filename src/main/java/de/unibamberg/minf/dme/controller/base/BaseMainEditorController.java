@@ -26,6 +26,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.unibamberg.minf.core.util.Stopwatch;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
 import de.unibamberg.minf.dme.exception.SchemaImportException;
+import de.unibamberg.minf.dme.importer.BaseImportWorker;
+import de.unibamberg.minf.dme.importer.Importer;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.dme.model.SessionSampleFile;
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
@@ -57,6 +60,7 @@ import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.processing.CollectingResourceConsumptionService;
+import de.unibamberg.minf.dme.service.base.BaseEntityService;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
 import de.unibamberg.minf.dme.service.interfaces.MappedConceptService;
 import de.unibamberg.minf.dme.service.interfaces.MappingService;
@@ -67,6 +71,7 @@ import de.unibamberg.minf.processing.output.FileOutputService;
 import de.unibamberg.minf.processing.output.json.JsonFileOutputService;
 import de.unibamberg.minf.processing.output.xml.XmlFileOutputService;
 import de.unibamberg.minf.processing.service.xml.XmlStringProcessingService;
+import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.MessagePojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 
@@ -88,19 +93,51 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		super(mainNavId);
 	}
 	
-	protected abstract String getPrefix();
-	
-	@RequestMapping(method=GET, value="/forms/uploadSample")
-	public String getUploadSampleForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(method=GET, value={"/state"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo getEntityState(@PathVariable String entityId, HttpServletRequest request) {
+		if (entityId==null || entityId.isEmpty()) {
+			return new ModelActionPojo(false);
+		}
+		boolean processing = this.getImportWorker().isBeingProcessed(entityId);
 		
-		model.addAttribute("actionPath", this.getPrefix() + entityId + "/async/executeUploadedSample");
-		//model.addAttribute("schema", schemaService.findSchemaById(entityId));
-		return "editor/form/upload_sample";
+		ModelActionPojo result = new ModelActionPojo(true);
+		ObjectNode jsonState = objectMapper.createObjectNode();
+		jsonState.put("processing", processing);
+		jsonState.put("ready", !processing);
+		jsonState.put("error", false);
+		result.setPojo(jsonState);
+		return result;
+	}
+
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/forms/fileupload"})
+	public String getImportForm(Model model, Locale locale) {
+		return "common/fileupload";
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method = RequestMethod.POST, value = {"/async/upload", "/async/upload/{elementId}"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody JsonNode uploadFile(@PathVariable String entityId, @PathVariable(required=false) String elementId, MultipartHttpServletRequest request, Model model, Locale locale, HttpServletResponse response) throws IOException {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!this.getMainEntityService().getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+		ObjectNode result = objectMapper.createObjectNode();
+		result.put("success", true);
+		result.set("files", this.uploadFile(request, "validate/%s/" + elementId));
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/async/uploadSample", produces = "application/json; charset=utf-8")
 	public @ResponseBody JsonNode uploadSample(@PathVariable String entityId, MultipartHttpServletRequest request, Model model, Locale locale, HttpServletResponse response) throws IOException {
-				
+		ObjectNode result = objectMapper.createObjectNode();
+		result.put("success", true);
+		result.set("files", this.uploadFile(request, null));
+		return result;
+	}
+	
+	private JsonNode uploadFile(MultipartHttpServletRequest request, String validationUrl) throws IOException {
 		MultiValueMap<String, MultipartFile> multipartMap = request.getMultiFileMap();
 		CommonsMultipartFile file = null;
 		if (multipartMap != null && multipartMap.size()>0 && multipartMap.containsKey("file")) {
@@ -113,7 +150,6 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				}
 			}
 		}
-
 		String tmpId = UUID.randomUUID().toString();
 		String tmpFilePath = String.format("%s/%s_%s", tmpUploadDirPath, tmpId, file.getOriginalFilename());
 		Files.write(Paths.get(tmpFilePath), file.getBytes());
@@ -126,16 +162,57 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		fileNode.put("fileName", file.getOriginalFilename());
 		fileNode.put("fileSize", humanReadableByteCount(file.getBytes().length, false));
 		fileNode.put("deleteLink", "/async/file/delete/" + tmpId);
-		//fileNode.put("validateLink", "/async/file/validateSample/" + tmpId);
-
+		if (validationUrl!=null) {
+			fileNode.put("validateLink", String.format("/async/file/%s/", String.format(validationUrl, tmpId)));
+		}
 		filesNode.add(fileNode);
-		
-		ObjectNode result = objectMapper.createObjectNode();
-		result.put("success", true);
-		result.set("files", filesNode);
-		
+		return filesNode;
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/async/file/delete/{fileId}"})
+	public @ResponseBody ModelActionPojo deleteImportedFile(@PathVariable String entityId, @PathVariable String fileId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		if (!this.getMainEntityService().getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+		if (temporaryFilesMap.containsKey(fileId)) {
+			temporaryFilesMap.remove(fileId);
+		}
+		return new ModelActionPojo(true);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/async/file/validate/{fileId}", "/async/file/validate/{fileId}/{elementId}"})
+	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String entityId, @PathVariable String fileId, @PathVariable(required=false) String elementId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException {
+		ModelActionPojo result = new ModelActionPojo();
+		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}		
+		if (temporaryFilesMap.containsKey(fileId)) {
+			result = this.validateImportedFile(entityId, fileId, elementId, locale);
+		}
+		result.setSuccess(false);
+		// TODO: Error message
+		MessagePojo msg = new MessagePojo("danger", 
+				messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationfailed.head", null, locale), 
+				messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationfailed.body", null, locale));
+		result.setMessage(msg);
 		return result;
 	}
+	
+	
+	
+	@RequestMapping(method=GET, value="/forms/uploadSample")
+	public String getUploadSampleForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		
+		model.addAttribute("actionPath", this.getPrefix() + entityId + "/async/executeUploadedSample");
+		//model.addAttribute("schema", schemaService.findSchemaById(entityId));
+		return "editor/form/upload_sample";
+	}
+		
+	
 	
 	@RequestMapping(method=RequestMethod.POST, value={"/async/executeUploadedSample"})
 	public @ResponseBody ModelActionPojo executeUploadedSample(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
@@ -351,11 +428,6 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pojo);
 	}
 
-	@RequestMapping(method=GET, value={"/forms/fileupload"})
-	public String getImportForm(Model model, Locale locale) {
-		return "common/fileupload";
-	}
-
 	@RequestMapping(method = RequestMethod.POST, value = "/async/applySample")
 	public @ResponseBody ModelActionPojo applySample(@PathVariable String entityId, @RequestParam String sample, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
@@ -519,11 +591,8 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);
 		}
-		
 		return result;
-	}
-	
-	
+	}	
 	
 	private void fillValueMap(Map<String, String> valueMap, Resource r) {
 		if (!valueMap.containsKey(r.getElementId())) {
@@ -535,6 +604,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			}
 		}
 	}
+	
+	protected abstract BaseEntityService getMainEntityService();
+	protected abstract String getPrefix();
+	protected abstract BaseImportWorker<? extends Importer> getImportWorker();
+	protected abstract ModelActionPojo validateImportedFile(String entityId, String fileId, String elementId, Locale locale);
+		
 			
 	public static String humanReadableByteCount(long bytes, boolean si) {
 	    int unit = si ? 1000 : 1024;

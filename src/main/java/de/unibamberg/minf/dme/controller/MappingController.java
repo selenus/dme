@@ -104,7 +104,7 @@ public class MappingController extends BaseScheregController {
 		model.addAttribute("mapping", mapping.getElement());
 		return "mapping/form/edit";
 	}
-	
+		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value="async/save")
 	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, BindingResult bindingResult, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {

@@ -45,6 +45,7 @@
 			<add-attribute type="string" value="editors/mappedConceptEditor.js" />
 		</put-list-attribute>
 	</definition>
+	<definition name="mapping/form/import" template="/WEB-INF/view/jsp/editor/forms/import_mapping.jsp" />
 	
 	<definition name="editor/form/upload_sample" template="/WEB-INF/view/jsp/editor/forms/sample_file.jsp" />
 	<definition name="editor/form/download_output" template="/WEB-INF/view/jsp/editor/forms/download_output.jsp" />

@@ -9,8 +9,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -20,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,19 +25,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 import de.unibamberg.minf.dme.controller.base.BaseMainEditorController;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
-import de.unibamberg.minf.dme.exception.SchemaImportException;
 import de.unibamberg.minf.dme.importer.DatamodelImportWorker;
 import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
 import de.unibamberg.minf.dme.model.PersistedSession;
@@ -65,6 +56,7 @@ import de.unibamberg.minf.dme.pojo.ModelElementPojo;
 import de.unibamberg.minf.dme.pojo.converter.AuthWrappedPojoConverter;
 import de.unibamberg.minf.dme.pojo.converter.ModelElementPojoConverter;
 import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
+import de.unibamberg.minf.dme.service.base.BaseEntityService;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 import de.unibamberg.minf.dme.service.interfaces.IdentifiableService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
@@ -79,6 +71,12 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@Autowired private GrammarService grammarService;
 	
 	@Autowired private IdentifiableService identifiableService;
+	
+	
+	@Override protected String getPrefix() { return "/model/editor/"; }
+	@Override protected DatamodelImportWorker getImportWorker() { return this.importWorker; }
+	@Override protected BaseEntityService getMainEntityService() { return this.schemaService; }
+	
 	
 	public SchemaEditorController() {
 		super("schemaEditor");
@@ -161,27 +159,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		return result;
 	}
 	
-	@RequestMapping(method=GET, value={"/state"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody ModelActionPojo getSchemaState(@PathVariable String entityId, HttpServletRequest request) {
-		ModelActionPojo result;
-		if (entityId!=null && !entityId.isEmpty()) {
-			result = new ModelActionPojo(true);
-		} else {
-			result = new ModelActionPojo(false);
-		}		
-		ObjectNode jsonState = objectMapper.createObjectNode();
-		if (importWorker.isBeingProcessed(entityId)) {
-			jsonState.put("processing", true);
-			jsonState.put("ready", false);
-		} else {
-			jsonState.put("processing", false);
-			jsonState.put("ready", true);
-		}
-		jsonState.put("error", false);
-		result.setPojo(jsonState);
-		
-		return result;
-	}
+	
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/forms/import"})
@@ -199,11 +177,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		return "schemaEditor/form/import";
 	}
 	
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method=GET, value={"/forms/fileupload"})
-	public String getImportForm(Model model, Locale locale) {
-		return "common/fileupload";
-	}
+	
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/form/createRoot")
@@ -235,112 +209,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		return result;
 	}
 	
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method = RequestMethod.POST, value = {"/async/upload", "/async/upload/{elementId}"}, produces = "application/json; charset=utf-8")
-	public @ResponseBody JsonNode prepareSchema(@PathVariable String entityId, @PathVariable(required=false) String elementId, MultipartHttpServletRequest request, Model model, Locale locale, HttpServletResponse response) throws IOException {
-		AuthPojo auth = authInfoHelper.getAuth(request);
-		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return null;
-		}
-		
-		MultiValueMap<String, MultipartFile> multipartMap = request.getMultiFileMap();
-		CommonsMultipartFile file = null;
-		if (multipartMap != null && multipartMap.size()>0 && multipartMap.containsKey("file")) {
-			List<MultipartFile> fileList = multipartMap.get("file");
-			if (fileList.size()==1 && fileList.get(0)!=null) {
-				file = (CommonsMultipartFile)fileList.get(0);
-				// 'empty' file
-				if (file.getOriginalFilename() == null || file.getSize() == 0) {
-					file = null;
-				}
-			}
-		}
-
-		String tmpId = UUID.randomUUID().toString();
-		String tmpFilePath = String.format("%s/%s_%s", tmpUploadDirPath, tmpId, file.getOriginalFilename());
-		Files.write(Paths.get(tmpFilePath), file.getBytes());
-		
-		temporaryFilesMap.put(tmpId, tmpFilePath);
-		
-		ArrayNode filesNode = objectMapper.createArrayNode();
-		ObjectNode fileNode = objectMapper.createObjectNode();
-		fileNode.put("id", tmpId);
-		fileNode.put("fileName", file.getOriginalFilename());
-		fileNode.put("fileSize", humanReadableByteCount(file.getBytes().length, false));
-		fileNode.put("deleteLink", "/async/file/delete/" + tmpId);
-		if (elementId==null) {
-			fileNode.put("validateLink", "/async/file/validate/" + tmpId);
-		} else {
-			fileNode.put("validateLink", "/async/file/validate/" + tmpId + "/" + elementId);
-		}
-		filesNode.add(fileNode);
-		
-		ObjectNode result = objectMapper.createObjectNode();
-		result.put("success", true);
-		result.set("files", filesNode);
-		
-		return result;
-	}
 	
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method=GET, value={"/async/file/delete/{fileId}"})
-	public @ResponseBody ModelActionPojo deleteImportedFile(@PathVariable String entityId, @PathVariable String fileId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
-		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return null;
-		}
-		if (temporaryFilesMap.containsKey(fileId)) {
-			temporaryFilesMap.remove(fileId);
-		}
-		return new ModelActionPojo(true);
-	}
-	
-	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method=GET, value={"/async/file/validate/{fileId}", "/async/file/validate/{fileId}/{elementId}"})
-	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String entityId, @PathVariable String fileId, @PathVariable(required=false) String elementId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException {
-		ModelActionPojo result = new ModelActionPojo();
-		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
-			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			return new ModelActionPojo(false);
-		}		
-		if (temporaryFilesMap.containsKey(fileId)) {
-			JsonNode rootNodes;
-			
-			DatamodelImporter importer = importWorker.getSupportingImporter(temporaryFilesMap.get(fileId));
-			
-			if (elementId==null) {
-				rootNodes = objectMapper.valueToTree(importer.getPossibleRootElements());
-			} else {
-				List<Class<? extends ModelElement>> allowedSubtreeRoots = identifiableService.getAllowedSubelementTypes(elementId);
-				rootNodes = objectMapper.valueToTree(importer.getElementsByTypes(allowedSubtreeRoots));
-			}
-			
-			if (rootNodes!=null) {
-				result.setSuccess(true);
-				MessagePojo msg = new MessagePojo("success", 
-						messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.head", null, locale), 
-						messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.body", null, locale));
-				result.setMessage(msg);
-				
-				ObjectNode pojoNode = objectMapper.createObjectNode();
-				pojoNode.set("elements", rootNodes);
-				pojoNode.set("keepIdsAllowed", BooleanNode.valueOf(importer.isKeepImportedIdsSupported()));
-				pojoNode.set("importerMainType", TextNode.valueOf(importer.getMainImporterType()));
-				pojoNode.set("importerSubtype", TextNode.valueOf(importer.getImporterSubtype()));
-				
-				result.setPojo(pojoNode);
-				return result;
-			}
-		}
-		result.setSuccess(false);
-		// TODO: Error message
-		MessagePojo msg = new MessagePojo("danger", 
-				messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationfailed.head", null, locale), 
-				messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationfailed.body", null, locale));
-		result.setMessage(msg);
-		return result;
-	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
@@ -478,7 +347,33 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	}
 
 	@Override
-	protected String getPrefix() {
-		return "/model/editor/";
+	protected ModelActionPojo validateImportedFile(String entityId, String fileId, String elementId, Locale locale) {
+		JsonNode rootNodes;
+		ModelActionPojo result = new ModelActionPojo();
+		DatamodelImporter importer = importWorker.getSupportingImporter(temporaryFilesMap.get(fileId));
+		
+		if (elementId==null) {
+			rootNodes = objectMapper.valueToTree(importer.getPossibleRootElements());
+		} else {
+			List<Class<? extends ModelElement>> allowedSubtreeRoots = identifiableService.getAllowedSubelementTypes(elementId);
+			rootNodes = objectMapper.valueToTree(importer.getElementsByTypes(allowedSubtreeRoots));
+		}
+		
+		if (rootNodes!=null) {
+			result.setSuccess(true);
+			MessagePojo msg = new MessagePojo("success", 
+					messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.head", null, locale), 
+					messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.body", null, locale));
+			result.setMessage(msg);
+			
+			ObjectNode pojoNode = objectMapper.createObjectNode();
+			pojoNode.set("elements", rootNodes);
+			pojoNode.set("keepIdsAllowed", BooleanNode.valueOf(importer.isKeepImportedIdsSupported()));
+			pojoNode.set("importerMainType", TextNode.valueOf(importer.getMainImporterType()));
+			pojoNode.set("importerSubtype", TextNode.valueOf(importer.getImporterSubtype()));
+			
+			result.setPojo(pojoNode);
+		}
+		return result;
 	}
 }

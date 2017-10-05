@@ -1,5 +1,7 @@
 package de.unibamberg.minf.dme.controller.editors;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -8,17 +10,24 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.bouncycastle.jce.provider.symmetric.RC6.Mappings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.core.util.Stopwatch;
 import de.unibamberg.minf.dme.controller.base.BaseMainEditorController;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
+import de.unibamberg.minf.dme.importer.BaseImportWorker;
+import de.unibamberg.minf.dme.importer.DatamodelImportWorker;
+import de.unibamberg.minf.dme.importer.Importer;
+import de.unibamberg.minf.dme.importer.MappingImportWorker;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
@@ -35,6 +44,7 @@ import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.pojo.converter.AuthWrappedPojoConverter;
 import de.unibamberg.minf.dme.processing.CollectingResourceConsumptionService;
+import de.unibamberg.minf.dme.service.base.BaseEntityService;
 import de.unibamberg.minf.dme.service.interfaces.FunctionService;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 import de.unibamberg.minf.dme.service.interfaces.MappedConceptService;
@@ -49,11 +59,19 @@ import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 @Controller
 @RequestMapping(value="/mapping/editor/{entityId}/")
 public class MappingEditorController extends BaseMainEditorController {
+	@Autowired private MappingImportWorker importWorker;
+	
 	@Autowired private GrammarService grammarService;
 	@Autowired private FunctionService functionService;
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
 	@Autowired private PersistedSessionService sessionService;
+	
+
+	@Override protected String getPrefix() { return "/mapping/editor/"; }
+	@Override protected MappingImportWorker getImportWorker() { return this.importWorker; }
+	@Override protected BaseEntityService getMainEntityService() { return this.mappingService; }
+	
 	
 	public MappingEditorController() {
 		super("mappingEditor");
@@ -99,6 +117,26 @@ public class MappingEditorController extends BaseMainEditorController {
 	@RequestMapping(value="/async/getConcepts", method=RequestMethod.GET)
 	public @ResponseBody List<MappedConcept> getMappedConcepts(@PathVariable String entityId, Model model) {
 		return mappedConceptService.findAllByMappingId(entityId);
+	}
+	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=GET, value={"/forms/import"})
+	public String getImportForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return null;
+		}
+		model.addAttribute("actionPath", "/mapping/editor/" + entityId + "/async/import");
+		model.addAttribute("mapping", mappingService.findMappingById(entityId));
+
+		return "mapping/form/import";
+	}
+	
+	@Override
+	protected ModelActionPojo validateImportedFile(String entityId, String fileId, String elementId, Locale locale) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSampleMapping")
@@ -197,10 +235,5 @@ public class MappingEditorController extends BaseMainEditorController {
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(mc);
 		return result;
-	}
-	
-	@Override
-	protected String getPrefix() {
-		return "/mapping/editor/";
 	}
 }
