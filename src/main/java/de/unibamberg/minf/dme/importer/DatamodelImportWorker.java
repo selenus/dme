@@ -45,9 +45,6 @@ public class DatamodelImportWorker extends BaseImportWorker<DatamodelImporter> i
 		}
 		
 		Datamodel s = schemaService.findSchemaById(entityId);
-		if (!this.processingEntityIds.contains(entityId)) {
-			this.processingEntityIds.add(entityId);
-		}
 		if (filePath==null || !(new File(filePath).exists())) {
 			logger.error("Schema import file not set or accessible [{}]", filePath);
 			throw new SchemaImportException("Schema import file not set or accessible [{}]");
