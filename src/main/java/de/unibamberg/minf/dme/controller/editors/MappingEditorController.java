@@ -1,6 +1,7 @@
 package de.unibamberg.minf.dme.controller.editors;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
+
 import de.unibamberg.minf.core.util.Stopwatch;
 import de.unibamberg.minf.dme.controller.base.BaseMainEditorController;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
@@ -28,12 +34,15 @@ import de.unibamberg.minf.dme.importer.BaseImportWorker;
 import de.unibamberg.minf.dme.importer.DatamodelImportWorker;
 import de.unibamberg.minf.dme.importer.Importer;
 import de.unibamberg.minf.dme.importer.MappingImportWorker;
+import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
+import de.unibamberg.minf.dme.importer.mapping.MappingImporter;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Grammar;
+import de.unibamberg.minf.dme.model.base.ModelElement;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
@@ -54,6 +63,7 @@ import de.unibamberg.minf.mapping.model.MappingExecGroup;
 import de.unibamberg.minf.mapping.service.MappingExecutionService;
 import de.unibamberg.minf.processing.model.base.Resource;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
+import de.unibamberg.minf.core.web.pojo.MessagePojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 
 @Controller
@@ -133,10 +143,53 @@ public class MappingEditorController extends BaseMainEditorController {
 		return "mapping/form/import";
 	}
 	
+	@PreAuthorize("isAuthenticated()")
+	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
+	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, @RequestParam(defaultValue="false", value="keep-imported-ids") boolean keepImportedIds,			
+			Locale locale, HttpServletRequest request, HttpServletResponse response) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if(!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
+			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			return new ModelActionPojo(false);
+		}
+		ModelActionPojo result = new ModelActionPojo();
+		try {
+			if (temporaryFilesMap.containsKey(fileId)) {
+				
+				importWorker.importMapping(temporaryFilesMap.remove(fileId), entityId, keepImportedIds, authInfoHelper.getAuth(request));
+				result.setSuccess(true);
+				return result;
+			}
+		} catch (Exception e) {
+			MessagePojo msg = new MessagePojo("danger", 
+					messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.generalerror.head", null, locale), 
+					messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.generalerror.body", new Object[] {e.getLocalizedMessage()}, locale));
+			result.setMessage(msg);
+		}
+		result.setSuccess(false);
+		return result;
+	}
+	
 	@Override
 	protected ModelActionPojo validateImportedFile(String entityId, String fileId, String elementId, Locale locale) {
-		// TODO Auto-generated method stub
-		return null;
+		ModelActionPojo result = new ModelActionPojo();
+		MappingImporter importer = importWorker.getSupportingImporter(temporaryFilesMap.get(fileId));
+				
+		if (importer!=null) {
+			result.setSuccess(true);
+			MessagePojo msg = new MessagePojo("success", 
+					messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.head", null, locale), 
+					messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationsucceeded.body", null, locale));
+			result.setMessage(msg);
+			
+			ObjectNode pojoNode = objectMapper.createObjectNode();
+			pojoNode.set("keepIdsAllowed", BooleanNode.valueOf(importer.isKeepImportedIdsSupported()));
+			pojoNode.set("importerMainType", TextNode.valueOf(importer.getMainImporterType()));
+			pojoNode.set("importerSubtype", TextNode.valueOf(importer.getImporterSubtype()));
+			
+			result.setPojo(pojoNode);
+		}
+		return result;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSampleMapping")

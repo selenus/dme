@@ -125,7 +125,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		}
 		ObjectNode result = objectMapper.createObjectNode();
 		result.put("success", true);
-		result.set("files", this.uploadFile(request, "validate/%s/" + elementId));
+		result.set("files", this.uploadFile(request, "validate/%s" + (elementId!=null ? (elementId + "/") : "")));
 		return result;
 	}
 	
@@ -185,15 +185,14 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=GET, value={"/async/file/validate/{fileId}", "/async/file/validate/{fileId}/{elementId}"})
 	public @ResponseBody ModelActionPojo validateImportedFile(@PathVariable String entityId, @PathVariable String fileId, @PathVariable(required=false) String elementId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException {
-		ModelActionPojo result = new ModelActionPojo();
 		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}		
 		if (temporaryFilesMap.containsKey(fileId)) {
-			result = this.validateImportedFile(entityId, fileId, elementId, locale);
+			return this.validateImportedFile(entityId, fileId, elementId, locale);
 		}
-		result.setSuccess(false);
+		ModelActionPojo result = new ModelActionPojo(false);
 		// TODO: Error message
 		MessagePojo msg = new MessagePojo("danger", 
 				messageSource.getMessage("~de.unibamberg.minf.common.view.forms.file.validationfailed.head", null, locale), 

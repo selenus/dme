@@ -17,7 +17,7 @@ MappingEditor.prototype.importMapping = function() {
 		formSource: "forms/fileupload",			// where is the form
 		uploadTarget: "async/upload", 			// where to we upload the file(s) to
 		multiFiles: false, 						// one or multiple files
-		//elementChangeCallback: _this.setupRootSelection
+		elementChangeCallback: _this.setupImportOptions
 	});
 		
 	modalFormHandler.show(form_identifier);
@@ -36,4 +36,17 @@ MappingEditor.prototype.exportMapping = function() {
 	    },
 	    error: __util.processServerError
 	});
+};
+
+MappingEditor.prototype.setupImportOptions = function(data) {
+	$("#importer-type").text(data.pojo.importerMainType);
+	$("#importer-subtype").text(data.pojo.importerSubtype);
+	
+	if (data.pojo.keepIdsAllowed===true) {
+		$("#importer-keep-ids").removeClass("hide");
+	} else {
+		$("#importer-keep-ids").addClass("hide");
+	}
+	
+	$("#importer-options").removeClass("hide");	
 };
