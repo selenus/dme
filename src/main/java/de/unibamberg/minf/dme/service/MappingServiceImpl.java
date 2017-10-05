@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import de.unibamberg.minf.dme.dao.base.DaoImpl;
+import de.unibamberg.minf.dme.dao.interfaces.MappedConceptDao;
 import de.unibamberg.minf.dme.dao.interfaces.MappingDao;
 import de.unibamberg.minf.dme.dao.interfaces.SchemaDao;
 import de.unibamberg.minf.dme.model.MappingWithSchemasImpl;
@@ -29,6 +30,8 @@ import eu.dariah.de.dariahsp.model.web.AuthPojo;
 @Service
 public class MappingServiceImpl extends BaseEntityServiceImpl implements MappingService {
 
+	@Autowired private MappedConceptDao mappedConceptDao;
+	
 	@Override
 	public List<RightsContainer<Mapping>> findAllByAuth(AuthPojo auth) {
 		return mappingDao.findAllByUserId(auth.getUserId());
@@ -163,5 +166,22 @@ public class MappingServiceImpl extends BaseEntityServiceImpl implements Mapping
 	public void changeDatamodelId(String currentId, String newId) {
 		mappingDao.updateSourceModel(currentId, newId);
 		mappingDao.updateTargetModel(currentId, newId);
+	}
+
+	@Override
+	public boolean changeId(String currentId, String id) {
+		RightsContainer<Mapping> m = mappingDao.findById(currentId);
+		m.setId(id);
+		mappingDao.save(m);
+		
+		Reference rootR = referenceDao.findById(currentId);
+		rootR.setId(id);
+		referenceDao.save(rootR);
+		
+		mappedConceptDao.updateEntityId(currentId, id);
+				
+		mappingDao.delete(currentId);
+		
+		return true;
 	}
 }

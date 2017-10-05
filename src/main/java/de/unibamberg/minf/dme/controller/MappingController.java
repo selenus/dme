@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.dme.controller.base.BaseScheregController;
 import de.unibamberg.minf.dme.model.RightsContainer;
+import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.TerminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
@@ -107,7 +108,7 @@ public class MappingController extends BaseScheregController {
 		
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value="async/save")
-	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, BindingResult bindingResult, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveMapping(@Valid MappingImpl mapping, BindingResult bindingResult, @RequestParam(required=false) String updateId, @RequestParam(defaultValue="false") boolean readOnly, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if(!mappingService.getUserCanWriteEntity(mapping.getId(), auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -144,7 +145,26 @@ public class MappingController extends BaseScheregController {
 			return result;
 		} 
 		
-		mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft, readOnly), auth);
+		
+		if (updateId!=null && !updateId.isEmpty() && !updateId.equals(saveMapping.getId())) {
+			if (!BaseIdentifiable.checkIdValid(updateId)) {
+				result.addFieldError("mappingImpl_updateId", messageSource.getMessage(BaseIdentifiable.ID_INVALID_CODE, null, locale));
+				result.setSuccess(false);
+			} else {
+				if (mappingService.findMappingById(updateId)!=null || schemaService.findSchemaById(updateId)!=null) {
+					result.addFieldError("datamodelImpl_updateId", messageSource.getMessage("~de.unibamberg.minf.dme.model.schema.validation.id_not_unique", null, locale));
+					result.setSuccess(false);
+				} else {
+					mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft, readOnly), auth);
+					mappingService.changeId(saveMapping.getId(), updateId);
+					
+					result.setStatusInfo(updateId);
+				}
+			}
+		} else {
+			mappingService.saveMapping(new AuthWrappedPojo<Mapping>(saveMapping, true, false, false, draft, readOnly), auth);
+		}
+		
 		return result;
 	}
 	

@@ -35,6 +35,18 @@
 			</div>
 		</fieldset>
 		<div class="form-group">
+			<label class="control-label col-sm-3" for="mapping_id"><s:message code="~de.unibamberg.minf.common.model.id" />:</label>
+			<div class="col-sm-9">
+				<div class="input-group">
+			      <input type="text" class="form-control" id="mappingImpl_updateId" name="updateId" value="${mapping.id}" disabled="disabled" placeholder="<s:message code='~de.unibamberg.minf.common.view.new_id_onsave' />" />
+			      <span class="input-group-btn">
+			        <button class="btn btn-default" onclick="$('#mappingImpl_updateId').removeProp('disabled'); $('#id-rename-hint').removeClass('hide'); $('#mappingImpl_updateId').focus();" type="button"><s:message code="~de.unibamberg.minf.common.link.edit" /></button>
+			      </span>
+			    </div>
+				<div id="id-rename-hint" class="alert alert-sm alert-warning alert-persist hide" style="margin-top: 10px;"><i class="fa fa-exclamation-triangle fa-color-warning" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.notification.id_rename_hint" /></div>
+			</div>
+		</div>
+		<div class="form-group">
 			<label class="control-label col-sm-3" for="mapping_description"><s:message code="~de.unibamberg.minf.mapreg.model.mapping.description" />:</label>
 			<div class="col-sm-9">
 				<sf:textarea path="description" class="form-control" rows="4" id="mapping_description" />

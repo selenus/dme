@@ -665,7 +665,7 @@ MappingEditor.prototype.triggerEdit = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
-		completeCallback: function() { 
+		completeCallback: function(data) { 
 			if (data.success) {
 				window.location.reload();
 			} else {
