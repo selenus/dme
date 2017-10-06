@@ -28,14 +28,12 @@ import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
-import de.unibamberg.minf.dme.model.mapping.TargetElementGroup;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import de.unibamberg.minf.dme.pojo.ModelElementPojo;
 import de.unibamberg.minf.dme.pojo.converter.ModelElementPojoConverter;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 import de.unibamberg.minf.dme.service.interfaces.MappedConceptService;
-import de.unibamberg.minf.dme.service.interfaces.MappingService;
 import de.unibamberg.minf.dme.service.interfaces.PersistedSessionService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
@@ -97,10 +95,11 @@ public class MappedConceptEditorController extends BaseScheregController {
 		}
 
 		for (String targetElementId : targetElementIds) {
-			if (c.getTargetElementIds()==null || !c.getTargetElementIds().contains(targetElementId)) {
-				TargetElementGroup g = new TargetElementGroup();
-				g.addTargetElementId(targetElementId);
-				c.addTargetElementGroup(g);
+			if (c.getTargetElementIds()==null) {
+				c.setTargetElementIds(new ArrayList<String>());
+			}			
+			if (!c.getTargetElementIds().contains(targetElementId)) {
+				c.getTargetElementIds().add(targetElementId);
 			}
 		}
 		
@@ -206,23 +205,13 @@ public class MappedConceptEditorController extends BaseScheregController {
 			return new ModelActionPojo(false);
 		}
 		MappedConcept mc = mappedConceptService.findById(mappingId, mappedConceptId, true);
-		List<TargetElementGroup> removeGroups = new ArrayList<TargetElementGroup>();
 		
-		for (TargetElementGroup teg : mc.getTargetElementGroups()) {
-			if (teg.getTargetElementIds().contains(targetId)) {
-				teg.getTargetElementIds().remove(targetId);
-				if (teg.getTargetElementIds().size()==0) {
-					removeGroups.add(teg);
-				}
-			}
-		}
-		
-		if (removeGroups.size()>0) {
-			mc.getTargetElementGroups().removeAll(removeGroups);
+		if (mc.getTargetElementIds().contains(targetId)) {
+			mc.getTargetElementIds().remove(targetId);
 		}
 		
 		// Delete mapping if there are no remaining targets
-		if (mc.getTargetElementGroups().size()==0) {
+		if (mc.getTargetElementIds().size()==0) {
 			mappedConceptService.removeMappedConcept(mappingId, mc.getId(), auth);
 		} else {		
 			mappedConceptService.saveMappedConcept(mc, mappingId, auth);

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.unibamberg.minf.dme.importer.mapping.BaseMappingImporter;
 import de.unibamberg.minf.dme.model.serialization.MappingContainer;
 
 
@@ -35,11 +34,12 @@ public class JsonMappingImporter extends BaseJsonMappingImporter {
 	
 	@Override
 	protected void importJson() {
-		// TODO Auto-generated method stub
-		
+		MappingContainer mc;
+		try {
+			mc = objectMapper.readValue(new File(this.importFilePath), MappingContainer.class);
+			this.importMapping(mc.getMapping(), mc.getFunctions(), mc.getGrammars());
+		} catch (Exception e) {
+			logger.error("Failed to deserialize JSON mapping specification", e);
+		}
 	}
-	
-
-	
-
 }
