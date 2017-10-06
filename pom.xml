@@ -387,6 +387,31 @@
 		
 	</dependencies>
 		
+	<repositories>
+		<repository>
+			<id>dariah-releases</id>
+			<name>DARIAH MInf Release Repository</name>
+			<url>https://minfba.de.dariah.eu/artifactory/dariah-release-proxy</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>dariah-snapshots</id>
+			<name>DARIAH MInf Snapshot Repository</name>
+			<url>https://minfba.de.dariah.eu/artifactory/dariah-snapshot-proxy</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+		
 	 <distributionManagement>
 		<repository>
 			<id>central</id>
@@ -397,4 +422,43 @@
 			<url>https://minfba.de.dariah.eu/artifactory/dariah-snapshot-proxy</url>
 		</snapshotRepository>
 	</distributionManagement>
+	
+	<profiles>
+		<profile>
+			<id>dariah.deb</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>jdeb</artifactId>
+						<groupId>org.vafer</groupId>
+						<version>1.4</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>jdeb</goal>
+								</goals>
+								<configuration>
+									<snapshotExpand>true</snapshotExpand>
+									<dataSet>
+									  <data>
+									    <type>directory</type>
+									    <src>${project.build.directory}/${project.build.finalName}</src>
+									    <mapper>
+									      <type>perm</type>
+									      <prefix>/var/dfa/webapps/${project.artifactId}</prefix>
+									      <user>root</user>
+									      <group>tomcat7</group>
+									      <filemode>755</filemode>
+									    </mapper>
+									  </data>
+									</dataSet>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
