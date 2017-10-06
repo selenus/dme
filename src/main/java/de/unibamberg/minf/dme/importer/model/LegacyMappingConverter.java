@@ -42,9 +42,9 @@ public class LegacyMappingConverter {
 		
 		if (oldMc.getTargetElementGroups()!=null) {
 			mc.setTargetElementIds(new ArrayList<String>());
-			for (eu.dariah.de.minfba.core.metamodel.mapping.TargetElementGroup oldTeg : oldMc.getTargetElementGroups()) {
-				if (!mc.getTargetElementIds().contains(oldTeg.getTargetContainerElementId())) {
-					mc.getTargetElementIds().add(oldTeg.getTargetContainerElementId());
+			for (String targetElementId : oldMc.getTargetElementIds()) {
+				if (!mc.getTargetElementIds().contains(targetElementId)) {
+					mc.getTargetElementIds().add(targetElementId);
 				}
 			}
 		}

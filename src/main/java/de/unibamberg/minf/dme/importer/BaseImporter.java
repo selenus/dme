@@ -1,5 +1,6 @@
 package de.unibamberg.minf.dme.importer;
 
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,4 +20,9 @@ public abstract class BaseImporter implements Importer {
 	@Override public void setAuth(AuthPojo auth) { this.auth = auth; }
 	
 	@Override public void setImportFilePath(String importFilePath) { this.importFilePath = importFilePath; }
+	
+	
+	protected String getOrCreateId(String id) {
+		return this.keepImportedIds ? id : new ObjectId().toString();
+	}
 }
