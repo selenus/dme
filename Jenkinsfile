@@ -12,7 +12,7 @@ node {
 
   stage('Publish') { 
     def pom = readMavenPom file: 'pom.xml'
-    def uiVersion = pom.parent.version
+    def uiVersion = pom.version
     def release = uiVersion.contains("RELEASE")
     def snapshot = uiVersion.contains("SNAPSHOT")
 
