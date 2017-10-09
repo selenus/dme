@@ -12,22 +12,21 @@ node {
 
   stage('Publish') { 
     def pom = readMavenPom file: 'pom.xml'
-    def uiVersion = pom.version
-    def release = uiVersion.contains("RELEASE")
-    def snapshot = uiVersion.contains("SNAPSHOT")
+    def release = pom.version.contains("RELEASE")
+    def snapshot = pom.version.contains("SNAPSHOT")
 
     if (snapshot || release) {
-        echo "publishing deb package dme for " + (snapshot ? "SNAPSHOT" : "RELEASE") + " version ${uiVersion}"
+        echo "publishing deb package dme for " + (snapshot ? "SNAPSHOT" : "RELEASE") + " version ${pom.version}"
 		
-        sh "PLOC=\$(ls dme/target/*.deb); curl -X POST -F file=@\${PLOC} http://localhost:8008/api/files/dme-${uiVersion}"
-        sh "curl -X POST http://localhost:8008/api/repos/" + (snapshot ? "snapshots" : "releases") + "/file/dme-${uiVersion}"
+        sh "PLOC=\$(ls target/*.deb); curl -X POST -F file=@\${PLOC} http://localhost:8008/api/files/dme-${pom.version}"
+        sh "curl -X POST http://localhost:8008/api/repos/" + (snapshot ? "snapshots" : "releases") + "/file/dme-${pom.version}"
         sh "curl -X PUT -H 'Content-Type: application/json' --data '{}' http://localhost:8008/api/publish/:./trusty"
-        sh "rm dme/target/*.deb"
-        sh "rm dme/target/*.changes"
+        sh "rm target/*.deb"
+        sh "rm target/*.changes"
 
     }
     else {
-        echo "deb package dme for version ${uiVersion} will not be published"
+        echo "deb package dme for version ${pom.version} will not be published"
     }
   }
 }
