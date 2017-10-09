@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.mapping.MappingImpl;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.model.serialization.MappingContainer;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
@@ -47,7 +48,7 @@ public class MappingApiController extends BaseApiController {
 		if (mappings!=null) {
 			for (RightsContainer<Mapping> m : mappings) {
 				MappingContainer mc = new MappingContainer();
-				mc.setMapping(m.getElement());
+				mc.setMapping((MappingImpl)m.getElement());
 				result.add(mc);
 			}
 		}
@@ -94,7 +95,7 @@ public class MappingApiController extends BaseApiController {
 				
 				m.getElement().flush();
 				
-				mc.setMapping(m.getElement());
+				mc.setMapping((MappingImpl)m.getElement());
 				result.add(mc);
 			}
 		}
@@ -104,7 +105,7 @@ public class MappingApiController extends BaseApiController {
 	private MappingContainer processMappingWithDetails(RightsContainer<Mapping> mapping) {
 		if (mapping!=null) {
 			MappingContainer result = new MappingContainer();
-			result.setMapping(mapping.getElement()); 
+			result.setMapping((MappingImpl)mapping.getElement()); 
 			mapping.getElement().setConcepts(mappedConceptService.findAllByMappingId(mapping.getId(), true));
 			mapping.getElement().flush();
 			

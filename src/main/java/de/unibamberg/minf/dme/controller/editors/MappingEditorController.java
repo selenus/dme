@@ -45,6 +45,7 @@ import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.base.ModelElement;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.mapping.MappingImpl;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
@@ -263,7 +264,7 @@ public class MappingEditorController extends BaseMainEditorController {
 			return new ModelActionPojo(false);
 		}
 		
-		Mapping m = mappingService.findMappingById(entityId);
+		MappingImpl m = (MappingImpl)mappingService.findMappingById(entityId);
 		m.setConcepts(mappedConceptService.findAllByMappingId(entityId, true));
 		m.flush();
 		
