@@ -18,6 +18,7 @@ import de.unibamberg.minf.dme.dao.interfaces.MappedConceptDao;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
 import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
@@ -35,6 +36,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private FunctionDao functionDao;
 	
+	// TODO: This method needs quite some refactoring
 	@Override
 	public void saveMappedConcept(MappedConcept mappedConcept, String mappingId, AuthPojo auth) {		
 		boolean isNew = DaoImpl.isNewId(mappedConcept.getId()); 
@@ -46,13 +48,18 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		Reference refConcept;
 		boolean needReferenceSave = false; 
 		
+		isNew = findSubreference(root, mappedConcept.getId())==null;
+		
 		if (isNew) {
 			refConcept = this.addChildReference(root, mappedConcept);
 			
-			Function function = new FunctionImpl(mappingId, "fMapping");
-			functionDao.save(function, auth.getUserId(), auth.getSessionId());
-			
-			mappedConcept.setFunctionId(function.getId());
+			Function function = functionDao.findById(mappedConcept.getFunctionId());
+			if (function==null) {
+				function = new FunctionImpl(mappingId, "fMapping");
+				functionDao.save(function, auth.getUserId(), auth.getSessionId());
+				
+				mappedConcept.setFunctionId(function.getId());
+			}
 			
 			addChildReference(refConcept, function); 
 			needReferenceSave = true;
@@ -61,19 +68,24 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		}
 
 		for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
+			
+			Grammar grammar;
+			
 			if (mappedConcept.getElementGrammarIdsMap().get(sourceElementId)==null) {
 				Element source = elementDao.findById(sourceElementId);
 				
-				GrammarImpl grammar = new GrammarImpl(mappingId, source.getName());
+				grammar = new GrammarImpl(mappingId, source.getName());
 				grammar.setPassthrough(true);
 				grammarDao.save(grammar, auth.getUserId(), auth.getSessionId());
 				
 				mappedConcept.getElementGrammarIdsMap().put(sourceElementId, grammar.getId());
 				
-				addChildReference(refConcept, grammar); 
-				
-				needReferenceSave = true;
+			} else {
+				grammar = grammarDao.findById(mappedConcept.getElementGrammarIdsMap().get(sourceElementId));
 			}
+			
+			addChildReference(refConcept, grammar);
+			needReferenceSave = true;
 		}
 		
 		if (needReferenceSave) {

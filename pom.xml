@@ -89,11 +89,11 @@
 		</dependency>
  -->
 		<!-- DARIAH -->
-		<!-- <dependency>
+		<dependency>
 			<groupId>de.unibamberg.minf.core</groupId>
 			<artifactId>core-metamodel</artifactId>
 			<version>${de.unibamberg.minf.core.core-metamodel.version}</version>
-		</dependency> -->
+		</dependency>
 		
 		<!-- To import old schemas for migration -->
 		<dependency>

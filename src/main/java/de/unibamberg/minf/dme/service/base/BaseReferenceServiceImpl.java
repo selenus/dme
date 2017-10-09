@@ -70,7 +70,12 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 			Reference[] newRefs = new Reference[subRefs.length + 1];
 			int i = 0;
 			while (i<subRefs.length) {
-				newRefs[i] = subRefs[i++];
+				newRefs[i] = subRefs[i];
+				if (subRefs[i].getId().equals(childReference.getId())) {
+					// Nothing to add: Child already in the list
+					return;
+				}
+				i++;
 			}
 			newRefs[i] = childReference;
 			parentReference.getChildReferences().put(childClass, newRefs);

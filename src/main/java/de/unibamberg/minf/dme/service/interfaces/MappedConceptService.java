@@ -1,9 +1,10 @@
 package de.unibamberg.minf.dme.service.interfaces;
 
 import java.util.List;
+import java.util.Map;
 
 import de.unibamberg.minf.dme.exception.GenericScheregException;
-import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
