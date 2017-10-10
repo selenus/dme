@@ -142,12 +142,32 @@ FunctionEditor.prototype.performTransformation = function() {
 	var _this = this;
 	var f = $(this.modal).find(".function_function").val();
 	
+	$(".transformation-result").text("");
+	
 	var samples = [];
 	$(this.modal).find(".sample-input").each(function() {
 		samples.push({
 			elementId : $(this).find("input[name='elementId']").val(),
 			text: $(this).find(".form-control").val()
 		});
+	});
+	
+	$.ajax({
+	    url: _this.pathname + "/async/validate",
+	    type: "POST",
+	    data: { func : f },
+	    dataType: "json",
+	    success: function(data) {
+	    	if (data.success) {
+	    		_this.showValidationResult(data);
+	    		container.find(".function-ok").removeClass("hide");
+	    	} else {
+	    		container.find(".function-error").removeClass("hide");
+	    	}
+	    	
+	    }, error: function(jqXHR, textStatus, errorThrown ) {
+	    	
+	    }
 	});
 	
 	$.ajax({
