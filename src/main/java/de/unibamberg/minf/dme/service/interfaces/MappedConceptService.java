@@ -1,10 +1,7 @@
 package de.unibamberg.minf.dme.service.interfaces;
 
 import java.util.List;
-import java.util.Map;
-
 import de.unibamberg.minf.dme.exception.GenericScheregException;
-import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
@@ -18,4 +15,5 @@ public interface MappedConceptService {
 	public void saveMappedConcept(MappedConcept mappedConcept, String mappingId, AuthPojo auth);
 	public void removeSourceElementById(AuthPojo auth, String mappingId, MappedConcept mc, String sourceId);
 	public void removeSourceElementById(AuthPojo auth, String mappingId, String mappedConceptId, String sourceId);
+	public void removeElementReferences(String entityId, String elementId);
 }

@@ -15,7 +15,6 @@ import de.unibamberg.minf.dme.dao.base.BaseDaoImpl;
 import de.unibamberg.minf.dme.dao.base.Dao;
 import de.unibamberg.minf.dme.dao.base.TrackedEntityDao;
 import de.unibamberg.minf.dme.dao.interfaces.ReferenceDao;
-import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.serialization.Reference;
 
@@ -85,6 +84,60 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 		return null;
 	}
 	
+	/**
+	 * Note: This method deletes all occurrences of a particular reference id AND ITS SUBTREES!
+	 */
+	@Override
+	public void removeById(Reference parentReference, String matchId) {
+		Reference[] references;
+		List<Reference> removeReferences;
+		List<String> removeTypes;
+		if (parentReference.getChildReferences()!=null) {
+			removeTypes = null;
+			for (String type : parentReference.getChildReferences().keySet()) {
+				if (parentReference.getChildReferences().get(type)!=null) {
+					references = parentReference.getChildReferences().get(type);
+					removeReferences = null;
+					// Collect removable references
+					for (Reference r : references) {
+						if (r.getId().equals(matchId)) {
+							if (removeReferences==null) {
+								removeReferences = new ArrayList<Reference>();
+							}
+							removeReferences.add(r);
+						} else {
+							this.removeById(r, matchId);
+						}
+					}
+					if (removeReferences!=null) {
+						// Nothing left, remove the whole child type
+						if (references.length==removeReferences.size()) {
+							if (removeTypes==null) {
+								removeTypes = new ArrayList<String>();
+							}
+							removeTypes.add(type);
+						} else {
+							// Recreate child reference array
+							Reference[] newRefs = new Reference[references.length-removeReferences.size()];
+							int j=0;
+							for (int i=0; i<references.length; i++) {
+								if (!removeReferences.contains(references[i])) {
+									newRefs[j++] = references[i];
+								}
+							}
+							parentReference.getChildReferences().put(type, newRefs);
+						}
+					}
+				}
+			}
+			if (removeTypes!=null) {
+				for (String removeType : removeTypes) {
+					parentReference.getChildReferences().remove(removeType);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public Reference findById(Reference reference, String referenceId) {
 		if (reference.getId().equals(referenceId)) {
@@ -131,9 +184,9 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 				
 				int result = 0;
 				if (matchingDao instanceof TrackedEntityDao) {
-					result = ((TrackedEntityDao)matchingDao).delete(deleteIds, userId, sessionId);
+					result = ((TrackedEntityDao<?>)matchingDao).delete(deleteIds, userId, sessionId);
 				} else {
-					result = ((BaseDao)matchingDao).delete(deleteIds);
+					result = ((BaseDao<?>)matchingDao).delete(deleteIds);
 				}
 				logger.info("Removed {} {} entities in consequence of a delete cascade", result, clazz.getSimpleName());
 			}

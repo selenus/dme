@@ -21,27 +21,16 @@ public class MappedConceptDaoImpl extends ModelElementDaoImpl<MappedConcept> imp
 		Query q = Query.query(Criteria.where("entityId").is(entityId));
 		return this.find(q);
 	}
-	
+
 	@Override
-	public <S extends MappedConcept> S save(S element, String userId, String sessionId) {
-		
-		/*element.setElementGrammarIdsMap(null);
-		if (element.getSourceElementMap()!=null && element.getSourceElementMap().size()>0) {
-			element.setElementGrammarIdsMap(new LinkedHashMap<String, String>());
-			DescriptionGrammarImpl g;
-			for (String key : element.getSourceElementMap().keySet()) {
-				g = element.getSourceElementMap().get(key);
-				if (g==null) {
-					continue;
-				} else if (isNewId(g.getId())) {
-					logger.warn("Reference to unsaved grammar not persisted for mapped concept.");
-				} else {
-					element.getElementGrammarIdsMap().put(key, g.getId());
-				}
-			}
-			
-		} */
-		
-		return super.save(element, userId, sessionId);
+	public List<MappedConcept> findBySourceElementId(String elementId) {
+		/* This is possible because the elementId actually forms the key of a hashmap, which - in JSON - 
+		 *  is persisted as a property label - the grammar id being its property value */
+		return this.find(Query.query(Criteria.where("elementGrammarIdsMap." + elementId).exists(true)));
+	}
+
+	@Override
+	public List<MappedConcept> findByTargetElementId(String elementId) {
+		return this.find(Query.query(Criteria.where("targetElementIds").in(elementId)));
 	}
 }

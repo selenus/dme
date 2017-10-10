@@ -15,6 +15,7 @@ import de.unibamberg.minf.dme.dao.interfaces.ElementDao;
 import de.unibamberg.minf.dme.dao.interfaces.FunctionDao;
 import de.unibamberg.minf.dme.dao.interfaces.GrammarDao;
 import de.unibamberg.minf.dme.dao.interfaces.MappedConceptDao;
+import de.unibamberg.minf.dme.dao.interfaces.ReferenceDao;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
 import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
@@ -35,6 +36,8 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 	@Autowired private ElementDao elementDao;
 	@Autowired private GrammarDao grammarDao;
 	@Autowired private FunctionDao functionDao;
+	
+	@Autowired private ReferenceDao referenceDao;
 	
 	// TODO: This method needs quite some refactoring
 	@Override
@@ -218,5 +221,59 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		elements.addAll(grammarDao.findByEntityId(mappingId));
 		elements.addAll(functionDao.findByEntityId(mappingId));
 		return elements;
+	}
+
+
+	@Override
+	public void removeElementReferences(String entityId, String elementId) {
+		List<String> deleteConcepts = new ArrayList<String>();
+		List<String> deleteGrammars = new ArrayList<String>();
+		List<String> deleteFunctions = new ArrayList<String>();
+		
+		Map<String, Reference> rootReferences = new HashMap<String, Reference>();
+		
+		
+		List<MappedConcept> concepts = mappedConceptDao.findBySourceElementId(elementId);
+		concepts.addAll(mappedConceptDao.findByTargetElementId(elementId));
+
+		String removeGrammarId;
+		Reference currentRootReference;
+		for (MappedConcept c : concepts) {
+			if (rootReferences.containsKey(c.getEntityId())) {
+				currentRootReference = rootReferences.get(c.getEntityId());
+			} else {
+				currentRootReference = referenceDao.findById(c.getEntityId());
+				rootReferences.put(c.getEntityId(), currentRootReference);
+			}
+			
+			if (c.getElementGrammarIdsMap().containsKey(elementId)) {
+				removeGrammarId = c.getElementGrammarIdsMap().remove(elementId);
+				deleteGrammars.add(removeGrammarId);
+				referenceDao.removeById(currentRootReference, removeGrammarId);
+			} else if (c.getTargetElementIds().contains(elementId)) {
+				c.getTargetElementIds().remove(elementId);
+			}
+			
+			// In this case, no individual subreferences are deleted bc the whole concept will be removed
+			if (c.getTargetElementIds().size()==0 || c.getElementGrammarIdsMap().size()==0) {
+				deleteFunctions.add(c.getFunctionId());
+				if (c.getElementGrammarIdsMap().size()>0) {
+					for (String sourceId : c.getElementGrammarIdsMap().keySet()) {
+						deleteGrammars.add(c.getElementGrammarIdsMap().get(sourceId));
+					}
+				}
+				deleteConcepts.add(c.getId());
+				referenceDao.removeById(currentRootReference, c.getId());
+			} else {
+				mappedConceptDao.save(c);
+			}
+		}
+		
+		for (Reference root : rootReferences.values()) {
+			referenceDao.save(root);
+		}
+		functionDao.delete(deleteFunctions);
+		grammarDao.delete(deleteGrammars);
+		mappedConceptDao.delete(deleteConcepts);
 	}
 }

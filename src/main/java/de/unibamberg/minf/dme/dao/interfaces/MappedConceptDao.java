@@ -6,6 +6,8 @@ import de.unibamberg.minf.dme.dao.base.ModelElementDao;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 
 public interface MappedConceptDao extends ModelElementDao<MappedConcept> {
-	
 	public List<MappedConcept> findByEntityId(String entityId);
+
+	public List<MappedConcept> findBySourceElementId(String elementId);
+	public List<MappedConcept> findByTargetElementId(String elementId);
 }

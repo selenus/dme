@@ -66,6 +66,7 @@ var SchemaEditor = function(options) {
 	                              "~de.unibamberg.minf.dme.button.export_from_here",
 	                              "~de.unibamberg.minf.dme.button.import_here",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_delete",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_delete_element",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_disable",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_enable",
 	                              "~de.unibamberg.minf.dme.dialog.element_label",
@@ -478,7 +479,7 @@ SchemaEditor.prototype.showTypeaheadFoundResult = function(data) {
 SchemaEditor.prototype.removeElement = function(type, id) { 
 	var _this = this;
 	
-	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), id), function(result) {
+	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete_element"), id), function(result) {
 		if(result) {
 			$.ajax({
 			    url: _this.pathname + "/" + _this.getElementType(type) + "/" + id + "/async/remove",

@@ -32,4 +32,6 @@ public interface ReferenceDao extends BaseDao<Reference> {
 	
 	public List<Reference> findParentsByChildId(Reference reference, String childId, List<String> parentClassNames);
 	public List<Reference> findParentsByChildId(String rootId, String childId);
+
+	public void removeById(Reference parentReference, String matchId);
 }

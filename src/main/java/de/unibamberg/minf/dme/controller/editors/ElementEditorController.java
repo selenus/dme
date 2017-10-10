@@ -12,9 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,6 +34,7 @@ import de.unibamberg.minf.dme.serialization.Reference;
 import de.unibamberg.minf.dme.service.ElementServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
+import de.unibamberg.minf.dme.service.interfaces.MappedConceptService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 
@@ -44,6 +43,8 @@ import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 public class ElementEditorController extends BaseScheregController {
 	@Autowired private ElementService elementService;
 	@Autowired private GrammarService grammarService;
+	
+	@Autowired private MappedConceptService mappedConceptService;
 	
 	public ElementEditorController() {
 		super("schemaEditor");
@@ -261,7 +262,9 @@ public class ElementEditorController extends BaseScheregController {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
+		mappedConceptService.removeElementReferences(schemaId, elementId);
 		elementService.removeElement(schemaId, elementId, authInfoHelper.getAuth(request));
+		
 		return new ModelActionPojo(true);
 	}
 	
