@@ -665,10 +665,14 @@ MappingEditor.prototype.triggerEdit = function() {
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],
-		completeCallback: function(data) { 
-			if (data.success) {
-				window.location.reload();
-			} else {
+        completeCallback: function(d) {
+        	if (d.success) {
+    			if (d.statusInfo!==undefined && d.statusInfo!==null && d.statusInfo.length==24 && d.statusInfo!==_this.schema.id) {
+    				window.location.replace(__util.composeUrl("model/editor/" + d.statusInfo + "/"));
+    			} else {
+    				window.location.reload();
+    			}
+        	} else {
         		__notifications.showMessage(NOTIFICATION_TYPES.ERROR, 
 	        			__translator.translate(data.message.messageHead), 
 	        			__translator.translate(data.message.messageBody));

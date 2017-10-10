@@ -11,19 +11,16 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import de.unibamberg.minf.dme.dao.base.DaoImpl;
+import de.unibamberg.minf.dme.dao.interfaces.FunctionDao;
+import de.unibamberg.minf.dme.dao.interfaces.GrammarDao;
 import de.unibamberg.minf.dme.dao.interfaces.MappedConceptDao;
-import de.unibamberg.minf.dme.dao.interfaces.MappingDao;
-import de.unibamberg.minf.dme.dao.interfaces.SchemaDao;
 import de.unibamberg.minf.dme.model.MappingWithSchemasImpl;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
-import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.serialization.Reference;
 import de.unibamberg.minf.dme.service.base.BaseEntityServiceImpl;
-import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.MappingService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
@@ -31,6 +28,8 @@ import eu.dariah.de.dariahsp.model.web.AuthPojo;
 public class MappingServiceImpl extends BaseEntityServiceImpl implements MappingService {
 
 	@Autowired private MappedConceptDao mappedConceptDao;
+	@Autowired private FunctionDao functionDao;
+	@Autowired private GrammarDao grammarDao;
 	
 	@Override
 	public List<RightsContainer<Mapping>> findAllByAuth(AuthPojo auth) {
@@ -179,6 +178,8 @@ public class MappingServiceImpl extends BaseEntityServiceImpl implements Mapping
 		referenceDao.save(rootR);
 		
 		mappedConceptDao.updateEntityId(currentId, id);
+		functionDao.updateEntityId(currentId, id);
+		grammarDao.updateEntityId(currentId, id);
 				
 		mappingDao.delete(currentId);
 		
