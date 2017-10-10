@@ -158,15 +158,14 @@ FunctionEditor.prototype.performTransformation = function() {
 	    data: { func : f },
 	    dataType: "json",
 	    success: function(data) {
-	    	if (data.success) {
-	    		_this.showValidationResult(data);
-	    		container.find(".function-ok").removeClass("hide");
+	    	if (data.success && (data.objectErrors==null || data.objectErrors.length == 0)) {
+	    		$(_this.modal).find(".function-error-hint").addClass("hide");
 	    	} else {
-	    		container.find(".function-error").removeClass("hide");
+	    		$(_this.modal).find(".function-error-hint").removeClass("hide");
 	    	}
 	    	
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
-	    	
+	    	$(_this.modal).find(".function-error-hint").removeClass("hide");
 	    }
 	});
 	
@@ -184,7 +183,7 @@ FunctionEditor.prototype.performTransformation = function() {
 	    		//$(_this.modal).find(".transformation-result-container").text(JSON.stringify(data.pojo));
 	    		_this.showTransformationResults(data);
 	    	} else {
-	    		alert("error1");
+	    		_this.showTransformationResults(null);
 	    	}
 	    }, error: function(jqXHR, textStatus, errorThrown ) {
 	    	__util.processServerError(jqXHR, textStatus, errorThrown);
@@ -193,7 +192,7 @@ FunctionEditor.prototype.performTransformation = function() {
 };
 
 FunctionEditor.prototype.showTransformationResults = function(data) {
-	if (data.pojo==null || !Array.isArray(data.pojo)) {
+	if (data==null || data.pojo==null || !Array.isArray(data.pojo)) {
 		$(this.modal).find(".transformation-result").addClass("hide");
 		$(this.modal).find(".transformation-result").text("");
 		$(this.modal).find(".no-results-alert").removeClass("hide");

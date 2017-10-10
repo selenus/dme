@@ -142,6 +142,7 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
+				<div class="function-error-hint alert alert-sm alert-danger hide"><s:message code="~de.unibamberg.minf.dme.editor.sample.error.error_in_function" /></div>
 				<div class="no-results-alert alert alert-sm alert-warning hide"><s:message code="~de.unibamberg.minf.dme.notification.transformation.no_results" /></div>
 				<pre class="transformation-result hide">
 				</pre>
