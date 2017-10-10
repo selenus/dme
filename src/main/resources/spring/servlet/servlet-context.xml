@@ -13,7 +13,7 @@
 	
 	<mvc:annotation-driven />
 	<mvc:resources location="/resources/" mapping="/resources/**" cache-period="31556926"/>
-	<sec:global-method-security pre-post-annotations="enabled" secured-annotations="enabled" />
+	<sec:global-method-security pre-post-annotations="enabled" />
 	
 	<bean id="initService" class="de.unibamberg.minf.core.web.init.LocaleAwareInitializationServiceImpl">
 		<property name="basename" value="classpath:i18n/messages" />
