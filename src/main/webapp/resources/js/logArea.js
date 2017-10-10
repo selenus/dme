@@ -58,6 +58,6 @@ LogArea.prototype.showLog = function(data) {
 		} else if (i>=this.options.maxLogEntries-1) {
 			break;
 		}
-		$(this.options.logList).append("<li class=\"log-" + data[i].logType + "\">" + data[i].displayTimestamp + " " + data[i].logType + " " + data[i].message + "</li>");
+		$(this.options.logList).append("<li class=\"log-" + data[i].logType + "\">" + data[i].displayTimestamp + " " + data[i].logType + " " + data[i].defaultMessage + "</li>");
 	}
 };
