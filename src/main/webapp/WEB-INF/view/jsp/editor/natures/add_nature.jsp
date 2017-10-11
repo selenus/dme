@@ -14,7 +14,7 @@
 			<div class="col-sm-8">
 				<select id="add-nature-selector" name="n" class="form-control">
 				  <c:forEach items="${natures}" var="nature">
-				  	<option value="<s:message code="${nature.name}" />"><s:message code="~${nature.name}.display_label" /></option>
+				  	<option value="${nature.name}"><s:message code="~${nature.name}.display_label" /></option>
 				  </c:forEach>
 				</select>
 			</div>

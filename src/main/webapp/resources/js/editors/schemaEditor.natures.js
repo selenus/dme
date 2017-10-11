@@ -44,7 +44,7 @@ SchemaEditor.prototype.triggerAddNature = function() {
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
-		                ],               
+		                ],          
         completeCallback: function(data) {
         	if (data.success) {
 	        	var label = "~" + data.pojo + ".display_label";
@@ -54,7 +54,7 @@ SchemaEditor.prototype.triggerAddNature = function() {
 	        	
 	        	$('#select-model-natures').append($('<option>', {
 	        	    value: data.pojo,
-	        	    text: label
+	        	    text: __translator.translate(label)
 	        	}));
 	        	$('#select-model-natures').val(data.pojo);
 	        	$('#select-model-natures').trigger("change");
@@ -73,6 +73,7 @@ SchemaEditor.prototype.triggerEditNature = function() {
 		formUrl: "natures/form/edit/",
 		data: { n: this.currentNature },
 		identifier: form_identifier,
+		additionalModalClasses: "wide-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ]

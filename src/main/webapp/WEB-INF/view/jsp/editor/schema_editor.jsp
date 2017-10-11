@@ -139,9 +139,9 @@
 										<div style="margin-top: 3px; display: table;">
 											<c:if test="${schema.own || schema.write}">
 												<div class="input-group-btn">
-													<button id="edit-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-pencil" aria-hidden="true"></i></button>
-													<button id="remove-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle fa-color-danger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
-													<button id="add-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i></button>
+													<button id="edit-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+													<button id="remove-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle fa-color-danger"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+													<button id="add-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle"><i class="fa fa-plus" aria-hidden="true"></i></button>
 												</div>
 											</c:if>
 											<select id="select-model-natures" class="form-control">
