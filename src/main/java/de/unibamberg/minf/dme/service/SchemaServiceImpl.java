@@ -347,7 +347,9 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		
 		existingXmlNature.getNamespaces().clear();
 		for (String nsUrl : urlPrefixMap.keySet()) {
-			existingXmlNature.getNamespaces().add(new XmlNamespace(urlPrefixMap.get(nsUrl), nsUrl));
+			if (!nsUrl.isEmpty()) {
+				existingXmlNature.getNamespaces().add(new XmlNamespace(urlPrefixMap.get(nsUrl), nsUrl));
+			}
 		}
 		this.saveSchema(m, auth);
 	}
