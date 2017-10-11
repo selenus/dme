@@ -32,9 +32,15 @@
 			<add-attribute type="string" value="editors/schemaEditor.js" />
 			<add-attribute type="string" value="editors/schemaEditor.graph.js" />
 			<add-attribute type="string" value="editors/schemaEditor.importexport.js" />	
+			<add-attribute type="string" value="editors/schemaEditor.natures.js" />
 		</put-list-attribute>
 	</definition>
 	<definition name="schemaEditor/form/import" template="/WEB-INF/view/jsp/editor/forms/import_schema.jsp" />
+	
+	<!-- Natures -->
+	<definition name="naturesEditor/form/add" template="/WEB-INF/view/jsp/editor/natures/add_nature.jsp" />
+	<definition name="naturesEditor/form/editXml" template="/WEB-INF/view/jsp/editor/natures/edit_xml.jsp" />
+	
 			
 	<!-- Mapping Editor -->
 	<definition name="mappingEditor" extends="template_editors">

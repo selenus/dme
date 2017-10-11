@@ -134,7 +134,27 @@
 							<!-- Center: Model -->
 							<div class="layout-center layout-pane" style="padding-bottom: 0;">
 								<div class="ui-pane-title">
-									<h4><s:message code="~de.unibamberg.minf.dme.editor.element_model" /></h4>
+									<h4 class="pull-left"><s:message code="~de.unibamberg.minf.dme.editor.element_model" /></h4>
+									<div id="model-natures-controls" class="pull-right">
+										<div style="margin-top: 3px; display: table;">
+											<c:if test="${schema.own || schema.write}">
+												<div class="input-group-btn">
+													<button id="edit-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+													<button id="remove-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle fa-color-danger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+													<button id="add-model-nature" type="button" class="btn btn-sm btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-plus" aria-hidden="true"></i></button>
+												</div>
+											</c:if>
+											<select id="select-model-natures" class="form-control">
+											  <option selected="selected" value="logical_model"><s:message code="~de.unibamberg.minf.dme.model.datamodel.natures.LogicalModel.display_label" /></option>
+											  <c:if test="${fn:length(schema.pojo.natures)>0}">
+												  <option disabled="disabled">──────────</option>
+												  <c:forEach items="${schema.pojo.natures}" var="nature">
+												  	<option value="${nature.class.name}"><s:message code="~${nature.class.name}.display_label" /></option>
+												  </c:forEach>
+											  </c:if>
+											</select>
+										</div>
+									</div>
 								</div>
 								<!-- <div class="button-bar ui-pane-subcontainer ">
 									<button type="button" onclick="schemaEditor.schema.expandAll(); return false;" class="btn btn-default btn-sm pull-left"><span class="glyphicon glyphicon-resize-full"></span> <s:message code="~de.unibamberg.minf.dme.button.expand_all" /></button>

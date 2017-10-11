@@ -21,6 +21,9 @@ import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.CsvDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.JsonDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.TextDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
@@ -237,5 +240,67 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		schemaDao.delete(currentId);
 		
 		return true;
+	}
+
+	@Override
+	public void removeNature(String entityId, String natureClass, AuthPojo auth) {
+		Datamodel m = this.findSchemaById(entityId);
+		for (DatamodelNature n : m.getNatures()) {
+			if (n.getClass().getName().equals(natureClass)) {
+				m.getNatures().remove(n);
+				break;
+			}
+		}
+		this.saveSchema(m, auth);
+	}
+
+	@Override
+	public void addNature(String entityId, String natureClass, AuthPojo auth) {
+		Datamodel m = this.findSchemaById(entityId);
+		DatamodelNature n = this.createNature(natureClass);
+		if (n!=null && m.getNature(n.getClass())==null) {
+			m.addOrReplaceNature(n);
+		}
+		this.saveSchema(m, auth);
+	}
+
+	private DatamodelNature createNature(String natureClass) {
+		if (natureClass==null) {
+			return null;
+		} else if (XmlDatamodelNature.class.getName().equals(natureClass)) {
+			return new XmlDatamodelNature();
+		} else if (JsonDatamodelNature.class.getName().equals(natureClass)) {
+			return new JsonDatamodelNature();
+		} else if (CsvDatamodelNature.class.getName().equals(natureClass)) {
+			return new CsvDatamodelNature();
+		} else if (TextDatamodelNature.class.getName().equals(natureClass)) {
+			return new TextDatamodelNature();
+		}
+		logger.error("Failed to create DatamodelNature of type: " + natureClass);
+		return null;
+	}
+
+	@Override
+	public List<Class<? extends DatamodelNature>> getMissingNatures(String entityId) {
+		List<Class<? extends DatamodelNature>> classes = getAllSuportedNatures();
+		Datamodel m = this.findSchemaById(entityId);
+		if (m==null) {
+			return null;
+		}
+		if (m.getNatures()!=null) {
+			for (DatamodelNature n : m.getNatures()) {
+				classes.remove(n.getClass());
+			}
+		}
+		return classes;
+	}
+	
+	public static List<Class<? extends DatamodelNature>> getAllSuportedNatures() {
+		List<Class<? extends DatamodelNature>> classes = new ArrayList<Class<? extends DatamodelNature>>();
+		classes.add(XmlDatamodelNature.class);
+		classes.add(JsonDatamodelNature.class);
+		classes.add(CsvDatamodelNature.class);
+		classes.add(TextDatamodelNature.class);
+		return classes;
 	}
 }

@@ -110,7 +110,9 @@ var SchemaEditor = function(options) {
 	                              "~de.unibamberg.minf.common.model.types.nonterminalimpl",
 	                              "~de.unibamberg.minf.common.model.types.transformationfunctionimpl",
 	                              
-	                              "~de.unibamberg.minf.dme.dialog.confirm_publish"]);
+	                              "~de.unibamberg.minf.dme.dialog.confirm_publish",
+	                              
+	                              "~de.unibamberg.minf.dme.dialog.confirm_delete_nature"]);
 	__translator.getTranslations();
 	
 	this.init();
@@ -125,6 +127,8 @@ SchemaEditor.prototype.getEntityId = function() {
 SchemaEditor.prototype.init = function() {
 	this.initLayout();
 	this.initGraph();
+	
+	this.initNatures();
 	
 	this.loadElementHierarchy();
 	this.initSample(this.pathname, this.schema.id);
