@@ -25,6 +25,7 @@ import de.unibamberg.minf.dme.model.datamodel.natures.CsvDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.JsonDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.TextDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
@@ -302,5 +303,52 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		classes.add(CsvDatamodelNature.class);
 		classes.add(TextDatamodelNature.class);
 		return classes;
+	}
+
+	@Override
+	public void updateNature(String entityId, XmlDatamodelNature xmlNature, AuthPojo auth) {
+		Datamodel m = this.findSchemaById(entityId);
+		XmlDatamodelNature existingXmlNature = m.getNature(XmlDatamodelNature.class);
+		existingXmlNature.setRecordPath(xmlNature.getRecordPath());
+		
+		// To prevent duplicate urls
+		Map<String, String> urlPrefixMap = new HashMap<String, String>();
+		List<String> removeNamespaces = new ArrayList<String>();
+		for (XmlNamespace existNs : existingXmlNature.getNamespaces()) {
+			boolean remove = true;
+			if (xmlNature.getNamespaces()!=null) {
+				for (XmlNamespace updateNs : xmlNature.getNamespaces()) {
+					if (updateNs.getUrl().trim().isEmpty()) {
+						continue;
+					}
+					if (existNs.getUrl().equals(updateNs.getUrl().trim())) {
+						urlPrefixMap.put(updateNs.getUrl().trim(), updateNs.getPrefix().trim());
+						remove = false;
+					}
+				}
+			}
+			if (remove) {
+				removeNamespaces.add(existNs.getUrl());
+			}
+		}
+		for (XmlNamespace updateNs : xmlNature.getNamespaces()) {
+			if (!urlPrefixMap.containsKey(updateNs.getUrl().trim())) {
+				urlPrefixMap.put(updateNs.getUrl().trim(), updateNs.getPrefix().trim());
+			}
+		}
+		
+		if (existingXmlNature.getTerminals()!=null) {
+			for (XmlTerminal xmlTerminal : existingXmlNature.getTerminals()) {
+				if (removeNamespaces.contains(xmlTerminal.getNamespace())) {
+					xmlTerminal.setNamespace("");
+				}
+			}
+		}
+		
+		existingXmlNature.getNamespaces().clear();
+		for (String nsUrl : urlPrefixMap.keySet()) {
+			existingXmlNature.getNamespaces().add(new XmlNamespace(urlPrefixMap.get(nsUrl), nsUrl));
+		}
+		this.saveSchema(m, auth);
 	}
 }

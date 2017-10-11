@@ -76,7 +76,19 @@ SchemaEditor.prototype.triggerEditNature = function() {
 		additionalModalClasses: "wide-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
-		                ]
+		                ],
+        submitCallback: function(data, container) {
+        	var i=0;
+        	$("#edit-nature-namespaces tr").each(function() {
+        		
+        		$($(this).find("input")[0]).prop("name", "namespaces[" + i + "].prefix");
+        		$($(this).find("input")[1]).prop("name", "namespaces[" + i + "].url");
+        		
+        		i++
+        	});
+        	
+        	
+        }
 	});
 		
 	modalFormHandler.show(form_identifier);

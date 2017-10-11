@@ -8,6 +8,7 @@ import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.serialization.Reference;
@@ -37,5 +38,6 @@ public interface SchemaService extends BaseEntityService {
 	public void removeNature(String entityId, String natureClass, AuthPojo auth);
 	public void addNature(String entityId, String natureClass, AuthPojo auth);
 	
-	public List<Class<? extends DatamodelNature>> getMissingNatures(String entityId);	
+	public List<Class<? extends DatamodelNature>> getMissingNatures(String entityId);
+	public void updateNature(String entityId, XmlDatamodelNature xmlNature, AuthPojo auth);	
 }

@@ -272,6 +272,8 @@ ModalFormHandler.prototype.submit = function(data) {
 					return false;
 				}
 			}
+			// In case the callback modified the inputs
+			d = $(data).serialize();
 			this.loading();
 			$.ajax({
 		        url: $(_this.container).find("form").prop("action"),

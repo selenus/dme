@@ -70,7 +70,7 @@ public class NaturesEditorController extends BaseScheregController {
 			return new ModelActionPojo(false);
 		}
 		ModelActionPojo result = new ModelActionPojo(true); 
-		
+		schemaService.updateNature(entityId, xmlNature, auth);
 		return result; 
 	}
 	
