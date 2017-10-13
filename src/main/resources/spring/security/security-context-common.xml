@@ -90,6 +90,7 @@
     
 	<bean id="authInfoHelper" class="eu.dariah.de.dariahsp.web.AuthInfoHelper">
 		<property name="roleLevelVoter" ref="roleLevelVoter" />
+		<property name="authenticationProvider" ref="authenticationProvider" />
 	</bean>
 	
 	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
