@@ -14,6 +14,7 @@ SchemaEditor.prototype.initNatures = function() {
 	$("#select-model-natures").change(function() {
 		_this.currentNature = $(this).val();
 		_this.setNature();
+		_this.reloadElementHierarchy();
 	});
 	
 	$("#edit-model-nature").click(function() { _this.triggerEditNature(); });
@@ -32,6 +33,7 @@ SchemaEditor.prototype.setNature = function() {
 		}
 		$("#remove-model-nature").show();
 	}
+	$("#current-model-nature").val(this.currentNature);
 }
 
 

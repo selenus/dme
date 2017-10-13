@@ -221,39 +221,6 @@ public class ElementEditorController extends BaseScheregController {
 	public @ResponseBody Element getElement(@PathVariable String schemaId, @PathVariable String elementId) {
 		return elementService.findById(elementId);
 	}
-		
-	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminal")
-	public @ResponseBody Terminal getTerminal(@PathVariable String schemaId, @PathVariable String elementId) throws Exception {
-		Element e = elementService.findById(elementId);
-		String terminalId = null;
-		
-		
-		Datamodel s = schemaService.findSchemaById(schemaId);
-		XmlDatamodelNature sn = s.getNature(XmlDatamodelNature.class);
-		
-		if (sn!=null) {
-			if (e instanceof Nonterminal) {
-				terminalId = sn.getTerminalId(e.getId());
-			} else {
-				logger.warn("GetTerminal called for object of type {}", e.getClass().getSimpleName());
-				throw new Exception("Invalid call of getTerminal on non-nonterminal");
-			}
-			if (terminalId==null || terminalId.isEmpty()) {
-				// None assigned yet
-				return null;
-			} else {
-				for (XmlTerminal t : sn.getTerminals()) {
-					if (t.getId().equals(terminalId)) {
-						return t;
-					}
-				}
-			}
-		} else {
-			logger.warn("GetTerminal called for BaseSchema");
-			throw new Exception("Invalid call of getTerminal on BaseSchema");
-		}
-		return null;
-	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")

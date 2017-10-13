@@ -17,9 +17,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.dme.controller.base.BaseScheregController;
+import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
@@ -33,7 +36,7 @@ import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 
 @Controller
-@RequestMapping(value="/model/editor/{schemaId}/terminal/{terminalId}")
+@RequestMapping(value="/model/editor/{entityId}/terminal")
 public class TerminalEditorController extends BaseScheregController {
 	@Autowired private ElementService elementService;
 	
@@ -41,65 +44,88 @@ public class TerminalEditorController extends BaseScheregController {
 		super("schemaEditor");
 	}
 	
+	@RequestMapping(method = RequestMethod.GET, value = "/missing/{nonterminalId}/async/get")
+	public @ResponseBody Terminal getMissingTerminal(@PathVariable String entityId, @PathVariable String nonterminalId) throws Exception {
+		XmlTerminal t = new XmlTerminal();
+		t.setId(nonterminalId);
+		t.setName("?");
+		t.setNamespace("?");
+		return t;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/{terminalId}/async/get")
+	public @ResponseBody Terminal getTerminal(@PathVariable String entityId, @PathVariable String terminalId, 
+			@RequestParam(name="n") String modelClass, HttpServletRequest request) throws Exception {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		@SuppressWarnings("unchecked")
+		Class<? extends DatamodelNature> modelClazz = (Class<? extends DatamodelNature>)Class.forName(modelClass);
+		DatamodelNature n = schemaService.findByIdAndAuth(entityId, auth).getElement().getNature(modelClazz);
+		for (Terminal t : n.getTerminals()) {
+			if (t.getId().equals(terminalId)) {
+				return t;
+			}
+		}
+		return null;
+	}
 	
 	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method = RequestMethod.GET, value = "/async/remove")
-	public @ResponseBody Terminal removeElement(@PathVariable String schemaId, @PathVariable String terminalId, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(method = RequestMethod.GET, value = "/{terminalId}/async/remove")
+	public @ResponseBody Terminal removeElement(@PathVariable String entityId, @PathVariable String terminalId, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+		if (!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		return elementService.removeTerminal(schemaId, terminalId, authInfoHelper.getAuth(request));
+		return elementService.removeTerminal(entityId, terminalId, authInfoHelper.getAuth(request));
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value = "/form/edit")
-	public String getElement(@PathVariable String schemaId, @PathVariable String terminalId, Model model, Locale locale, HttpServletRequest request) {
-		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+	@RequestMapping(method = RequestMethod.GET, value = {"/{terminalId}/form/edit", "/missing/{nonterminalId}/form/edit"})
+	public String getElement(@PathVariable String entityId, @PathVariable(required=false) String terminalId, @PathVariable(required=false) String nonterminalId, 
+			Model model, Locale locale, @RequestParam(name="n") String modelClass, HttpServletRequest request) throws ClassNotFoundException {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		if (!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			model.addAttribute("readonly", true);
 		} else {
 			model.addAttribute("readonly", false);
 		}
 		
-		Datamodel s = schemaService.findSchemaById(schemaId);
-		XmlDatamodelNature xmlSchemaNature = s.getNature(XmlDatamodelNature.class);
+		@SuppressWarnings("unchecked")
+		Class<? extends DatamodelNature> modelClazz = (Class<? extends DatamodelNature>)Class.forName(modelClass);
+		DatamodelNature n = schemaService.findByIdAndAuth(entityId, auth).getElement().getNature(modelClazz);
 		
-		XmlTerminal terminal = null;
-		if (terminalId != "-1") {
-			if (xmlSchemaNature.getTerminals()!=null) {
-				for (Terminal t : xmlSchemaNature.getTerminals()) {
-					if (t.getId().equals(terminalId)) {
-						terminal = (XmlTerminal)t;
-						break;
-					}
+		if (terminalId!=null) {
+			for (Terminal t : n.getTerminals()) {
+				if (t.getId().equals(terminalId)) {
+					model.addAttribute("terminal", t);
 				}
 			}
-		} 
-		if (terminal==null) {
-			terminal = new XmlTerminal();
-			terminal.setId("-1");
+		} else if (nonterminalId!=null) {
+			// TODO Also for the others not only XML
 		}
-		model.addAttribute("terminal", terminal);
-		
-		
+				
 		List<String> availableNamespaces = new ArrayList<String>();
-		if (s instanceof XmlDatamodelNature) {	
-			if (((XmlDatamodelNature)s).getNamespaces()!=null) {
-				for (XmlNamespace ns : ((XmlDatamodelNature)s).getNamespaces()) {
+		if (n instanceof XmlDatamodelNature) {	
+			if (((XmlDatamodelNature)n).getNamespaces()!=null) {
+				for (XmlNamespace ns : ((XmlDatamodelNature)n).getNamespaces()) {
 					availableNamespaces.add(ns.getUrl());
 				}
 			}
 		}
 		model.addAttribute("availableNamespaces", availableNamespaces);
-		model.addAttribute("actionPath", "/model/editor/" + schemaId + "/terminal/" + terminal.getId() + "/async/saveTerminal");
+		
+		if (terminalId!=null) {
+			model.addAttribute("actionPath", "/model/editor/" + entityId + "/terminal/" + terminalId + "/async/save");
+		} else {
+			model.addAttribute("actionPath", "/model/editor/" + entityId + "/terminal/" + nonterminalId + "/async/append");
+		}
 		return "elementEditor/form/edit_terminal";
 	}
 	
 	@PreAuthorize("isAuthenticated()")
-	@RequestMapping(method = RequestMethod.POST, value = "/async/saveTerminal")
-	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String schemaId, @Valid XmlTerminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(method = RequestMethod.POST, value = {"/{terminalId}/async/save", "/{nonterminalId}/async/append"})
+	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String entityId, @Valid XmlTerminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		if (!schemaService.getUserCanWriteEntity(schemaId, authInfoHelper.getAuth(request).getUserId())) {
+		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
@@ -109,7 +135,7 @@ public class TerminalEditorController extends BaseScheregController {
 				element.setId(null);
 			}
 			
-			Datamodel s = schemaService.findSchemaById(schemaId);
+			Datamodel s = schemaService.findSchemaById(entityId);
 			XmlDatamodelNature xmlSchemaNature = s.getNature(XmlDatamodelNature.class);
 					
 			if (xmlSchemaNature.getTerminals()!=null) {

@@ -32,6 +32,7 @@
 			<input type="hidden" id="schema-id" value="${schema.id}" />
 			<input type="hidden" id="schema-write" value="${schema.write}" />
 			<input type="hidden" id="schema-own" value="${schema.own}" />
+			<input type="hidden" id="current-model-nature" value="logical_model" />
 			<div id="main-content">
 				<div class="row">
 					<div class="col-xs-12">

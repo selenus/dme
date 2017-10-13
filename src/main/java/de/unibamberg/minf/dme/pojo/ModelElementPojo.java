@@ -14,6 +14,7 @@ public class ModelElementPojo implements Identifiable {
 	private String id;
 	private String label;
 	private String type;
+	private String[] info;
 	private boolean processingRoot;
 	private boolean disabled;
 	private ModelElementState state;
@@ -35,6 +36,9 @@ public class ModelElementPojo implements Identifiable {
 	
 	public boolean isDisabled() { return disabled; }
 	public void setDisabled(boolean disabled) { this.disabled = disabled; }
+	
+	public String[] getInfo() { return info; }
+	public void setInfo(String[] info) { this.info = info; }
 	
 	public ModelElementState getState() { return state; }
 	public void setState(ModelElementState state) { this.state = state; }

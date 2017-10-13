@@ -150,10 +150,11 @@ SchemaEditor.prototype.initLayout = function() {
 	this.layoutContainer.removeClass("hide").addClass("fade");
 	
 	var initEastClosed = true;
-	var initWestClosed = true;
-	/*if (this.layoutContainer.width()>800) {
+	if (this.layoutContainer.width()>800) {
 		initEastClosed = false;
-	}*/
+	}
+	
+	var initWestClosed = true;
 	if (this.layoutContainer.width()>1100) {
 		initWestClosed = false;
 	}
@@ -176,7 +177,7 @@ SchemaEditor.prototype.initLayout = function() {
 			minHeight : 200
 		},
 		east : {
-			size : "30%",
+			size : "25%",
 			paneSelector : ".layout-east",
 			initClosed : initEastClosed,
 		},
@@ -254,13 +255,7 @@ SchemaEditor.prototype.selectionHandler = function(e) {
 	_this.elementContextButtons.text("");
 	
 	_this.createActionButtons(_this.elementContextButtons, e.element.getContextMenuItems(), "editor");
-	
-	if (e.element.getType()==="Nonterminal") {
-		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail, _this.processTerminalElement);
-	} else {
-		_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail);
-	}
-	
+	_this.getElementDetails(_this.pathname, e.element.getType(), e.element.id, _this.elementContextDetail);
 	_this.loadActivitiesForElement(e.element.id, _this.elementActivitiesContainer);
 	
 	_this.elementContextContainer.removeClass("hide");
@@ -518,21 +513,13 @@ SchemaEditor.prototype.toggleElementDisabled = function(type, id, disable) {
 	});
 };
 
-SchemaEditor.prototype.addTerminal = function() {
-	this.innerEditTerminal("-1");
-};
-
-SchemaEditor.prototype.editTerminal = function() {
-	var terminalId = $("#terminalId").val();
-	this.innerEditTerminal(terminalId);
-};
-
-SchemaEditor.prototype.innerEditTerminal = function(id) {
+SchemaEditor.prototype.editTerminal = function(elementType, id) {
 	var _this = this;
 	var form_identifier = "edit-terminal" + id;
 	
 	modalFormHandler = new ModalFormHandler({
-		formUrl: "/terminal/" + id + "/form/edit",
+		formUrl: "/" + elementType.toLowerCase() + "/" + id + "/form/edit",
+		data: { n: this.currentNature },
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
@@ -551,6 +538,7 @@ SchemaEditor.prototype.removeTerminal = function() {
 		if(result) {
 			$.ajax({
 			    url: _this.pathname + "/terminal/" + terminalId + "/async/remove",
+			    data: { n: this.currentNature },
 			    type: "GET",
 			    dataType: "json",
 			    success: function(data) {
@@ -559,28 +547,6 @@ SchemaEditor.prototype.removeTerminal = function() {
 			    }
 			});
 		}
-	});
-};
-
-SchemaEditor.prototype.updateTerminalList = function() {
-	var _this = this;
-	$(".form-btn-submit").prop("disabled", "disabled");
-		
-	$.ajax({
-	    url: _this.pathname + "/async/getTerminals",
-	    type: "GET",
-	    dataType: "json",
-	    success: function(data) {
-	    	$("#terminalId option.schema-terminal").remove();
-	    	for (var i=0; i<data.length; i++) {
-	    		$("#terminalId").append("<option class='schema-terminal' value='" + data[i].id + "'>" + 
-	    				data[i].name + " (" + data[i].namespace + ")" + 
-	    			"</option>");
-	    	}
-	    	
-	    	$(".form-btn-submit").removeProp("disabled");
-	    },
-	    error: __util.processServerError
 	});
 };
 

@@ -46,6 +46,7 @@ import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
@@ -327,13 +328,27 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
-	public @ResponseBody ModelElementPojo getHierarchy(@PathVariable String entityId, @RequestParam(defaultValue="false") boolean staticElementsOnly, Model model, Locale locale, HttpServletResponse response) throws IOException, GenericScheregException {
+	public @ResponseBody ModelElementPojo getHierarchy(@PathVariable String entityId, @RequestParam(defaultValue="false") boolean staticElementsOnly, 
+			@RequestParam(defaultValue="logical_model", name="model") String modelClass, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException, GenericScheregException {
+		AuthPojo auth = authInfoHelper.getAuth(request);
 		Element result = elementService.findRootBySchemaId(entityId, true);
 		if (result==null) {
 			response.getWriter().print("null");
 			response.setContentType("application/json");
 		}
+		if (!modelClass.equals("logical_model")) {
+			try {
+				@SuppressWarnings("unchecked")
+				Class<? extends DatamodelNature> modelClazz = (Class<? extends DatamodelNature>)Class.forName(modelClass);
+				DatamodelNature n = schemaService.findByIdAndAuth(entityId, auth).getElement().getNature(modelClazz);
+				
+				return ModelElementPojoConverter.convertModelElementTerminal(result, n);
+			} catch (Exception e) {
+				logger.error(String.format("Failed to retrieve model of class %s for datamodel %s", modelClass, entityId), e);
+			}
+		}
 		return ModelElementPojoConverter.convertModelElement(result, staticElementsOnly);
+		
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")

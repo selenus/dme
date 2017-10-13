@@ -4,6 +4,7 @@ function BaseEditor() {
 	                              "~de.unibamberg.minf.dme.model.element.name",
 	                              "~de.unibamberg.minf.dme.model.element.transient",
 	                              "~de.unibamberg.minf.dme.model.element.attribute",
+	                              "~de.unibamberg.minf.dme.model.element.namespace",
 	                              "~de.unibamberg.minf.dme.notification.no_terminal_configured",
 	                              
 	                              "~de.unibamberg.minf.dme.model.mapped_concept.source",
@@ -107,33 +108,33 @@ BaseEditor.prototype.deregisterTypeahead = function(element) {
 
 BaseEditor.prototype.getElementDetails = function(pathPrefix, type, id, container, callback) {
 	var _this = this;
+	var elementType = this.getElementType(type);
 	$.ajax({
-		url: pathPrefix + "/" + this.getElementType(type) + "/" + id + "/async/get",
+		url: pathPrefix + "/" + elementType + "/" + id + "/async/get",
         type: "GET",
         dataType: "json",
+        data: elementType.startsWith("terminal") ? { n: this.currentNature } : undefined,
         success: function(data) {
         	switch (_this.getElementType(type)) {
 				case "element": return _this.processElementDetails(data, callback, container, pathPrefix);
 				case "grammar": return _this.processGrammarDetails(data, callback, container, pathPrefix);
 				case "function": return _this.processFunctionDetails(data, callback, container, pathPrefix);
 				case "mappedConcept": return _this.processMappedConceptDetails(data, callback, container, pathPrefix);
+				case "terminal": return _this.processTerminalElement(data, callback, container, pathPrefix);
+				case "terminal/missing": return _this.processTerminalElement(data, callback, container, pathPrefix);
 				default: throw Error("Unknown element type: " + type);
 			}
         },
         error: __util.processServerError
- 	});
+ 	});	
 };
 
 BaseEditor.prototype.getElementType = function(originalType) {
 	var type = originalType;
 	if (type==="Nonterminal" || type==="Label") {
 		type="element";
-	} else if (type==="Grammar") {
-		type="grammar";
-	} else if (type==="Function") {
-		type="function";
 	}
-	return type;
+	return type.toLowerCase();
 };
 
 BaseEditor.prototype.processMappedConceptDetails = function(data, callback, container, pathPrefix) {
@@ -220,32 +221,17 @@ BaseEditor.prototype.processElementDetails = function(data, callback, container,
 	}
 };
 
-BaseEditor.prototype.processTerminalElement = function(data, container, pathPrefix) { 
-	var _this = editor;
-	if (data.terminalId!=null && data.terminalId!="") {
-		$.ajax({
-			url: pathPrefix + "/element/" + data.id + "/async/getTerminal",
-	        type: "GET",
-	        dataType: "json",
-	        success: function(data) {
-	        	var details = $("<div class=\"clearfix tab-details-block\">");
-	        	details.append(_this.renderContextTabDetail("", "<h4>" + data.simpleType + "</h4>"));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.name));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.transient"), data.namespace));
-	        	details.append(_this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.attribute"), data.attribute));
-	        		
-	        	container.append(details);
-	        },
-	        error: function(textStatus) {}
-	 	});    
-	} else if (data.simpleType==="Nonterminal") {
-		var details = $("<div class=\"clearfix tab-details-block\">");
-		details.append("<div class='alert alert-sm alert-warning' role='alert'>" + 
-				"<span aria-hidden='true' class='glyphicon glyphicon-info-sign'></span> " +
-				__translator.translate("~de.unibamberg.minf.dme.notification.no_terminal_configured") +
-				"</div>");
-		container.append(details);
+BaseEditor.prototype.processTerminalElement = function(data, callback, container, pathPrefix) {
+	var details = $("<div class=\"clearfix tab-details-block\">");
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.name));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.namespace"), data.namespace));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.attribute"), data.attribute));
+		
+	container.append(details);
+	
+	if (callback!==undefined) {
+		callback(data, container, pathPrefix);
 	}
 };
 

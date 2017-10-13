@@ -44,7 +44,7 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("editElement", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
 				}
 				return items; 
-			}, 
+			}
 		}, {
 			key: "Label",
 			primaryColor: "#f3e6ff", secondaryColor: "#5700a6",
@@ -131,7 +131,50 @@ SchemaEditor.prototype.initGraph = function() {
 				}
 				return items; 
 			}
-		}]
+		}, {
+			key: "Terminal",
+			primaryColor: "#E4FFEF", secondaryColor: "#00772C",
+			getContextMenuItems: function(element) { 
+				var items = [];
+				items.push(_this.graph.createContextMenuItem("expandFromHere", "~de.unibamberg.minf.dme.button.expand_from_here", "resize-full", element.id, element.template.options.key));
+				items.push(_this.graph.createContextMenuItem("collapseFromHere", "~de.unibamberg.minf.dme.button.collapse_from_here", "resize-small", element.id, element.template.options.key));
+				
+				if (element.reusing || element.reused) {
+					items.push(_this.graph.createContextMenuItem("showReused", "~de.unibamberg.minf.dme.button.show_reused", "resize-full", element.id, element.template.options.key));
+				}
+				
+				items.push(_this.graph.createContextMenuSeparator());
+
+				if (_this.schema.owned || _this.schema.write) {
+					items.push(_this.graph.createContextMenuItem("editTerminal", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
+				} else {
+					items.push(_this.graph.createContextMenuItem("editTerminal", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
+				}
+				return items; 
+			}, 
+		}, {
+			key: "Terminal/Missing",
+			primaryColor: "#E4FFEF", secondaryColor: "#A40000",
+			getContextMenuItems: function(element) { 
+				var items = [];
+				items.push(_this.graph.createContextMenuItem("expandFromHere", "~de.unibamberg.minf.dme.button.expand_from_here", "resize-full", element.id, element.template.options.key));
+				items.push(_this.graph.createContextMenuItem("collapseFromHere", "~de.unibamberg.minf.dme.button.collapse_from_here", "resize-small", element.id, element.template.options.key));
+				
+				if (element.reusing || element.reused) {
+					items.push(_this.graph.createContextMenuItem("showReused", "~de.unibamberg.minf.dme.button.show_reused", "resize-full", element.id, element.template.options.key));
+				}
+				
+				items.push(_this.graph.createContextMenuSeparator());
+
+				if (_this.schema.owned || _this.schema.write) {
+					items.push(_this.graph.createContextMenuItem("editTerminal", "~de.unibamberg.minf.common.link.edit", "edit", element.id, element.template.options.key));
+				} else {
+					items.push(_this.graph.createContextMenuItem("editTerminal", "~de.unibamberg.minf.common.link.view", "edit", element.id, element.template.options.key));
+				}
+				return items; 
+			}, 
+		}
+		]
 	});
 	
 	this.area = this.graph.addArea({
@@ -177,6 +220,8 @@ SchemaEditor.prototype.performTreeAction = function(action, elementId, elementTy
 	    case "editElement" : return this.editElement(elementId);
 	    case "editGrammar" : return this.editGrammar(elementId);
 	    case "editFunction" : return this.editFunction(elementId);
+	    case "editTerminal": return this.editTerminal(elementType, elementId);
+	    
 	    case "assignChild" : return this.assignChild(elementId);
 	    case "setProcessingRoot" : return this.setProcessingRoot(elementId);
 	    
@@ -243,6 +288,7 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 		
 		$.ajax({
 		    url: this.pathname + "/async/getHierarchy",
+		    data: { model: $("#current-model-nature").val() },
 		    type: "GET",
 		    success: function(data) {
 		    	if (data===null || data===undefined || data.length==0) {
@@ -321,6 +367,7 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 		$.ajax({
 		    url: this.pathname + "/async/getHierarchy",
 		    type: "GET",
+		    data: { model: $("#current-model-nature").val() },
 		    dataType: "json",
 		    success: function(data) {
 		    	if (data===null || data===undefined || data.length==0) {
