@@ -355,6 +355,7 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 				existingXmlNature.getNamespaces().add(new XmlNamespace(urlPrefixMap.get(nsUrl), nsUrl));
 			}
 		}
+		
 		this.saveSchema(m, auth);
 	}
 

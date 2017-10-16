@@ -1,5 +1,7 @@
 package de.unibamberg.minf.dme.controller.editors;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 import de.unibamberg.minf.dme.controller.base.BaseScheregController;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
@@ -63,15 +66,27 @@ public class NaturesEditorController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/updateXml")
-	public @ResponseBody ModelActionPojo updateXmlNature(@PathVariable String entityId, @ModelAttribute XmlDatamodelNature xmlNature, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo updateXmlNature(@PathVariable String entityId, @ModelAttribute XmlDatamodelNature xmlNature, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if (!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
-		ModelActionPojo result = new ModelActionPojo(true); 
+		ModelActionPojo result;
+		List<String> prefices = new ArrayList<String>();
+		for (XmlNamespace xmlNs : xmlNature.getNamespaces()) {
+			if (xmlNs.getPrefix()!=null && !xmlNs.getPrefix().isEmpty()) {
+				if (prefices.contains(xmlNs.getPrefix())) {
+					result = new ModelActionPojo(false);
+					result.addFieldError("edit-nature-namespaces", messageSource.getMessage("~de.unibamberg.minf.dme.form.nature.hint.duplicate_namespace_prefices", null, locale));
+					return result;
+				} else {
+					prefices.add(xmlNs.getPrefix());
+				}
+			}
+		}
 		schemaService.updateNature(entityId, xmlNature, auth);
-		return result; 
+		return new ModelActionPojo(true); 
 	}
 	
 	@PreAuthorize("isAuthenticated()")

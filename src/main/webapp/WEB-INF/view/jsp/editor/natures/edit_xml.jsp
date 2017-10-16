@@ -7,14 +7,15 @@
 
 <sf:form method="POST" action="${saveUrl}" modelAttribute="xmlNature" class="form-horizontal" >
 	<div class="form-header">
-		<h3 id="form-header-title">~ Edit xml nature</h3>	
+		<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.nature.edit_xml" /></h3>	
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="function_name">~Namespaces:</label>
+			<label class="col-sm-3 control-label" for="function_name"><s:message code="~de.unibamberg.minf.dme.model.element.namespaces" />:</label>
 			<div class="col-sm-8">
+				<div class="alert alert-info alert-sm" role="alert" style="margin-top: 10px;"><s:message code="~de.unibamberg.minf.dme.form.nature.hint.use_of_prefices" /></div>
 				<table id="edit-nature-namespaces" style="width: 100%">
-					<tbody style="display: block; border: 1px solid #CCC; padding: 2px; max-height: 300px; overflow-y: auto; width: 100%">
+					<tbody style="display: block; border: 1px solid #CCC; padding: 2px; max-height: 250px; overflow-y: auto; width: 100%">
 						<c:if test="${xmlNature.namespaces!=null}">
 							<c:forEach items="${xmlNature.namespaces}" var="xmlNs" varStatus="status">
 								<tr class="edit-nature-namespace-row">
@@ -36,15 +37,15 @@
 						</tr>
 					</tbody>
 				</table>
-				<a href="#" class="btn btn-link" onclick="$('#edit-nature-namespace-placeholder').clone().removeProp('id').appendTo('#edit-nature-namespaces').show().find('input')[0].focus();"><i class="fa fa-plus" aria-hidden="true"></i> ~Add namespace</a>
+				<a href="#" class="btn btn-link" onclick="$('#edit-nature-namespace-placeholder').clone().removeProp('id').appendTo('#edit-nature-namespaces').show().find('input')[0].focus();"><i class="fa fa-plus" aria-hidden="true"></i> <s:message code="~de.unibamberg.minf.dme.form.nature.add_namespace" /></a>
 			</div>
 		</div>
-		<legend>Advanced options:</legend>
+		<legend><s:message code="~de.unibamberg.minf.common.view.advanced_options" />:</legend>
 		<div class="form-group">
-			<label class="col-sm-3 control-label" for="function_name">~Root selector:</label>
+			<label class="col-sm-3 control-label" for="function_name"><s:message code="~de.unibamberg.minf.dme.form.nature.xml.root_selector" />:</label>
 			<div class="col-sm-8">
 				<sf:input path="recordPath" class="form-control" />
-				<div class="alert alert-warning alert-sm" role="alert" style="margin-top: 10px;">~ hint break parse</div>
+				<div class="alert alert-warning alert-sm" role="alert" style="margin-top: 10px;"><s:message code="~de.unibamberg.minf.dme.form.nature.hint.xml_root_selector" /></div>
 			</div>
 		</div>		
 	</div>
