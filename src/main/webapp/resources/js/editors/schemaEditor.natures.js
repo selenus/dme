@@ -82,15 +82,14 @@ SchemaEditor.prototype.triggerEditNature = function() {
         submitCallback: function(data, container) {
         	var i=0;
         	$("#edit-nature-namespaces tr").each(function() {
-        		
         		$($(this).find("input")[0]).prop("name", "namespaces[" + i + "].prefix");
         		$($(this).find("input")[1]).prop("name", "namespaces[" + i + "].url");
-        		
         		i++
         	});
-        	
-        	
-        }
+        },          
+        completeCallback: function(data) {
+        	_this.reloadElementHierarchy();
+		}
 	});
 		
 	modalFormHandler.show(form_identifier);
