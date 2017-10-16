@@ -1,6 +1,5 @@
 package de.unibamberg.minf.dme.controller.editors;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +19,7 @@ import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 import de.unibamberg.minf.dme.controller.base.BaseScheregController;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
 @Controller
@@ -76,13 +76,15 @@ public class NaturesEditorController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/add")
-	public @ResponseBody ModelActionPojo addNewNature(@PathVariable String entityId, @RequestParam(name="n") String natureClass, @RequestParam String autocreate, @RequestParam(name="element-naming") String naming, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo addNewNature(@PathVariable String entityId, @RequestParam(name="n") String natureClass, @RequestParam String autocreate, @RequestParam(name="element-naming") String naming, HttpServletRequest request, HttpServletResponse response) throws ClassNotFoundException, MetamodelConsistencyException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if (!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
 		schemaService.addNature(entityId, natureClass, auth);
+		schemaService.createTerminals(entityId, natureClass, naming, auth);
+		
 		ModelActionPojo result = new ModelActionPojo(true); 
 		result.setPojo(natureClass);
 		return result; 

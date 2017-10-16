@@ -7,9 +7,11 @@ import java.util.Map;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import de.unibamberg.minf.dme.dao.base.BaseDaoImpl;
 import de.unibamberg.minf.dme.dao.interfaces.ElementDao;
 import de.unibamberg.minf.dme.dao.interfaces.FunctionDao;
 import de.unibamberg.minf.dme.dao.interfaces.GrammarDao;
@@ -19,6 +21,7 @@ import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
+import de.unibamberg.minf.dme.model.datamodel.TerminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.CsvDatamodelNature;
@@ -27,6 +30,7 @@ import de.unibamberg.minf.dme.model.datamodel.natures.TextDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.serialization.Reference;
@@ -351,6 +355,36 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 				existingXmlNature.getNamespaces().add(new XmlNamespace(urlPrefixMap.get(nsUrl), nsUrl));
 			}
 		}
+		this.saveSchema(m, auth);
+	}
+
+	@Override
+	public void createTerminals(String entityId, String natureClass, String namingOption, AuthPojo auth) throws ClassNotFoundException, MetamodelConsistencyException {
+		@SuppressWarnings("unchecked")
+		Class<? extends DatamodelNature> modelClazz = (Class<? extends DatamodelNature>)Class.forName(natureClass);
+		Datamodel m = findByIdAndAuth(entityId, auth).getElement();
+		DatamodelNature n = m.getNature(modelClazz);
+		
+		List<Element> nonterminals = elementDao.find(new Query(Criteria.where("entityId").is(entityId).and("_class").is(NonterminalImpl.class.getName())));
+		TerminalImpl t;
+		for (Element e : nonterminals) {
+			if (n.getTerminalId(e.getId())==null) {
+				t = XmlDatamodelNature.class.isAssignableFrom(n.getClass()) ? new XmlTerminal() : new TerminalImpl();
+				t.setId(BaseDaoImpl.createNewObjectId());
+				if (namingOption.equals("unchanged")) {
+					t.setName(e.getName());
+				} else if (namingOption.equals("first_lower")) {
+					t.setName(e.getName().substring(0, 1).toUpperCase() + e.getName().substring(1));
+				} else if (namingOption.equals("all_upper")) {
+					t.setName(e.getName().toUpperCase());
+				} else if (namingOption.equals("all_lower")) {
+					t.setName(e.getName().toLowerCase());
+				} 
+				n.addTerminal(t);
+				n.mapNonterminal(e.getId(), t.getId());
+			}
+		}
+		
 		this.saveSchema(m, auth);
 	}
 }

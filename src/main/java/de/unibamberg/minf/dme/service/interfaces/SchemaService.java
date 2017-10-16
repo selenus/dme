@@ -9,6 +9,7 @@ import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.serialization.Reference;
@@ -39,5 +40,6 @@ public interface SchemaService extends BaseEntityService {
 	public void addNature(String entityId, String natureClass, AuthPojo auth);
 	
 	public List<Class<? extends DatamodelNature>> getMissingNatures(String entityId);
-	public void updateNature(String entityId, XmlDatamodelNature xmlNature, AuthPojo auth);	
+	public void updateNature(String entityId, XmlDatamodelNature xmlNature, AuthPojo auth);
+	public void createTerminals(String entityId, String natureClass, String namingOption, AuthPojo auth) throws ClassNotFoundException, MetamodelConsistencyException;	
 }
