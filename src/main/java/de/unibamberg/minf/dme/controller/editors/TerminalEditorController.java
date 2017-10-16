@@ -21,17 +21,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.dme.controller.base.BaseScheregController;
-import de.unibamberg.minf.dme.model.base.Element;
-import de.unibamberg.minf.dme.model.base.Nonterminal;
+import de.unibamberg.minf.dme.dao.base.BaseDaoImpl;
 import de.unibamberg.minf.dme.model.base.Terminal;
+import de.unibamberg.minf.dme.model.datamodel.TerminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
+import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import de.unibamberg.minf.dme.model.tracking.ChangeType;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
-import de.unibamberg.minf.dme.service.interfaces.SchemaService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 
@@ -93,14 +93,19 @@ public class TerminalEditorController extends BaseScheregController {
 		Class<? extends DatamodelNature> modelClazz = (Class<? extends DatamodelNature>)Class.forName(modelClass);
 		DatamodelNature n = schemaService.findByIdAndAuth(entityId, auth).getElement().getNature(modelClazz);
 		
+				
 		if (terminalId!=null) {
 			for (Terminal t : n.getTerminals()) {
 				if (t.getId().equals(terminalId)) {
 					model.addAttribute("terminal", t);
 				}
 			}
-		} else if (nonterminalId!=null) {
-			// TODO Also for the others not only XML
+		} else if (nonterminalId!=null) {			
+			if (modelClazz.equals(XmlDatamodelNature.class)) {
+				model.addAttribute("terminal", new XmlTerminal());
+			} else {
+				model.addAttribute("terminal", new TerminalImpl());
+			}
 		}
 				
 		List<String> availableNamespaces = new ArrayList<String>();
@@ -112,6 +117,7 @@ public class TerminalEditorController extends BaseScheregController {
 			}
 		}
 		model.addAttribute("availableNamespaces", availableNamespaces);
+		model.addAttribute("natureType", modelClass);
 		
 		if (terminalId!=null) {
 			model.addAttribute("actionPath", "/model/editor/" + entityId + "/terminal/" + terminalId + "/async/save");
@@ -123,51 +129,50 @@ public class TerminalEditorController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = {"/{terminalId}/async/save", "/{nonterminalId}/async/append"})
-	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String entityId, @Valid XmlTerminal element, BindingResult bindingResult, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String entityId, @PathVariable(required=false) String terminalId, 
+			@PathVariable(required=false) String nonterminalId, @RequestParam(defaultValue="false") boolean attribute, 
+			@RequestParam String name, @RequestParam String namespace, @RequestParam(name="natureType") String natureType, Locale locale, 
+			HttpServletRequest request, HttpServletResponse response) throws ClassNotFoundException, MetamodelConsistencyException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return null;
 		}
-		ModelActionPojo result = this.getActionResult(bindingResult, locale);
-		if (result.isSuccess()) {	
-			if (element.getId().isEmpty() || element.getId().trim().equals("-1")) {
-				element.setId(null);
-			}
-			
-			Datamodel s = schemaService.findSchemaById(entityId);
-			XmlDatamodelNature xmlSchemaNature = s.getNature(XmlDatamodelNature.class);
-					
-			if (xmlSchemaNature.getTerminals()!=null) {
-				for (int i=0; i<xmlSchemaNature.getTerminals().size(); i++) {
-					XmlTerminal t = xmlSchemaNature.getTerminals().get(i);
-					if (t.getName().equals(element.getName()) && t.getNamespace().equals(element.getNamespace()) &&
-							!t.getId().equals(element.getId())) {
-						result.setSuccess(false);
-						result.setObjectErrors(new ArrayList<String>());
-						result.getObjectErrors().add("~Duplicate");
-						return result;
+		
+		@SuppressWarnings("unchecked")
+		Class<? extends DatamodelNature> modelClazz = (Class<? extends DatamodelNature>)Class.forName(natureType);
+		Datamodel m = schemaService.findByIdAndAuth(entityId, auth).getElement();
+		DatamodelNature n = m.getNature(modelClazz);
+				
+		// Update existing terminal
+		if (terminalId!=null) {
+			for (Terminal t : n.getTerminals()) {
+				if (t.getId().equals(terminalId)) {
+					t.setName(name);
+					if (modelClazz.equals(XmlDatamodelNature.class)) {
+						((XmlTerminal)t).setAttribute(attribute);
+						((XmlTerminal)t).setNamespace(namespace);
 					}
+					break;
 				}
 			}
-			if (xmlSchemaNature.getTerminals()==null) {
-				xmlSchemaNature.setTerminals(new ArrayList<XmlTerminal>());
-			}
-			if (element.getId()==null) {
-				element.setId(new ObjectId().toString());
-				element.addChange(ChangeType.NEW_OBJECT, "terminal", null, element.getId());
-				xmlSchemaNature.getTerminals().add(element);
+		} else if (nonterminalId!=null) {
+			TerminalImpl tAppend;
+			if (modelClazz.equals(XmlDatamodelNature.class)) {
+				tAppend = new XmlTerminal();
+				((XmlTerminal)tAppend).setAttribute(attribute);
+				((XmlTerminal)tAppend).setNamespace(namespace);
 			} else {
-				for (int i=0; i<xmlSchemaNature.getTerminals().size(); i++) {
-					if (xmlSchemaNature.getTerminals().get(i).getId().equals(element.getId())) {
-						xmlSchemaNature.getTerminals().set(i, element);
-						break;
-					}
-				}
+				tAppend = new TerminalImpl();
 			}
-			
-			schemaService.saveSchema(s, authInfoHelper.getAuth(request));			
+			tAppend.setName(name);
+			tAppend.setId(BaseDaoImpl.createNewObjectId());
+			n.addTerminal(tAppend);
+			n.mapNonterminal(nonterminalId, tAppend.getId());
 		}
-		return result;
+		
+		schemaService.saveSchema(m, auth);
+		
+		return new ModelActionPojo(true);
 	}
 }

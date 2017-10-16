@@ -9,6 +9,7 @@
 	<div class="form-header">
 		<h3 id="form-header-title"><s:message code="~de.unibamberg.minf.dme.form.terminal.edit" /></h3>	
 		<sf:hidden path="id" />
+		<input type="hidden" name="natureType" value="${natureType}">
 	</div>
 	<div class="form-content">
 		<fieldset<c:if test="${readonly}"> disabled</c:if>>

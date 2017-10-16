@@ -524,7 +524,9 @@ SchemaEditor.prototype.editTerminal = function(elementType, id) {
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],       
-		completeCallback: function() { _this.updateTerminalList(); }
+		completeCallback: function() { 
+			_this.reloadElementHierarchy();
+		}
 	});
 		
 	modalFormHandler.show(form_identifier);
