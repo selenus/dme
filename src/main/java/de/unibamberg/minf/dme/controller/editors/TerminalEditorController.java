@@ -124,14 +124,20 @@ public class TerminalEditorController extends BaseScheregController {
 		} else {
 			model.addAttribute("actionPath", "/model/editor/" + entityId + "/terminal/" + nonterminalId + "/async/append");
 		}
-		return "elementEditor/form/edit_terminal";
+		
+		if (modelClazz.equals(XmlDatamodelNature.class)) {
+			return "elementEditor/form/edit_xml_terminal";
+		} else {
+			return "elementEditor/form/edit_terminal";
+		}
+		
 	}
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = {"/{terminalId}/async/save", "/{nonterminalId}/async/append"})
 	public @ResponseBody ModelActionPojo saveTerminal(@PathVariable String entityId, @PathVariable(required=false) String terminalId, 
 			@PathVariable(required=false) String nonterminalId, @RequestParam(defaultValue="false") boolean attribute, 
-			@RequestParam String name, @RequestParam String namespace, @RequestParam(name="natureType") String natureType, Locale locale, 
+			@RequestParam String name, @RequestParam(required=false) String namespace, @RequestParam(name="natureType") String natureType, Locale locale, 
 			HttpServletRequest request, HttpServletResponse response) throws ClassNotFoundException, MetamodelConsistencyException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if (!schemaService.getUserCanWriteEntity(entityId, authInfoHelper.getAuth(request).getUserId())) {

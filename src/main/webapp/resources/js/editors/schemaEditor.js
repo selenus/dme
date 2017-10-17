@@ -112,6 +112,8 @@ var SchemaEditor = function(options) {
 	                              
 	                              "~de.unibamberg.minf.dme.dialog.confirm_publish",
 	                              
+	                              "~de.unibamberg.minf.dme.form.nature.terminals.missing",
+	                              
 	                              "~de.unibamberg.minf.dme.dialog.confirm_delete_nature"]);
 	__translator.getTranslations();
 	

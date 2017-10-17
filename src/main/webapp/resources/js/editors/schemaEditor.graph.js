@@ -440,3 +440,35 @@ SchemaEditor.prototype.formatLabel = function(label) {
 SchemaEditor.prototype.updateGraph = function() {
 	this.graph.update();
 };
+
+SchemaEditor.prototype.processElementDetails = function(data, callback, container, pathPrefix) { 
+	var details = $("<div class=\"clearfix\">");
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.label));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.transient"), data.disabled));
+		
+	container.append(details); 
+	
+	if (data.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null) {
+		var missing = "";
+		for (var i=0; i<this.availableNatures.length; i++) {
+			if (data.info===undefined || data.info===null || 
+					data.info["mappedNatureClasses"]===undefined || 
+					data.info["mappedNatureClasses"].indexOf(this.availableNatures[i])<0) {
+				
+				var label = "~" + this.availableNatures[i] + ".display_label";
+		    	__translator.addTranslation(label);
+		    	__translator.getTranslations();
+				
+				missing = missing + __translator.translate(label) + ", ";
+			}
+		}
+		if (missing.length>0) {
+			details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.form.nature.terminals.missing"), missing.substring(0, missing.length-2)));
+		}
+	}
+	
+	if (callback!==undefined) {
+		callback(data, container, pathPrefix);
+	}
+};

@@ -14,12 +14,28 @@
 	<div class="form-content">
 		<fieldset<c:if test="${readonly}"> disabled</c:if>>
 			<div class="form-group">
+				<label class="col-sm-3 control-label" for="xmlTerminal_namespace"><s:message code="~de.unibamberg.minf.dme.model.element.namespace" />:</label>
+				<div class="col-sm-8">
+					<sf:select path="namespace" class="form-control" id="xmlTerminal_namespace">
+	   					<sf:options items="${availableNamespaces}" />
+					</sf:select>
+					<sf:errors path="namespace" cssClass="error" />
+				</div>
+			</div>
+			<div class="form-group">
 				<label class="col-sm-3 control-label" for="xmlTerminal_name"><s:message code="~de.unibamberg.minf.dme.model.element.name" />:</label>
 				<div class="col-sm-8">
 					<sf:input path="name" class="form-control" id="xmlTerminal_name" />
 					<sf:errors path="name" cssClass="error" />
 				</div>
 			</div>		
+			<div class="form-group">
+				<div class="col-sm-8 col-sm-offset-3">
+					<div class="checkbox">
+						<label><sf:checkbox path="attribute" /> <s:message code="~de.unibamberg.minf.dme.model.element.attribute" /></label>
+					</div>
+				</div>
+			</div>
 		</fieldset>
 	</div>
 	<div class="form-footer">

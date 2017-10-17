@@ -61,6 +61,7 @@
 	<definition name="elementEditor/form/edit_nonterminal" template="/WEB-INF/view/jsp/editor/element/edit_nonterminal.jsp" />
 	<definition name="elementEditor/form/edit_label" template="/WEB-INF/view/jsp/editor/element/edit_label.jsp" />
 	<definition name="elementEditor/form/edit_terminal" template="/WEB-INF/view/jsp/editor/element/edit_terminal.jsp" />
+	<definition name="elementEditor/form/edit_xml_terminal" template="/WEB-INF/view/jsp/editor/element/edit_xml_terminal.jsp" />
 	<definition name="elementEditor/form/assign_child" template="/WEB-INF/view/jsp/editor/element/assign_child.jsp" />
 	
 	<definition name="grammarEditor/form/edit" template="/WEB-INF/view/jsp/editor/grammar/edit_grammar.jsp" />

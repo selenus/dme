@@ -228,7 +228,7 @@ public class ElementEditorController extends BaseScheregController {
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
 	public @ResponseBody ModelElementPojo getElement(@PathVariable String schemaId, @PathVariable String elementId, HttpServletRequest request, HttpServletResponse response) throws IOException, GenericScheregException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
-		Element result = elementService.findRootBySchemaId(schemaId, true);
+		Element result = elementService.findById(elementId);
 		if (result==null) {
 			response.getWriter().print("null");
 			response.setContentType("application/json");
