@@ -47,8 +47,6 @@ var SchemaEditor = function(options) {
 	document.addEventListener("selectionEvent", this.selectionHandler, false);
 	document.addEventListener("deselectionEvent", this.deselectionHandler, false);
 	
-	
-	
 	__translator.addTranslations(["~de.unibamberg.minf.common.model.id",
 	                              "~de.unibamberg.minf.common.model.label",
 	                              "~de.unibamberg.minf.common.model.type",
@@ -65,13 +63,14 @@ var SchemaEditor = function(options) {
 	                              "~de.unibamberg.minf.dme.button.add_trans_function",
 	                              "~de.unibamberg.minf.dme.button.export_from_here",
 	                              "~de.unibamberg.minf.dme.button.import_here",
+	                              "~de.unibamberg.minf.dme.button.assign_missing_terminal",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_delete",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_delete_element",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_disable",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_enable",
 	                              "~de.unibamberg.minf.dme.dialog.element_label",
 	                              "~de.unibamberg.minf.dme.dialog.confirm_processing_root.head",
-	                              "~de.unibamberg.minf.dme.dialog.confirm_processing_root.body",
+	                              "~de.unibamberg.minf.dme.dialog.confirm_processing_root.body",	                              
 	                              "~de.unibamberg.minf.common.view.forms.servererror.head",
 	                              "~de.unibamberg.minf.common.view.forms.servererror.body",
 	                              "~de.unibamberg.minf.dme.model.element.element",

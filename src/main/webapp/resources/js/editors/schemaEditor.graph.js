@@ -28,7 +28,7 @@ SchemaEditor.prototype.initGraph = function() {
 					items.push(_this.graph.createContextMenuItem("addNonterminal", "~de.unibamberg.minf.dme.button.add_nonterminal", "asterisk", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("addDescription", "~de.unibamberg.minf.dme.button.add_desc_function", "asterisk", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("assignChild", "~de.unibamberg.minf.dme.button.assign_child", "link", element.id, element.template.options.key));
-					items.push(_this.graph.createContextMenuSeparator());
+					items.push(_this.graph.createContextMenuSeparator());					
 					items.push(_this.graph.createContextMenuItem("setProcessingRoot", "~de.unibamberg.minf.dme.button.set_processing_root", "grain", element.id, element.template.options.key));
 					items.push(_this.graph.createContextMenuItem("exportSubtree", "~de.unibamberg.minf.dme.button.export_from_here", "cloud-download", element.id));
 					items.push(_this.graph.createContextMenuItem("importSubtree", "~de.unibamberg.minf.dme.button.import_here", "leaf", element.id));
@@ -411,6 +411,7 @@ SchemaEditor.prototype.processElementHierarchy = function(data) {
 
 SchemaEditor.prototype.generateTree = function(area, node, parentNode, isSource, processed) {
 	var icon = null;
+	var terminalMissing = false;
 	if (node.state==="ERROR") {
 		icon = this.options.icons.error;
 	} else if (node.state==="WARNING") {
@@ -423,13 +424,15 @@ SchemaEditor.prototype.generateTree = function(area, node, parentNode, isSource,
 	if (node.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null) {
 		if (node.info===undefined || node.info===null || node.info["mappedNatureClasses"]===undefined || node.info["mappedNatureClasses"].length<this.availableNatures.length) {
 			icon = this.options.icons.warning;
+			terminalMissing = true;
 		}
 	}
 	var childProcessed = (processed || node.pRoot) && !node.disabled;
 	var e = this.area.addElement(node.type, parentNode, node.id, this.formatLabel(node.label), icon, childProcessed, node.disabled);
 	e.reusing = node.state==="REUSING";
 	e.reused = node.state==="REUSED";
-	
+	e.terminalMissing = terminalMissing;
+		
 	if (node.childElements!=null && node.childElements instanceof Array) {
 		for (var i=0; i<node.childElements.length; i++) {
 			this.generateTree(area, node.childElements[i], e, isSource, childProcessed);
