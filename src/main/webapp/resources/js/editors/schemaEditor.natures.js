@@ -10,6 +10,8 @@ SchemaEditor.prototype.initNatures = function() {
 	this.currentNature = $('#select-model-natures').val();
 	this.setNature();
 	
+	this.availableNatures = JSON.parse($("#existing-model-natures").val().replace(/'/g, "\""));
+		
 	var _this = this;
 	$("#select-model-natures").change(function() {
 		_this.currentNature = $(this).val();
@@ -58,6 +60,9 @@ SchemaEditor.prototype.triggerAddNature = function() {
 	        	    value: data.pojo,
 	        	    text: __translator.translate(label)
 	        	}));
+	        	
+	        	_this.availableNatures.push(data.pojo);
+	        	
 	        	$('#select-model-natures').val(data.pojo);
 	        	$('#select-model-natures').trigger("change");
         	}
@@ -106,6 +111,7 @@ SchemaEditor.prototype.triggerRemoveNature = function() {
 			    dataType: "json",
 			    success: function(data) {
 			    	if (data.success) {
+			    		_this.availableNatures.remove(data.pojo);
 				    	$("#select-model-natures option[value='" + data.pojo + "']").remove();
 			        	$('#select-model-natures').val("logical_model");
 			        	$('#select-model-natures').trigger("change");

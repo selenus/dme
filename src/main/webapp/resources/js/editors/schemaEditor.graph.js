@@ -288,7 +288,7 @@ SchemaEditor.prototype.loadElementHierarchy = function() {
 		
 		$.ajax({
 		    url: this.pathname + "/async/getHierarchy",
-		    data: { model: $("#current-model-nature").val() },
+		    data: { model: $("#current-model-nature").val(), collectNatureClasses: true },
 		    type: "GET",
 		    success: function(data) {
 		    	if (data===null || data===undefined || data.length==0) {
@@ -367,7 +367,7 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 		$.ajax({
 		    url: this.pathname + "/async/getHierarchy",
 		    type: "GET",
-		    data: { model: $("#current-model-nature").val() },
+		    data: { model: $("#current-model-nature").val(), collectNatureClasses: true },
 		    dataType: "json",
 		    success: function(data) {
 		    	if (data===null || data===undefined || data.length==0) {
@@ -396,31 +396,35 @@ SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 };
 
 SchemaEditor.prototype.processElementHierarchy = function(data) {
-	var root = this.area.addElement(data.type, null, data.id, this.formatLabel(data.label), null, data.pRoot, data.disabled);
-	this.generateTree(this.area, root, data.childElements, true, (data.pRoot && !data.disabled));
+	this.generateTree(this.area, data, null, true, (data.pRoot && !data.disabled));
 	this.area.elements[0].setExpanded(true);
 	this.graph.update();
 };
 
-SchemaEditor.prototype.generateTree = function(area, parentNode, elements, isSource, processed) {
-	if (elements!=null && elements instanceof Array) {
-		for (var i=0; i<elements.length; i++) {
-			var icon = null;
-			if (elements[i].state==="ERROR") {
-				icon = this.options.icons.error;
-			} else if (elements[i].state==="WARNING") {
-				icon = this.options.icons.warning;
-			} else if (elements[i].state==="REUSING") {
-				icon = this.options.icons.reusing;
-			} else if (elements[i].state==="REUSED") {
-				icon = this.options.icons.reused;
-			}
-			var childProcessed = (processed || elements[i].pRoot) && !elements[i].disabled;
-			var e = this.area.addElement(elements[i].type, parentNode, elements[i].id, this.formatLabel(elements[i].label), icon, childProcessed, elements[i].disabled);
-			e.reusing = elements[i].state==="REUSING";
-			e.reused = elements[i].state==="REUSED";
-			
-			this.generateTree(area, e, elements[i].childElements, isSource, childProcessed);
+SchemaEditor.prototype.generateTree = function(area, node, parentNode, isSource, processed) {
+	var icon = null;
+	if (node.state==="ERROR") {
+		icon = this.options.icons.error;
+	} else if (node.state==="WARNING") {
+		icon = this.options.icons.warning;
+	} else if (node.state==="REUSING") {
+		icon = this.options.icons.reusing;
+	} else if (node.state==="REUSED") {
+		icon = this.options.icons.reused;
+	}
+	if (this.availableNatures!==undefined && this.availableNatures!==null) {
+		if (node.info===undefined || node.info===null || node.info["mappedNatureClasses"]===undefined || node.info["mappedNatureClasses"].length<this.availableNatures.length) {
+			icon = this.options.icons.warning;
+		}
+	}
+	var childProcessed = (processed || node.pRoot) && !node.disabled;
+	var e = this.area.addElement(node.type, parentNode, node.id, this.formatLabel(node.label), icon, childProcessed, node.disabled);
+	e.reusing = node.state==="REUSING";
+	e.reused = node.state==="REUSED";
+	
+	if (node.childElements!=null && node.childElements instanceof Array) {
+		for (var i=0; i<node.childElements.length; i++) {
+			this.generateTree2(area, node.childElements[i], e, isSource, childProcessed);
 		}
 	}
 }

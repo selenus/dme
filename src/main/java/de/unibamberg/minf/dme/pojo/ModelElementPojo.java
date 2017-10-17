@@ -1,6 +1,8 @@
 package de.unibamberg.minf.dme.pojo;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -14,7 +16,7 @@ public class ModelElementPojo implements Identifiable {
 	private String id;
 	private String label;
 	private String type;
-	private String[] info;
+	private Map<String, Object[]> info;
 	private boolean processingRoot;
 	private boolean disabled;
 	private ModelElementState state;
@@ -37,12 +39,20 @@ public class ModelElementPojo implements Identifiable {
 	public boolean isDisabled() { return disabled; }
 	public void setDisabled(boolean disabled) { this.disabled = disabled; }
 	
-	public String[] getInfo() { return info; }
-	public void setInfo(String[] info) { this.info = info; }
+	public Map<String, Object[]> getInfo() { return info; }
+	public void setInfo(Map<String, Object[]> info) { this.info = info; }
 	
 	public ModelElementState getState() { return state; }
 	public void setState(ModelElementState state) { this.state = state; }
 	
 	public List<ModelElementPojo> getChildElements() { return childElements; }
 	public void setChildElements(List<ModelElementPojo> childElements) { this.childElements = childElements; }
+	
+	
+	public void addInfo(String key, Object[] args) {
+		if (this.getInfo()==null) {
+			this.setInfo(new HashMap<String, Object[]>());
+		}
+		this.getInfo().put(key, args);
+	}
 }

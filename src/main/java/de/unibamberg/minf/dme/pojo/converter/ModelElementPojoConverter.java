@@ -22,16 +22,18 @@ import de.unibamberg.minf.dme.pojo.ModelElementPojo.ModelElementState;
 
 public class ModelElementPojoConverter {
 
+	
+	
 	public static List<ModelElementPojo> convertModelElements(List<Element> modelElements, boolean staticElementsOnly) throws GenericScheregException {
-		return convertModelElements(modelElements, staticElementsOnly, new HashMap<Element, ModelElementPojo>());
+		return convertModelElements(modelElements, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), null);
 	}
 	
-	public static List<ModelElementPojo> convertModelElements(List<Element> modelElements, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted) throws GenericScheregException {
+	public static List<ModelElementPojo> convertModelElements(List<Element> modelElements, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted, Map<String, List<String>> nonterminalNatureClassesMap) throws GenericScheregException {
 		List<ModelElementPojo> results = new ArrayList<ModelElementPojo>();
 		ModelElementPojo mep;
 		if (modelElements!=null) {
 			for (Element e : modelElements) {
-				mep = convertModelElement(e, staticElementsOnly, converted);
+				mep = convertModelElement(e, staticElementsOnly, converted, nonterminalNatureClassesMap);
 				if (mep!=null) {
 					results.add(mep);
 				}
@@ -41,14 +43,18 @@ public class ModelElementPojoConverter {
 	}
 	
 	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly) throws GenericScheregException {
-		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>());
+		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), null);
 	}
 	
-	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted) throws GenericScheregException {
+	public static ModelElementPojo convertModelElement(Element modelElement, Map<String, List<String>> nonterminalNatureClassesMap, boolean staticElementsOnly) throws GenericScheregException {
+		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), nonterminalNatureClassesMap);
+	}	
+	
+	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted, Map<String, List<String>> nonterminalNatureClassesMap) throws GenericScheregException {
 		if (modelElement==null) {
 			return null;
 		} else if (Nonterminal.class.isAssignableFrom(modelElement.getClass())) {
-			return convertNonterminal((Nonterminal)modelElement, staticElementsOnly, converted);
+			return convertNonterminal((Nonterminal)modelElement, staticElementsOnly, converted, nonterminalNatureClassesMap);
 		} else if (Label.class.isAssignableFrom(modelElement.getClass())) {
 			return convertLabel((Label)modelElement, staticElementsOnly);
 		} else if (Grammar.class.isAssignableFrom(modelElement.getClass())) {
@@ -104,7 +110,7 @@ public class ModelElementPojoConverter {
 		if (t!=null) {
 			p.setState(ModelElementState.OK);
 			p.setId(t.getId());
-			p.setInfo(new String[] { nature.getClass().getSimpleName(), nature.getClass().getName() });
+			p.addInfo("natureClass", new Object[] { nature.getClass().getSimpleName(), nature.getClass().getName() });
 			if (namespacePrefixMap!=null) {
 				XmlTerminal xmlT = (XmlTerminal)t;
 				String prefix = null;
@@ -141,7 +147,7 @@ public class ModelElementPojoConverter {
 		return p;
 	}
 	
-	private static ModelElementPojo convertNonterminal(Nonterminal n, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted) {
+	private static ModelElementPojo convertNonterminal(Nonterminal n, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted, Map<String, List<String>> nonterminalNatureClassesMap) {
 		if (converted.containsKey(n)) {
 			converted.get(n).setState(ModelElementState.REUSED);
 			
@@ -157,13 +163,16 @@ public class ModelElementPojoConverter {
 		p.setState(ModelElementState.OK);
 		p.setType("Nonterminal");
 		p.setProcessingRoot(n.isProcessingRoot());
+		if (nonterminalNatureClassesMap!=null && nonterminalNatureClassesMap.containsKey(n.getId())) {
+			p.addInfo("mappedNatureClasses", nonterminalNatureClassesMap.get(n.getId()).toArray(new Object[0]));
+		}
 		
 		converted.put(n, p);
 		
 		if (n.getChildNonterminals()!=null && n.getChildNonterminals().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
 			for (Nonterminal childN : n.getChildNonterminals()) {
-				p.getChildElements().add(convertNonterminal(childN, staticElementsOnly, converted));
+				p.getChildElements().add(convertNonterminal(childN, staticElementsOnly, converted, nonterminalNatureClassesMap));
 			}
 		}
 		
@@ -247,5 +256,5 @@ public class ModelElementPojoConverter {
 		}
 		
 		return p;
-	}	
+	}
 }

@@ -7,8 +7,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -328,7 +331,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getHierarchy")
-	public @ResponseBody ModelElementPojo getHierarchy(@PathVariable String entityId, @RequestParam(defaultValue="false") boolean staticElementsOnly, 
+	public @ResponseBody ModelElementPojo getHierarchy(@PathVariable String entityId, @RequestParam(defaultValue="false") boolean staticElementsOnly, @RequestParam(defaultValue="false") boolean collectNatureClasses,
 			@RequestParam(defaultValue="logical_model", name="model") String modelClass, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws IOException, GenericScheregException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		Element result = elementService.findRootBySchemaId(entityId, true);
@@ -336,7 +339,22 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			response.getWriter().print("null");
 			response.setContentType("application/json");
 		}
-		if (!modelClass.equals("logical_model")) {
+		
+		Map<String, List<String>> nonterminalNatureClassesMap = new HashMap<String, List<String>>();
+		Datamodel m = schemaService.findByIdAndAuth(entityId, auth).getElement();
+		if (modelClass.equals("logical_model")) {
+			for (DatamodelNature n : m.getNatures()) {
+				for (String nId : n.getNonterminalTerminalIdMap().keySet()) {
+					List<String> natureClasses = nonterminalNatureClassesMap.get(nId);
+					if (natureClasses==null) {
+						natureClasses = new ArrayList<String>();
+					}
+					natureClasses.add(n.getClass().getName());
+					nonterminalNatureClassesMap.put(nId, natureClasses);
+				}
+			}
+			return ModelElementPojoConverter.convertModelElement(result, nonterminalNatureClassesMap, staticElementsOnly);
+		} else {
 			try {
 				@SuppressWarnings("unchecked")
 				Class<? extends DatamodelNature> modelClazz = (Class<? extends DatamodelNature>)Class.forName(modelClass);
@@ -347,8 +365,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 				logger.error(String.format("Failed to retrieve model of class %s for datamodel %s", modelClass, entityId), e);
 			}
 		}
-		return ModelElementPojoConverter.convertModelElement(result, staticElementsOnly);
-		
+		return null;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/getTerminals")

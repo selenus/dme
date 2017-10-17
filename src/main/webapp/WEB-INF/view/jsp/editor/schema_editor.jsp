@@ -33,6 +33,23 @@
 			<input type="hidden" id="schema-write" value="${schema.write}" />
 			<input type="hidden" id="schema-own" value="${schema.own}" />
 			<input type="hidden" id="current-model-nature" value="logical_model" />
+			
+
+			<c:set var="existingModelNatures" value="[" />
+			<c:if test="${fn:length(schema.pojo.natures)>0}">
+				<c:forEach items="${schema.pojo.natures}" var="nature" varStatus="status">
+					
+					<c:if test="${status.index>0}">
+						<c:set var="existingModelNatures" value="${existingModelNatures}," />
+					</c:if>
+							
+					<c:set var="existingModelNatures" value="${existingModelNatures}'${nature.class.name}'" />
+							
+				</c:forEach>
+			</c:if>
+			<input type="hidden" id="existing-model-natures" value="${existingModelNatures}]" />
+			
+
 			<div id="main-content">
 				<div class="row">
 					<div class="col-xs-12">
