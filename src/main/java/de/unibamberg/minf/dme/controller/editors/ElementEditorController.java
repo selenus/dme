@@ -1,6 +1,11 @@
 package de.unibamberg.minf.dme.controller.editors;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,9 +32,12 @@ import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
+import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
+import de.unibamberg.minf.dme.pojo.ModelElementPojo;
+import de.unibamberg.minf.dme.pojo.converter.ModelElementPojoConverter;
 import de.unibamberg.minf.dme.serialization.Reference;
 import de.unibamberg.minf.dme.service.ElementServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
@@ -218,8 +226,31 @@ public class ElementEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/get")
-	public @ResponseBody Element getElement(@PathVariable String schemaId, @PathVariable String elementId) {
-		return elementService.findById(elementId);
+	public @ResponseBody ModelElementPojo getElement(@PathVariable String schemaId, @PathVariable String elementId, HttpServletRequest request, HttpServletResponse response) throws IOException, GenericScheregException {
+		AuthPojo auth = authInfoHelper.getAuth(request);
+		Element result = elementService.findRootBySchemaId(schemaId, true);
+		if (result==null) {
+			response.getWriter().print("null");
+			response.setContentType("application/json");
+		}
+		
+		Map<String, List<String>> nonterminalNatureClassesMap = new HashMap<String, List<String>>();
+		Datamodel m = schemaService.findByIdAndAuth(schemaId, auth).getElement();
+		
+		for (DatamodelNature n : m.getNatures()) {
+			if (n.getNonterminalTerminalIdMap()!=null) {
+				for (String nId : n.getNonterminalTerminalIdMap().keySet()) {
+					List<String> natureClasses = nonterminalNatureClassesMap.get(nId);
+					if (natureClasses==null) {
+						natureClasses = new ArrayList<String>();
+					}
+					natureClasses.add(n.getClass().getName());
+					nonterminalNatureClassesMap.put(nId, natureClasses);
+				}
+			}
+		}
+		
+		return ModelElementPojoConverter.convertModelElement(result, nonterminalNatureClassesMap, false, true);
 	}
 	
 	@PreAuthorize("isAuthenticated()")

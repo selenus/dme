@@ -91,14 +91,16 @@ public class NaturesEditorController extends BaseScheregController {
 	
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method = RequestMethod.POST, value = "/async/add")
-	public @ResponseBody ModelActionPojo addNewNature(@PathVariable String entityId, @RequestParam(name="n") String natureClass, @RequestParam String autocreate, @RequestParam(name="element-naming") String naming, HttpServletRequest request, HttpServletResponse response) throws ClassNotFoundException, MetamodelConsistencyException {
+	public @ResponseBody ModelActionPojo addNewNature(@PathVariable String entityId, @RequestParam(name="n") String natureClass, @RequestParam(defaultValue="false") boolean autocreate, @RequestParam(name="element-naming") String naming, HttpServletRequest request, HttpServletResponse response) throws ClassNotFoundException, MetamodelConsistencyException {
 		AuthPojo auth = authInfoHelper.getAuth(request);
 		if (!schemaService.getUserCanWriteEntity(entityId, auth.getUserId())) {
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
 		schemaService.addNature(entityId, natureClass, auth);
-		schemaService.createTerminals(entityId, natureClass, naming, auth);
+		if (autocreate) {
+			schemaService.createTerminals(entityId, natureClass, naming, auth);
+		}
 		
 		ModelActionPojo result = new ModelActionPojo(true); 
 		result.setPojo(natureClass);

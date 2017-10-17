@@ -412,7 +412,7 @@ SchemaEditor.prototype.generateTree = function(area, node, parentNode, isSource,
 	} else if (node.state==="REUSED") {
 		icon = this.options.icons.reused;
 	}
-	if (this.availableNatures!==undefined && this.availableNatures!==null) {
+	if (node.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null) {
 		if (node.info===undefined || node.info===null || node.info["mappedNatureClasses"]===undefined || node.info["mappedNatureClasses"].length<this.availableNatures.length) {
 			icon = this.options.icons.warning;
 		}
@@ -424,7 +424,7 @@ SchemaEditor.prototype.generateTree = function(area, node, parentNode, isSource,
 	
 	if (node.childElements!=null && node.childElements instanceof Array) {
 		for (var i=0; i<node.childElements.length; i++) {
-			this.generateTree2(area, node.childElements[i], e, isSource, childProcessed);
+			this.generateTree(area, node.childElements[i], e, isSource, childProcessed);
 		}
 	}
 }

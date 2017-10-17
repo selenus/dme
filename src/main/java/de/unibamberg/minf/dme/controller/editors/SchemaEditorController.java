@@ -343,14 +343,18 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 		Map<String, List<String>> nonterminalNatureClassesMap = new HashMap<String, List<String>>();
 		Datamodel m = schemaService.findByIdAndAuth(entityId, auth).getElement();
 		if (modelClass.equals("logical_model")) {
-			for (DatamodelNature n : m.getNatures()) {
-				for (String nId : n.getNonterminalTerminalIdMap().keySet()) {
-					List<String> natureClasses = nonterminalNatureClassesMap.get(nId);
-					if (natureClasses==null) {
-						natureClasses = new ArrayList<String>();
+			if (m.getNatures()!=null) {
+				for (DatamodelNature n : m.getNatures()) {
+					if (n.getNonterminalTerminalIdMap()!=null) {
+						for (String nId : n.getNonterminalTerminalIdMap().keySet()) {
+							List<String> natureClasses = nonterminalNatureClassesMap.get(nId);
+							if (natureClasses==null) {
+								natureClasses = new ArrayList<String>();
+							}
+							natureClasses.add(n.getClass().getName());
+							nonterminalNatureClassesMap.put(nId, natureClasses);
+						}
 					}
-					natureClasses.add(n.getClass().getName());
-					nonterminalNatureClassesMap.put(nId, natureClasses);
 				}
 			}
 			return ModelElementPojoConverter.convertModelElement(result, nonterminalNatureClassesMap, staticElementsOnly);

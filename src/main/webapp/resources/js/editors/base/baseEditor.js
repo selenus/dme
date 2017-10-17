@@ -171,7 +171,7 @@ BaseEditor.prototype.processGrammarDetails = function(data, callback, container,
 	));
 	
 	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.label"), data.grammarName));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.label"), data.name));
 	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.grammar.base_rule"), data.baseMethod));
 	
 	if (data.passthrough!=true && data.grammarContainer!=null) {
@@ -211,8 +211,8 @@ BaseEditor.prototype.processFunctionDetails = function(data, callback, container
 BaseEditor.prototype.processElementDetails = function(data, callback, container, pathPrefix) { 
 	var details = $("<div class=\"clearfix\">");
 	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
-	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.name));
-	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.transient"), data.transient));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.label));
+	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.transient"), data.disabled));
 		
 	container.append(details); 
 	
@@ -225,8 +225,12 @@ BaseEditor.prototype.processTerminalElement = function(data, callback, container
 	var details = $("<div class=\"clearfix tab-details-block\">");
 	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.common.model.id"), data.id));
 	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.name"), data.name));
-	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.namespace"), data.namespace));
-	details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.attribute"), data.attribute));
+	if (data.namespace!==undefined) {
+		details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.namespace"), data.namespace));
+	}
+	if (data.attribute!==undefined) {
+		details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.model.element.attribute"), data.attribute));
+	}
 		
 	container.append(details);
 	

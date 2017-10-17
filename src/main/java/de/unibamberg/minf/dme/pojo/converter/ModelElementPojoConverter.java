@@ -21,8 +21,6 @@ import de.unibamberg.minf.dme.pojo.ModelElementPojo;
 import de.unibamberg.minf.dme.pojo.ModelElementPojo.ModelElementState;
 
 public class ModelElementPojoConverter {
-
-	
 	
 	public static List<ModelElementPojo> convertModelElements(List<Element> modelElements, boolean staticElementsOnly) throws GenericScheregException {
 		return convertModelElements(modelElements, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), null);
@@ -33,7 +31,7 @@ public class ModelElementPojoConverter {
 		ModelElementPojo mep;
 		if (modelElements!=null) {
 			for (Element e : modelElements) {
-				mep = convertModelElement(e, staticElementsOnly, converted, nonterminalNatureClassesMap);
+				mep = convertModelElement(e, staticElementsOnly, converted, nonterminalNatureClassesMap, false);
 				if (mep!=null) {
 					results.add(mep);
 				}
@@ -42,31 +40,35 @@ public class ModelElementPojoConverter {
 		return results;
 	}
 	
+	public static ModelElementPojo convertModelElement(Element modelElement, Map<String, List<String>> nonterminalNatureClassesMap, boolean staticElementsOnly, boolean skipHierarchy) throws GenericScheregException {
+		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), nonterminalNatureClassesMap, skipHierarchy);
+	}
+	
 	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly) throws GenericScheregException {
-		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), null);
+		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), null, false);
 	}
 	
 	public static ModelElementPojo convertModelElement(Element modelElement, Map<String, List<String>> nonterminalNatureClassesMap, boolean staticElementsOnly) throws GenericScheregException {
-		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), nonterminalNatureClassesMap);
+		return convertModelElement(modelElement, staticElementsOnly, new HashMap<Element, ModelElementPojo>(), nonterminalNatureClassesMap, false);
 	}	
 	
-	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted, Map<String, List<String>> nonterminalNatureClassesMap) throws GenericScheregException {
+	public static ModelElementPojo convertModelElement(ModelElement modelElement, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted, Map<String, List<String>> nonterminalNatureClassesMap, boolean skipHierarchy) throws GenericScheregException {
 		if (modelElement==null) {
 			return null;
 		} else if (Nonterminal.class.isAssignableFrom(modelElement.getClass())) {
-			return convertNonterminal((Nonterminal)modelElement, staticElementsOnly, converted, nonterminalNatureClassesMap);
+			return convertNonterminal((Nonterminal)modelElement, staticElementsOnly, converted, nonterminalNatureClassesMap, skipHierarchy);
 		} else if (Label.class.isAssignableFrom(modelElement.getClass())) {
-			return convertLabel((Label)modelElement, staticElementsOnly);
+			return convertLabel((Label)modelElement, staticElementsOnly, skipHierarchy);
 		} else if (Grammar.class.isAssignableFrom(modelElement.getClass())) {
 			if (staticElementsOnly) {
 				return null;
 			}
-			return convertGrammar((Grammar)modelElement);
+			return convertGrammar((Grammar)modelElement, skipHierarchy);
 		} else if (Function.class.isAssignableFrom(modelElement.getClass())) {
 			if (staticElementsOnly) {
 				return null;
 			}
-			return convertFunction((Function)modelElement);
+			return convertFunction((Function)modelElement, skipHierarchy);
 		}
 		throw new GenericScheregException("Failed to convert model element; conversion not supported for " + modelElement.getClass().getName());
 	}
@@ -79,12 +81,12 @@ public class ModelElementPojoConverter {
 	public static ModelElementPojo convertModelElementTerminal(ModelElement modelElement, DatamodelNature nature, Map<Nonterminal, ModelElementPojo> converted) throws GenericScheregException {
 		if (modelElement!=null && Nonterminal.class.isAssignableFrom(modelElement.getClass())) {
 			Nonterminal n = (Nonterminal)modelElement;
-			return convertTerminal(n, nature, converted);
+			return convertTerminal(n, nature, converted, false);
 		}
 		return null;
 	}
 	
-	private static ModelElementPojo convertTerminal(Nonterminal n, DatamodelNature nature, Map<Nonterminal, ModelElementPojo> converted) {
+	private static ModelElementPojo convertTerminal(Nonterminal n, DatamodelNature nature, Map<Nonterminal, ModelElementPojo> converted, boolean skipHierarchy) {
 		if (converted.containsKey(n)) {
 			ModelElementPojo pExist = converted.get(n);
 			pExist.setState(ModelElementState.REUSED);
@@ -137,17 +139,17 @@ public class ModelElementPojoConverter {
 		p.setDisabled(n.isDisabled());
 		converted.put(n, p);
 		
-		if (n.getChildNonterminals()!=null && n.getChildNonterminals().size()>0) {
+		if (!skipHierarchy && n.getChildNonterminals()!=null && n.getChildNonterminals().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
 			for (Nonterminal childN : n.getChildNonterminals()) {
-				p.getChildElements().add(convertTerminal(childN, nature, converted));
+				p.getChildElements().add(convertTerminal(childN, nature, converted, skipHierarchy));
 			}
 		}
 		
 		return p;
 	}
 	
-	private static ModelElementPojo convertNonterminal(Nonterminal n, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted, Map<String, List<String>> nonterminalNatureClassesMap) {
+	private static ModelElementPojo convertNonterminal(Nonterminal n, boolean staticElementsOnly, Map<Element, ModelElementPojo> converted, Map<String, List<String>> nonterminalNatureClassesMap, boolean skipHierarchy) {
 		if (converted.containsKey(n)) {
 			converted.get(n).setState(ModelElementState.REUSED);
 			
@@ -169,17 +171,17 @@ public class ModelElementPojoConverter {
 		
 		converted.put(n, p);
 		
-		if (n.getChildNonterminals()!=null && n.getChildNonterminals().size()>0) {
+		if (!skipHierarchy && n.getChildNonterminals()!=null && n.getChildNonterminals().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
 			for (Nonterminal childN : n.getChildNonterminals()) {
-				p.getChildElements().add(convertNonterminal(childN, staticElementsOnly, converted, nonterminalNatureClassesMap));
+				p.getChildElements().add(convertNonterminal(childN, staticElementsOnly, converted, nonterminalNatureClassesMap, skipHierarchy));
 			}
 		}
 		
-		return convertElement(p, n, staticElementsOnly); 
+		return convertElement(p, n, staticElementsOnly, skipHierarchy); 
 	}
 	
-	private static ModelElementPojo convertLabel(Label l, boolean staticElementsOnly) {
+	private static ModelElementPojo convertLabel(Label l, boolean staticElementsOnly, boolean skipHierarchy) {
 		ModelElementPojo p = new ModelElementPojo();
 		p.setState(ModelElementState.OK);
 		p.setType("Label");
@@ -189,17 +191,21 @@ public class ModelElementPojoConverter {
 				p.setChildElements(new ArrayList<ModelElementPojo>());
 			}
 			for (Label childL : l.getSubLabels()) {
-				p.getChildElements().add(convertLabel(childL, staticElementsOnly));
+				p.getChildElements().add(convertLabel(childL, staticElementsOnly, skipHierarchy));
 			}
 		}
 		
-		return convertElement(p, l, staticElementsOnly); 
+		return convertElement(p, l, staticElementsOnly, skipHierarchy); 
 	}
 	
-	private static ModelElementPojo convertElement(ModelElementPojo p, Element e, boolean staticElementsOnly) {
+	private static ModelElementPojo convertElement(ModelElementPojo p, Element e, boolean staticElementsOnly, boolean skipHierarchy) {
 		p.setId(e.getId());
 		p.setLabel(e.getName());
 		p.setDisabled(e.isDisabled());
+		
+		if (skipHierarchy) {
+			return p;
+		}
 		
 		List<Label> producedLabels = e.getProducedLabels();
 		if (staticElementsOnly && producedLabels!=null && producedLabels.size()>0) {
@@ -207,7 +213,7 @@ public class ModelElementPojoConverter {
 				p.setChildElements(new ArrayList<ModelElementPojo>());
 			}
 			for (Label childL : producedLabels) {
-				p.getChildElements().add(convertLabel(childL, staticElementsOnly));
+				p.getChildElements().add(convertLabel(childL, staticElementsOnly, skipHierarchy));
 			}
 		}
 		
@@ -216,13 +222,13 @@ public class ModelElementPojoConverter {
 				p.setChildElements(new ArrayList<ModelElementPojo>());
 			}
 			for (Grammar g : e.getGrammars()) {
-				p.getChildElements().add(convertGrammar(g));
+				p.getChildElements().add(convertGrammar(g, skipHierarchy));
 			}
 		}
 		return p;
 	}
 	 	
-	private static ModelElementPojo convertGrammar(Grammar g) {
+	private static ModelElementPojo convertGrammar(Grammar g, boolean skipHierarchy) {
 		ModelElementPojo p = new ModelElementPojo();
 		p.setId(g.getId());
 		p.setLabel(g.getName());
@@ -230,17 +236,17 @@ public class ModelElementPojoConverter {
 		p.setType("Grammar");
 		p.setDisabled(g.isDisabled());
 		
-		if (g.getFunctions()!=null && g.getFunctions().size()>0) {
+		if (!skipHierarchy && g.getFunctions()!=null && g.getFunctions().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
 			for (Function f : g.getFunctions()) {
-				p.getChildElements().add(convertFunction(f));
+				p.getChildElements().add(convertFunction(f, skipHierarchy));
 			}
 		}
 		
 		return p;
 	}
 	
-	private static ModelElementPojo convertFunction(Function f) {
+	private static ModelElementPojo convertFunction(Function f, boolean skipHierarchy) {
 		ModelElementPojo p = new ModelElementPojo();
 		p.setId(f.getId());
 		p.setLabel(f.getName());
@@ -248,13 +254,15 @@ public class ModelElementPojoConverter {
 		p.setType("Function");
 		p.setDisabled(f.isDisabled());
 		
-		if (f.getOutputElements()!=null && f.getOutputElements().size()>0) {
+		if (!skipHierarchy && f.getOutputElements()!=null && f.getOutputElements().size()>0) {
 			p.setChildElements(new ArrayList<ModelElementPojo>());
 			for (Label l : f.getOutputElements()) {
-				p.getChildElements().add(convertLabel(l, false));
+				p.getChildElements().add(convertLabel(l, false, skipHierarchy));
 			}
 		}
 		
 		return p;
 	}
+
+	
 }
