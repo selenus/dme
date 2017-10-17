@@ -220,14 +220,16 @@ FunctionEditor.prototype.appendTransformationResults = function(elements, contai
 	for (var i=0; i<elements.length; i++) {
 		var elem = $("<li>");
 		elem.append("<span class=\"transformation-result-label\">" + elements[i].label + "</span>");
+		if (elements[i].value!=undefined && elements[i].value!=null) {
+			elem.append(": ");
+			elem.append("<span class=\"transformation-result-value\">" + elements[i].value + "</span>");
+		}
+		
 		if (elements[i].children!=null && Array.isArray(elements[i].children) && elements[i].children.length > 0) {
 			var subelem = $("<ul>");
 			this.appendTransformationResults(elements[i].children, subelem);
 			elem.append(subelem);
-		} else {
-			elem.append(": ");
-			elem.append("<span class=\"transformation-result-value\">" + elements[i].value + "</span>");
-		}
+		} 
 		container.append(elem);
 	}
 };
