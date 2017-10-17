@@ -472,7 +472,7 @@ SchemaEditor.prototype.processElementDetails = function(data, callback, containe
 			}
 		}
 		if (missing.length>0) {
-			details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.form.nature.terminals.missing"), missing.substring(0, missing.length-2)));
+			details.append(this.renderContextTabDetail(__translator.translate("~de.unibamberg.minf.dme.form.nature.terminals.missing"), missing.substring(0, missing.length-2), undefined, "color-warning"));
 		}
 	}
 	

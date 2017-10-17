@@ -239,8 +239,8 @@ BaseEditor.prototype.processTerminalElement = function(data, callback, container
 	}
 };
 
-BaseEditor.prototype.renderContextTabDetail = function(label, data, pre) {
-	var detail = $("<div class=\"row\">");
+BaseEditor.prototype.renderContextTabDetail = function(label, data, pre, classes) {
+	var detail = $("<div class=\"row " + (classes===undefined ? "" : classes) + "\">");
 	
 	if (pre) {
 		if (label!=null && label!="") {
