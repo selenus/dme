@@ -421,7 +421,7 @@ SchemaEditor.prototype.generateTree = function(area, node, parentNode, isSource,
 	} else if (node.state==="REUSED") {
 		icon = this.options.icons.reused;
 	}
-	if (node.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null) {
+	if (node.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null && this.availableNatures.length > 0) {
 		if (node.info===undefined || node.info===null || node.info["mappedNatureClasses"]===undefined || node.info["mappedNatureClasses"].length<this.availableNatures.length) {
 			icon = this.options.icons.warning;
 			terminalMissing = true;
@@ -460,7 +460,7 @@ SchemaEditor.prototype.processElementDetails = function(data, callback, containe
 		
 	container.append(details); 
 	
-	if (data.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null) {
+	if (data.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null && this.availableNatures.length > 0) {
 		var missing = "";
 		for (var i=0; i<this.availableNatures.length; i++) {
 			if (data.info===undefined || data.info===null || 

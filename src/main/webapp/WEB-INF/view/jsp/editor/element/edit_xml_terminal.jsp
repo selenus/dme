@@ -16,9 +16,20 @@
 			<div class="form-group">
 				<label class="col-sm-3 control-label" for="xmlTerminal_namespace"><s:message code="~de.unibamberg.minf.dme.model.element.namespace" />:</label>
 				<div class="col-sm-8">
-					<sf:select path="namespace" class="form-control" id="xmlTerminal_namespace">
-	   					<sf:options items="${availableNamespaces}" />
-					</sf:select>
+				
+					<select id="xmlTerminal_namespace" name="namespace" class="form-control">
+	   					<option value=""></option>
+	   					
+	   					<c:forEach items="${availableNamespaces}" var="availableNamespace">
+	   					
+	   						<option <c:if test="${availableNamespace==terminal.namespace}"> selected="selected"</c:if> value="${availableNamespace}">${availableNamespace}</option>
+	   					
+	   					</c:forEach>
+	   					
+	   					
+	   					
+					</select>
+				
 					<sf:errors path="namespace" cssClass="error" />
 				</div>
 			</div>

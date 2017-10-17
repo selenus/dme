@@ -318,23 +318,25 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		// To prevent duplicate urls
 		Map<String, String> urlPrefixMap = new HashMap<String, String>();
 		List<String> removeNamespaces = new ArrayList<String>();
-		for (XmlNamespace existNs : existingXmlNature.getNamespaces()) {
-			boolean remove = true;
-			if (xmlNature.getNamespaces()!=null) {
-				for (XmlNamespace updateNs : xmlNature.getNamespaces()) {
-					if (updateNs.getUrl().trim().isEmpty()) {
-						continue;
-					}
-					if (existNs.getUrl().equals(updateNs.getUrl().trim())) {
-						urlPrefixMap.put(updateNs.getUrl().trim(), updateNs.getPrefix().trim());
-						remove = false;
+		if (existingXmlNature.getNamespaces()!=null) {
+			for (XmlNamespace existNs : existingXmlNature.getNamespaces()) {
+				boolean remove = true;
+				if (xmlNature.getNamespaces()!=null) {
+					for (XmlNamespace updateNs : xmlNature.getNamespaces()) {
+						if (updateNs.getUrl().trim().isEmpty()) {
+							continue;
+						}
+						if (existNs.getUrl().equals(updateNs.getUrl().trim())) {
+							urlPrefixMap.put(updateNs.getUrl().trim(), updateNs.getPrefix().trim());
+							remove = false;
+						}
 					}
 				}
+				if (remove) {
+					removeNamespaces.add(existNs.getUrl());
+				}
 			}
-			if (remove) {
-				removeNamespaces.add(existNs.getUrl());
 			}
-		}
 		for (XmlNamespace updateNs : xmlNature.getNamespaces()) {
 			if (!urlPrefixMap.containsKey(updateNs.getUrl().trim())) {
 				urlPrefixMap.put(updateNs.getUrl().trim(), updateNs.getPrefix().trim());
@@ -349,7 +351,7 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 			}
 		}
 		
-		existingXmlNature.getNamespaces().clear();
+		existingXmlNature.setNamespaces(new ArrayList<XmlNamespace>());
 		for (String nsUrl : urlPrefixMap.keySet()) {
 			if (!nsUrl.isEmpty()) {
 				existingXmlNature.getNamespaces().add(new XmlNamespace(urlPrefixMap.get(nsUrl), nsUrl));
