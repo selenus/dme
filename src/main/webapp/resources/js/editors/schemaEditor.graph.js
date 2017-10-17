@@ -344,6 +344,14 @@ SchemaEditor.prototype.checkSchemaState = function() {
 	return result;
 };
 
+SchemaEditor.prototype.reloadPage = function() {
+	var _this = this;
+	if (this.checkSchemaState()===true) {
+		window.location.reload();
+	} else {
+		setTimeout(function() { _this.reloadPage() }, 2000);
+	}
+};
 
 SchemaEditor.prototype.reloadElementHierarchy = function(callback) {
 	if (editor.area.root==null) {

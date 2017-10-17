@@ -13,9 +13,7 @@ SchemaEditor.prototype.importSchema = function(elementId) {
 		                ],
 		additionalModalClasses: "wide-modal",
 		completeCallback: function() { 
-			_this.reloadElementHierarchy(function() {
-				_this.area.expandFromElement(elementId, true)
-			});
+			_this.reloadPage();
 		}
 	});
 	
