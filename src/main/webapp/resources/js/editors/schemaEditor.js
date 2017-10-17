@@ -313,7 +313,7 @@ SchemaEditor.prototype.createRoot = function() {
 		                {placeholder: "~*servererror.body", key: "~de.unibamberg.minf.common.view.forms.servererror.body"}
 		                ],               
 		completeCallback: function() {
-	    	_this.reloadElementHierarchy();
+	    	_this.reloadPage();
 		}
 	});
 		

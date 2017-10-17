@@ -239,6 +239,13 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 				if (elementId!=null) {
 					importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, schemaRoot, schemaRootType, keepImportedIds, authInfoHelper.getAuth(request));
 				} else {
+					Datamodel m = schemaService.findByIdAndAuth(entityId, auth).getElement();
+					m.setNatures(null);
+					
+					elementService.clearElementTree(entityId, auth);
+					
+					schemaService.saveSchema(m, auth);
+					
 					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, keepImportedIds, authInfoHelper.getAuth(request));
 				}
 				result.setSuccess(true);
