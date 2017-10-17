@@ -305,7 +305,7 @@ MappingEditor.prototype.editConnection = function(connectionId) {
 	var _this = this;
 	
 	modalFormHandler = new ModalFormHandler({
-		formUrl: "mappedConcept/" + connectionId + "/form/edit",
+		formUrl: "mappedconcept/" + connectionId + "/form/edit",
 		identifier: form_identifier,
 		additionalModalClasses: "max-modal",
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
@@ -578,7 +578,7 @@ MappingEditor.prototype.selectionHandler = function(e) {
 	} else if (e.element instanceof Connection || e.element instanceof Function) {
 		_this.createActionButtons(_this.conceptContextButtons, e.element.getContextMenuItems(), "editor");
 		
-		_this.getElementDetails(_this.mappingPath, "mappedConcept", e.element.getId(), _this.conceptContextDetail);
+		_this.getElementDetails(_this.mappingPath, "mappedconcept", e.element.getId(), _this.conceptContextDetail);
 		_this.loadActivitiesForElement(e.element.getId(), _this.conceptActivitiesContainer);
 		
 		_this.elementContextContainer.addClass("hide");
@@ -608,7 +608,7 @@ MappingEditor.prototype.removeConceptMapping = function(conceptMappingId) {
 	bootbox.confirm(String.format(__translator.translate("~de.unibamberg.minf.dme.dialog.confirm_delete"), conceptMappingId), function(result) {
 		if(result) {
 			$.ajax({
-			    url: _this.mappingPath + "mappedConcept/" + conceptMappingId + "/async/remove",
+			    url: _this.mappingPath + "mappedconcept/" + conceptMappingId + "/async/remove",
 			    type: "POST",
 			    dataType: "json",
 			    success: function(data) {
@@ -635,7 +635,7 @@ MappingEditor.prototype.saveConceptMappingHandler = function(e) {
 	
 	var _this = editor;
 	$.ajax({
-		url: _this.mappingPath + "mappedConcept/" + e.connection.id + '/async/save',
+		url: _this.mappingPath + "mappedconcept/" + e.connection.id + '/async/save',
         type: "POST",
         data: { sourceElementId: sourceIds, targetElementId: targetIds},
         dataType: "json",

@@ -39,7 +39,7 @@ import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 
 @Controller
-@RequestMapping(value="/mapping/editor/{mappingId}/mappedConcept/{mappedConceptId}")
+@RequestMapping(value="/mapping/editor/{mappingId}/mappedconcept/{mappedConceptId}")
 public class MappedConceptEditorController extends BaseScheregController {
 	@Autowired private MappedConceptService mappedConceptService;
 	@Autowired private ElementService elementService;

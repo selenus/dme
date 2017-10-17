@@ -119,7 +119,7 @@ BaseEditor.prototype.getElementDetails = function(pathPrefix, type, id, containe
 				case "element": return _this.processElementDetails(data, callback, container, pathPrefix);
 				case "grammar": return _this.processGrammarDetails(data, callback, container, pathPrefix);
 				case "function": return _this.processFunctionDetails(data, callback, container, pathPrefix);
-				case "mappedConcept": return _this.processMappedConceptDetails(data, callback, container, pathPrefix);
+				case "mappedconcept": return _this.processMappedConceptDetails(data, callback, container, pathPrefix);
 				case "terminal": return _this.processTerminalElement(data, callback, container, pathPrefix);
 				case "terminal/missing": return _this.processTerminalElement(data, callback, container, pathPrefix);
 				default: throw Error("Unknown element type: " + type);

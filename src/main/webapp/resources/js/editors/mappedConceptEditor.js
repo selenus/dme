@@ -1,7 +1,7 @@
 var MappedConceptEditor = function(owner, container, modal, options) {
 	this.options = {
 			conceptId: "",
-			path: "mappedConcept/{0}",
+			path: "mappedconcept/{0}",
 			layoutContainer: ".layout-helper-container",
 			editorContainer: ".mapped-concept-editor-container",
 			canvasId: "mapped-concept-editor",
