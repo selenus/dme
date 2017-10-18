@@ -17,6 +17,7 @@ SchemaEditor.prototype.initNatures = function() {
 		_this.currentNature = $(this).val();
 		_this.setNature();
 		_this.reloadElementHierarchy();
+		_this.area.resetView()
 	});
 	
 	$("#edit-model-nature").click(function() { _this.triggerEditNature(); });

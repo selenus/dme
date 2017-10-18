@@ -10,7 +10,7 @@
 	</div>
 	<div class="form-content">
 		<div class="form-group">
-			<label class="col-sm-4 control-label" for="mapping_source">~Source:</label>
+			<label class="col-sm-4 control-label" for="mapping_source"><s:message code="~de.unibamberg.minf.dme.model.schema.source" />:</label>
 			<div class="col-sm-8">
 				<input type="hidden" name="file.id" id="file.id" />
 				<input id="mapping_source" type="file" name="file" />
