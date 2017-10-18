@@ -126,6 +126,8 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 			oldToNewIdMap.put(element.getId(), newId);
 			newToOldIdMap.put(newId, element.getId());
 			element.setId(newId);
+		} else {
+			newToOldIdMap.put(element.getId(), element.getId());
 		}
 		
 		List<? extends Element> children = null;
@@ -156,6 +158,8 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 					newToOldIdMap.put(newId, g.getId());
 					oldToNewIdMap.put(g.getId(), newId);
 					g.setId(newId);
+				} else {
+					newToOldIdMap.put(g.getId(), g.getId());
 				}
 				
 				if (g.getFunctions()!=null) {
@@ -169,6 +173,8 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 							newToOldIdMap.put(newId, f.getId());
 							oldToNewIdMap.put(f.getId(), newId);
 							f.setId(newId);
+						} else {
+							newToOldIdMap.put(f.getId(), f.getId());
 						}
 						if (f.getOutputElements()!=null) {
 							for (Label fOut : f.getOutputElements()) {
