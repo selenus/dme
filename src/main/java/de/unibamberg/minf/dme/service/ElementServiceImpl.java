@@ -569,6 +569,13 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		if (me==null) {
 			return null;
 		}
+		if (Grammar.class.isAssignableFrom(me.getClass())) {
+			Grammar g = (Grammar)me;
+			if (!g.isPassthrough() && g.getGrammarContainer()==null) {
+				g.setGrammarContainer(grammarDao.findById(me.getId()).getGrammarContainer());
+			}
+		}
+		
 		ModelElement clone = me.cloneElement();
 		if (Element.class.isAssignableFrom(me.getClass())) {
 			((Element)clone).setGrammars(this.cloneElementList(((Element)me).getGrammars(), referenceUsageMap, originalIdClonedNonterminalMap));
