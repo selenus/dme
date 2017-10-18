@@ -421,10 +421,12 @@ SchemaEditor.prototype.generateTree = function(area, node, parentNode, isSource,
 	} else if (node.state==="REUSED") {
 		icon = this.options.icons.reused;
 	}
-	if (node.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null && this.availableNatures.length > 0) {
-		if (node.info===undefined || node.info===null || node.info["mappedNatureClasses"]===undefined || node.info["mappedNatureClasses"].length<this.availableNatures.length) {
-			icon = this.options.icons.warning;
-			terminalMissing = true;
+	if (node.state!=="REUSING") {
+		if (node.type==="Nonterminal" && this.availableNatures!==undefined && this.availableNatures!==null && this.availableNatures.length > 0) {
+			if (node.info===undefined || node.info===null || node.info["mappedNatureClasses"]===undefined || node.info["mappedNatureClasses"].length<this.availableNatures.length) {
+				icon = this.options.icons.warning;
+				terminalMissing = true;
+			}
 		}
 	}
 	var childProcessed = (processed || node.pRoot) && !node.disabled;
