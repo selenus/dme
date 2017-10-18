@@ -89,7 +89,9 @@ public class JsonLegacySchemaImporter extends BaseJsonDatamodelImporter {
 		// Processing root implemented after legacy schemas
 		root.setProcessingRoot(true);
 		
-		m.getNature(XmlDatamodelNature.class).setNonterminalTerminalIdMap(nonterminalTerminalIdMap);
+		if (m.getNature(XmlDatamodelNature.class)!=null) {
+			m.getNature(XmlDatamodelNature.class).setNonterminalTerminalIdMap(nonterminalTerminalIdMap);
+		}
 			
 		Map<String, GrammarContainer> grammars = new HashMap<String, GrammarContainer>();
 		if (s.getGrammars()!=null) {

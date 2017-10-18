@@ -140,8 +140,10 @@ public class DatamodelImportWorker extends BaseImportWorker<DatamodelImporter> i
 		}
 		
 		Datamodel s = schemaService.findSchemaById(importedSchema.getId());
-		for (DatamodelNature n : importedSchema.getNatures()) {
-			s.addOrReplaceNature(n);
+		if (importedSchema.getNatures()!=null) {
+			for (DatamodelNature n : importedSchema.getNatures()) {
+				s.addOrReplaceNature(n);
+			}
 		}
 		schemaService.saveSchema(s, rootRefs, auth);
 		

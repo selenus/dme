@@ -32,7 +32,7 @@ public class LegacySchemaConverter {
 		n.setTransient(oldN.isTransient());
 		n.setLocked(oldN.isLocked());
 		
-		if (nonterminalTerminalIdMap!=null) {
+		if (nonterminalTerminalIdMap!=null && oldN.getTerminalId()!=null && !oldN.getTerminalId().isEmpty()) {
 			nonterminalTerminalIdMap.put(oldN.getId(), oldN.getTerminalId());
 		}
 		
