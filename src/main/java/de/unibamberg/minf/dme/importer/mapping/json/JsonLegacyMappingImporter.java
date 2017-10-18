@@ -27,7 +27,7 @@ public class JsonLegacyMappingImporter extends BaseJsonMappingImporter {
 			try {
 				objectMapper.readValue(new File(this.importFilePath), SerializableMappingContainer.class);
 				return true;
-			} catch (Exception e) {}
+			} catch (Exception e) { }
 		}
 		return false;
 	}

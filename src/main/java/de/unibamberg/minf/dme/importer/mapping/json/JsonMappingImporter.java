@@ -28,8 +28,7 @@ public class JsonMappingImporter extends BaseJsonMappingImporter {
 				objectMapper.readValue(new File(this.importFilePath), MappingContainer.class);
 				return true;
 			} catch (Exception e) {
-				logger.debug("Failed to import", e);
-				
+				logger.error("", e);
 			}
 		}
 		return false;
