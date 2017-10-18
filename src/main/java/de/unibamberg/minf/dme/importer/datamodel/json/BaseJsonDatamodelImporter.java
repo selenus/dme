@@ -82,13 +82,15 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 	}
 		
 	protected void importModel(Datamodel m, Nonterminal root, Map<String, GrammarContainer> grammars) throws MetamodelConsistencyException {
-		Map<String, String> nonterminalIdMap = new HashMap<String, String>();
-		this.reworkElementHierarchy(this.getDatamodel(), root, nonterminalIdMap, grammars);
+		Map<String, String> newToOldIdMap = new HashMap<String, String>();
+		Map<String, String> oldToNewIdMap = new HashMap<String, String>();
+		
+		this.reworkElementHierarchy(this.getDatamodel(), root, oldToNewIdMap, newToOldIdMap, grammars);
 		
 		if (!isKeepImportedIds()) {
 			if (m.getNatures()!=null) {
 				for (DatamodelNature nature : m.getNatures()) {
-					this.regenerateTerminalIds(nature, this.getDatamodel().getId(), nonterminalIdMap);
+					this.regenerateTerminalIds(nature, this.getDatamodel().getId(), oldToNewIdMap);
 				}
 			}
 		}
@@ -111,13 +113,18 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 	protected abstract void importJson() throws JsonParseException, JsonMappingException, IOException, MetamodelConsistencyException;
 	
 	
-	protected void reworkElementHierarchy(Datamodel schema, Element element, Map<String, String> nonterminalIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
+	private void reworkElementHierarchy(Datamodel schema, Element element, Map<String, String> oldToNewIdMap, Map<String, String> newToOldIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
+		if (newToOldIdMap.containsKey(element.getId())) {
+			return;
+		}
+		
 		element.setEntityId(schema.getId());
 		String newId = null;
 		
 		if (!this.isKeepImportedIds()) {
 			newId = new ObjectId().toString();		
-			nonterminalIdMap.put(element.getId(), newId);
+			oldToNewIdMap.put(element.getId(), newId);
+			newToOldIdMap.put(newId, element.getId());
 			element.setId(newId);
 		}
 		
@@ -130,11 +137,14 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 		
 		if (children!=null) {
 			for (Element child : children) {
-				this.reworkElementHierarchy(schema, child, nonterminalIdMap, grammarContainerMap);
+				this.reworkElementHierarchy(schema, child, oldToNewIdMap, newToOldIdMap, grammarContainerMap);
 			}
 		}
 		if (element.getGrammars()!=null) {
 			for (Grammar g : element.getGrammars()) {
+				if (newToOldIdMap.containsKey(g.getId())) {
+					continue;
+				}
 				g.setEntityId(schema.getId());
 				
 				if (grammarContainerMap!=null && grammarContainerMap.containsKey(g.getId())) {
@@ -143,21 +153,26 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 				
 				if (!this.isKeepImportedIds()) {
 					newId = new ObjectId().toString();
-					nonterminalIdMap.put(g.getId(), newId);
+					newToOldIdMap.put(newId, g.getId());
+					oldToNewIdMap.put(g.getId(), newId);
 					g.setId(newId);
 				}
 				
 				if (g.getFunctions()!=null) {
 					for (Function f : g.getFunctions()) {
+						if (newToOldIdMap.containsKey(f.getId())) {
+							continue;
+						}
 						f.setEntityId(schema.getId());
 						if (!this.isKeepImportedIds()) {
 							newId = new ObjectId().toString();
-							nonterminalIdMap.put(f.getId(), newId);
+							newToOldIdMap.put(newId, f.getId());
+							oldToNewIdMap.put(f.getId(), newId);
 							f.setId(newId);
 						}
 						if (f.getOutputElements()!=null) {
 							for (Label fOut : f.getOutputElements()) {
-								this.reworkElementHierarchy(schema, fOut, nonterminalIdMap, grammarContainerMap);
+								this.reworkElementHierarchy(schema, fOut, oldToNewIdMap, newToOldIdMap, grammarContainerMap);
 							}
 						}
 					}
@@ -166,7 +181,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 		}
 	}
 	
-	protected void regenerateTerminalIds(DatamodelNature nature, String entityId, Map<String, String> nonterminalIdMap) throws MetamodelConsistencyException {
+	protected void regenerateTerminalIds(DatamodelNature nature, String entityId, Map<String, String> idMap) throws MetamodelConsistencyException {
 		Map<String, String> oldNonterminalTerminalIdMap = new HashMap<String, String>(nature.getNonterminalTerminalIdMap());
 		nature.setNonterminalTerminalIdMap(new HashMap<String, String>());
 		
@@ -175,7 +190,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 			newId = new ObjectId().toString();
 			for (String oldNonterminalId : oldNonterminalTerminalIdMap.keySet()) {
 				if (oldNonterminalTerminalIdMap.get(oldNonterminalId).equals(t.getId())) {
-					nature.mapNonterminal(nonterminalIdMap.get(oldNonterminalId), newId);
+					nature.mapNonterminal(idMap.get(oldNonterminalId), newId);
 				}
 			}
 			t.setId(newId);

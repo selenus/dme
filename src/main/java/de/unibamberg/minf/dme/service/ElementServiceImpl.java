@@ -205,7 +205,9 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		Nonterminal root = (Nonterminal)element;
 		List<Nonterminal> result = new ArrayList<Nonterminal>();
 		if (root!=null) {
-			result.add(root);
+			if (!result.contains(root)) {
+				result.add(root);
+			}
 			if (root.getChildNonterminals()!=null) {
 				for (Nonterminal childN : root.getChildNonterminals()) {
 					result.addAll(extractAllNonterminals(childN));
