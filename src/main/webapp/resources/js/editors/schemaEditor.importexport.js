@@ -57,11 +57,18 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 	
 	$("#importer-options").removeClass("hide");
 	
-	if (data.pojo.elements.length==1) {
+	
+	if (data.pojo.elements[0].namespace===undefined) {
+		$("#schema_root_qn").val(data.pojo.elements[0].name);
+	} else {
 		$("#schema_root_qn").val("{" + data.pojo.elements[0].namespace + "}:" + data.pojo.elements[0].name);
-		rootSelector.val(data.pojo.elements[0].name);
-		return;
 	}
+	$("#schema_root_type").val(data.pojo.elements[0].type);
+	rootSelector.val(data.pojo.elements[0].name);
+	
+	if (data.pojo.elements.length==1) {
+		return;
+	} 
 	
 	rootSelector.removeProp("disabled");
 	
