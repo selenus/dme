@@ -21,8 +21,6 @@ import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
-import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
-import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import de.unibamberg.minf.dme.model.serialization.Reference;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
@@ -255,7 +253,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 		return rRemove;
 	}
 	
-	protected Identifiable fillElement(Reference r, Map<String, Identifiable> elementMap) {
+	public static Identifiable fillElement(Reference r, Map<String, ? extends Identifiable> elementMap) {
 		Identifiable e = elementMap.get(r.getId());
 		
 		if (r.getChildReferences()!=null) {

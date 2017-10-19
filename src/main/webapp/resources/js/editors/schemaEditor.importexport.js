@@ -99,6 +99,7 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 					$("#schema_root_qn").val("{" + suggestion.namespace + "}:" + suggestion.name);
 				}
 				$("#schema_root_type").val(suggestion.type);
+				$("#schema_root_id").val(suggestion.id!==undefined ? suggestion.id : "")
 			},
 			function(t, value) {
 				for (var i=0; i<data.pojo.elements.length; i++) {
@@ -109,11 +110,13 @@ SchemaEditor.prototype.setupRootSelection = function(data) {
 							$("#schema_root_qn").val("{" + data.pojo.elements[i].namespace + "}:" + data.pojo.elements[i].name);
 						}
 						$("#schema_root_type").val(data.pojo.elements[i].type);
+						$("#schema_root_id").val(data.pojo.elements[i].id!==undefined ? data.pojo.elements[i].id : "")
 						return;
 					}
 				}
 				$("#schema_root_qn").val("");
 				$("#schema_root_type").val("");
+				$("#schema_root_id").val("")
 			}			
 	);
 

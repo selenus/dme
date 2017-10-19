@@ -85,7 +85,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 		Map<String, String> newToOldIdMap = new HashMap<String, String>();
 		Map<String, String> oldToNewIdMap = new HashMap<String, String>();
 		
-		this.reworkElementHierarchy(this.getDatamodel(), root, oldToNewIdMap, newToOldIdMap, grammars);
+		this.reworkElementHierarchy(this.getDatamodel().getId(), root, oldToNewIdMap, newToOldIdMap, grammars);
 		
 		if (!isKeepImportedIds()) {
 			if (m.getNatures()!=null) {
@@ -113,12 +113,12 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 	protected abstract void importJson() throws JsonParseException, JsonMappingException, IOException, MetamodelConsistencyException;
 	
 	
-	private void reworkElementHierarchy(Datamodel schema, Element element, Map<String, String> oldToNewIdMap, Map<String, String> newToOldIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
+	protected void reworkElementHierarchy(String entityId, Element element, Map<String, String> oldToNewIdMap, Map<String, String> newToOldIdMap, Map<String, GrammarContainer> grammarContainerMap) throws MetamodelConsistencyException {
 		if (newToOldIdMap.containsKey(element.getId())) {
 			return;
 		}
 		
-		element.setEntityId(schema.getId());
+		element.setEntityId(entityId);
 		String newId = null;
 		
 		if (!this.isKeepImportedIds()) {
@@ -139,7 +139,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 		
 		if (children!=null) {
 			for (Element child : children) {
-				this.reworkElementHierarchy(schema, child, oldToNewIdMap, newToOldIdMap, grammarContainerMap);
+				this.reworkElementHierarchy(entityId, child, oldToNewIdMap, newToOldIdMap, grammarContainerMap);
 			}
 		}
 		if (element.getGrammars()!=null) {
@@ -147,7 +147,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 				if (newToOldIdMap.containsKey(g.getId())) {
 					continue;
 				}
-				g.setEntityId(schema.getId());
+				g.setEntityId(entityId);
 				
 				if (grammarContainerMap!=null && grammarContainerMap.containsKey(g.getId())) {
 					g.setGrammarContainer(grammarContainerMap.get(g.getId()));
@@ -167,7 +167,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 						if (newToOldIdMap.containsKey(f.getId())) {
 							continue;
 						}
-						f.setEntityId(schema.getId());
+						f.setEntityId(entityId);
 						if (!this.isKeepImportedIds()) {
 							newId = new ObjectId().toString();
 							newToOldIdMap.put(newId, f.getId());
@@ -178,7 +178,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 						}
 						if (f.getOutputElements()!=null) {
 							for (Label fOut : f.getOutputElements()) {
-								this.reworkElementHierarchy(schema, fOut, oldToNewIdMap, newToOldIdMap, grammarContainerMap);
+								this.reworkElementHierarchy(entityId, fOut, oldToNewIdMap, newToOldIdMap, grammarContainerMap);
 							}
 						}
 					}

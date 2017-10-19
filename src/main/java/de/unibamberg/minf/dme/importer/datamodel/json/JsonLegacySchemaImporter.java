@@ -29,7 +29,7 @@ import eu.dariah.de.minfba.core.metamodel.serialization.SerializableSchemaContai
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class JsonLegacySchemaImporter extends BaseJsonDatamodelImporter {
 	
-	@Override public String getImporterSubtype() { return "Legacy datamodel"; }
+	@Override public String getImporterSubtype() { return "Schema (legacy)"; }
 	
 	@Override
 	public boolean getIsSupported() {

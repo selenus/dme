@@ -64,7 +64,7 @@ public class DatamodelExporter {
 					exportModel.getNatures().add(n.getClass().newInstance());
 				}
 			}
-			result.add(new DatamodelReferenceContainer(exportModel));
+			result.add(new DatamodelReferenceContainer((DatamodelImpl)exportModel));
 		}
 		return result;
 	}
@@ -76,7 +76,7 @@ public class DatamodelExporter {
 		}
 		
 		DatamodelReferenceContainer sp = new DatamodelReferenceContainer();
-		sp.setModel(s.getElement());
+		sp.setModel((DatamodelImpl)s.getElement());
 		
 		ChangeSet ch = datamodelService.getLatestChangeSetForEntity(s.getId());
 		if (ch!=null) {

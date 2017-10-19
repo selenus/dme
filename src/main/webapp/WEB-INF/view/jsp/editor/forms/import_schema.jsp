@@ -26,6 +26,7 @@
 				<input type="text" class="form-control typeahead" id="schema_root" disabled="disabled" />
 				<input type="hidden" name="schema_root_qn" id="schema_root_qn" />
 				<input type="hidden" name="schema_root_type" id="schema_root_type" />
+				<input type="hidden" name="schema_root_id" id="schema_root_id" />
 			</div>
 		</div>
 		<div id="importer-options" class="form-group hide">

@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 
 import de.unibamberg.minf.dme.controller.base.BaseMainEditorController;
 import de.unibamberg.minf.dme.exception.GenericScheregException;
+import de.unibamberg.minf.dme.exporter.DatamodelExporter;
 import de.unibamberg.minf.dme.importer.DatamodelImportWorker;
 import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
 import de.unibamberg.minf.dme.model.PersistedSession;
@@ -55,6 +56,7 @@ import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
+import de.unibamberg.minf.dme.model.serialization.DatamodelReferenceContainer;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.ModelElementPojo;
 import de.unibamberg.minf.dme.pojo.converter.AuthWrappedPojoConverter;
@@ -75,6 +77,8 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@Autowired private GrammarService grammarService;
 	
 	@Autowired private IdentifiableService identifiableService;
+	
+	@Autowired private DatamodelExporter datamodelExporter;
 	
 	
 	@Override protected String getPrefix() { return "/model/editor/"; }
@@ -218,7 +222,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	@PreAuthorize("isAuthenticated()")
 	@RequestMapping(method=POST, value={"/async/import"}, produces = "application/json; charset=utf-8")
 	public @ResponseBody ModelActionPojo importSchemaElements(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, @RequestParam(required=false, value="elementId") String elementId, 
-			@RequestParam(value="schema_root_qn") String schemaRoot, @RequestParam(required=false, value="schema_root_type") String schemaRootType, 
+			@RequestParam(value="schema_root_qn") String schemaRoot, @RequestParam(required=false, value="schema_root_type") String schemaRootType, @RequestParam(required=false, value="schema_root_id") String schemaRootId, 
 			@RequestParam(defaultValue="false", value="keep-imported-ids") boolean keepImportedIds,			
 			Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		AuthPojo auth = authInfoHelper.getAuth(request);
@@ -237,7 +241,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 				}
 				
 				if (elementId!=null) {
-					importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, schemaRoot, schemaRootType, keepImportedIds, authInfoHelper.getAuth(request));
+					importWorker.importSubtree(temporaryFilesMap.remove(fileId), entityId, elementId, (schemaRootId!=null ? schemaRootId : schemaRoot), schemaRootType, keepImportedIds, authInfoHelper.getAuth(request));
 				} else {
 					Datamodel m = schemaService.findByIdAndAuth(entityId, auth).getElement();
 					m.setNatures(null);
@@ -246,7 +250,7 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 					
 					schemaService.saveSchema(m, auth);
 					
-					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, schemaRoot, keepImportedIds, authInfoHelper.getAuth(request));
+					importWorker.importSchema(temporaryFilesMap.remove(fileId), entityId, (schemaRootId!=null ? schemaRootId : schemaRoot), keepImportedIds, authInfoHelper.getAuth(request));
 				}
 				result.setSuccess(true);
 				return result;
@@ -262,24 +266,13 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/export")
-	public @ResponseBody ModelActionPojo exportSchema(@PathVariable String entityId, Model model, Locale locale) {
-		Datamodel s = schemaService.findSchemaById(entityId);
-		Element r = elementService.findRootBySchemaId(entityId, true);
-		
-		DatamodelContainer sp = new DatamodelContainer();
-		sp.setModel((DatamodelImpl)s);
-		sp.setRoot(r);
-		
-		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
-		if (ch!=null) {
-			s.setVersionId(ch.getId());
+	public @ResponseBody ModelActionPojo exportSchema(@PathVariable String entityId, Model model, HttpServletRequest request, Locale locale) {
+		DatamodelReferenceContainer container = datamodelExporter.exportDatamodel(entityId, authInfoHelper.getAuth(request));
+		if (container==null) {
+			return new ModelActionPojo(false);
 		}
-		
-		sp.setRoot(r);
-		sp.setGrammars(grammarService.serializeGrammarSources(entityId));
-		
 		ModelActionPojo result = new ModelActionPojo(true);
-		result.setPojo(sp);
+		result.setPojo(container);
 		return result;
 	}
 	

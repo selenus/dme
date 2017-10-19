@@ -29,7 +29,7 @@ import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
 @Scope(value=ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class JsonDatamodelImporter extends BaseJsonDatamodelImporter {
 
-	@Override public String getImporterSubtype() { return "Datamodel"; }
+	@Override public String getImporterSubtype() { return "Datamodel v1.0"; }
 		
 	@Override
 	public boolean getIsSupported() {
@@ -38,6 +38,7 @@ public class JsonDatamodelImporter extends BaseJsonDatamodelImporter {
 				objectMapper.readValue(new File(this.importFilePath), DatamodelContainer.class);
 				return true;
 			} catch (Exception e) {
+				logger.warn("Import error", e);
 				return false;
 			}
 		}

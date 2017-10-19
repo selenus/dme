@@ -305,10 +305,10 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 			}
 			if (saveElements.contains(e) || saveGrammars.contains(me) || saveFunctions.contains(me)) {
 				r.setReuse(true);
-				logger.debug("Recursion at " + e.getId());
+				//logger.debug("Recursion at " + e.getId());
 			} else if (skip) {
 				r.setReuse(true);
-				logger.debug("Skipping existing...implied recursion at " + e.getId());
+				//logger.debug("Skipping existing...implied recursion at " + e.getId());
 			} else {
 				saveElements.add(e);
 			}
