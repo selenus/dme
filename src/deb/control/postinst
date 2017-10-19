@@ -1,4 +1,16 @@
 #!/bin/bash
 # invoke-rc.d tomcat7 start
 # return success, even if service not installed
+
+mkdir -p /etc/dfa/dme/grammars
+mkdir -p /etc/dfa/dme/models         
+
+if [ ! -e /etc/dfa/dme/models/openNLP-1.5-DE-sent.bin ]; then
+  curl -o /etc/dfa/dme/models/openNLP-1.5-DE-sent.bin http://opennlp.sourceforge.net/models-1.5/de-sent.bin
+fi
+
+if [ ! -e /etc/dfa/dme/models/stanford-german-corenlp-2016-10-31-models.jar ]; then
+  curl -o /etc/dfa/dme/models/stanford-german-corenlp-2016-10-31-models.jar http://nlp.stanford.edu/software/stanford-german-corenlp-2016-10-31-models.jar
+fi
+
 exit 0
