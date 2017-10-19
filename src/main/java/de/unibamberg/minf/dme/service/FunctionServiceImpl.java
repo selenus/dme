@@ -11,7 +11,7 @@ import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Label;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
-import de.unibamberg.minf.dme.serialization.Reference;
+import de.unibamberg.minf.dme.model.serialization.Reference;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.FunctionService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;

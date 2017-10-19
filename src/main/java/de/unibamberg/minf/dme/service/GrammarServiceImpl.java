@@ -27,7 +27,7 @@ import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
-import de.unibamberg.minf.dme.serialization.Reference;
+import de.unibamberg.minf.dme.model.serialization.Reference;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 import de.unibamberg.minf.gtf.MainEngine;

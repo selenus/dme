@@ -6,7 +6,7 @@ import java.util.Map;
 import de.unibamberg.minf.dme.dao.base.BaseDao;
 import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
 import de.unibamberg.minf.dme.model.base.Identifiable;
-import de.unibamberg.minf.dme.serialization.Reference;
+import de.unibamberg.minf.dme.model.serialization.Reference;
 
 public interface ReferenceDao extends BaseDao<Reference> {
 	/**

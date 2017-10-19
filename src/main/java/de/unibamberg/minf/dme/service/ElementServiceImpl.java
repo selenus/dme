@@ -35,7 +35,7 @@ import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
-import de.unibamberg.minf.dme.serialization.Reference;
+import de.unibamberg.minf.dme.model.serialization.Reference;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
 import de.unibamberg.minf.dme.service.interfaces.IdentifiableService;

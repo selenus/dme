@@ -54,5 +54,6 @@
 	<context:component-scan base-package="de.unibamberg.minf.dme.service"/>
 	<context:component-scan base-package="de.unibamberg.minf.dme.util"/>
 	<context:component-scan base-package="de.unibamberg.minf.dme.importer"/>
+	<context:component-scan base-package="de.unibamberg.minf.dme.exporter"/>
 	<context:component-scan base-package="de.unibamberg.minf.dme.pojo.converter"/>
 </beans>

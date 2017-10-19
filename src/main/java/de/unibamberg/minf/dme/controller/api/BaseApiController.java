@@ -8,7 +8,7 @@ import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 
 public abstract class BaseApiController {
-	@Autowired private GrammarService grammarService;
+	@Autowired protected GrammarService grammarService;
 	
 	protected Map<String, GrammarContainer> serializeGrammarSources(String entityId) {
 		return grammarService.serializeGrammarSources(entityId);

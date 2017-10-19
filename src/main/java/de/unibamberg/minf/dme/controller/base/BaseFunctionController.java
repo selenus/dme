@@ -16,7 +16,7 @@ import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
-import de.unibamberg.minf.dme.serialization.Reference;
+import de.unibamberg.minf.dme.model.serialization.Reference;
 import de.unibamberg.minf.dme.service.interfaces.MappedConceptService;
 import de.unibamberg.minf.dme.service.interfaces.MappingService;
 import de.unibamberg.minf.dme.service.interfaces.PersistedSessionService;

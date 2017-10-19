@@ -2,7 +2,7 @@ package de.unibamberg.minf.dme.service.interfaces;
 
 import java.util.List;
 
-import de.unibamberg.minf.dme.serialization.Reference;
+import de.unibamberg.minf.dme.model.serialization.Reference;
 
 public interface ReferenceService {
 	public Reference findReferenceBySchemaAndChildId(String schemaId, String childId);
