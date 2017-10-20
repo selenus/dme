@@ -112,9 +112,130 @@ The DME includes components of the [dariahsp](https://github.com/tgradl/dariahsp
 
 Here, only the default DARIAH-DE/DFN-AAI case is illustrated - skipping some steps that might be necessary in other scenarios.
 
-#### Keystore
-The DME requires a Java keystore (JKS) to be present and configured in order to generate SAML metadata. A JKS can easily be created by means of openssl as illustrated [here](https://github.com/tgradl/dariahsp#java-keystore)  
+#### Java keystore (JKS)
+The DME requires a Java keystore (JKS) to be present and configured in order to generate SAML metadata. A JKS can easily be created by means of openssl as illustrated [here](https://github.com/tgradl/dariahsp#java-keystore).
 
+Modify the dme.yml configuration according to the available JKS, appending the following snippet (modify accordingly)
+```
+  saml:
+    keystore:
+      path: /etc/dfa/key/dfa-de-dariah-eu.jks
+      # Uncomment if keystore is protected by password
+      #pass: 'somepass'
+      alias: dfa.de.dariah.eu
+      aliaspass: ''
+```
+
+#### DFN-AAI Metadata
+Point the configuration towards the correct DFN-AAI metadata. For new installations this will typically be metadata of the testfederation, which might later be changed to productive metadata. Append some configuration to the existing *saml* block:
+```
+    metadata:
+      url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-test-metadata.xml
+      #url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-basic-metadata.xml
+```
+
+#### SP Metadata
+To be able to register your installation of the DME with the DFN-AAI, you will need to create appropriate service provider (SP) metadata. While the DME includes a webbased SAML metadata management component (see https://github.com/tgradl/dariahsp#2-saml-sp-metadata), the fastest way to produce metadata is to provide some sp configuration parameters - leading to the automaic generation of deployable SP metadata.
+
+Append the following configuration to the existing *saml* block - taking particular care of:
+* *baseUrl*: this is the base URL of the installation as configured e.g. in the apache proxy above
+* *entityId*: use a good identifier of your SP. The baseUrl is a good and commonly used entityId.
+* *signingKey*, *encryptionKey* and *tlsKey* point to the correct alias within your JKS
+* *discovery.return* is build from the *baseUrl* and the *alias* of the installation
+
+```
+    sp:
+      #externalMetadata: /path/to/sp_metadata.xml
+      maxAuthAge: -1
+      alias: dme
+      baseUrl: https://dfa.de.dariah.eu/dme
+      entityId: https://dfa.de.dariah.eu
+      securityProfile: metaiop
+      sslSecurityProfile: pkix
+      sslHostnameVerification: default
+      signMetadata: true
+      signingAlgorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+      signingKey: dfa.de.dariah.eu
+      encryptionKey: dfa.de.dariah.eu
+      tlsKey: dfa.de.dariah.eu
+      requireArtifactResolveSigned: true
+      requireAttributeQuerySigned: true
+      requireLogoutRequestSigned: true
+      requireLogoutResponseSigned: false
+      discovery:
+        enabled: true
+        url: https://wayf.aai.dfn.de/DFN-AAI-Test/wayf
+        #url: https://auth.dariah.eu/CDS/WAYF
+        return: https://dfa.de.dariah.eu/dme/saml/login/alias/dme?disco:true
+      allowedNameIds : EMAIL, TRANSIENT, PERSISTENT, UNSPECIFIED, X509_SUBJECT
+    
+```
+
+#### Required attributes
+The DME relies on the availability of some specific attributes. The DARIAH-DE AAI is based on top of Terms of Use, which are also presented as attributes. In order to be able to generate local metadata that reflects these required attributes, append the following parameters to the existing *saml* block. You will not have to change any parameter in case of a DARIAH-DE-based installation.
+```
+      # Attribute querying
+      attributeQuery:
+        enabled: true
+        excludedEndpoints: 
+          urls: ["https://ldap-dariah-clone.esc.rzg.mpg.de/idp/shibboleth", "https://idp.de.dariah.eu/idp/shibboleth"]
+          assumeAttributesComplete: true
+        queryIdp: https://ldap-dariah-clone.esc.rzg.mpg.de/idp/shibboleth
+        #queryIdp: https://idp.de.dariah.eu/idp/shibboleth
+        queryByNameID: false
+        queryAttribute:
+          friendlyName: eduPersonPrincipalName
+          name: urn:oid:1.3.6.1.4.1.5923.1.1.1.6
+          nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+        # For now without parameters bc DARIAH Self Service is broken 
+        incompleteAttributesRedirect: "https://dariah.daasi.de/Shibboleth.sso/Login?target=/cgi-bin/selfservice/ldapportal.pl"
+        #incompleteAttributesRedirect: "https://dariah.daasi.de/Shibboleth.sso/Login?target=/cgi-bin/selfservice/ldapportal.pl%3Fmode%3Dauthenticate%3Bshibboleth%3D1%3Bnextpage%3Dregistration%3Breturnurl%3D{returnUrl}&entityID={entityId}"
+        #incompleteAttributesRedirect: "https://auth.dariah.eu/Shibboleth.sso/Login?target=/cgi-bin/selfservice/ldapportal.pl%3Fmode%3Dauthenticate%3Bshibboleth%3D1%3Bnextpage%3Dregistration%3Breturnurl%3D{returnUrl}&entityID={entityId}"
+      requiredAttributes:
+        - stage: ATTRIBUTES
+          required: true
+          attributeGroup:
+            - check: AND
+              attributes:
+                - friendlyName: mail
+                  name: urn:oid:0.9.2342.19200300.100.1.3
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+        - stage: ATTRIBUTES
+          required: true
+          attributeGroup:
+            - check: OR
+              attributes:
+                - friendlyName: dariahTermsOfUse
+                  name: urn:oid:1.3.6.1.4.1.10126.1.52.4.15
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+                  value: Terms_of_Use_v5.pdf
+                - friendlyName: dariahTermsOfUse
+                  name: urn:oid:1.3.6.1.4.1.10126.1.52.4.15
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+                  value: foobar-service-agreement_version1.pdf     
+        - stage: AUTHENTICATION
+          required: true
+          attributeGroup:
+            - check: AND
+              attributes:
+                - friendlyName: eduPersonPrincipalName
+                  name: urn:oid:1.3.6.1.4.1.5923.1.1.1.6
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+        - stage: AUTHENTICATION
+          required: false
+          attributeGroup:
+            - check: OPTIONAL
+              attributes:
+                - friendlyName: mail
+                  name: urn:oid:0.9.2342.19200300.100.1.3
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+                - friendlyName: displayName
+                  name: urn:oid:2.16.840.1.113730.3.1.241
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+```
+
+#### Restart the application
+When executing a now necessary restart of the Tomcat, closely monitor the Tomcat log in order to find out if parameters around the JKS and metadata has been configured correctly.
 
 
 
