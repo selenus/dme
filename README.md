@@ -9,7 +9,7 @@ Further information on the concepts behind the DME are accessible at https://de.
 ## 1) Prerequisites
 
 The installation of an instance of the DME requires the setup of some required components:
-* An installed Java, minimum version JavaSE-1.8
+* An installed Java, minimum version JavaSE-1.8 - **install the JDK as the DME creates and compiles Java code** 
 * A Java web-application server such as Tomcat or Jetty
 * MongoDB 3 as storage backend
 
@@ -57,12 +57,12 @@ The post-installation script within the debian package creates some directories 
 #### Directory setup
 The deb package (post-installation script):
 * installs the DME at */var/dfa/webapps/dme*. This directory needs to be linked from within the Tomcat webapps directory (e.g. in a standard Ubuntu install: `ln -s /var/dfa/webapps/dme/ /var/lib/tomcat8/webapps/`)
-* creates */etc/dfa/dme* and installs the simple sample configuration if *dme.yml* does not yet exist. This configuration will probably need to be adapted, which is discussed in 3) of this page.
+* creates */etc/dfa/dme* and installs the simple sample configuration if *dme.yml* does not yet exist. This configuration will probably need to be adapted, which is discussed in section 3) of this page.
 * creates - if it does not exist - */var/lib/dme/models* and downloads some Stanford CoreNLP and OpenNLP models required for NLP processing
-* creates - if it does not exist - */var/lib/dme/grammars*: **make sure the Tomcat running user has write access to this directory**  
+* creates - if it does not exist - */var/lib/dme/grammars*: **make sure the Tomcat running user has write access to this directory** (in a standard Ubuntu install: `chown -R tomcat8 /var/lib/dme/grammars`)
 
 #### Configure Tomcat
-Although the debian package comes with a complete configuration setup, manual registration of the dme configuration file is explicitly required. Modify/create the *setenv.sh* script within the *bin* directory of the installed Tomcat to point to the dme configuration:
+Although the debian package comes with a complete configuration setup, manual registration of the dme configuration file is explicitly required. Modify/create the *setenv.sh* script within the *bin* directory of the installed Tomcat (default Ubuntu/Tomcat8 `/usr/share/tomcat8/bin/`) to point to the dme configuration:
 ```
 #!/bin/sh
 # Application specific environment variables
@@ -70,8 +70,5 @@ Although the debian package comes with a complete configuration setup, manual re
 export CATALINA_OPTS="$CATALINA_OPTS -Ddme.yml=/etc/dfa/dme/dme.yml"
 ```
 
-
 ### 2.3) Test startup
-
-
-Once installed and successfully started as (within a Java web application server) an empty CR dashboard is presented - with default ports and installed on a local machine as http://localhost:8080
+Start/restart Tomcat: the DME will be accessible at http://localhost:8080/dme. To debug startup issues analyze the Tomcat log file (`/var/log/tomcat8/catalina.out`)
