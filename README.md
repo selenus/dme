@@ -105,4 +105,35 @@ ProxyPassReverse /dme/ http://127.0.0.1:8080/dme/
 
 If the Apache proxy has been setup correctly, the dme should be available at https://localhost:443 or - in the case of the above snippet - https://dme.de.dariah.eu.
 
+Hint: make sure that the Apache server has the modules *ssl*, *proxy* and *proxy-http* enabled.
+
 ### 3.2) SAML Integration
+The DME includes components of the [dariahsp](https://github.com/tgradl/dariahsp) and is prepared for integration with SAML-based AAI infrastructures such as the [DFN-AAI](https://www.aai.dfn.de/). Please review the documentation of the [dariahsp](https://github.com/tgradl/dariahsp) component in order to create custom configurations.
+
+Here, only the default DARIAH-DE/DFN-AAI case is illustrated - skipping some steps that might be necessary in other scenarios.
+
+#### Keystore
+The DME requires a Java keystore (JKS) to be present and configured in order to generate SAML metadata. A JKS can easily be created by means of openssl as illustrated [here](https://github.com/tgradl/dariahsp#java-keystore)  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
