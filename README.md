@@ -39,32 +39,39 @@ wget -O - https://ci.de.dariah.eu/packages/repository.asc | sudo apt-key add -
 ```
 apt-get update && apt-get install dme
 ```
-
-#### Post-installation tasks
-The deb package:
-* installs the DME at */var/dfa/webapps/dme*. This directory needs to be linked from within the Tomcat webapps directory (e.g. in a standard Ubuntu install: `ln -s /var/dfa/webapps/dme/ /var/lib/tomcat8/webapps/`)
-* creates /etc/dfa/dme and installs the simple sample configuration if dme.yml does not yet exist. Configuration is discussed in 3) of this page
-* creates - if it does not exist - */var/lib/dme/models* and downloads some Stanford CoreNLP and OpenNLP models required for NLP processing
-* creates - if it does not exist - */var/lib/dme/grammars*: make sure the **Tomcat running user has write access to this directory**  
-
-
-#### Install in Tomcat
-
-The package installs the DME at */var/dfa/webapps/dme*. Make sure to register this path with your web application server. When using Tomcat, a link to the installation directory from */path/to/tomcat/webapps* can be placed. For a default Ubuntu installation:
-```
-apt-get update && apt-get install dme
-```
- 
-
-
-
-
-Once installed and successfully started as (within a Java web application server) an empty CR dashboard is presented - with default ports and installed on a local machine as http://localhost:8080
+Continue with the steps in 2.3)
 
 ### 2.2) WAR Container
 
-WAR container files of the DME can be found at:
+As an alternative installation method WAR container files of the DME can be found at:
 * Production releases: https://minfba.de.dariah.eu/artifactory/webapp/#/artifacts/browse/tree/General/dariah-minfba-releases/de/unibamberg/minf/dme
 * Snapshot releases: https://minfba.de.dariah.eu/artifactory/webapp/#/artifacts/browse/tree/General/dariah-minfba-snapshots/de/unibamberg/minf/dme
 
-Place the WAR container in the applications directory of your web server - e.g. */path/to/tomcat/webapps* for Tomcat.  
+To install the dme, simply place the WAR container in the applications directory of your web server - e.g. */path/to/tomcat/webapps* for Tomcat.
+
+The post-installation script within the debian package creates some directories and files and downloads NLP models (see the following section 2.3). In case of a manual installation, these steps need to be executed as well. Have a look at the [post-install bash script](https://github.com/tgradl/dme/blob/master/src/deb/control/postinst).
+
+
+### 2.3) Post-installation setup
+
+#### Directory setup
+The deb package (post-installation script):
+* installs the DME at */var/dfa/webapps/dme*. This directory needs to be linked from within the Tomcat webapps directory (e.g. in a standard Ubuntu install: `ln -s /var/dfa/webapps/dme/ /var/lib/tomcat8/webapps/`)
+* creates */etc/dfa/dme* and installs the simple sample configuration if *dme.yml* does not yet exist. This configuration will probably need to be adapted, which is discussed in 3) of this page.
+* creates - if it does not exist - */var/lib/dme/models* and downloads some Stanford CoreNLP and OpenNLP models required for NLP processing
+* creates - if it does not exist - */var/lib/dme/grammars*: **make sure the Tomcat running user has write access to this directory**  
+
+#### Configure Tomcat
+Although the debian package comes with a complete configuration setup, manual registration of the dme configuration file is explicitly required. Modify/create the *setenv.sh* script within the *bin* directory of the installed Tomcat to point to the dme configuration:
+```
+#!/bin/sh
+# Application specific environment variables
+
+export CATALINA_OPTS="$CATALINA_OPTS -Ddme.yml=/etc/dfa/dme/dme.yml"
+```
+
+
+### 2.3) Test startup
+
+
+Once installed and successfully started as (within a Java web application server) an empty CR dashboard is presented - with default ports and installed on a local machine as http://localhost:8080
