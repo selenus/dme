@@ -1,19 +1,20 @@
 # Data Modeling Environment (DME)
 
-The Data Modeling Environment (DME) is a component of the DARIAH-DE Data Federation Architecture (DFA) software stack. The main intention of the DME is to enable domain experts in the arts and humanities to specify and correlate data structures in order to make data more accessible. The DME is a web-application and the frontend to the grammatical transformation framework, which will be published to GitHub in the near future. A particular focus lies on the explication of contextual knowledge in the form of rules to (1) define data in terms of domain specific languages and (2) provide transformative functions that operate of parsed instances of the data.
+The Data Modeling Environment (DME) is a component of the *DARIAH-DE Data Federation Architecture (DFA)* software stack. The main intention of the DME is to enable domain experts in the arts and humanities to specify and correlate data structures in order to make data more accessible. The DME is a web-application and the frontend to the *Grammatical Transformation Framework (GTF)*, which will be published to GitHub in the near future. A particular focus lies on the explication of contextual knowledge in the form of rules to (1) define data in terms of domain specific languages and (2) provide transformative functions that operate on parsed instances of the data.
 
 Issues for the DME are tracked here: https://minfba.de.dariah.eu/mantisbt/set_project.php?project_id=11
 
 Further information on the concepts behind the DME are accessible at https://de.dariah.eu/dme.
 
-Please note that the following Instructions are primarily oriented towards Linux-based environments - specifically DARIAH-DE/Ubuntu/Tomcat8/Apache. Please evaluate and modify the steps according to your installation environment.
+The following instructions are primarily oriented towards the DARIAH-DE default environment - specifically **DARIAH-DE/Ubuntu/Tomcat8/Apache proxy**. Please evaluate and modify the installation steps according to your installation environment.
 
 ## 1) Prerequisites
 
 The installation of an instance of the DME requires the setup of some required components:
-* An installed Java, minimum version JavaSE-1.8 - **install the JDK as the DME creates and compiles Java code** 
+* An installed **Java-JDK**, minimum version 1.8 - **installation of the JDK is required as the DME creates and compiles Java code** Please note that while the DME might startup correctly with only the JRE installed, most functionality of the DME will be limited.  
 * A Java web-application server such as Tomcat or Jetty
 * MongoDB 3 as storage backend
+* Apache or Nginx as a web proxy server
 
 ## 2) Installation
 
@@ -138,10 +139,10 @@ Point the configuration towards the correct DFN-AAI metadata. For new installati
 To be able to register your installation of the DME with the DFN-AAI, you will need to create appropriate service provider (SP) metadata. While the DME includes a webbased SAML metadata management component (see https://github.com/tgradl/dariahsp#2-saml-sp-metadata), the fastest way to produce metadata is to provide some sp configuration parameters - leading to the automaic generation of deployable SP metadata.
 
 Append the following configuration to the existing *saml* block - taking particular care of:
-* *baseUrl*: this is the base URL of the installation as configured e.g. in the apache proxy above
-* *entityId*: use a good identifier of your SP. The baseUrl is a good and commonly used entityId.
-* *signingKey*, *encryptionKey* and *tlsKey* point to the correct alias within your JKS
-* *discovery.return* is build from the *baseUrl* and the *alias* of the installation
+* **baseUrl**: this is the base URL of the installation as configured e.g. in the apache proxy above
+* **entityId**: use a good identifier of your SP. The baseUrl is a good and commonly used entityId.
+* **signingKey**, **encryptionKey** and **tlsKey** point to the correct alias within your JKS
+* **discovery.return** is build from the *baseUrl* and the *alias* of the installation
 
 ```
     sp:
