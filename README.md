@@ -147,8 +147,8 @@ Append the following configuration to the existing *saml* block - taking particu
     sp:
       maxAuthAge: -1
       alias: dme
-      baseUrl: https://dfa.de.dariah.eu/dme
-      entityId: https://dfa.de.dariah.eu
+      baseUrl: https://dme.de.dariah.eu/dme
+      entityId: https://dme.de.dariah.eu/dme
       securityProfile: metaiop
       sslSecurityProfile: pkix
       sslHostnameVerification: default
@@ -165,7 +165,7 @@ Append the following configuration to the existing *saml* block - taking particu
         enabled: true
         url: https://wayf.aai.dfn.de/DFN-AAI-Test/wayf
         #url: https://auth.dariah.eu/CDS/WAYF
-        return: https://dfa.de.dariah.eu/dme/saml/login/alias/dme?disco:true
+        return: https://dme.de.dariah.eu/dme/saml/login/alias/dme?disco:true
       allowedNameIds : EMAIL, TRANSIENT, PERSISTENT, UNSPECIFIED, X509_SUBJECT
     
 ```
@@ -368,24 +368,11 @@ auth:
 
 ```
 
+#### Finalize the installation
+Having saved the metadata in the configuration directory and pointed to it within the configuration perform another restart of the Tomcat/DME to make sure that the SAML configuration is complete and correct.
 
+After a successful restart, click on Login and you should see the following screen - indicating that the login is supposed to be handled by the DFN-AAI, which does not know our new SP installation, however. Now, the generated SP metadata needs to be registered with the DFN as soon as the DFN refreshes its metadata including the newly provided SP, logins are possible (without having to restart the DME again).
 
+![DFN-AAI EntityID unknown](https://github.com/tgradl/dme/raw/master/docs/img/screenshot-dfn-entityid-unknown.png "DFN-AAI EntityID unknown")
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+It is up to you/your organization to then push the instance to the Basic federation of the DFN-AAI.
