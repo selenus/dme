@@ -72,3 +72,5 @@ export CATALINA_OPTS="$CATALINA_OPTS -Ddme.yml=/etc/dfa/dme/dme.yml"
 
 ### 2.3) Test startup
 Start/restart Tomcat: the DME will be accessible at http://localhost:8080/dme. To debug startup issues analyze the Tomcat log file (`/var/log/tomcat8/catalina.out`)
+
+![Empty DME Startup page](https://github.com/tgradl/dme/raw/master/docs/img/screenshot-empty-startup.png "Empty DME Startup page")
