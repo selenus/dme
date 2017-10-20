@@ -145,7 +145,6 @@ Append the following configuration to the existing *saml* block - taking particu
 
 ```
     sp:
-      #externalMetadata: /path/to/sp_metadata.xml
       maxAuthAge: -1
       alias: dme
       baseUrl: https://dfa.de.dariah.eu/dme
@@ -234,8 +233,140 @@ The DME relies on the availability of some specific attributes. The DARIAH-DE AA
                   nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
 ```
 
-#### Restart the application
+#### Modify tomcat configuration and restart
+In order to be able to easily switch between authentication mechanisms, a flag is provided as environment parameter. Please modify the *setenv.sh* script within the *bin* directory of your Tomcat installation and append the *saml* flag:
+```
+export CATALINA_OPTS="$CATALINA_OPTS -Dsaml=true"
+```  
+
 When executing a now necessary restart of the Tomcat, closely monitor the Tomcat log in order to find out if parameters around the JKS and metadata has been configured correctly.
+
+You can access the generated metadata at https://your-servername/dme/saml/metadata if everything has been setup correctly. This URL can be used to fill some parameters in the DFN-AAI self-management tools.
+
+Also, please download the metadata yourself and place them within the configuration directory of the DME - i.e. /etc/dfa/dme/sp_metadata.xml and configure the *externalMetadata* parameter in the *dme.yml* under *saml.sp* (see the complete dme.yml sample configuration below). In doing so, no automatic generation of metadata is attempted on every restart of the Tomcat/DME and the configured static metadata is utilized instead. This has proven to be more robust especially in production scenarios.
+
+#### Complete DARIAH-DE sample confguration
+This sample configuration comes within the installed DME directory and is also accessible [here](https://github.com/tgradl/dme/blob/master/src/main/resources/dme.sample_dariah.yml)
+```
+paths:
+  main: /var/run/dme
+  tmp: /tmp
+  logging: ${paths.main}/log
+  grammars: ${paths.main}/grammars
+  models: ${paths.main}/models
+  tmpUploadDir: ${paths.tmp}/dme_uploads/
+  sampleFilesDir: ${paths.tmp}/dme_samples/
+
+editors:
+  samples:
+    maxTravelSize: 50000
+
+db:
+  host: 127.0.0.1
+  port: 27017
+  database: dme
+
+auth:
+  local: 
+    users:  
+      - username: 'admin'
+        passhash: '$2a$10$nbXRnAx5wKurTrbaUkT/MOLXKAJgpT8R71/jujzPwgXXrG.OqlBKW'
+        roles: ["ROLE_ADMINISTRATOR"]
+  saml:
+    keystore:
+      path: /etc/dfa/key/dfa-de-dariah-eu.jks
+      # Uncomment if keystore is protected by password
+      #pass: 'somepass'
+      alias: dfa.de.dariah.eu
+      aliaspass: ''
+    metadata:
+      url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-test-metadata.xml
+      #url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-basic-metadata.xml
+    sp:
+      #externalMetadata: /etc/dfa/dme/sp_metadata.xml
+      maxAuthAge: -1
+      alias: dme
+      baseUrl: https://dme.de.dariah.eu/dme
+      entityId: https://dme.de.dariah.eu/dme
+      securityProfile: metaiop
+      sslSecurityProfile: pkix
+      sslHostnameVerification: default
+      signMetadata: true
+      signingAlgorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+      signingKey: dfa.de.dariah.eu
+      encryptionKey: dfa.de.dariah.eu
+      tlsKey: dfa.de.dariah.eu
+      requireArtifactResolveSigned: true
+      requireAttributeQuerySigned: true
+      requireLogoutRequestSigned: true
+      requireLogoutResponseSigned: false
+      discovery:
+        enabled: true
+        url: https://wayf.aai.dfn.de/DFN-AAI-Test/wayf
+        #url: https://auth.dariah.eu/CDS/WAYF
+        return: https://dme.de.dariah.eu/dme/saml/login/alias/dme?disco:true
+      allowedNameIds : EMAIL, TRANSIENT, PERSISTENT, UNSPECIFIED, X509_SUBJECT
+    
+      # Attribute querying
+      attributeQuery:
+        enabled: true
+        excludedEndpoints: 
+          urls: ["https://ldap-dariah-clone.esc.rzg.mpg.de/idp/shibboleth", "https://idp.de.dariah.eu/idp/shibboleth"]
+          assumeAttributesComplete: true
+        queryIdp: https://ldap-dariah-clone.esc.rzg.mpg.de/idp/shibboleth
+        #queryIdp: https://idp.de.dariah.eu/idp/shibboleth
+        queryByNameID: false
+        queryAttribute:
+          friendlyName: eduPersonPrincipalName
+          name: urn:oid:1.3.6.1.4.1.5923.1.1.1.6
+          nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+        # For now without parameters bc DARIAH Self Service is broken 
+        incompleteAttributesRedirect: "https://dariah.daasi.de/Shibboleth.sso/Login?target=/cgi-bin/selfservice/ldapportal.pl"
+        #incompleteAttributesRedirect: "https://dariah.daasi.de/Shibboleth.sso/Login?target=/cgi-bin/selfservice/ldapportal.pl%3Fmode%3Dauthenticate%3Bshibboleth%3D1%3Bnextpage%3Dregistration%3Breturnurl%3D{returnUrl}&entityID={entityId}"
+        #incompleteAttributesRedirect: "https://auth.dariah.eu/Shibboleth.sso/Login?target=/cgi-bin/selfservice/ldapportal.pl%3Fmode%3Dauthenticate%3Bshibboleth%3D1%3Bnextpage%3Dregistration%3Breturnurl%3D{returnUrl}&entityID={entityId}"
+      requiredAttributes:
+        - stage: ATTRIBUTES
+          required: true
+          attributeGroup:
+            - check: AND
+              attributes:
+                - friendlyName: mail
+                  name: urn:oid:0.9.2342.19200300.100.1.3
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+        - stage: ATTRIBUTES
+          required: true
+          attributeGroup:
+            - check: OR
+              attributes:
+                - friendlyName: dariahTermsOfUse
+                  name: urn:oid:1.3.6.1.4.1.10126.1.52.4.15
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+                  value: Terms_of_Use_v5.pdf
+                - friendlyName: dariahTermsOfUse
+                  name: urn:oid:1.3.6.1.4.1.10126.1.52.4.15
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+                  value: foobar-service-agreement_version1.pdf     
+        - stage: AUTHENTICATION
+          required: true
+          attributeGroup:
+            - check: AND
+              attributes:
+                - friendlyName: eduPersonPrincipalName
+                  name: urn:oid:1.3.6.1.4.1.5923.1.1.1.6
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+        - stage: AUTHENTICATION
+          required: false
+          attributeGroup:
+            - check: OPTIONAL
+              attributes:
+                - friendlyName: mail
+                  name: urn:oid:0.9.2342.19200300.100.1.3
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+                - friendlyName: displayName
+                  name: urn:oid:2.16.840.1.113730.3.1.241
+                  nameFormat: urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+
+```
 
 
 

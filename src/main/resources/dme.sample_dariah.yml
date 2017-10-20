@@ -24,7 +24,7 @@ auth:
         roles: ["ROLE_ADMINISTRATOR"]
   saml:
     keystore:
-      path: ${paths.main}/key/dfa-de-dariah-eu.jks
+      path: /etc/dfa/key/dfa-de-dariah-eu.jks
       # Uncomment if keystore is protected by password
       #pass: 'somepass'
       alias: dfa.de.dariah.eu
@@ -33,11 +33,11 @@ auth:
       url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-test-metadata.xml
       #url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-basic-metadata.xml
     sp:
-      #externalMetadata: /home/tobias/_srv/schereg/sp_metadata.xml
+      #externalMetadata: /etc/dfa/dme/sp_metadata.xml
       maxAuthAge: -1
       alias: dme
-      baseUrl: https://dfa.de.dariah.eu/dfa
-      entityId: https://dfa.de.dariah.eu
+      baseUrl: https://dme.de.dariah.eu/dme
+      entityId: https://dme.de.dariah.eu/dme
       securityProfile: metaiop
       sslSecurityProfile: pkix
       sslHostnameVerification: default
@@ -54,7 +54,7 @@ auth:
         enabled: true
         url: https://wayf.aai.dfn.de/DFN-AAI-Test/wayf
         #url: https://auth.dariah.eu/CDS/WAYF
-        return: https://schereg.de.dariah.eu/schereg/saml/login/alias/schereg?disco:true
+        return: https://dme.de.dariah.eu/dme/saml/login/alias/dme?disco:true
       allowedNameIds : EMAIL, TRANSIENT, PERSISTENT, UNSPECIFIED, X509_SUBJECT
     
       # Attribute querying
