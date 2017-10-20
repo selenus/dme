@@ -1,0 +1,24 @@
+paths:
+  main: /var/run/dme
+  tmp: /tmp
+  logging: ${paths.main}/log
+  grammars: ${paths.main}/grammars
+  models: ${paths.main}/models
+  tmpUploadDir: ${paths.tmp}/dme_uploads/
+  sampleFilesDir: ${paths.tmp}/dme_samples/
+
+editors:
+  samples:
+    maxTravelSize: 50000
+
+db:
+  host: 127.0.0.1
+  port: 27017
+  database: dme
+
+auth:
+  local: 
+    users:  
+      - username: 'admin'
+        passhash: '$2a$10$nbXRnAx5wKurTrbaUkT/MOLXKAJgpT8R71/jujzPwgXXrG.OqlBKW'
+        roles: ["ROLE_ADMINISTRATOR"]

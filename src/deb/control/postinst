@@ -1,16 +1,35 @@
 #!/bin/bash
 # invoke-rc.d tomcat7 start
 # return success, even if service not installed
+#
+# This script creates some necessary directories and downloads models required for the nlp-extension of the gtf
+#  Modify the BASEDIR as required in your system and as configured in the dme.yml configuration
+#
+BASEDIR="/var/lib/dme"
 
-mkdir -p /etc/dfa/dme/grammars
-mkdir -p /etc/dfa/dme/models         
-
-if [ ! -e /etc/dfa/dme/models/openNLP-1.5-DE-sent.bin ]; then
-  curl -o /etc/dfa/dme/models/openNLP-1.5-DE-sent.bin http://opennlp.sourceforge.net/models-1.5/de-sent.bin
+if [ ! -e $BASEDIR/models/openNLP-1.5-DE-sent.bin ]; then
+  echo "Creating DME grammars directory at $BASEDIR/grammars"
+  mkdir -p $BASEDIR/grammars
 fi
 
-if [ ! -e /etc/dfa/dme/models/stanford-german-corenlp-2016-10-31-models.jar ]; then
-  curl -o /etc/dfa/dme/models/stanford-german-corenlp-2016-10-31-models.jar http://nlp.stanford.edu/software/stanford-german-corenlp-2016-10-31-models.jar
+if [ ! -e $BASEDIR/models/openNLP-1.5-DE-sent.bin ]; then
+  echo "Creating DME models directory at $BASEDIR/models"
+  mkdir -p $BASEDIR/models
 fi
+
+if [ ! -e $BASEDIR/models/openNLP-1.5-DE-sent.bin ]; then
+  echo "Downloading openNLP models"
+  curl -o $BASEDIR/models/openNLP-1.5-DE-sent.bin http://opennlp.sourceforge.net/models-1.5/de-sent.bin
+fi
+
+if [ ! -e $BASEDIR/models/stanford-german-corenlp-2016-10-31-models.jar ]; then
+  echo "Downloading stanford models"
+  curl -o $BASEDIR/models/stanford-german-corenlp-2016-10-31-models.jar https://nlp.stanford.edu/software/stanford-german-corenlp-2016-10-31-models.jar
+fi
+
+echo "--------------------------------------"
+echo "DME post-installation script executed."
+echo "Make sure that the web application has read/write-access to $BASEDIR/grammars and read-access to $BASEDIR/models"
+echo "--------------------------------------"
 
 exit 0

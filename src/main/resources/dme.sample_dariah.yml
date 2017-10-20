@@ -1,18 +1,15 @@
 paths:
-  main: /data/_srv/dme
+  main: /var/run/dme
+  tmp: /tmp
   logging: ${paths.main}/log
   grammars: ${paths.main}/grammars
   models: ${paths.main}/models
-  tmpUploadDir: /tmp/schereg_uploads/
-  sampleFilesDir: /tmp/schereg_sample_files/
+  tmpUploadDir: ${paths.tmp}/dme_uploads/
+  sampleFilesDir: ${paths.tmp}/dme_samples/
 
 editors:
   samples:
     maxTravelSize: 50000
-
-processing:
-  transformation:
-    debug: false
 
 db:
   host: 127.0.0.1
@@ -25,9 +22,6 @@ auth:
       - username: 'admin'
         passhash: '$2a$10$nbXRnAx5wKurTrbaUkT/MOLXKAJgpT8R71/jujzPwgXXrG.OqlBKW'
         roles: ["ROLE_ADMINISTRATOR"]
-      - username: 'tgradl'
-        passhash: '$2a$10$EeajSQQUepa7H7.g4xQCaeO.hjUwh0yzYCMrfOkWCZGe1IiWaexa6'
-        roles: ["ROLE_CONTRIBUTOR"]
   saml:
     keystore:
       path: ${paths.main}/key/dfa-de-dariah-eu.jks
@@ -39,11 +33,11 @@ auth:
       url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-test-metadata.xml
       #url: https://www.aai.dfn.de/fileadmin/metadata/dfn-aai-basic-metadata.xml
     sp:
-      externalMetadata: /home/tobias/_srv/schereg/sp_metadata.xml
+      #externalMetadata: /home/tobias/_srv/schereg/sp_metadata.xml
       maxAuthAge: -1
-      alias: schereg
-      baseUrl: https://schereg.de.dariah.eu/schereg
-      entityId: https://schereg.de.dariah.eu
+      alias: dme
+      baseUrl: https://dfa.de.dariah.eu/dfa
+      entityId: https://dfa.de.dariah.eu
       securityProfile: metaiop
       sslSecurityProfile: pkix
       sslHostnameVerification: default
