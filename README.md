@@ -15,6 +15,35 @@ The installation of an instance of the DME requires the setup of some required c
 
 ## Installation
 
+Aside from building the application on your own, two primary installation methods are provided. For debian-based systems, the installation of the *deb package is recommended* as it takes care of some post-installation steps and thus simplifies installation and upgrades. 
+
+### Debian Repository
+
+The DARIAH-DE developer portal generates and provides packages for a simplified installation of the DME on Debian-based machines. The repository can be found at: https://ci.de.dariah.eu/packages/
+
+#### Register repository as apt source
+To install productive versions:
+```
+echo "deb [arch=amd64] https://ci.de.dariah.eu/packages trusty releases" > /etc/apt/sources.list.d/dariah_apt_repository.list
+```
+For development releases
+```
+echo "deb [arch=amd64] https://ci.de.dariah.eu/packages trusty snapshots" > /etc/apt/sources.list.d/dariah_apt_repository.list
+```
+#### Register repository as apt source
+```
+wget -O - https://ci.de.dariah.eu/packages/repository.asc | sudo apt-key add -
+```
+
+#### Update apt sources and install DME
+```
+apt-get update && apt-get install dme
+```
+
+The package installs the DME at */var/dfa/webapps/dme*. Make sure to register this path with your web application server. When using Tomcat, a link to the installation directory from */path/to/tomcat/webapps* can be placed.
+
+Once installed and successfully started as (within a Java web application server) an empty CR dashboard is presented - with default ports and installed on a local machine as http://localhost:8080
+
 ### WAR Container
 
 WAR container files of the DME can be found at:
@@ -22,11 +51,3 @@ WAR container files of the DME can be found at:
 * Snapshot releases: https://minfba.de.dariah.eu/artifactory/webapp/#/artifacts/browse/tree/General/dariah-minfba-snapshots/de/unibamberg/minf/dme
 
 Place the WAR container in the applications directory of your web server - e.g. */path/to/tomcat/webapps* for Tomcat.  
-
-### Debian Repository
-
-The DARIAH-DE developer portal generates and provides packages for a simplified installation of the DME on Debian-based machines. The repository can be found at: https://ci.de.dariah.eu/packages/
-
-The package installs the DME at */var/dfa/webapps/dme*. Make sure to register this path with your web application server. When using Tomcat, a link to the installation directory from */path/to/tomcat/webapps* can be placed.
-
-Once installed and successfully started as (within a Java web application server) an empty CR dashboard is presented - with default ports and installed on a local machine as http://localhost:8080

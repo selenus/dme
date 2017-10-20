@@ -119,7 +119,7 @@
     <bean class="org.springframework.security.saml.SAMLBootstrap"/>
 
 	<!-- Central storage of cryptographic keys -->
-    <bean id="keyManager" class="org.springframework.security.saml.key.JKSKeyManager">
+    <bean id="keyManager" class="eu.dariah.de.dariahsp.saml.key.KeyManagerWrapper">
         <constructor-arg value="file:${auth.saml.keystore.path:#{null}}"/>
         <constructor-arg type="java.lang.String" value="${auth.saml.keystore.pass:#{null}}"/>
         <constructor-arg>
