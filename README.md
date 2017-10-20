@@ -40,7 +40,16 @@ wget -O - https://ci.de.dariah.eu/packages/repository.asc | sudo apt-key add -
 apt-get update && apt-get install dme
 ```
 
-The package installs the DME at */var/dfa/webapps/dme*. Make sure to register this path with your web application server. When using Tomcat, a link to the installation directory from */path/to/tomcat/webapps* can be placed.
+#### Install in Tomcat
+
+The package installs the DME at */var/dfa/webapps/dme*. Make sure to register this path with your web application server. When using Tomcat, a link to the installation directory from */path/to/tomcat/webapps* can be placed. For a default Ubuntu installation:
+```
+apt-get update && apt-get install dme
+```
+ 
+
+
+
 
 Once installed and successfully started as (within a Java web application server) an empty CR dashboard is presented - with default ports and installed on a local machine as http://localhost:8080
 
