@@ -5,14 +5,26 @@
 # This script creates some necessary directories and downloads models required for the nlp-extension of the gtf
 #  Modify the BASEDIR as required in your system and as configured in the dme.yml configuration
 #
+CONFIGDIR="/etc/dfa/dme"
 BASEDIR="/var/lib/dme"
+INSTALLDIR="/var/dfa/webapps/dme"
 
-if [ ! -e $BASEDIR/models/openNLP-1.5-DE-sent.bin ]; then
+if [ ! -e $CONFIGDIR ]; then
+  echo "Creating DME config directory at $CONFIGDIR"
+  mkdir -p $BASEDIR
+fi
+
+if [ ! -e $CONFIGDIR/dme.yml ]; then
+  echo "Installing simple DME config directory at $CONFIGDIR/dme.yml"
+  cp /var/dfa/webapps/dme/WEB-INF/classes/dme.sample_simple.yml $CONFIGDIR/dme.yml
+fi
+
+if [ ! -e $BASEDIR/grammars ]; then
   echo "Creating DME grammars directory at $BASEDIR/grammars"
   mkdir -p $BASEDIR/grammars
 fi
 
-if [ ! -e $BASEDIR/models/openNLP-1.5-DE-sent.bin ]; then
+if [ ! -e $BASEDIR/models ]; then
   echo "Creating DME models directory at $BASEDIR/models"
   mkdir -p $BASEDIR/models
 fi

@@ -6,18 +6,18 @@ Issues for the DME are tracked here: https://minfba.de.dariah.eu/mantisbt/set_pr
 
 Further information on the concepts behind the DME are accessible at https://de.dariah.eu/dme.
 
-## Prerequisites
+## 1) Prerequisites
 
 The installation of an instance of the DME requires the setup of some required components:
 * An installed Java, minimum version JavaSE-1.8
 * A Java web-application server such as Tomcat or Jetty
 * MongoDB 3 as storage backend
 
-## Installation
+## 2) Installation
 
 Aside from building the application on your own, two primary installation methods are provided. For debian-based systems, the installation of the *deb package is recommended* as it takes care of some post-installation steps and thus simplifies installation and upgrades. 
 
-### Debian Repository
+### 2.1) Debian Repository
 
 The DARIAH-DE developer portal generates and provides packages for a simplified installation of the DME on Debian-based machines. The repository can be found at: https://ci.de.dariah.eu/packages/
 
@@ -44,7 +44,7 @@ The package installs the DME at */var/dfa/webapps/dme*. Make sure to register th
 
 Once installed and successfully started as (within a Java web application server) an empty CR dashboard is presented - with default ports and installed on a local machine as http://localhost:8080
 
-### WAR Container
+### 2.2) WAR Container
 
 WAR container files of the DME can be found at:
 * Production releases: https://minfba.de.dariah.eu/artifactory/webapp/#/artifacts/browse/tree/General/dariah-minfba-releases/de/unibamberg/minf/dme
