@@ -103,4 +103,6 @@ ProxyPassReverse /dme/ http://127.0.0.1:8080/dme/
 
 ```
 
+If the Apache proxy has been setup correctly, the dme should be available at https://localhost:443 or - in the case of the above snippet - https://dme.de.dariah.eu.
+
 ### 3.2) SAML Integration
