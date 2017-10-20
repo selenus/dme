@@ -6,6 +6,8 @@ Issues for the DME are tracked here: https://minfba.de.dariah.eu/mantisbt/set_pr
 
 Further information on the concepts behind the DME are accessible at https://de.dariah.eu/dme.
 
+Please note that the following Instructions are primarily oriented towards Linux-based environments - specifically DARIAH-DE/Ubuntu/Tomcat8/Apache. Please evaluate and modify the steps according to your installation environment.
+
 ## 1) Prerequisites
 
 The installation of an instance of the DME requires the setup of some required components:
@@ -74,3 +76,31 @@ export CATALINA_OPTS="$CATALINA_OPTS -Ddme.yml=/etc/dfa/dme/dme.yml"
 Start/restart Tomcat: the DME will be accessible at http://localhost:8080/dme. To debug startup issues analyze the Tomcat log file (`/var/log/tomcat8/catalina.out`)
 
 ![Empty DME Startup page](https://github.com/tgradl/dme/raw/master/docs/img/screenshot-empty-startup.png "Empty DME Startup page")
+
+## 3) Additional configuration
+
+### 3.1) Tomcat behind proxy
+If the tomcat server is running behind a web proxy, additional configuration steps are required in order to let the application know about the outside perspective (e.g. to show correct links).
+
+#### Tomcat configuration
+If the proxy server is providing SSL access over port 443 (recommended), modify the Tomcat *conf/server.xml* file (Ubuntu/Tomcat8: */var/lib/tomcat8/conf/server.xml*) and update the Connector for port 8080 to
+```
+<Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" proxyPort="443" scheme="https" />
+```
+
+Based on an Apache as proxy server, the host configuration is required to pass some header information to the tomcat. An appropriate proxy configuration could be as follows. Modify accordingly or adapt as nginx configuration.
+```
+# Pass host information to tomcat 
+ProxyPreserveHost on
+
+# Redirect incomplete paths to the actual tomcat equivalent
+Redirect /dme https://dme.de.dariah.eu/dme/
+Redirect / https://dme.de.dariah.eu/dme/
+
+# Actual proxy
+ProxyPass /dme/ http://127.0.0.1:8080/dme/
+ProxyPassReverse /dme/ http://127.0.0.1:8080/dme/
+
+```
+
+### 3.2) SAML Integration
