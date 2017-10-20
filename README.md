@@ -40,6 +40,14 @@ wget -O - https://ci.de.dariah.eu/packages/repository.asc | sudo apt-key add -
 apt-get update && apt-get install dme
 ```
 
+#### Post-installation tasks
+The deb package:
+* installs the DME at */var/dfa/webapps/dme*. This directory needs to be linked from within the Tomcat webapps directory (e.g. in a standard Ubuntu install: `ln -s /var/dfa/webapps/dme/ /var/lib/tomcat8/webapps/`)
+* creates /etc/dfa/dme and installs the simple sample configuration if dme.yml does not yet exist. Configuration is discussed in 3) of this page
+* creates - if it does not exist - */var/lib/dme/models* and downloads some Stanford CoreNLP and OpenNLP models required for NLP processing
+* creates - if it does not exist - */var/lib/dme/grammars*: make sure the **Tomcat running user has write access to this directory**  
+
+
 #### Install in Tomcat
 
 The package installs the DME at */var/dfa/webapps/dme*. Make sure to register this path with your web application server. When using Tomcat, a link to the installation directory from */path/to/tomcat/webapps* can be placed. For a default Ubuntu installation:

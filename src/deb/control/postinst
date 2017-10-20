@@ -11,7 +11,7 @@ INSTALLDIR="/var/dfa/webapps/dme"
 
 if [ ! -e $CONFIGDIR ]; then
   echo "Creating DME config directory at $CONFIGDIR"
-  mkdir -p $BASEDIR
+  mkdir -p $CONFIGDIR
 fi
 
 if [ ! -e $CONFIGDIR/dme.yml ]; then
