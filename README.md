@@ -250,7 +250,7 @@ Also, please download the metadata yourself and place them within the configurat
 This sample configuration comes within the installed DME directory and is also accessible [here](https://github.com/tgradl/dme/blob/master/src/main/resources/dme.sample_dariah.yml)
 ```
 paths:
-  main: /var/run/dme
+  main: /var/lib/dme
   tmp: /tmp
   logging: ${paths.main}/log
   grammars: ${paths.main}/grammars

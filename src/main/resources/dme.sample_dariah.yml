@@ -1,5 +1,5 @@
 paths:
-  main: /var/run/dme
+  main: /var/lib/dme
   tmp: /tmp
   logging: ${paths.main}/log
   grammars: ${paths.main}/grammars
