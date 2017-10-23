@@ -34,7 +34,6 @@
 			<input type="hidden" id="schema-own" value="${schema.own}" />
 			<input type="hidden" id="current-model-nature" value="logical_model" />
 			
-
 			<c:set var="existingModelNatures" value="[" />
 			<c:if test="${fn:length(schema.pojo.natures)>0}">
 				<c:forEach items="${schema.pojo.natures}" var="nature" varStatus="status">

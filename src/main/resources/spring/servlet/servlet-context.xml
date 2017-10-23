@@ -18,7 +18,7 @@
 	<bean id="initService" class="de.unibamberg.minf.core.web.init.LocaleAwareInitializationServiceImpl">
 		<property name="basename" value="classpath:i18n/messages" />
 	</bean>
-	
+
 	<!-- View resolution and dispatching -->
 	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
 		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />

@@ -101,6 +101,8 @@ public class ExceptionController {
 			e = getException(httpRequest);
 		}
 		
+		logger.error("Failed to render view", e);
+		
 		String originalUri = (String)httpRequest.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
 		
 		if ( (httpRequest.getHeader("accept")!=null && httpRequest.getHeader("accept").toLowerCase().contains("json")) || 
