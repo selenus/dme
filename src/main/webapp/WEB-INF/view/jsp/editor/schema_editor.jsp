@@ -42,7 +42,7 @@
 						<c:set var="existingModelNatures" value="${existingModelNatures}," />
 					</c:if>
 							
-					<c:set var="existingModelNatures" value="${existingModelNatures}'${nature.class.name}'" />
+					<c:set var="existingModelNatures" value="${existingModelNatures}'${nature['class'].name}'" />
 							
 				</c:forEach>
 			</c:if>
@@ -166,7 +166,7 @@
 											  <c:if test="${fn:length(schema.pojo.natures)>0}">
 												  <option disabled="disabled">──────────</option>
 												  <c:forEach items="${schema.pojo.natures}" var="nature">
-												  	<option value="${nature.class.name}"><s:message code="~${nature.class.name}.display_label" /></option>
+												  	<option value="${nature['class'].name}"><s:message code="~${nature['class'].name}.display_label" /></option>
 												  </c:forEach>
 											  </c:if>
 											</select>
