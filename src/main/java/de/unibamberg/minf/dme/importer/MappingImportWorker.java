@@ -89,7 +89,7 @@ public class MappingImportWorker extends BaseImportWorker<MappingImporter> imple
 
 	@Override
 	public void registerImportFinished(Mapping mapping, List<MappedConcept> importedConcepts, Map<String, String> importedFunctions, Map<String, GrammarContainer> importedGrammars, AuthPojo auth) {
-		logger.error(GenericImporterMessages.ImportFinished.getMessageCode());
+		logger.info(GenericImporterMessages.ImportFinished.getMessageCode());
 		
 		for (MappedConcept mappedConcept : importedConcepts) {
 			if (mappedConcept.getId()==null) {

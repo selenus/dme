@@ -230,6 +230,10 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 			response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			return new ModelActionPojo(false);
 		}
+		if (schemaRootId!=null && schemaRootId.isEmpty()) {
+			schemaRootId = null;
+		}
+		
 		ModelActionPojo result = new ModelActionPojo();
 		try {
 			if (temporaryFilesMap.containsKey(fileId)) {
