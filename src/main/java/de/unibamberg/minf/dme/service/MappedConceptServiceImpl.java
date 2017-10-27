@@ -117,8 +117,15 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		for (Identifiable e : elements) {
 			elementMap.put(e.getId(), e);
 		}
+		Identifiable iTest;
 		for (Reference r : reference.getChildReferences().get(MappedConceptImpl.class.getName())) {
-			result.add((MappedConcept)this.fillElement(r, elementMap));
+			iTest = BaseReferenceServiceImpl.fillElement(r, elementMap);
+			if (iTest!=null) {
+				result.add(MappedConcept.class.cast(iTest));
+			} else {
+				// TODO: This null check is only a hotfix. The problem seems to be importer-related however
+				logger.warn("Inconsistency warning: Mapping references concept that no longer exists");
+			}
 		}
 		return result;
 	}
