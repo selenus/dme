@@ -157,11 +157,11 @@ public class TerminalEditorController extends BaseScheregController {
 					t.setName(name);
 					if (modelClazz.equals(XmlDatamodelNature.class)) {
 						((XmlTerminal)t).setAttribute(attribute);
-						/*if (namespace.trim().isEmpty()) {
+						if (namespace.trim().isEmpty()) {
 							((XmlTerminal)t).setNamespace(null);
-						} else {*/
+						} else {
 							((XmlTerminal)t).setNamespace(namespace);
-						//}
+						}
 					}
 					break;
 				}
