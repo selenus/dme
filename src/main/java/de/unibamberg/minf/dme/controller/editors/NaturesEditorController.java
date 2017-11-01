@@ -74,17 +74,24 @@ public class NaturesEditorController extends BaseScheregController {
 		}
 		ModelActionPojo result;
 		List<String> prefices = new ArrayList<String>();
+		List<String> urls = new ArrayList<String>();
+		List<XmlNamespace> namespaces = new ArrayList<XmlNamespace>();
 		for (XmlNamespace xmlNs : xmlNature.getNamespaces()) {
-			if (xmlNs.getPrefix()!=null && !xmlNs.getPrefix().isEmpty()) {
-				if (prefices.contains(xmlNs.getPrefix())) {
+			if (xmlNs.getPrefix()!=null && !xmlNs.getPrefix().trim().isEmpty()) {
+				if (prefices.contains(xmlNs.getPrefix().trim())) {
 					result = new ModelActionPojo(false);
 					result.addFieldError("edit-nature-namespaces", messageSource.getMessage("~de.unibamberg.minf.dme.form.nature.hint.duplicate_namespace_prefices", null, locale));
 					return result;
-				} else {
-					prefices.add(xmlNs.getPrefix());
 				}
 			}
+			if (!urls.contains(xmlNs.getUrl().trim())) {
+				prefices.add(xmlNs.getPrefix().trim());
+				urls.add(xmlNs.getUrl().trim());
+				namespaces.add(xmlNs);
+			}
 		}
+		xmlNature.setNamespaces(namespaces);
+		
 		schemaService.updateNature(entityId, xmlNature, auth);
 		return new ModelActionPojo(true); 
 	}
