@@ -232,7 +232,7 @@ public class MappingEditorController extends BaseMainEditorController {
 			result.setPojo(session.getSampleMapped().size());
 			
 			if (session.getSampleOutput().size()==1) {
-				session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.translated_1_results", new Object[]{sw.getElapsedTime()}, locale));
+				session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.translated_1_result", new Object[]{sw.getElapsedTime()}, locale));
 			} else {
 				session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.translated_n_results", new Object[]{sw.getElapsedTime(), consumptionService.getResources().size()}, locale));	
 			}
