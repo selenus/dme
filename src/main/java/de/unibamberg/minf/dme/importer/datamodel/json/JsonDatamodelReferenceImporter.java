@@ -22,8 +22,9 @@ import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
+import de.unibamberg.minf.dme.model.reference.Reference;
+import de.unibamberg.minf.dme.model.reference.ReferenceHelper;
 import de.unibamberg.minf.dme.model.serialization.DatamodelReferenceContainer;
-import de.unibamberg.minf.dme.model.serialization.Reference;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.ReferenceService;
 
@@ -89,7 +90,7 @@ public class JsonDatamodelReferenceImporter extends BaseJsonDatamodelImporter {
 		
 		Reference importRoot = referenceService.findReferenceById(s.getRoot(), this.getRootElementName());
 		
-		Element e = (Element)BaseReferenceServiceImpl.fillElement(importRoot, s.getElements());
+		Element e = (Element)ReferenceHelper.fillElement(importRoot, s.getElements());
 		
 		Map<String, String> oldToNewIdMap = new HashMap<String, String>();
 		this.reworkElementHierarchy(m.getId(), e, oldToNewIdMap, new HashMap<String, String>(), null);

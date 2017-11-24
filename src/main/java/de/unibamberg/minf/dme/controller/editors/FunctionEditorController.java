@@ -39,7 +39,7 @@ import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 import de.unibamberg.minf.dme.pojo.TreeElementPojo;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
 import de.unibamberg.minf.dme.service.interfaces.FunctionService;

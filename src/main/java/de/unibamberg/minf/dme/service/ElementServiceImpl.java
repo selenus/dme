@@ -35,7 +35,8 @@ import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
+import de.unibamberg.minf.dme.model.reference.ReferenceHelper;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
 import de.unibamberg.minf.dme.service.interfaces.IdentifiableService;
@@ -84,10 +85,10 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 			}
 			for (Reference ref : references) {
 				if (parent==null) {
-					parent = findSubreference(ref, elementId);
+					parent = ReferenceHelper.findSubreference(ref, elementId);
 				}
 				if (child==null) {
-					child = findSubreference(ref, childId);
+					child = ReferenceHelper.findSubreference(ref, childId);
 				}
 				if (child!=null && parent!=null) {
 					addChildReference(parent, child);
@@ -99,7 +100,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Element findRootBySchemaId(String schemaId, boolean eagerLoadHierarchy) {
 		Reference reference = this.findReferenceById(schemaId);
@@ -136,7 +137,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		for (Identifiable e : elements) {
 			elementMap.put(e.getId(), e);
 		}
-		return (Element)fillElement(rootElementReference, elementMap);
+		return (Element)ReferenceHelper.fillElement(rootElementReference, elementMap);
 	}
 		
 	@Override
@@ -275,7 +276,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	@Override
 	public Element createAndAppendElement(String schemaId, String parentElementId, String label, AuthPojo auth) {
 		Reference rRoot = this.findReferenceById(schemaId);
-		Reference rParent = findSubreference(rRoot, parentElementId);
+		Reference rParent = ReferenceHelper.findSubreference(rRoot, parentElementId);
 		Element eParent = elementDao.findById(parentElementId);
 		
 		Element element = null;
@@ -433,7 +434,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		}
 		
 		// Fill element hierarchy for our clone blueprint
-		Element eCloneRef = (Element)fillElement(rCloneRef, elementMap);
+		Element eCloneRef = (Element)ReferenceHelper.fillElement(rCloneRef, elementMap);
 		
 		/* Track association between original element ids and cloned nonterminals
 		 *  This is required to later associate the new nonterminal ids to 

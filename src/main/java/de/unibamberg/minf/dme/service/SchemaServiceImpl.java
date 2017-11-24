@@ -31,7 +31,7 @@ import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlNamespace;
 import de.unibamberg.minf.dme.model.datamodel.natures.xml.XmlTerminal;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.AuthWrappedPojo;
 import de.unibamberg.minf.dme.service.base.BaseEntityServiceImpl;

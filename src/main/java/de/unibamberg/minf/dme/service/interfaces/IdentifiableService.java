@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.base.ModelElement;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 
 public interface IdentifiableService {

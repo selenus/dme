@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.unibamberg.minf.dme.dao.interfaces.ReferenceDao;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 import de.unibamberg.minf.dme.service.interfaces.ReferenceService;
 
 @Service

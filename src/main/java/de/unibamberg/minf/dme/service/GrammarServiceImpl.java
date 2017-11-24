@@ -27,7 +27,8 @@ import de.unibamberg.minf.dme.model.base.Terminal;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
+import de.unibamberg.minf.dme.model.reference.ReferenceHelper;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 import de.unibamberg.minf.gtf.MainEngine;
@@ -48,7 +49,7 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	@Override
 	public Grammar createAndAppendGrammar(String schemaId, String parentElementId, String label, AuthPojo auth) {
 		Reference rRoot = this.findReferenceById(schemaId);
-		Reference rParent = findSubreference(rRoot, parentElementId);
+		Reference rParent = ReferenceHelper.findSubreference(rRoot, parentElementId);
 		
 		GrammarImpl grammar = new GrammarImpl(schemaId, getNormalizedName(label));
 		grammar.setPassthrough(true);

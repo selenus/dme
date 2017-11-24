@@ -26,7 +26,7 @@ import de.unibamberg.minf.dme.model.datamodel.LabelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 import de.unibamberg.minf.dme.service.base.BaseServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 import de.unibamberg.minf.dme.service.interfaces.IdentifiableService;

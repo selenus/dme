@@ -33,7 +33,7 @@ import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 import de.unibamberg.minf.dme.pojo.ModelElementPojo;
 import de.unibamberg.minf.dme.pojo.converter.ModelElementPojoConverter;
 import de.unibamberg.minf.dme.service.ElementServiceImpl;

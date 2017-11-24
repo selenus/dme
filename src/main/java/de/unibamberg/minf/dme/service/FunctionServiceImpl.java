@@ -11,7 +11,8 @@ import de.unibamberg.minf.dme.model.base.Element;
 import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Label;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
+import de.unibamberg.minf.dme.model.reference.ReferenceHelper;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.FunctionService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
@@ -23,7 +24,7 @@ public class FunctionServiceImpl extends BaseReferenceServiceImpl implements Fun
 	@Override
 	public Function createAndAppendFunction(String schemaId, String grammarId, String label, AuthPojo auth) {
 		Reference rRoot = this.findReferenceById(schemaId);
-		Reference rParent = findSubreference(rRoot, grammarId);
+		Reference rParent = ReferenceHelper.findSubreference(rRoot, grammarId);
 		
 		Function grammar = new FunctionImpl(schemaId, getNormalizedName(label));
 		functionDao.save(grammar, auth.getUserId(), auth.getSessionId());

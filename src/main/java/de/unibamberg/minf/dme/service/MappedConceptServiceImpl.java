@@ -25,7 +25,8 @@ import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
+import de.unibamberg.minf.dme.model.reference.ReferenceHelper;
 import de.unibamberg.minf.dme.service.base.BaseReferenceServiceImpl;
 import de.unibamberg.minf.dme.service.interfaces.MappedConceptService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
@@ -51,7 +52,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		Reference refConcept;
 		boolean needReferenceSave = false; 
 		
-		isNew = findSubreference(root, mappedConcept.getId())==null;
+		isNew = ReferenceHelper.findSubreference(root, mappedConcept.getId())==null;
 		
 		if (isNew) {
 			refConcept = this.addChildReference(root, mappedConcept);
@@ -67,7 +68,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			addChildReference(refConcept, function); 
 			needReferenceSave = true;
 		} else {
-			refConcept = findSubreference(root, mappedConcept.getId());
+			refConcept = ReferenceHelper.findSubreference(root, mappedConcept.getId());
 		}
 
 		for (String sourceElementId : mappedConcept.getElementGrammarIdsMap().keySet()) {
@@ -119,7 +120,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		}
 		Identifiable iTest;
 		for (Reference r : reference.getChildReferences().get(MappedConceptImpl.class.getName())) {
-			iTest = BaseReferenceServiceImpl.fillElement(r, elementMap);
+			iTest = ReferenceHelper.fillElement(r, elementMap);
 			if (iTest!=null) {
 				result.add(MappedConcept.class.cast(iTest));
 			} else {
@@ -177,7 +178,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			elementMap.put(e.getId(), e);
 		}
 		
-		return (MappedConcept)this.fillElement(r, elementMap);
+		return (MappedConcept)ReferenceHelper.fillElement(r, elementMap);
 	}
 
 	@Override
@@ -212,7 +213,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 			this.saveMappedConcept(mc, mappingId, auth);
 			
 			Reference rMapping = this.findReferenceById(mappingId);
-			removeSubreference(rMapping, sourceId);
+			ReferenceHelper.removeSubreference(rMapping, sourceId);
 			this.saveRootReference(rMapping);
 		}
 	}

@@ -16,7 +16,7 @@ import de.unibamberg.minf.dme.dao.base.Dao;
 import de.unibamberg.minf.dme.dao.base.TrackedEntityDao;
 import de.unibamberg.minf.dme.dao.interfaces.ReferenceDao;
 import de.unibamberg.minf.dme.model.base.Identifiable;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 
 @Repository
 public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements ReferenceDao, ApplicationContextAware {

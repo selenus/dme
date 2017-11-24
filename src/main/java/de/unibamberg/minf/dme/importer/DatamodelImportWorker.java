@@ -15,7 +15,7 @@ import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.exception.MetamodelConsistencyException;
-import de.unibamberg.minf.dme.model.serialization.Reference;
+import de.unibamberg.minf.dme.model.reference.Reference;
 import de.unibamberg.minf.dme.service.interfaces.ElementService;
 import de.unibamberg.minf.dme.service.interfaces.IdentifiableService;
 import de.unibamberg.minf.dme.service.interfaces.ReferenceService;
