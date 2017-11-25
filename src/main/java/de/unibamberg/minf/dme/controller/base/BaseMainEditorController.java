@@ -79,6 +79,9 @@ import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 public abstract class BaseMainEditorController extends BaseScheregController {
 	protected static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
 	
+	@Value("${debug.element.processing:false}")
+	private boolean debugElementProcessing;
+	
 	@Autowired protected MappingService mappingService;
 	@Autowired protected MappedConceptService mappedConceptService;
 	@Autowired protected PersistedSessionService sessionService;
@@ -543,7 +546,9 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(0);
 		
-		logger.debug("Start executing sample against datamodel [{}]", entityId);
+		if (debugElementProcessing) {
+			logger.debug("Start executing sample against datamodel [{}]", entityId);
+		}
 		
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (session==null) {
@@ -551,8 +556,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			return null;
 		}
 		
-		logger.debug("Session for transformation loaded [{}] took {}ms", entityId, sw.getElapsedTime());
-		sw.reset();
+		if (debugElementProcessing) {
+			logger.debug("Session for transformation loaded [{}] took {}ms", entityId, sw.getElapsedTime());
+			sw.reset();
+		}
 		
 		Datamodel s = schemaService.findSchemaById(entityId);
 		if (s==null) {
@@ -560,8 +567,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			s = schemaService.findSchemaById(m.getSourceId());
 		}		
 		
-		logger.debug("Datamodel loaded [{}] took {}ms", entityId, sw.getElapsedTime());
-		sw.reset();
+		if (debugElementProcessing) {
+			logger.debug("Datamodel loaded [{}] took {}ms", entityId, sw.getElapsedTime());
+			sw.reset();
+		}
 		
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);
 		
@@ -578,14 +587,16 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			processingSvc.setRoot(r);
 			processingSvc.init();
 			
-			logger.debug("Preparation of sample for datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
-			
-			sw.reset();
+			if (debugElementProcessing) {
+				logger.debug("Preparation of sample for datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
+				sw.reset();
+			}
 			processingSvc.run();
 			
-			logger.debug("Parse of sample against datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
-			
-			sw.reset();
+			if (debugElementProcessing) {
+				logger.debug("Parse of sample against datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
+				sw.reset();
+			}
 			
 			session.setSampleOutput(consumptionService.getResources());
 			session.setSelectedOutputIndex(0);
@@ -603,9 +614,9 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			}
 			
 			sessionService.saveSession(session);
-			
-			logger.debug("Post-parse session handling for datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
-			
+			if (debugElementProcessing) {
+				logger.debug("Post-parse session handling for datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
+			}
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);
 		}

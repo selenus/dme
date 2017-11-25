@@ -7,6 +7,11 @@ paths:
   tmpUploadDir: ${paths.tmp}/dme_uploads/
   sampleFilesDir: ${paths.tmp}/dme_samples/
 
+debug:
+  element:
+    processing: false
+  gtf: false
+
 editors:
   samples:
     maxTravelSize: 50000
