@@ -538,9 +538,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
 	public @ResponseBody ModelActionPojo executeSample(@PathVariable String entityId, HttpServletRequest request, HttpServletResponse response, Locale locale) {
-		Stopwatch sw = new Stopwatch();
+		Stopwatch sw = new Stopwatch().start();
+		Stopwatch swTotal = new Stopwatch().start();
 		ModelActionPojo result = new ModelActionPojo(true);
 		result.setPojo(0);
+		
+		logger.debug("Start executing sample against datamodel [{}]", entityId);
 		
 		PersistedSession session = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (session==null) {
@@ -548,11 +551,17 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			return null;
 		}
 		
+		logger.debug("Session for transformation loaded [{}] took {}ms", entityId, sw.getElapsedTime());
+		sw.reset();
+		
 		Datamodel s = schemaService.findSchemaById(entityId);
 		if (s==null) {
 			Mapping m = mappingService.findMappingById(entityId);
 			s = schemaService.findSchemaById(m.getSourceId());
 		}		
+		
+		logger.debug("Datamodel loaded [{}] took {}ms", entityId, sw.getElapsedTime());
+		sw.reset();
 		
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);
 		
@@ -569,8 +578,14 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			processingSvc.setRoot(r);
 			processingSvc.init();
 			
-			sw.start();
+			logger.debug("Preparation of sample for datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
+			
+			sw.reset();
 			processingSvc.run();
+			
+			logger.debug("Parse of sample against datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
+			
+			sw.reset();
 			
 			session.setSampleOutput(consumptionService.getResources());
 			session.setSelectedOutputIndex(0);
@@ -579,15 +594,18 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				result.setPojo(session.getSampleOutput().size());
 								
 				if (session.getSampleOutput().size()==1) {				
-					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.processed_1_result", new Object[]{sw.getElapsedTime()}, locale));
+					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.processed_1_result", new Object[]{swTotal.getElapsedTime()}, locale));
 				} else {
-					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.processed_n_results", new Object[]{sw.getElapsedTime(), consumptionService.getResources().size()}, locale));	
+					session.addLogEntry(LogType.SUCCESS, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.processed_n_results", new Object[]{swTotal.getElapsedTime(), consumptionService.getResources().size()}, locale));	
 				}
 			} else {
 				session.addLogEntry(LogType.WARNING, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.processed_no_results", null, locale));
 			}
 			
 			sessionService.saveSession(session);
+			
+			logger.debug("Post-parse session handling for datamodel [{}] took {}ms", entityId, sw.getElapsedTime());
+			
 		} catch (Exception e) {
 			logger.error("Error parsing XML string", e);
 		}

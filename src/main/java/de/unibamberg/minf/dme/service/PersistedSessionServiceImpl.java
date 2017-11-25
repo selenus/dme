@@ -39,7 +39,8 @@ public class PersistedSessionServiceImpl implements PersistedSessionService {
 		if (s==null) {
 			return null;
 		}
-		return this.saveSession(s);
+		return s;
+		//return this.saveSession(s);
 	}
 	
 	@Override
