@@ -240,4 +240,4 @@ Util.prototype.renderActivities = function(container, id, data) {
 			
 		}
 	}
-}
+};

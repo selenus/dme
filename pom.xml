@@ -367,6 +367,35 @@
 		</snapshotRepository>
 	</distributionManagement>
 	
+	<!-- Needs some strategy -> postponed 
+	<build>
+		<plugins>
+			<plugin>
+		    	<groupId>com.samaxes.maven</groupId>
+		        <artifactId>minify-maven-plugin</artifactId>
+		        <version>1.7.6</version>
+		        <executions>
+		          <execution>
+		            <id>default-minify</id>
+		            <configuration>
+		              <cssSourceDir>resources/css</cssSourceDir>
+		              <cssSourceIncludes>
+		                <cssSourceInclude>**</cssSourceInclude>
+		              </cssSourceIncludes>
+		              <jsSourceDir>resources/js</jsSourceDir>
+		              <jsSourceIncludes>
+		                <jsSourceInclude>**</jsSourceInclude>
+		              </jsSourceIncludes>
+		            </configuration>
+		            <goals>
+		              <goal>minify</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+			</plugin>
+		</plugins>
+	</build> -->
+	
 	<profiles>
 		<profile>
 			<id>dariah.deb</id>
