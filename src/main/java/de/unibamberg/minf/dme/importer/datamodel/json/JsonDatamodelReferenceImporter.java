@@ -43,7 +43,7 @@ public class JsonDatamodelReferenceImporter extends BaseJsonDatamodelImporter {
 				objectMapper.readValue(new File(this.importFilePath), DatamodelReferenceContainer.class);
 				return true;
 			} catch (Exception e) {
-				logger.warn("Import error", e);
+				//logger.warn("Import error", e);
 				return false;
 			}
 		}
