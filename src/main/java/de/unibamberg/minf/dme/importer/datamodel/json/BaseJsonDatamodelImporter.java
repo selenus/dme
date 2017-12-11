@@ -102,7 +102,9 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 		List<ModelElement> possibleElements = IdentifiableServiceImpl.extractAllByType(root, this.getRootElementType());
 		if (possibleElements!=null) {
 			for (ModelElement i : possibleElements) {
-				if (NamedModelElement.class.isAssignableFrom(i.getClass()) && ((NamedModelElement)i).getName().equals(this.getRootElementName())) {
+				if (NamedModelElement.class.isAssignableFrom(i.getClass()) && 
+						(((NamedModelElement)i).getId().equals(this.getRootElementName()) || 
+						 ((NamedModelElement)i).getName().equals(this.getRootElementName()))) {
 					this.getRootElements().add(i);
 				}
 			}
