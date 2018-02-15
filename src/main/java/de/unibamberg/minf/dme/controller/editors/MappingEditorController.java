@@ -264,7 +264,7 @@ public class MappingEditorController extends BaseMainEditorController {
 			m.setVersionId(ch.getId());
 		}
 
-		mc.setGrammars(grammarService.serializeGrammarSources(entityId));
+		mc.setGrammars(grammarService.getNonPassthroughGrammars(entityId));
 		
 		Map<String, String> serializedFunctions = new HashMap<String, String>();
 		

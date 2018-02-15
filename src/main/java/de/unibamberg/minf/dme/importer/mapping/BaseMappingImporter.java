@@ -11,6 +11,7 @@ import de.unibamberg.minf.core.util.Stopwatch;
 import de.unibamberg.minf.dme.exception.MappingImportException;
 import de.unibamberg.minf.dme.importer.BaseImporter;
 import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.model.mapping.MappedConceptImpl;
 import de.unibamberg.minf.dme.model.mapping.base.MappedConcept;
@@ -28,7 +29,7 @@ public abstract class BaseMappingImporter extends BaseImporter implements Mappin
 	
 	private List<MappedConcept> importedConcepts;
 	private Map<String, String> importedFunctions;
-	private Map<String, GrammarContainer> importedGrammars;
+	private Map<String, Grammar> importedGrammars;
 	
 	public Mapping getMapping() { return mapping; }
 	@Override public void setMapping(Mapping mapping) { this.mapping = mapping; }
@@ -57,10 +58,10 @@ public abstract class BaseMappingImporter extends BaseImporter implements Mappin
 		}
 	}
 	
-	protected void importMapping(Mapping m, Map<String, String> functions, Map<String, GrammarContainer> grammars) {
+	protected void importMapping(Mapping m, Map<String, String> functions, List<Grammar> grammars) {
 		importedConcepts = new ArrayList<MappedConcept>();
 		importedFunctions = new HashMap<String, String>();
-		importedGrammars = new HashMap<String, GrammarContainer>();
+		importedGrammars = new HashMap<String, Grammar>();
 		
 		MappedConcept importedMc;
 		List<String> targetElementIds, sourceElementIds;
@@ -95,10 +96,15 @@ public abstract class BaseMappingImporter extends BaseImporter implements Mappin
 				importedMc.setElementGrammarIdsMap(new HashMap<String, String>());
 				for (String sourceElementId : sourceElementIds) {
 					grammarId = mc.getElementGrammarIdsMap().get(sourceElementId);
-					if (grammarId!=null && grammars!=null && grammars.containsKey(grammarId)) {
-						setId = this.getOrCreateId(grammarId); 
-						importedMc.getElementGrammarIdsMap().put(sourceElementId, setId);
-						importedGrammars.put(setId, grammars.get(grammarId));
+					if (grammarId!=null && grammars!=null) {
+						for (Grammar g : grammars) {
+							if (g.getId().equals(grammarId)) {
+								setId = this.getOrCreateId(grammarId); 
+								importedMc.getElementGrammarIdsMap().put(sourceElementId, setId);
+								importedGrammars.put(setId, g);
+								break;
+							}
+						}
 					} else {
 						importedMc.getElementGrammarIdsMap().put(sourceElementId, null);
 					}

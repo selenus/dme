@@ -39,4 +39,8 @@ public interface GrammarService extends BaseService {
 	public Map<String, GrammarContainer> serializeGrammarSources(String entityId);
 
 	public Map<String, GrammarContainer> serializeGrammarSources(List<Grammar> grammars);
+
+	List<Grammar> getNonPassthroughGrammars(List<Grammar> grammars);
+
+	List<Grammar> getNonPassthroughGrammars(String entityId);
 }

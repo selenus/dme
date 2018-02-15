@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -23,8 +22,6 @@ import org.springframework.util.Assert;
 import de.unibamberg.minf.dme.dao.interfaces.GrammarDao;
 import de.unibamberg.minf.dme.model.base.Function;
 import de.unibamberg.minf.dme.model.base.Grammar;
-import de.unibamberg.minf.dme.model.base.Terminal;
-import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.reference.Reference;
@@ -286,18 +283,35 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 	public Map<String, GrammarContainer> serializeGrammarSources(List<Grammar> grammars) {
 		Map<String, GrammarContainer> containers = new HashMap<String, GrammarContainer>();
 		if (grammars!=null) {
-			for (Grammar g : grammars) {
-				if (g.isPassthrough() || g.isError() || g.isTemporary()) {
-					continue;
-				}
-				
+			for (Grammar g : this.getNonPassthroughGrammars(grammars)) {
 				if (GrammarImpl.class.isAssignableFrom(g.getClass())) {
-					g = this.findById(g.getId());
 					containers.put(g.getId(), ((GrammarImpl)g).getGrammarContainer());
 				}
 			}
 		}
 		return containers;
+	}
+	
+	@Override
+	public List<Grammar> getNonPassthroughGrammars(String entityId) {
+		List<Grammar> grammars = this.findByEntityId(entityId, false);
+		return this.getNonPassthroughGrammars(grammars);
+	}
+
+	@Override
+	public List<Grammar> getNonPassthroughGrammars(List<Grammar> grammars) {
+		List<Grammar> result = new ArrayList<Grammar>(); 
+		for (Grammar g : grammars) {
+			if (g.isPassthrough() || g.isError() || g.isTemporary()) {
+				continue;
+			}
+			
+			if (GrammarImpl.class.isAssignableFrom(g.getClass())) {
+				g = this.findById(g.getId());
+				result.add(g);
+			}
+		}
+		return result;
 	}
 	
 

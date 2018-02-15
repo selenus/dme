@@ -116,7 +116,7 @@ public class MappingApiController extends BaseApiController {
 			
 			mapping.getElement().flush();
 			
-			result.setGrammars(this.serializeGrammarSources(mapping.getId()));		
+			result.setGrammars(this.getNonPassthroughGrammars(mapping.getId()));		
 			
 			Map<String, String> serializedFunctions = new HashMap<String, String>();
 			

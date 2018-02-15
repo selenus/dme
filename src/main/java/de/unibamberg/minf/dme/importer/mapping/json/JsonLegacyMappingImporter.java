@@ -40,13 +40,15 @@ public class JsonLegacyMappingImporter extends BaseJsonMappingImporter {
 		
 			Mapping m = LegacyMappingConverter.convertMapping(mc.getMapping());
 			
+			
 			Map<String, GrammarContainer> grammars = new HashMap<String, GrammarContainer>();
 			if (mc.getGrammars()!=null) {
 				for (String key : mc.getGrammars().keySet()) {
 					grammars.put(key, LegacySchemaConverter.convertLegacyGrammarContainer(mc.getGrammars().get(key)));
 				}
 			}
-			this.importMapping(m, mc.getFunctions(), grammars);
+			// TODO: Fix
+			//this.importMapping(m, mc.getFunctions(), grammars);
 			
 		} catch (Exception e) {
 			logger.error("Failed to deserialize JSON mapping specification", e);

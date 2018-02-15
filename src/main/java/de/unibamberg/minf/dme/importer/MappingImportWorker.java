@@ -16,6 +16,7 @@ import de.unibamberg.minf.dme.model.LogEntry;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.model.base.Element;
+import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarContainer;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
@@ -88,7 +89,7 @@ public class MappingImportWorker extends BaseImportWorker<MappingImporter> imple
 	} 
 
 	@Override
-	public void registerImportFinished(Mapping mapping, List<MappedConcept> importedConcepts, Map<String, String> importedFunctions, Map<String, GrammarContainer> importedGrammars, AuthPojo auth) {
+	public void registerImportFinished(Mapping mapping, List<MappedConcept> importedConcepts, Map<String, String> importedFunctions, Map<String, Grammar> importedGrammars, AuthPojo auth) {
 		logger.info(GenericImporterMessages.ImportFinished.getMessageCode());
 		
 		for (MappedConcept mappedConcept : importedConcepts) {
@@ -106,7 +107,8 @@ public class MappingImportWorker extends BaseImportWorker<MappingImporter> imple
 				gSource.setId(mappedConcept.getElementGrammarIdsMap().get(sourceId));
 				gSource.setName(eSource.getName());
 				if (gSource.getId()!=null && importedGrammars.containsKey(gSource.getId()) && importedGrammars.get(gSource.getId())!=null) {
-					gSource.setGrammarContainer(importedGrammars.get(gSource.getId()));
+					gSource.setGrammarContainer(importedGrammars.get(gSource.getId()).getGrammarContainer());
+					gSource.setBaseMethod(gSource.getBaseMethod());
 				} else {
 					gSource.setPassthrough(true);
 				}
