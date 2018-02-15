@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.base.Function;
+import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.mapping.MappingImpl;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
 import de.unibamberg.minf.dme.model.serialization.MappingContainer;
@@ -116,7 +117,13 @@ public class MappingApiController extends BaseApiController {
 			
 			mapping.getElement().flush();
 			
-			result.setGrammars(this.getNonPassthroughGrammars(mapping.getId()));		
+			List<Grammar> grammars = grammarService.getNonPassthroughGrammars(mapping.getId());
+			if (grammars!=null && grammars.size()>0) {
+				result.setGrammars(new HashMap<String, Grammar>());
+				for (Grammar g : grammars) {
+					result.getGrammars().put(g.getId(), g);
+				}
+			}
 			
 			Map<String, String> serializedFunctions = new HashMap<String, String>();
 			

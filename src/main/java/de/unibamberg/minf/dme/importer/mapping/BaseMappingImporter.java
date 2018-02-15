@@ -58,7 +58,7 @@ public abstract class BaseMappingImporter extends BaseImporter implements Mappin
 		}
 	}
 	
-	protected void importMapping(Mapping m, Map<String, String> functions, List<Grammar> grammars) {
+	protected void importMapping(Mapping m, Map<String, String> functions, Map<String,Grammar> grammars) {
 		importedConcepts = new ArrayList<MappedConcept>();
 		importedFunctions = new HashMap<String, String>();
 		importedGrammars = new HashMap<String, Grammar>();
@@ -96,15 +96,11 @@ public abstract class BaseMappingImporter extends BaseImporter implements Mappin
 				importedMc.setElementGrammarIdsMap(new HashMap<String, String>());
 				for (String sourceElementId : sourceElementIds) {
 					grammarId = mc.getElementGrammarIdsMap().get(sourceElementId);
-					if (grammarId!=null && grammars!=null) {
-						for (Grammar g : grammars) {
-							if (g.getId().equals(grammarId)) {
-								setId = this.getOrCreateId(grammarId); 
-								importedMc.getElementGrammarIdsMap().put(sourceElementId, setId);
-								importedGrammars.put(setId, g);
-								break;
-							}
-						}
+					if (grammarId!=null && grammars!=null && grammars.containsKey(grammarId)) {
+						setId = this.getOrCreateId(grammarId); 
+						importedMc.getElementGrammarIdsMap().put(sourceElementId, setId);
+						importedGrammars.put(setId, grammars.get(grammarId));
+						break;
 					} else {
 						importedMc.getElementGrammarIdsMap().put(sourceElementId, null);
 					}
