@@ -84,7 +84,7 @@ public class JsonDatamodelImporter extends BaseJsonDatamodelImporter {
 		this.collectElementReferences(s.getRoot(), elementReferences);
 		this.resolveReoccurringElements(s.getRoot(), elementReferences, new ArrayList<String>());;
 		
-		this.importModel(s.getModel(), (Nonterminal)s.getRoot(), s.getGrammars());
+		this.importModel(s.getModel(), s.getRoot(), s.getGrammars());
 	}
 
 	private void resolveReoccurringElements(ModelElement e, Map<String, ModelElement> elements, List<String> processedIds) {

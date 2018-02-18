@@ -167,7 +167,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		fileNode.put("fileSize", humanReadableByteCount(file.getBytes().length, false));
 		fileNode.put("deleteLink", "/async/file/delete/" + tmpId);
 		if (validationUrl!=null) {
-			fileNode.put("validateLink", String.format("/async/file/%s/", String.format(validationUrl, tmpId)));
+			fileNode.put("validateLink", String.format("/async/file/%s/", String.format(validationUrl, tmpId + "/")));
 		}
 		filesNode.add(fileNode);
 		return filesNode;

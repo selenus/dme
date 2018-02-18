@@ -81,7 +81,7 @@ public abstract class BaseJsonDatamodelImporter extends BaseDatamodelImporter im
 		return new String[]{""};
 	}
 		
-	protected void importModel(Datamodel m, Nonterminal root, Map<String, GrammarContainer> grammars) throws MetamodelConsistencyException {
+	protected void importModel(Datamodel m, Element root, Map<String, GrammarContainer> grammars) throws MetamodelConsistencyException {
 		Map<String, String> newToOldIdMap = new HashMap<String, String>();
 		Map<String, String> oldToNewIdMap = new HashMap<String, String>();
 		
