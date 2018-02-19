@@ -281,55 +281,10 @@ public class SchemaEditorController extends BaseMainEditorController implements 
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/exportSubtree")
-	public @ResponseBody ModelActionPojo exportSubtree(@PathVariable String entityId, @RequestParam String elementId, Model model, Locale locale) {
-		Datamodel s = schemaService.findSchemaById(entityId);
-		Identifiable rootE = elementService.getElementSubtree(entityId, elementId);
-		Element expE;
-		if (Element.class.isAssignableFrom(rootE.getClass())) {
-			expE = (Element)rootE;
-		} else {
-			expE = new NonterminalImpl(s.getId(), "EXPORT_CONTAINER");
-			expE.setGrammars(new ArrayList<Grammar>());
-			
-			GrammarImpl expG;
-			if (GrammarImpl.class.isAssignableFrom(rootE.getClass())) {
-				expG = (GrammarImpl)rootE;
-			} else {
-				expG = new GrammarImpl(entityId, "EXPORT_CONTAINER");
-				expG.setFunctions(new ArrayList<Function>());
-				
-				FunctionImpl expF;
-				if (FunctionImpl.class.isAssignableFrom(rootE.getClass())) {
-					expF = (FunctionImpl)rootE;
-				} else {
-					return null;
-				}
-				expG.getFunctions().add(expF);
-			}
-			expE.getGrammars().add(expG);
-		}
-
-		DatamodelContainer sp = new DatamodelContainer();
-		sp.setModel(schemaService.cloneSchemaForSubtree(s, expE));
-		sp.setRoot(expE);
-		
-		ChangeSet ch = schemaService.getLatestChangeSetForEntity(s.getId());
-		if (ch!=null) {
-			s.setVersionId(ch.getId());
-		}
-		
-		List<ModelElement> relevantGrammarsI = IdentifiableServiceImpl.extractAllByTypes(expE, IdentifiableServiceImpl.getGrammarClasses());
-		if (relevantGrammarsI!=null && relevantGrammarsI.size()>0) {
-			List<Grammar> relevantGrammars = new ArrayList<Grammar>(relevantGrammarsI.size());
-			for (ModelElement g : relevantGrammarsI) {
-				if (!relevantGrammars.contains(g)) {
-					relevantGrammars.add((Grammar)g);
-				}
-			}
-			sp.setGrammars(grammarService.serializeGrammarSources(relevantGrammars));
-		}
+	public @ResponseBody ModelActionPojo exportSubtree(@PathVariable String entityId, @RequestParam String elementId, Model model, HttpServletRequest request, Locale locale) {
+		AuthPojo auth = authInfoHelper.getAuth(request);
 		ModelActionPojo result = new ModelActionPojo(true);
-		result.setPojo(sp);
+		result.setPojo(datamodelExporter.exportDatamodelSubtree(entityId, elementId, auth));
 		return result;
 	}
 	
