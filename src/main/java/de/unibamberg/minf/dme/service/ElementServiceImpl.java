@@ -147,6 +147,8 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		element.setProcessingRoot(true);
 		
 		Reference r = identifiableService.saveHierarchy(element, auth);
+		r.setRoot(true);
+		
 		Reference root = this.findReferenceById(schemaId);
 	
 		Reference[] childArray = new Reference[1];
