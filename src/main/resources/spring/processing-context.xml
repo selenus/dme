@@ -101,7 +101,13 @@
 						<property name="restTemplate" ref="restTemplate" />
 					</bean>
 				</entry>
-				<entry key="VOCABULARY"><bean class="de.unibamberg.minf.gtf.extensions.vocabulary.commands.VocabularyCommandsDispatcher" /></entry>
+				<entry key="VOCABULARY">
+					<bean class="de.unibamberg.minf.gtf.extensions.vocabulary.commands.VocabularyCommandsDispatcher" scope="prototype">
+						<property name="simple">
+							<bean class="de.unibamberg.minf.gtf.extensions.vocabulary.commands.SimpleVocabularyCommands" scope="prototype" />
+						</property>
+					</bean>
+				</entry>
 				<entry key="GEO">
 					<bean class="de.unibamberg.minf.gtf.extensions.geo.commands.GeoCommandsDispatcher">
 						<property name="simple">
