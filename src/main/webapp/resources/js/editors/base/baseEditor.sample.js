@@ -490,7 +490,14 @@ BaseEditor.prototype.toggleSampleOutputValue = function(button) {
 BaseEditor.prototype.buildSampleResourceItem = function(key, resource) {
 	
 	var item = $("<li>");
-	item.append("&#8594; <span class=\"sample-output-key\">" + key + "</span>");
+	var displayKey;
+	if (key.indexOf("|")>0) {
+		displayKey = key.substring(0, key.indexOf("|"));
+	} else {
+		displayKey = key;
+	}
+	
+	item.append("&#8594; <span class=\"sample-output-key\">" + displayKey + "</span>");
 	
 	var subItems = this.buildSampleResource(resource, item);
 	if (subItems.length > 0) {

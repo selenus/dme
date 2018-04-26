@@ -4,6 +4,7 @@ paths:
   logging: ${paths.main}/log
   grammars: ${paths.main}/grammars
   models: ${paths.main}/models
+  sessionData : ${paths.main}/sessions
   tmpUploadDir: ${paths.tmp}/dme_uploads/
   sampleFilesDir: ${paths.tmp}/dme_samples/
 

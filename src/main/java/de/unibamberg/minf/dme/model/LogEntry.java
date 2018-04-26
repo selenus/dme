@@ -2,8 +2,9 @@ package de.unibamberg.minf.dme.model;
 
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class LogEntry implements Comparable<LogEntry> {
 	public static enum LogType { SUCCESS, INFO, WARNING, ERROR }
 	
@@ -23,7 +24,6 @@ public class LogEntry implements Comparable<LogEntry> {
 	private String messageCode;
 	private Object[] args;
 	
-	@JsonIgnore
 	public DateTime getTimestamp() { return timestamp; }
 	public void setTimestamp(DateTime timestamp) { this.timestamp = timestamp; }
 	

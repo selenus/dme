@@ -27,7 +27,13 @@
 		<constructor-arg name="mongoConverter" ref="mongoMoxydomainConverter" />
 	</bean>
 	
-	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+	<bean id="objectMapper" class="de.unibamberg.minf.core.util.InitializingObjectMapper" init-method="initModules">
+		<property name="modulesToInitialize">
+			<list>
+				<bean class="com.fasterxml.jackson.datatype.joda.JodaModule"></bean>
+			</list>
+		</property>
+	</bean>	
 	
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
 		<property name="validationMessageSource" ref="messageSource" />

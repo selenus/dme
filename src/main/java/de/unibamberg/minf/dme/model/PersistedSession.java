@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.springframework.data.annotation.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
@@ -29,13 +32,12 @@ public class PersistedSession extends BaseIdentifiable implements Comparable<Per
 	private DateTime created;
 	private boolean notExpiring;
 	private SessionSampleFile sampleFile;
+	private int selectedOutputIndex;
 	
 	private String sampleInput;
 	private List<Resource> sampleOutput;
 	private List<Resource> sampleMapped;
-	private int selectedOutputIndex;
 	private Map<String, String> selectedValueMap;
-	
 	private List<LogEntry> sessionLog;
 	
 	
