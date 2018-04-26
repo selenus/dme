@@ -27,10 +27,22 @@
 		<constructor-arg name="mongoConverter" ref="mongoMoxydomainConverter" />
 	</bean>
 	
-	<bean id="objectMapper" class="de.unibamberg.minf.core.util.InitializingObjectMapper" init-method="initModules">
+	<bean id="objectMapper" class="de.unibamberg.minf.core.util.InitializingObjectMapper" init-method="initModules" scope="prototype">
 		<property name="modulesToInitialize">
 			<list>
 				<bean class="com.fasterxml.jackson.datatype.joda.JodaModule"></bean>
+				<bean class="de.unibamberg.minf.core.util.InitializingModule" init-method="init">
+					<property name="initSerializers">
+						<list>
+							<bean class="de.unibamberg.minf.processing.model.serialization.ResourceSerializer" scope="prototye" />
+						</list>
+					</property>
+					<property name="initDeserializers">
+						<list>
+							<bean class="de.unibamberg.minf.processing.model.serialization.ResourceDeserializer" scope="prototye" />
+						</list>
+					</property>
+				</bean>
 			</list>
 		</property>
 	</bean>	

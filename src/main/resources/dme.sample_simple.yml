@@ -13,6 +13,11 @@ debug:
     processing: false
   gtf: false
 
+gtf:
+  extensions:
+    file:
+      baseDownloadDir: ${paths.main}/downloads
+
 editors:
   samples:
     maxTravelSize: 50000

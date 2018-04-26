@@ -12,6 +12,11 @@ editors:
   samples:
     maxTravelSize: 50000
 
+gtf:
+  extensions:
+    file:
+      baseDownloadDir: ${paths.main}/downloads
+
 db:
   host: 127.0.0.1
   port: 27017

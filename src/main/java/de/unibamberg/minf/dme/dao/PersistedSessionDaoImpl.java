@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import org.bson.types.ObjectId;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -15,19 +16,24 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 
+import de.unibamberg.minf.core.util.InitializingModule;
+import de.unibamberg.minf.core.util.InitializingObjectMapper;
 import de.unibamberg.minf.dme.dao.base.BaseDaoImpl;
 import de.unibamberg.minf.dme.dao.interfaces.PersistedSessionDao;
 import de.unibamberg.minf.dme.model.LogEntry;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.processing.model.SerializableResource;
+import de.unibamberg.minf.processing.model.serialization.ResourceSerializer;
 
 @Repository
-public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> implements PersistedSessionDao {
-	@Autowired private ObjectMapper objectMapper;
+public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> implements PersistedSessionDao, InitializingBean {
+	@Autowired private InitializingObjectMapper objectMapper;
 	
 	private static final String SAMPLE_OUTPUT = "/output.json";;
 	private static final String SAMPLE_MAPPED = "/mapped.json";
@@ -43,6 +49,25 @@ public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> imple
 		super(PersistedSession.class);
 	}
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		if (objectMapper.getModulesToInitialize()!=null) {
+			for (Module m : objectMapper.getModulesToInitialize()) {
+				if (m.getClass().isAssignableFrom(InitializingModule.class)) {
+					InitializingModule mod = (InitializingModule)m;
+					if (mod.getInitSerializers()!=null) {
+						for (JsonSerializer<?> s : mod.getInitSerializers()) {
+							if (s.getClass().isAssignableFrom(ResourceSerializer.class)) {
+								((ResourceSerializer)s).setSerializeIds(true);
+								((ResourceSerializer)s).setSerializeAutocreated(true);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	@Override
 	public PersistedSession findById(String id) {
 		return this.loadData(super.findById(id));
