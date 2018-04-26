@@ -95,6 +95,15 @@
 		<property name="commandDispatchers">
 			<map>
 				<entry key="CORE"><bean class="de.unibamberg.minf.gtf.commands.dispatcher.CoreCommandsDispatcher" /></entry>
+				<entry key="FILE">
+					<bean class="de.unibamberg.minf.gtf.extensions.file.dispatcher.FileCommandsDispatcher">
+						<property name="commands">
+							<bean class="de.unibamberg.minf.gtf.extensions.file.commands.OnlineFileCommands">
+								<property name="baseDownloadDirectory" value="${gtf.extensions.file.baseDownloadDir:/tmp}" />
+							</bean>
+						</property>
+					</bean>
+				</entry>
 				<entry key="WIKI"><bean class="de.unibamberg.minf.gtf.extensions.wiki.commands.WikiCommandsDispatcher" /></entry>
 				<entry key="PERSON">
 					<bean class="de.unibamberg.minf.gtf.extensions.person.commands.PersonCommandsDispatcher">
