@@ -18,7 +18,7 @@
 		<de.unibamberg.minf.core.core-util.version>2.0.0-SNAPSHOT</de.unibamberg.minf.core.core-util.version>
 		<de.unibamberg.minf.core.core-web.version>2.0.2-SNAPSHOT</de.unibamberg.minf.core.core-web.version>
 		<de.unibamberg.minf.processing.processing-version>3.3.5-SNAPSHOT</de.unibamberg.minf.processing.processing-version>
-		<de.unibamberg.minf.gtf-version>1.2.1-SNAPSHOT</de.unibamberg.minf.gtf-version>
+		<de.unibamberg.minf.gtf-version>1.3.0</de.unibamberg.minf.gtf-version>
 
 		<eu.dariah.de.dariahsp-version>1.2.2-SNAPSHOT</eu.dariah.de.dariahsp-version>
 
@@ -69,6 +69,11 @@
 		</dependency>
 		<dependency>
 			<groupId>de.unibamberg.minf.gtf</groupId>
+			<artifactId>gtf-extension-file</artifactId>
+			<version>${de.unibamberg.minf.gtf-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.unibamberg.minf.gtf</groupId>
 			<artifactId>gtf-extension-wiki</artifactId>
 			<version>${de.unibamberg.minf.gtf-version}</version>
 		</dependency>
@@ -79,7 +84,7 @@
 		</dependency>
 		<dependency>
 			<groupId>de.unibamberg.minf.gtf</groupId>
-			<artifactId>gtf-extensions-nlp</artifactId>
+			<artifactId>gtf-extension-nlp</artifactId>
 			<version>${de.unibamberg.minf.gtf-version}</version>
 		</dependency>
 		<dependency>
