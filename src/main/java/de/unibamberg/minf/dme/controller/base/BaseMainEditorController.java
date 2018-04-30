@@ -545,7 +545,7 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/async/executeSample")
-	public @ResponseBody ModelActionPojo executeSample(@PathVariable String entityId, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+	public @ResponseBody ModelActionPojo executeSample(@PathVariable String entityId, @RequestParam(required=false) String inputType, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		Stopwatch sw = new Stopwatch().start();
 		Stopwatch swTotal = new Stopwatch().start();
 		ModelActionPojo result = new ModelActionPojo(true);
@@ -580,6 +580,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);
 		
 		BaseResourceProcessingServiceImpl processingSvc;
+		
+		if(inputType!=null) {
+			session.setSampleInputType(InputTypes.valueOf(inputType));
+		}
 		
 		if (session.getSampleInputType().equals(InputTypes.XML)) {
 			processingSvc = appContext.getBean(XmlStringProcessingService.class);

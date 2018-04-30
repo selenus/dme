@@ -11,9 +11,9 @@
 		<input type="hidden" id="sample-set" value="${sampleInputSet}">
 		
 		<div id="sample-input-inputtypes">
-		  <label><input type="radio" name="inputType" id="inputTypeXml" value="XML" checked>XML</label>
-		  <label><input type="radio" name="inputType" id="inputTypeCsv" value="CSV">CSV</label>
-		  <label><input type="radio" name="inputType" id="inputTypeText" value="TEXT">Text</label>
+		  <label><input type="radio" name="inputType" id="inputTypeXml" value="XML" ${session.sampleInputType==null || session.sampleInputType=='XML' ? 'checked' : ''}>XML</label>
+		  <label><input type="radio" name="inputType" id="inputTypeCsv" value="CSV" ${session.sampleInputType=='CSV' ? 'checked' : ''}>CSV</label>
+		  <label><input type="radio" name="inputType" id="inputTypeText" value="TEXT" ${session.sampleInputType=='TEXT' ? 'checked' : ''}>Text</label>
 		</div>
 		
 		<div id="sample-input-textarea-placeholder" onclick="editor.handleEnterTextarea(); return false;" class="codearea height-sized-element<c:if test="${sampleInputDisplayed}"> hide</c:if>">

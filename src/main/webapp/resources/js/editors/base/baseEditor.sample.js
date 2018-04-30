@@ -219,7 +219,7 @@ BaseEditor.prototype.executeSample = function() {
 	$.ajax({
 	    url: this.samplePath + "async/executeSample",
 	    type: "GET",
-	    //data: { sample : _this.sampleTextbox.val() },
+	    data: { inputType : _this.sampleInputType() },
 	    dataType: "json",
 	    async: false,
 	    success: function(data) {
