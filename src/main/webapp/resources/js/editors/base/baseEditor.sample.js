@@ -4,6 +4,7 @@ BaseEditor.prototype.initSample = function(samplePath, sampleEntityId) {
 	this.samplePath = samplePath;
 	this.sampleEntityId = sampleEntityId;
 	this.sampleTextbox = $(".sample-textarea");  //schema-editor-outer-east-container, schema-editor-detail-pane
+	this.sampleInputType = function() { return $("input[name=inputType]:checked").val() }; 
 	this.samplePane = $(".editor-sample-pane");
 	this.sampleContainer = $(".editor-sample-container");
 	this.sampleOutputContainer = $("#sample-output-container");
@@ -62,7 +63,8 @@ BaseEditor.prototype.uploadAndExecuteSample = function() {
 	var form_identifier = "edit-root";
 
 	modalFormHandler = new ModalFormHandler({
-		formUrl: "forms/uploadSample/",
+		formUrl: "forms/uploadSample",
+		data: { inputType: this.sampleInputType() },
 		additionalModalClasses: "wide-modal",
 		identifier: form_identifier,
 		translations: [{placeholder: "~*servererror.head", key: "~de.unibamberg.minf.common.view.forms.servererror.head"},
@@ -83,7 +85,7 @@ BaseEditor.prototype.uploadAndExecuteSample = function() {
 		formSource: "forms/fileupload",		// where is the form
 		uploadTarget: "async/uploadSample", 			// where to we upload the file(s) to
 		multiFiles: false, 						// one or multiple files
-		elementChangeCallback: _this.handleFileValidatedOrFailed
+		elementChangeCallback: _this.handleValidatedOrFailed
 	});	
 		
 	modalFormHandler.show(form_identifier);
@@ -112,7 +114,10 @@ BaseEditor.prototype.applySample = function(callback) {
 	$.ajax({
 	    url: this.samplePath + "async/applySample",
 	    type: "POST",
-	    data: { sample : _this.sampleTextbox.val() },
+	    data: { 
+	    	sample : _this.sampleTextbox.val(),
+	    	inputType : this.sampleInputType()
+	    },
 	    dataType: "json",
 	    success: function(data) {
 	    	if (data.success) { 

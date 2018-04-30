@@ -41,29 +41,21 @@ import de.unibamberg.minf.dme.importer.datamodel.DatamodelImporter;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.dme.model.RightsContainer;
 import de.unibamberg.minf.dme.model.base.Element;
-import de.unibamberg.minf.dme.model.base.Function;
-import de.unibamberg.minf.dme.model.base.Grammar;
 import de.unibamberg.minf.dme.model.base.Identifiable;
 import de.unibamberg.minf.dme.model.base.ModelElement;
 import de.unibamberg.minf.dme.model.base.Nonterminal;
 import de.unibamberg.minf.dme.model.base.Terminal;
-import de.unibamberg.minf.dme.model.datamodel.DatamodelImpl;
 import de.unibamberg.minf.dme.model.datamodel.NonterminalImpl;
 import de.unibamberg.minf.dme.model.datamodel.base.Datamodel;
 import de.unibamberg.minf.dme.model.datamodel.base.DatamodelNature;
 import de.unibamberg.minf.dme.model.datamodel.natures.XmlDatamodelNature;
-import de.unibamberg.minf.dme.model.function.FunctionImpl;
 import de.unibamberg.minf.dme.model.grammar.GrammarImpl;
 import de.unibamberg.minf.dme.model.mapping.base.Mapping;
-import de.unibamberg.minf.dme.model.serialization.DatamodelContainer;
 import de.unibamberg.minf.dme.model.serialization.DatamodelReferenceContainer;
-import de.unibamberg.minf.dme.model.tracking.ChangeSet;
 import de.unibamberg.minf.dme.pojo.ModelElementPojo;
 import de.unibamberg.minf.dme.pojo.converter.AuthWrappedPojoConverter;
 import de.unibamberg.minf.dme.pojo.converter.ModelElementPojoConverter;
-import de.unibamberg.minf.dme.service.IdentifiableServiceImpl;
 import de.unibamberg.minf.dme.service.base.BaseEntityService;
-import de.unibamberg.minf.dme.service.interfaces.GrammarService;
 import de.unibamberg.minf.dme.service.interfaces.IdentifiableService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
@@ -74,7 +66,6 @@ import de.unibamberg.minf.core.web.pojo.MessagePojo;
 public class SchemaEditorController extends BaseMainEditorController implements InitializingBean {	
 	@Autowired private DatamodelImportWorker importWorker;
 	@Autowired private AuthWrappedPojoConverter authPojoConverter;
-	@Autowired private GrammarService grammarService;
 	
 	@Autowired private IdentifiableService identifiableService;
 	

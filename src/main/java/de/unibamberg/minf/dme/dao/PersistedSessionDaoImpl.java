@@ -73,6 +73,7 @@ public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> imple
 		saveSession.setSelectedOutputIndex(entity.getSelectedOutputIndex());
 		saveSession.setUserId(entity.getUserId());
 		saveSession.setSampleFile(entity.getSampleFile());
+		saveSession.setSampleInputType(entity.getSampleInputType());
 		
 		super.save(saveSession);
 		
@@ -132,7 +133,9 @@ public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> imple
 			}
 			File sampleInput = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);
 			if (sampleInput.exists()) {
-				session.setSampleInput(objectMapper.readValue(sampleInput, String.class));
+				Path path = Paths.get(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);
+				String read = new String (Files.readAllBytes(path));
+				session.setSampleInput(read);
 			}
 			File sampleMapped = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_MAPPED);
 			if (sampleMapped.exists()) {
@@ -170,7 +173,9 @@ public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> imple
 				objectMapper.writeValue(new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_MAPPED), session.getSampleMapped());
 			}
 			if (session.getSampleInput()!=null && session.getSampleInput().length()>0) {
-				objectMapper.writeValue(new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT), session.getSampleInput());
+				Path path = Paths.get(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);
+			    byte[] strToBytes = session.getSampleInput().getBytes();
+			    Files.write(path, strToBytes);
 			}
 			if (session.getSelectedValueMap()!=null && session.getSelectedValueMap().size()>0) {
 				objectMapper.writeValue(new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_SELECTED_VALUE_MAP), session.getSelectedValueMap());

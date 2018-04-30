@@ -131,6 +131,7 @@ ModalFormHandler.prototype.init = function() {
 	}
 	
 	// Get the actual form to display
+		
 	$.ajax({
         url: url,
         data: _this.options.data,

@@ -39,7 +39,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.IntNode;
@@ -52,6 +51,7 @@ import de.unibamberg.minf.dme.exception.SchemaImportException;
 import de.unibamberg.minf.dme.importer.BaseImportWorker;
 import de.unibamberg.minf.dme.importer.Importer;
 import de.unibamberg.minf.dme.model.PersistedSession;
+import de.unibamberg.minf.dme.model.PersistedSession.InputTypes;
 import de.unibamberg.minf.dme.model.SessionSampleFile;
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.model.SessionSampleFile.FileTypes;
@@ -71,6 +71,9 @@ import de.unibamberg.minf.processing.model.base.Resource;
 import de.unibamberg.minf.processing.output.FileOutputService;
 import de.unibamberg.minf.processing.output.json.JsonFileOutputService;
 import de.unibamberg.minf.processing.output.xml.XmlFileOutputService;
+import de.unibamberg.minf.processing.service.base.BaseResourceProcessingServiceImpl;
+import de.unibamberg.minf.processing.service.text.CsvStringProcessingService;
+import de.unibamberg.minf.processing.service.text.TextStringProcessingService;
 import de.unibamberg.minf.processing.service.xml.XmlStringProcessingService;
 import eu.dariah.de.dariahsp.model.web.AuthPojo;
 import de.unibamberg.minf.core.web.pojo.MessagePojo;
@@ -208,23 +211,23 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	
 	
 	@RequestMapping(method=GET, value="/forms/uploadSample")
-	public String getUploadSampleForm(@PathVariable String entityId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
+	public String getUploadSampleForm(@PathVariable String entityId, @RequestParam(defaultValue="XML") String inputType, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) {
 		
 		model.addAttribute("actionPath", this.getPrefix() + entityId + "/async/executeUploadedSample");
-		//model.addAttribute("schema", schemaService.findSchemaById(entityId));
+		model.addAttribute("inputType", inputType);
 		return "editor/form/upload_sample";
 	}
 		
 	
 	
 	@RequestMapping(method=RequestMethod.POST, value={"/async/executeUploadedSample"})
-	public @ResponseBody ModelActionPojo executeUploadedSample(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
+	public @ResponseBody ModelActionPojo executeUploadedSample(@PathVariable String entityId, @RequestParam(value="file.id") String fileId, @RequestParam(defaultValue="XML") String inputType, Model model, Locale locale, HttpServletRequest request, HttpServletResponse response) throws SchemaImportException, IOException {
 		ModelActionPojo result = new ModelActionPojo();
 		
 		if (temporaryFilesMap.containsKey(fileId)) {
 			String sample = new String(Files.readAllBytes(Paths.get(  new File(temporaryFilesMap.get(fileId)).toURI()  )), Charset.forName("UTF-8"));
 			
-			this.applySample(entityId, sample, request, response, locale);
+			this.applySample(entityId, sample, inputType, request, response, locale);
 			
 			result.setSuccess(true);
 			MessagePojo msg = new MessagePojo("success", 
@@ -432,13 +435,15 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/async/applySample")
-	public @ResponseBody ModelActionPojo applySample(@PathVariable String entityId, @RequestParam String sample, HttpServletRequest request, HttpServletResponse response, Locale locale) {
+	public @ResponseBody ModelActionPojo applySample(@PathVariable String entityId, @RequestParam String sample, @RequestParam(defaultValue="XML") String inputType, HttpServletRequest request, HttpServletResponse response, Locale locale) {
 		PersistedSession s = sessionService.access(entityId, request.getSession().getId(), authInfoHelper.getUserId(request));
 		if (s==null) {
 			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 			return new ModelActionPojo(false);
 		}
 		s.setSampleInput(sample);
+		s.setSampleInputType(InputTypes.valueOf(inputType));
+		
 		s.addLogEntry(LogType.INFO, messageSource.getMessage("~de.unibamberg.minf.dme.editor.sample.log.session_sample_set", null, locale));
 		
 		sessionService.saveSession(s);
@@ -574,13 +579,25 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 		
 		Nonterminal r = (Nonterminal)elementService.findRootBySchemaId(s.getId(), true);
 		
-		XmlStringProcessingService processingSvc = appContext.getBean(XmlStringProcessingService.class);
+		BaseResourceProcessingServiceImpl processingSvc;
+		
+		if (session.getSampleInputType().equals(InputTypes.XML)) {
+			processingSvc = appContext.getBean(XmlStringProcessingService.class);
+			((XmlStringProcessingService)processingSvc).setXmlString(session.getSampleInput());
+		} else if (session.getSampleInputType().equals(InputTypes.CSV)) {
+			processingSvc = appContext.getBean(CsvStringProcessingService.class);
+			((CsvStringProcessingService)processingSvc).setText(session.getSampleInput());
+			((CsvStringProcessingService)processingSvc).setUseHeadings(true);
+		} else {
+			processingSvc = appContext.getBean(TextStringProcessingService.class);
+			((TextStringProcessingService)processingSvc).setText(session.getSampleInput());
+		}
+		
 		
 		//TextStringProcessingService processingSvc = appContext.getBean(TextStringProcessingService.class);
 		
 		CollectingResourceConsumptionService consumptionService = new CollectingResourceConsumptionService();
 		
-		processingSvc.setXmlString(session.getSampleInput());
 		processingSvc.setSchema(s);
 		processingSvc.addConsumptionService(consumptionService);
 		try {

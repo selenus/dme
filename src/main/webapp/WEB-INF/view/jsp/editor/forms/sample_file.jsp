@@ -12,6 +12,7 @@
 		<div class="form-group">
 			<label class="col-sm-4 control-label" for="schema_source"><s:message code="~de.unibamberg.minf.dme.editor.sample.file" />:</label>
 			<div class="col-sm-8">
+				<input type="hidden" name="inputType" value="${inputType}" />
 				<input type="hidden" name="file.id" id="file.id" />
 				<input id="upload_source" type="file" name="file" />
 			</div>

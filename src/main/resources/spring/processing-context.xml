@@ -16,6 +16,24 @@
     	<property name="maxItems" value="100" />
     </bean>
     
+    <bean id="csvStringProcessor" class="de.unibamberg.minf.processing.service.text.CsvStringProcessingService" scope="prototype">
+    	<property name="elementProcessors">
+    		<list>
+				<ref bean="gtfElementProcessor" />
+			</list>
+    	</property>
+    	<property name="maxItems" value="100" />
+    </bean>
+    
+    <bean id="textStringProcessor" class="de.unibamberg.minf.processing.service.text.TextStringProcessingService" scope="prototype">
+    	<property name="elementProcessors">
+    		<list>
+				<ref bean="gtfElementProcessor" />
+			</list>
+    	</property>
+    	<property name="maxItems" value="100" />
+    </bean>
+    
     <bean id="xmlFileOutputService" class="de.unibamberg.minf.processing.output.xml.XmlFileOutputService" scope="prototype">
     	<property name="outputBaseDirectory" value="${paths.sampleFilesDir:/tmp}" />
     	<property name="extensionNamespacePattern" value="https://schereg.de.dariah.eu/namespaces/%s/" />
@@ -25,16 +43,7 @@
     	<property name="outputBaseDirectory" value="${paths.sampleFilesDir:/tmp}" />
     	<property name="objMapper" ref="objectMapper" />
     </bean>
-    
-    <bean id="textProcessor" class="de.unibamberg.minf.processing.service.text.TextStringProcessingService" scope="prototype">
-    	<property name="elementProcessors">
-    		<list>
-				<ref bean="gtfElementProcessor" />
-			</list>
-    	</property>
-    	<property name="maxItems" value="100" />
-    </bean>
-    
+ 
     
    	<bean id="mappingExecutionService" class="de.unibamberg.minf.mapping.service.MappingExecutionServiceImpl" scope="prototype">
    		<property name="mappingProcessors">

@@ -35,9 +35,19 @@
 	font-size: 14px;
 }
 
-#sample-input-textarea-placeholder {
+#sample-input-textarea-placeholder,
+#sample-input-inputtypes {
 	padding: 6px 12px;
+	border-bottom: 1px solid #DDD;
 	background-color: #F8F8F8;
+}
+
+#sample-input-inputtypes label {
+	font-weight: normal;
+}
+
+#sample-input-inputtypes input {
+	margin: 4px;
 }
 
 /*!
