@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import de.unibamberg.minf.dme.model.LogEntry.LogType;
 import de.unibamberg.minf.dme.model.base.BaseIdentifiable;
 import de.unibamberg.minf.processing.model.base.Resource;

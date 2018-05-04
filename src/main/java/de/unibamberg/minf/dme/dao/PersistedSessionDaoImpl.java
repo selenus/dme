@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,7 @@ import de.unibamberg.minf.dme.dao.interfaces.PersistedSessionDao;
 import de.unibamberg.minf.dme.model.LogEntry;
 import de.unibamberg.minf.dme.model.PersistedSession;
 import de.unibamberg.minf.processing.model.SerializableResource;
+import de.unibamberg.minf.processing.model.base.Resource;
 
 @Repository
 public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> implements PersistedSessionDao {
@@ -32,6 +35,15 @@ public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> imple
 	private static final String SAMPLE_SELECTED_VALUE_MAP = "/valueMap.json"; 
 	private static final String SAMPLE_SESSION_LOG = "/sessionLog.json";
 	
+	/**
+	 * Helper class for JSON serializing resources
+	 */
+	private class ResourceList extends ArrayList<Resource> {
+		private static final long serialVersionUID = 4998781729252376207L;
+		public ResourceList(List<Resource> sampleOutput) {
+			super(sampleOutput);
+		}
+	}
 	
 	@Value(value="${paths.sessionData}")
 	private String sessionsPath;
@@ -127,24 +139,29 @@ public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> imple
 			TypeReference<ArrayList<SerializableResource>> resourceListRef = new TypeReference<ArrayList<SerializableResource>>() {};
 			TypeReference<ArrayList<LogEntry>> logListRef = new TypeReference<ArrayList<LogEntry>>() {};
 			
-			File sampleOutput = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_OUTPUT);
-			if (sampleOutput.exists()) {
-				session.setSampleOutput(objectMapper.readValue(sampleOutput, resourceListRef));
+			try {
+				File sampleOutput = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_OUTPUT);
+				if (sampleOutput.exists()) {
+					session.setSampleOutput(objectMapper.readValue(sampleOutput, resourceListRef));
+				}
+				File sampleInput = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);
+				if (sampleInput.exists()) {
+					Path path = Paths.get(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);
+					String read = new String (Files.readAllBytes(path));
+					session.setSampleInput(read);
+				}
+				File sampleMapped = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_MAPPED);
+				if (sampleMapped.exists()) {
+					session.setSampleMapped(objectMapper.readValue(sampleMapped, resourceListRef));
+				}
+				File sampleValueMap = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_SELECTED_VALUE_MAP);
+				if (sampleValueMap.exists()) {
+					session.setSelectedValueMap(objectMapper.readValue(sampleValueMap, mapRef));
+				}	
+			} catch (Exception e) {
+				logger.error("Failed to deserialize session data", e);
 			}
-			File sampleInput = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);
-			if (sampleInput.exists()) {
-				Path path = Paths.get(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);
-				String read = new String (Files.readAllBytes(path));
-				session.setSampleInput(read);
-			}
-			File sampleMapped = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_MAPPED);
-			if (sampleMapped.exists()) {
-				session.setSampleMapped(objectMapper.readValue(sampleMapped, resourceListRef));
-			}
-			File sampleValueMap = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_SELECTED_VALUE_MAP);
-			if (sampleValueMap.exists()) {
-				session.setSelectedValueMap(objectMapper.readValue(sampleValueMap, mapRef));
-			}
+			
 			File sampleSessionLog = new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_SESSION_LOG);
 			if (sampleSessionLog.exists()) {
 				session.setSessionLog(objectMapper.readValue(sampleSessionLog, logListRef));
@@ -167,10 +184,10 @@ public class PersistedSessionDaoImpl extends BaseDaoImpl<PersistedSession> imple
 			}
 			
 			if (session.getSampleOutput()!=null && session.getSampleOutput().size()>0) {
-				objectMapper.writeValue(new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_OUTPUT), session.getSampleOutput());
+				objectMapper.writeValue(new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_OUTPUT), new ResourceList(session.getSampleOutput()));
 			}
 			if (session.getSampleMapped()!=null && session.getSampleMapped().size()>0) {	
-				objectMapper.writeValue(new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_MAPPED), session.getSampleMapped());
+				objectMapper.writeValue(new File(sessionDirectoryPath.toAbsolutePath() + SAMPLE_MAPPED), new ResourceList(session.getSampleMapped()));
 			}
 			if (session.getSampleInput()!=null && session.getSampleInput().length()>0) {
 				Path path = Paths.get(sessionDirectoryPath.toAbsolutePath() + SAMPLE_INPUT);

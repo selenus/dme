@@ -39,6 +39,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.IntNode;
@@ -68,6 +70,7 @@ import de.unibamberg.minf.dme.service.interfaces.MappingService;
 import de.unibamberg.minf.dme.service.interfaces.PersistedSessionService;
 import de.unibamberg.minf.processing.exception.ProcessingConfigException;
 import de.unibamberg.minf.processing.model.base.Resource;
+import de.unibamberg.minf.processing.model.serialization.ResourceSerializer;
 import de.unibamberg.minf.processing.output.FileOutputService;
 import de.unibamberg.minf.processing.output.json.JsonFileOutputService;
 import de.unibamberg.minf.processing.output.xml.XmlFileOutputService;
@@ -81,6 +84,8 @@ import de.unibamberg.minf.core.web.pojo.ModelActionPojo;
 
 public abstract class BaseMainEditorController extends BaseScheregController {
 	protected static Map<String, String> temporaryFilesMap = new HashMap<String, String>();
+	
+	protected ObjectMapper viewObjectMapper = new ObjectMapper();
 	
 	@Value("${debug.element.processing:false}")
 	private boolean debugElementProcessing;
@@ -98,6 +103,10 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 	
 	public BaseMainEditorController(String mainNavId) {
 		super(mainNavId);
+		
+		SimpleModule module = new SimpleModule();
+		module.addSerializer(Resource.class, new ResourceSerializer());
+		viewObjectMapper.registerModule(module);
 	}
 	
 	@RequestMapping(method=GET, value={"/state"}, produces = "application/json; charset=utf-8")
@@ -458,9 +467,9 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 			response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
 			return null;
 		}
-		
+				
 		ModelActionPojo result = new ModelActionPojo();
-		ObjectNode statusPojo = objectMapper.createObjectNode();
+		ObjectNode statusPojo = viewObjectMapper.createObjectNode();
 		result.setStatusInfo(statusPojo);
 		
 		if (s.getSampleOutput()!=null && s.getSampleOutput().size()>0) {
@@ -489,15 +498,17 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				result.setSuccess(true);
 				statusPojo.set("available", BooleanNode.TRUE);
 				
-				if (!force && objectMapper.writeValueAsString(s.getSampleOutput().get(index)).getBytes().length > this.maxTravelSize) {
+				JsonNode pojo = viewObjectMapper.valueToTree(s.getSampleOutput().get(index));
+				
+				if (!force && pojo.toString().getBytes().length > this.maxTravelSize) {
 					statusPojo.set("oversize", BooleanNode.TRUE);
 				} else {
 					statusPojo.set("oversize", BooleanNode.FALSE);
-					result.setPojo(s.getSampleOutput().get(index));
+					result.setPojo(pojo);
 				}
 				return result;
 			} 
-		}
+		}		
 		
 		statusPojo.set("available", BooleanNode.FALSE);
 		
@@ -531,11 +542,12 @@ public abstract class BaseMainEditorController extends BaseScheregController {
 				result.setSuccess(true);
 				statusPojo.set("available", BooleanNode.TRUE);
 				
-				if (!force && objectMapper.writeValueAsString(s.getSampleMapped().get(index)).getBytes().length > this.maxTravelSize) {
+				JsonNode pojo = viewObjectMapper.valueToTree(s.getSampleMapped().get(index));
+				if (!force && pojo.toString().getBytes().length > this.maxTravelSize) {
 					statusPojo.set("oversize", BooleanNode.TRUE);
 				} else {
 					statusPojo.set("oversize", BooleanNode.FALSE);
-					result.setPojo(s.getSampleMapped().get(index));
+					result.setPojo(pojo);
 				}
 				return result;
 			} 
