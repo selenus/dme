@@ -76,7 +76,7 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 				
 		Reference parent = null;
 		Reference child = null;
-		Reference[] references;
+		List<Reference> references;
 		
 		for (String className : rootRef.getChildReferences().keySet()) {
 			references = rootRef.getChildReferences().get(className);
@@ -107,20 +107,20 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		Reference rootElementReference = null;
 		if (reference.getChildReferences()!=null) {
 			if (reference.getChildReferences().containsKey(NonterminalImpl.class.getName()) &&
-					reference.getChildReferences().get(NonterminalImpl.class.getName()).length>0 ) {
-				if (reference.getChildReferences().get(NonterminalImpl.class.getName()).length==1) {
-					rootElementReference = reference.getChildReferences().get(NonterminalImpl.class.getName())[0];
+					reference.getChildReferences().get(NonterminalImpl.class.getName()).size()>0 ) {
+				if (reference.getChildReferences().get(NonterminalImpl.class.getName()).size()==1) {
+					rootElementReference = reference.getChildReferences().get(NonterminalImpl.class.getName()).get(0);
 				} else {
-					for (int i=0; i<reference.getChildReferences().get(NonterminalImpl.class.getName()).length; i++) {
-						if (reference.getChildReferences().get(NonterminalImpl.class.getName())[i].isRoot()) {
-							rootElementReference = reference.getChildReferences().get(NonterminalImpl.class.getName())[i];
+					for (int i=0; i<reference.getChildReferences().get(NonterminalImpl.class.getName()).size(); i++) {
+						if (reference.getChildReferences().get(NonterminalImpl.class.getName()).get(i).isRoot()) {
+							rootElementReference = reference.getChildReferences().get(NonterminalImpl.class.getName()).get(i);
 							break;
 						}
 					}
 				}
 			} else if (reference.getChildReferences().containsKey(MappedConceptImpl.class.getName()) &&
-					reference.getChildReferences().get(MappedConceptImpl.class.getName()).length>0 ) {
-				rootElementReference = reference.getChildReferences().get(MappedConceptImpl.class.getName())[0];
+					reference.getChildReferences().get(MappedConceptImpl.class.getName()).size()>0 ) {
+				rootElementReference = reference.getChildReferences().get(MappedConceptImpl.class.getName()).get(0);
 			}
 		}
 		if (rootElementReference==null) {
@@ -151,11 +151,11 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 		
 		Reference root = this.findReferenceById(schemaId);
 	
-		Reference[] childArray = new Reference[1];
-		childArray[0] = r;
+		List<Reference> childArray = new ArrayList<Reference>();
+		childArray.add(r);
 		
-		root.setChildReferences(new HashMap<String, Reference[]>());
-		root.getChildReferences().put(element.getClass().getName(), childArray);;
+		root.setChildReferences(new HashMap<String, List<Reference>>());
+		root.getChildReferences().put(element.getClass().getName(), childArray);
 		this.saveRootReference(root);
 	}
 	
@@ -644,10 +644,10 @@ public class ElementServiceImpl extends BaseReferenceServiceImpl implements Elem
 	
 	private void replaceClonedChild(Reference parent, String originalChildId, Reference clonedChild) {
 		for (String type : parent.getChildReferences().keySet()) {
-			Reference[] refs = parent.getChildReferences().get(type);
-			for (int i=0; i<refs.length; i++) {
-				if (refs[i].getId().equals(originalChildId)) {
-					refs[i] = clonedChild;
+			List<Reference> refs = parent.getChildReferences().get(type);
+			for (int i=0; i<refs.size(); i++) {
+				if (refs.get(i).getId().equals(originalChildId)) {
+					refs.set(i, clonedChild);
 					return;
 				}
 			}

@@ -1,6 +1,7 @@
 package de.unibamberg.minf.dme.service.base;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public abstract class BaseReferenceServiceImpl extends BaseServiceImpl {
 			return;
 		}
 		
-		Map<String, Reference[]> subordinateReferenceMap = new HashMap<String, Reference[]>();
+		Map<String, List<Reference>> subordinateReferenceMap = new HashMap<String, List<Reference>>();
 		ReferenceHelper.getAllSubordinateReferences(rootReference, subordinateReferenceMap);
 		
 		//referenceDao.deleteAll(subordinateReferenceMap, auth.getUserId(), auth.getSessionId());

@@ -89,7 +89,7 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 	 */
 	@Override
 	public void removeById(Reference parentReference, String matchId) {
-		Reference[] references;
+		List<Reference> references;
 		List<Reference> removeReferences;
 		List<String> removeTypes;
 		if (parentReference.getChildReferences()!=null) {
@@ -111,18 +111,18 @@ public class ReferenceDaoImpl extends BaseDaoImpl<Reference> implements Referenc
 					}
 					if (removeReferences!=null) {
 						// Nothing left, remove the whole child type
-						if (references.length==removeReferences.size()) {
+						if (references.size()==removeReferences.size()) {
 							if (removeTypes==null) {
 								removeTypes = new ArrayList<String>();
 							}
 							removeTypes.add(type);
 						} else {
 							// Recreate child reference array
-							Reference[] newRefs = new Reference[references.length-removeReferences.size()];
+							List<Reference> newRefs = new ArrayList<Reference>(references.size()-removeReferences.size());
 							int j=0;
-							for (int i=0; i<references.length; i++) {
-								if (!removeReferences.contains(references[i])) {
-									newRefs[j++] = references[i];
+							for (int i=0; i<references.size(); i++) {
+								if (!removeReferences.contains(references.get(i))) {
+									newRefs.add(references.get(i));
 								}
 							}
 							parentReference.getChildReferences().put(type, newRefs);

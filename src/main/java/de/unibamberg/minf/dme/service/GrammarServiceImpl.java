@@ -151,19 +151,19 @@ public class GrammarServiceImpl extends BaseReferenceServiceImpl implements Gram
 		Reference parentReference = referenceDao.findParentByChildId(entityReference, grammarId);
 		Assert.notNull(parentReference);
 		
-		Reference[] gRefs = parentReference.getChildReferences().get(GrammarImpl.class.getName());
-		for (int i=0; i<gRefs.length; i++) {
-			if (gRefs[i].getId().equals(grammarId)) {
+		List<Reference> gRefs = parentReference.getChildReferences().get(GrammarImpl.class.getName());
+		for (int i=0; i<gRefs.size(); i++) {
+			if (gRefs.get(i).getId().equals(grammarId)) {
 				boolean change = false;				
 				if (i>0 && delta==1) {
-					Reference gTmp = gRefs[i-1];
-					gRefs[i-1] = gRefs[i];
-					gRefs[i] = gTmp;
+					Reference gTmp = gRefs.get(i-1);
+					gRefs.set(i-1, gRefs.get(i));
+					gRefs.set(i, gTmp);
 					change = true;
-				} else if (i<gRefs.length-1 && delta==-1) {
-					Reference gTmp = gRefs[i+1];
-					gRefs[i+1] = gRefs[i];
-					gRefs[i] = gTmp;
+				} else if (i<gRefs.size()-1 && delta==-1) {
+					Reference gTmp = gRefs.get(i+1);
+					gRefs.set(i+1, gRefs.get(i));
+					gRefs.set(i, gTmp);
 					change = true;
 				}
 				

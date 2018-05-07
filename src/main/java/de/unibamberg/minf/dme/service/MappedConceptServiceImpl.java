@@ -109,10 +109,10 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		Reference reference = this.findReferenceById(mappingId);
 		if (reference.getChildReferences()==null || reference.getChildReferences().size()==0 || 
 				!reference.getChildReferences().containsKey(MappedConceptImpl.class.getName()) || 
-				reference.getChildReferences().get(MappedConceptImpl.class.getName()).length==0) {
+				reference.getChildReferences().get(MappedConceptImpl.class.getName()).size()==0) {
 			return new ArrayList<MappedConcept>();
 		}
-		List<MappedConcept> result = new ArrayList<MappedConcept>(reference.getChildReferences().get(MappedConceptImpl.class.getName()).length);
+		List<MappedConcept> result = new ArrayList<MappedConcept>(reference.getChildReferences().get(MappedConceptImpl.class.getName()).size());
 		List<Identifiable> elements = this.getAllElements(mappingId);		
 		Map<String, Identifiable> elementMap = new HashMap<String, Identifiable>(elements.size()); 
 		for (Identifiable e : elements) {
@@ -141,7 +141,7 @@ public class MappedConceptServiceImpl extends BaseReferenceServiceImpl implement
 		Reference reference = this.findReferenceById(mappingId);
 		if (reference.getChildReferences()==null || reference.getChildReferences().size()==0 || 
 				!reference.getChildReferences().containsKey(MappedConceptImpl.class.getName()) || 
-				reference.getChildReferences().get(MappedConceptImpl.class.getName()).length==0) {
+				reference.getChildReferences().get(MappedConceptImpl.class.getName()).size()==0) {
 			return null;
 		}
 		

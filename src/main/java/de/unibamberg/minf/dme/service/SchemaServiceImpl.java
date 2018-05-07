@@ -72,11 +72,11 @@ public class SchemaServiceImpl extends BaseEntityServiceImpl implements SchemaSe
 		Reference root = this.findReferenceById(schema.getId());
 	
 		if (root.getChildReferences()==null) {
-			root.setChildReferences(new HashMap<String, Reference[]>());
+			root.setChildReferences(new HashMap<String, List<Reference>>());
 		}
-		Reference[] childArray = new Reference[rootNonterminals.size()];
+		List<Reference> childArray = new ArrayList<Reference>(rootNonterminals.size());
 		for (int i=0; i<rootNonterminals.size(); i++) {
-			childArray[i] = rootNonterminals.get(i);
+			childArray.add(rootNonterminals.get(i));
 		}		
 		root.getChildReferences().put(NonterminalImpl.class.getName(), childArray);
 		this.saveRootReference(root);

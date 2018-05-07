@@ -341,14 +341,14 @@ public class IdentifiableServiceImpl extends BaseServiceImpl implements Identifi
 		}
 		
 		if (!subElementsMap.isEmpty()) {
-			r.setChildReferences(new HashMap<String, Reference[]>());		
+			r.setChildReferences(new HashMap<String, List<Reference>>());		
 			List<Reference> subreferences;
 			for (String subclass : subElementsMap.keySet()) {
 				subreferences = new ArrayList<Reference>();
 				for (ModelElement childMe : subElementsMap.get(subclass)) {
 					subreferences.add(this.saveElementsInHierarchy(childMe, saveElements, saveGrammars, saveFunctions, skipIdExisting));
 				}
-				r.getChildReferences().put(subclass, subreferences.toArray(new Reference[0]));
+				r.getChildReferences().put(subclass, subreferences);
 			}
 		}
 		return r;

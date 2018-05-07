@@ -129,8 +129,10 @@ public class DatamodelExporter {
 			boolean found = false;
 			for (Reference rChild : parentReference.getChildReferences().get(className)) {
 				if (rChild.getId().equals(exportElementId)) {
-					rootR.setChildReferences(new HashMap<String, Reference[]>());
-					rootR.getChildReferences().put(className, new Reference[] {rChild});
+					rootR.setChildReferences(new HashMap<String, List<Reference>>());
+					List<Reference> childReferences = new ArrayList<Reference>();
+					childReferences.add(rChild);
+					rootR.getChildReferences().put(className, childReferences);
 					found = true;
 					break;
 				}

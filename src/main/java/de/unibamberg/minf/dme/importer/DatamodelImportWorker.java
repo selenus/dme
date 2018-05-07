@@ -85,7 +85,7 @@ public class DatamodelImportWorker extends BaseImportWorker<DatamodelImporter> i
 		for (ModelElement me : rootElements) {
 			subrefs = new ArrayList<Reference>();
 			if (parent.getChildReferences()==null) {
-				parent.setChildReferences(new HashMap<String, Reference[]>());
+				parent.setChildReferences(new HashMap<String, List<Reference>>());
 			}
 			if (parent.getChildReferences().containsKey(me.getClass().getName())) {
 				for (Reference r : parent.getChildReferences().get(me.getClass().getName())) {
@@ -93,7 +93,7 @@ public class DatamodelImportWorker extends BaseImportWorker<DatamodelImporter> i
 				}
 			}
 			subrefs.add(identifiableService.saveHierarchy(me, auth));			
-			parent.getChildReferences().put(me.getClass().getName(), subrefs.toArray(new Reference[0]));
+			parent.getChildReferences().put(me.getClass().getName(), subrefs);
 		}
 		referenceService.saveRoot(root);
 		
